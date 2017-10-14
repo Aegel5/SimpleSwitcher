@@ -1,0 +1,5 @@
+LIBRARY	"SimpleSwitcherHook.dll"
+EXPORTS
+	GetMsgProc
+	CallWndProc
+	KeyboardProc

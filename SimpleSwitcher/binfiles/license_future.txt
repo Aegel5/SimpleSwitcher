@@ -1,0 +1,7 @@
+﻿1. Modify, reverse engineer, decompile, disassemble or otherwise attempt to reconstruct or discover the source code, or any parts of it from the binaries of SimpleSwitcher.
+
+NOTE: SimpleSwitcher MAY CONNECT BY USER’S REQUEST THROUGH THE INTERNET TO WWW.SIMPLESWITCHER.RU TO CHECK FOR UPDATES. DURING THIS PROCESS IT WILL DOWNLOAD A SMALL FILE THAT CONTAINS THE NUMBER OF THE LATEST VERSION AVAILABLE ON THE INTERNET TO CHECK IF THE VERSION AVAILABLE ON THE INTERNET IS NEWER THAN THE VERSION INSTALLED ON THE USER'S COMPUTER. SimpleSwitcher WILL NOT SEND ANY DATA FROM THE USER'S COMPUTER. YOU CAN DISABLE THIS FEATURE FROM THE SETTINGS SCREEN.
+
+Copyright SimpleSwitcher Group All rights reserved.
+http://www.simpleswitcher.ru
+

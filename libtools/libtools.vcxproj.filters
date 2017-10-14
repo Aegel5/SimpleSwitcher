@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{91d34314-d790-4576-bb4c-b3ce45dd3950}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui">
+      <UniqueIdentifier>{f1bfeba7-f0ac-4290-b9df-ea62408023cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="startup">
+      <UniqueIdentifier>{9d38fc35-c825-4085-bdb8-89b13b2780f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{b8c10b53-439d-4aae-8650-84f34d62c687}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="luawrap">
+      <UniqueIdentifier>{c437b54b-c585-4097-be1c-a9f5eba79bf3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="core\CAutoCleanup.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\core.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Errors.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\inc_all.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Logger.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\button.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\common.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\inc_all.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\simpletabs.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\TrayIcon.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="startup\reguser.h">
+      <Filter>startup</Filter>
+    </ClInclude>
+    <ClInclude Include="startup\scheduler.h">
+      <Filter>startup</Filter>
+    </ClInclude>
+    <ClInclude Include="inc_basic.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="startup\cmn.h">
+      <Filter>startup</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\cautocleanupgui.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\CAutoCleanupWin.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\CHotKey.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\CThreadQueue.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\file_utils.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\parsecfg.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\ScanMap.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\ShareMemory.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\str_utils.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\SwSyncVal.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\utils-func.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\testtime.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\procstart.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\COM_utils.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\cmdlineparser.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="core\WinInfo.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="luawrap\luawrap.h">
+      <Filter>luawrap</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\getpath.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\img_res.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="core\winAutoCleanBase.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\WinApiInt.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
