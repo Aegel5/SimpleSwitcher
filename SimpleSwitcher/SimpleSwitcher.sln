@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleSwitcher", "SimpleSwitcher\SimpleSwitcher.vcxproj", "{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -13,10 +13,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtools", "..\libtools\libtools.vcxproj", "{F51ABB00-9F31-43E2-8EF4-B38BEF592E9D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lualib", "..\lualib\lualib.vcxproj", "{55741B2B-4A80-46EA-86FA-656EF74E6B85}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MySchedule", "..\MySchedule\MySchedule.vcxproj", "{703183F5-7140-4131-8EAD-D7D7C332CCF6}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CoffeeTimeNow", "..\CofeeTimeNow\CofeeTimeNow.vcxproj", "{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "checksum", "..\CheckSum\CheckSum.vcxproj", "{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}"
 EndProject
@@ -96,34 +92,6 @@ Global
 		{55741B2B-4A80-46EA-86FA-656EF74E6B85}.XP_Release|Win32.Build.0 = XP_Release|Win32
 		{55741B2B-4A80-46EA-86FA-656EF74E6B85}.XP_Release|x64.ActiveCfg = XP_Release|x64
 		{55741B2B-4A80-46EA-86FA-656EF74E6B85}.XP_Release|x64.Build.0 = XP_Release|x64
-		{703183F5-7140-4131-8EAD-D7D7C332CCF6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{703183F5-7140-4131-8EAD-D7D7C332CCF6}.Debug|Win32.Build.0 = Debug|Win32
-		{703183F5-7140-4131-8EAD-D7D7C332CCF6}.Debug|x64.ActiveCfg = Debug|Win32
-		{703183F5-7140-4131-8EAD-D7D7C332CCF6}.Release|Win32.ActiveCfg = Release|Win32
-		{703183F5-7140-4131-8EAD-D7D7C332CCF6}.Release|Win32.Build.0 = Release|Win32
-		{703183F5-7140-4131-8EAD-D7D7C332CCF6}.Release|x64.ActiveCfg = Release|Win32
-		{703183F5-7140-4131-8EAD-D7D7C332CCF6}.XP_Debug|Win32.ActiveCfg = Debug|Win32
-		{703183F5-7140-4131-8EAD-D7D7C332CCF6}.XP_Debug|Win32.Build.0 = Debug|Win32
-		{703183F5-7140-4131-8EAD-D7D7C332CCF6}.XP_Debug|x64.ActiveCfg = Debug|Win32
-		{703183F5-7140-4131-8EAD-D7D7C332CCF6}.XP_Release|Win32.ActiveCfg = Release|Win32
-		{703183F5-7140-4131-8EAD-D7D7C332CCF6}.XP_Release|Win32.Build.0 = Release|Win32
-		{703183F5-7140-4131-8EAD-D7D7C332CCF6}.XP_Release|x64.ActiveCfg = Release|Win32
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.Debug|Win32.ActiveCfg = Debug|Win32
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.Debug|Win32.Build.0 = Debug|Win32
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.Debug|x64.ActiveCfg = Debug|x64
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.Debug|x64.Build.0 = Debug|x64
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.Release|Win32.ActiveCfg = Release|Win32
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.Release|Win32.Build.0 = Release|Win32
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.Release|x64.ActiveCfg = Release|x64
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.Release|x64.Build.0 = Release|x64
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.XP_Debug|Win32.ActiveCfg = Debug|Win32
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.XP_Debug|Win32.Build.0 = Debug|Win32
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.XP_Debug|x64.ActiveCfg = Debug|x64
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.XP_Debug|x64.Build.0 = Debug|x64
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.XP_Release|Win32.ActiveCfg = Release|Win32
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.XP_Release|Win32.Build.0 = Release|Win32
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.XP_Release|x64.ActiveCfg = Release|x64
-		{AE475510-B2BC-4BE0-A3F7-7812DED5FA2F}.XP_Release|x64.Build.0 = Release|x64
 		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Debug|Win32.Build.0 = Debug|Win32
 		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Debug|x64.ActiveCfg = Debug|Win32
@@ -141,5 +109,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7D43AA48-EE81-485A-941B-69EF9580F2D6}
 	EndGlobalSection
 EndGlobal
