@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleSwitcher", "SimpleSwitcher\SimpleSwitcher.vcxproj", "{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -18,14 +18,21 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
+		Release_sign|Win32 = Release_sign|Win32
+		Release_sign|x64 = Release_sign|x64
 		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}.Debug|Win32.ActiveCfg = Debug|Win32
 		{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}.Debug|Win32.Build.0 = Debug|Win32
+		{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}.Debug|Win32.Deploy.0 = Debug|Win32
 		{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}.Debug|x64.ActiveCfg = Debug|x64
 		{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}.Debug|x64.Build.0 = Debug|x64
+		{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}.Release_sign|Win32.ActiveCfg = Release_sign|Win32
+		{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}.Release_sign|Win32.Build.0 = Release_sign|Win32
+		{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}.Release_sign|x64.ActiveCfg = Release_sign|x64
+		{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}.Release_sign|x64.Build.0 = Release_sign|x64
 		{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}.Release|Win32.ActiveCfg = Release|Win32
 		{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}.Release|Win32.Build.0 = Release|Win32
 		{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}.Release|x64.ActiveCfg = Release|x64
@@ -34,6 +41,10 @@ Global
 		{F51ABB00-9F31-43E2-8EF4-B38BEF592E9D}.Debug|Win32.Build.0 = Debug|Win32
 		{F51ABB00-9F31-43E2-8EF4-B38BEF592E9D}.Debug|x64.ActiveCfg = Debug|x64
 		{F51ABB00-9F31-43E2-8EF4-B38BEF592E9D}.Debug|x64.Build.0 = Debug|x64
+		{F51ABB00-9F31-43E2-8EF4-B38BEF592E9D}.Release_sign|Win32.ActiveCfg = Release_sign|Win32
+		{F51ABB00-9F31-43E2-8EF4-B38BEF592E9D}.Release_sign|Win32.Build.0 = Release_sign|Win32
+		{F51ABB00-9F31-43E2-8EF4-B38BEF592E9D}.Release_sign|x64.ActiveCfg = Release_sign|x64
+		{F51ABB00-9F31-43E2-8EF4-B38BEF592E9D}.Release_sign|x64.Build.0 = Release_sign|x64
 		{F51ABB00-9F31-43E2-8EF4-B38BEF592E9D}.Release|Win32.ActiveCfg = Release|Win32
 		{F51ABB00-9F31-43E2-8EF4-B38BEF592E9D}.Release|Win32.Build.0 = Release|Win32
 		{F51ABB00-9F31-43E2-8EF4-B38BEF592E9D}.Release|x64.ActiveCfg = Release|x64
@@ -42,6 +53,10 @@ Global
 		{55741B2B-4A80-46EA-86FA-656EF74E6B85}.Debug|Win32.Build.0 = Debug|Win32
 		{55741B2B-4A80-46EA-86FA-656EF74E6B85}.Debug|x64.ActiveCfg = Debug|x64
 		{55741B2B-4A80-46EA-86FA-656EF74E6B85}.Debug|x64.Build.0 = Debug|x64
+		{55741B2B-4A80-46EA-86FA-656EF74E6B85}.Release_sign|Win32.ActiveCfg = Release_sign|Win32
+		{55741B2B-4A80-46EA-86FA-656EF74E6B85}.Release_sign|Win32.Build.0 = Release_sign|Win32
+		{55741B2B-4A80-46EA-86FA-656EF74E6B85}.Release_sign|x64.ActiveCfg = Release_sign|x64
+		{55741B2B-4A80-46EA-86FA-656EF74E6B85}.Release_sign|x64.Build.0 = Release_sign|x64
 		{55741B2B-4A80-46EA-86FA-656EF74E6B85}.Release|Win32.ActiveCfg = Release|Win32
 		{55741B2B-4A80-46EA-86FA-656EF74E6B85}.Release|Win32.Build.0 = Release|Win32
 		{55741B2B-4A80-46EA-86FA-656EF74E6B85}.Release|x64.ActiveCfg = Release|x64
@@ -49,6 +64,9 @@ Global
 		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Debug|Win32.Build.0 = Debug|Win32
 		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Debug|x64.ActiveCfg = Debug|Win32
+		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Release_sign|Win32.ActiveCfg = Release_sign|Win32
+		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Release_sign|Win32.Build.0 = Release_sign|Win32
+		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Release_sign|x64.ActiveCfg = Release_sign|Win32
 		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Release|Win32.ActiveCfg = Release|Win32
 		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Release|Win32.Build.0 = Release|Win32
 		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Release|x64.ActiveCfg = Release|Win32

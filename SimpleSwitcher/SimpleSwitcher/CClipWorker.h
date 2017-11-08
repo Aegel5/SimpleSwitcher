@@ -207,7 +207,7 @@ private:
 	{
 		LOG_INFO_1(L"RestoreClipboardText...");
 
-		std::wstring& data = m_clipboardSave;
+		std::wstring data = m_clipboardSave;
 		m_clipboardSave.clear();
 
 		if (data.empty())
