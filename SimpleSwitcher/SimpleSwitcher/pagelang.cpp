@@ -45,8 +45,8 @@ LRESULT CALLBACK DlgProcPageLang(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 		SetDlgItemText(hwnd, IDC_CHECK_DBG_MODE, GetMessageById(AM_DBG_MODE));
 		SetDlgItemText(hwnd, IDC_STATIC_PATH, GetMessageById(AM_DBG_PATH_TO_PRG));
 
-		CheckDlgButton(hwnd, IDC_CHECK_DBG_MODE, SettingsGlobal().fDbgMode ? BST_CHECKED : BST_UNCHECKED);
-		//CheckDlgButton(hwnd, IDC_CHECK_USE_DLL_HOOK, SettingsGlobal().fHookDll ? BST_CHECKED : BST_UNCHECKED);
+		gui_tools::SetCheckBox(hwnd, IDC_CHECK_DBG_MODE, SettingsGlobal().fDbgMode);
+		gui_tools::SetCheckBox(hwnd, IDC_CHECK_ESC_CLOSE, SettingsGlobal().fCloseByEsc);
 
 		return FALSE;
 	}
@@ -58,16 +58,23 @@ LRESULT CALLBACK DlgProcPageLang(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 	}
 	else if (msg == WM_COMMAND)
 	{
+		WORD dlgId = LOWORD(wParam);
+
 		if (HIWORD(wParam) == CBN_SELCHANGE)
 		{
 			int id = LOWORD(wParam);
 			LangChanged(hwnd, id);
 		}
-		else if (LOWORD(wParam) == IDC_CHECK_DBG_MODE)
+		else if (dlgId == IDC_CHECK_DBG_MODE)
 		{
-			SettingsGlobal().fDbgMode = (SendDlgItemMessage(hwnd, IDC_CHECK_DBG_MODE, BM_GETCHECK, 0, 0) == BST_CHECKED);
+			SettingsGlobal().fDbgMode = gui_tools::IsCheckBox(hwnd, dlgId);
 			SettingsGlobal().SaveAndPostMsg();
 			SettingsGlobal().SetLogLevelBySettings();
+		}
+		else if (dlgId == IDC_CHECK_ESC_CLOSE)
+		{
+			SettingsGlobal().fCloseByEsc = gui_tools::IsCheckBox(hwnd, dlgId);
+			SettingsGlobal().SaveAndPostMsg();
 		}
 		//else if (LOWORD(wParam) == IDC_CHECK_USE_DLL_HOOK)
 		//{

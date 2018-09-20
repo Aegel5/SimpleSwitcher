@@ -127,6 +127,8 @@ public:
 	//bool isDashSeparate;
 	bool fDbgMode;
 	bool fClipboardClearFormat;
+	bool fCloseByEsc;
+
 	//bool fHookDll;
 
 	std::vector<HKL> customLangList;

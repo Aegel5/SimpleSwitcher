@@ -307,8 +307,26 @@ TStatus StartCycle(int& retFromWnd, bool fShowWnd)
 			IFW_RET(FALSE);
 		}
 
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		bool fdispatch = true;
+
+		if (msg.message == WM_KEYDOWN)
+		{
+			auto nVirtKey = msg.wParam;
+			if (nVirtKey == VK_ESCAPE)
+			{
+				if (SettingsGlobal().fCloseByEsc)
+				{
+					fdispatch = false;
+					HandleExitGui(hWnd);
+				}
+			}
+		}
+		
+		if(fdispatch)
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 		
 	}
 
