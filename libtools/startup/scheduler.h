@@ -19,6 +19,7 @@ namespace Startup
 		bool isTaskExists = false;
 		bool isPathEqual = false;
 		bool isSettingsCorrect = false;
+		std::wstring pathValue;
 	};
 
 	inline TStatus CheckTaskShedule(CheckTaskSheduleParm& parm)
@@ -94,11 +95,22 @@ namespace Startup
 			std::wstring actPath = bsPath;
 			Str_Utils::trim(actPath, L" \"");
 
-			bool resPath = _wcsicmp(actPath.c_str(), parm.sPath) == 0;
+			parm.pathValue = actPath;
+
+			bool resPath = false;
+			if (parm.sPath)
+			{
+				resPath = _wcsicmp(actPath.c_str(), parm.sPath) == 0;
+			}
 			bool resArgs = false;
 			if (bsArgs)
 			{
-				resArgs = _wcsicmp(bsArgs.get(), parm.sArgs) == 0;
+				parm.pathValue.append(L" ");
+				parm.pathValue.append(bsArgs);
+				if (parm.sArgs)
+				{
+					resArgs = _wcsicmp(bsArgs.get(), parm.sArgs) == 0;
+				}
 			}
 
 			parm.isPathEqual = (resPath && resArgs);

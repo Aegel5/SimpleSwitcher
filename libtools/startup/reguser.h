@@ -27,10 +27,10 @@ namespace Startup
 			RETURN_SUCCESS;
 		}
 	}
-	inline TStatus CheckAutoStartUser(bool& isPathEquals, bool& isHasEntry, TStr keyName, TStr sPath, TStr sArgs)
+	inline TStatus GetString_AutoStartUser(TStr keyName, bool& exist, std::wstring& value)
 	{
-		isPathEquals = false;
-		isHasEntry = false;
+		exist = false;
+		value.clear();
 
 		CAutoCloseHKey hg;
 		IF_LSTATUS_RET(RegOpenKeyEx(
@@ -41,7 +41,7 @@ namespace Startup
 			&hg));
 		DWORD type = 0;
 		wchar_t data[0x1000];
-		DWORD size = SW_ARRAY_SIZE(data) - sizeof(wchar_t) ;
+		DWORD size = SW_ARRAY_SIZE(data) - sizeof(wchar_t);
 		auto res = RegQueryValueEx(hg, keyName, 0, &type, (PBYTE)data, &size);
 		if (res != ERROR_SUCCESS)
 		{
@@ -51,7 +51,7 @@ namespace Startup
 			}
 			RETURN_SUCCESS;
 		}
-		isHasEntry = true;
+		exist = true;
 
 		DWORD len = size / sizeof(wchar_t);
 		data[len] = 0;
@@ -61,10 +61,22 @@ namespace Startup
 			RETURN_SUCCESS;
 		}
 
+		value = data;
+
+		RETURN_SUCCESS;
+	}
+	inline TStatus CheckAutoStartUser(bool& isPathEquals, bool& isHasEntry, TStr keyName, TStr sPath, TStr sArgs)
+	{
+		isPathEquals = false;
+		isHasEntry = false;
+
+		std::wstring value;
+		IFS_RET(GetString_AutoStartUser(keyName, isHasEntry, value));
+
 		std::wstring cmdLine;
 		IFS_RET(Int::BuildCmdLine(sPath, sArgs, cmdLine));
 
-		isPathEquals = Str_Utils::IsEqualCI(cmdLine.c_str(), data);
+		isPathEquals = Str_Utils::IsEqualCI(cmdLine.c_str(), value.c_str());
 
 		RETURN_SUCCESS;
 	}

@@ -301,6 +301,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CMainWorker.cpp" />
+    <ClCompile Include="extern\fmt\format.cc" />
     <ClCompile Include="pageabout.cpp" />
     <ClCompile Include="dlghotkey.cpp" />
     <ClCompile Include="Hooker.cpp" />

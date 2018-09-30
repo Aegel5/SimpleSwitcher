@@ -22,6 +22,9 @@
     <Filter Include="swtools">
       <UniqueIdentifier>{bb9fd656-8b85-4533-9c79-7b43876b9135}</UniqueIdentifier>
     </Filter>
+    <Filter Include="extern\fmt">
+      <UniqueIdentifier>{a657321d-fca9-4813-9978-95f6f7fb2d5d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -164,6 +167,9 @@
     </ClCompile>
     <ClCompile Include="CMainWorker.cpp">
       <Filter>src-main</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\fmt\format.cc">
+      <Filter>extern\fmt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

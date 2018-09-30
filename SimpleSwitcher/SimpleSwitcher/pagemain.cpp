@@ -13,6 +13,7 @@ namespace SwGui{
 
 
 void UpdateAddToTray(HWND hwnd);
+void UpdateAutostartExplain(HWND hwnd);
 
 void UpdateAdmin(HWND hwnd)
 {
@@ -70,9 +71,37 @@ void UpdateAutoStart(HWND hwnd)
 	SettingsGlobal().isAddToAutoStart = SettingsGlobal().isMonitorAdmin ? isAdminAllOk : (isAdminAllOk || isUserAllOk);
 
 	gui_tools::SetCheckBox(hwnd, IDC_CHECK_AUTOSTART, SettingsGlobal().isAddToAutoStart);
+
+	UpdateAutostartExplain(hwnd);
 }
 
+void UpdateAutostartExplain(HWND hwnd)
+{
+	Startup::CheckTaskSheduleParm parm;
+	parm.taskName = c_wszTaskName;
+	IFS_LOG(Startup::CheckTaskShedule(parm));
 
+	bool isHasEntry = false;
+	std::wstring value;
+	IFS_LOG(Startup::GetString_AutoStartUser(c_sRegRunValue, isHasEntry, value));
+
+	std::wstring registryRes = L"none";
+	std::wstring schedulRes = L"none";
+
+	if (isHasEntry)
+	{
+		registryRes = value;
+	}
+
+	if (parm.isTaskExists)
+	{
+		schedulRes = parm.pathValue;
+	}
+
+	std::wstring sLabel = fmt::format(L"Registry: {}\r\nScheduler: {}", registryRes, schedulRes);
+
+	SetDlgItemText(hwnd, IDC_EDIT_AUTOEXPLAIN, sLabel.c_str());
+}
 
 TStatus InitDialogPageMain(HWND hwnd)
 {
@@ -104,6 +133,8 @@ TStatus InitDialogPageMain(HWND hwnd)
 		PageMainHandleEnable();
 		UpdateEnabled(hwnd);
 	}
+
+	UpdateAutostartExplain(hwnd);
 
 	RETURN_SUCCESS;
 }
