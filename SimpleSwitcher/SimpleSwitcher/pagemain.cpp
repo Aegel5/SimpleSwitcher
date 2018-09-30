@@ -134,8 +134,6 @@ TStatus InitDialogPageMain(HWND hwnd)
 		UpdateEnabled(hwnd);
 	}
 
-	UpdateAutostartExplain(hwnd);
-
 	RETURN_SUCCESS;
 }
 
