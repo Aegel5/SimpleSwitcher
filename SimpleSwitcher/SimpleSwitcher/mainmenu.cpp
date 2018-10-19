@@ -157,8 +157,24 @@ TStatus InitDialogMainMenu(HWND hwnd)
 	IFS_RET(g_dlgData.smTabs.AddTab(IDD_DIALOG_PAGE_LANG2, (DLGPROC)DlgProcPageLang, GetMessageById(AM_LANG)));
 	IFS_RET(g_dlgData.smTabs.AddTab(IDD_DIALOG_PAGE_ABOUT, (DLGPROC)DlgProcAbout, GetMessageById(AM_ABOUT)));
 
+	//auto timeId = SetTimer(hwnd, c_timerGetCurLayout, 250, NULL);
+	//IFW_LOG(timeId != 0);
+
 	RETURN_SUCCESS;
 }
+
+void HandleCurLayout()
+{
+	static HKL lastLayout = 0;
+	auto curLayout = GetKeyboardLayout(0);
+
+	if (curLayout != lastLayout)
+	{
+		lastLayout = curLayout;
+	}
+
+}
+
 
 
 LRESULT CALLBACK DlgProcMainMenu(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -186,10 +202,18 @@ LRESULT CALLBACK DlgProcMainMenu(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 		InitDialogMainMenu(hwnd);
 		return TRUE;
 	}
-
-	if(msg == WM_CLOSE)
+	else if(msg == WM_CLOSE)
 	{
 		HandleExitGui(hwnd);
+		return TRUE;
+	}
+	else if (msg == WM_TIMER)
+	{
+		UINT_PTR timerId = wParam;
+		if (timerId == c_timerGetCurLayout)
+		{
+			HandleCurLayout();
+		}
 		return TRUE;
 	}
 
@@ -251,7 +275,7 @@ LRESULT CALLBACK MainWindowProc(
 
 	return 0;
 }
-TStatus StartCycle(int& retFromWnd, bool fShowWnd)
+TStatus StartCycleGui(int& retFromWnd, bool fShowWnd)
 {
 	IFW_LOG(SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST));
 
@@ -320,6 +344,10 @@ TStatus StartCycle(int& retFromWnd, bool fShowWnd)
 					HandleExitGui(hWnd);
 				}
 			}
+		}
+		else if(msg.message == WM_INPUTLANGCHANGEREQUEST)
+		{
+			LOG_INFO_1(L"WM_INPUTLANGCHANGE");
 		}
 		
 		if(fdispatch)
@@ -396,7 +424,7 @@ TStatus APIENTRY StartGui(bool fShowWnd)
 	IFS_LOG(autoCom.Init());
 
 	int retWnd = 0;
-	TStatus stat = StartCycle(retWnd, fShowWnd);
+	TStatus stat = StartCycleGui(retWnd, fShowWnd);
 
 	LOG_INFO_1(L"StartCycle ends");
 
