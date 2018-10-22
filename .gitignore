@@ -6,6 +6,7 @@
 **.VC.db
 **.VC.opendb
 **/*Release/*
+**/*Release_sign/*
 **/*Debug/*
 **/ipch/*
 **/.vs
