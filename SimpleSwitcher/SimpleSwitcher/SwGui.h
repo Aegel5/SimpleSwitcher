@@ -38,6 +38,10 @@ namespace SwGui
 	const static int ID_TRAYITEM_ENABLE = 3002;
 	const static int ID_TRAYITEM_ABOUT = 3003;
 
+	const static int MENU_ID_EXIT = 5001;
+	const static int MENU_ID_CONFIG_LUA_OPEN = 5002;
+	const static int MENU_ID_CONFIG_LUA_RELOAD = 5003;
+
 	struct DlgHotKeyData
 	{
 		CHotKey keyRevert;
@@ -111,6 +115,7 @@ namespace SwGui
 		CAutoHandleIcon hIconBig;
 		//CAutoHMENU hPopupMenu;
 		CAutoHFONT fontLabel;
+		HMENU menu;
 	};
 
 	extern DialogData g_dlgData;

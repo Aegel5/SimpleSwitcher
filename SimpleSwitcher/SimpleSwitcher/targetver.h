@@ -10,7 +10,7 @@
 #define SW_VER_1    2
 #define SW_VER_2    0
 #define SW_VER_3    7
-#define SW_VER_4    3
+#define SW_VER_4    4
 
 #define _SW_QT(X) #X
 #define SW_QT(X) _SW_QT(X)
@@ -23,3 +23,5 @@
 
 #define SW_PROGRAM_NAME    "SimpleSwitcher"
 #define SW_PROGRAM_NAME_L SW_UT(SW_PROGRAM_NAME)
+
+

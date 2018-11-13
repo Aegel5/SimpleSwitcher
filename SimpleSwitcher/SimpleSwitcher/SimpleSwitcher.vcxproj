@@ -298,6 +298,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="sw-base.h" />
+    <ClInclude Include="ver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CMainWorker.cpp" />

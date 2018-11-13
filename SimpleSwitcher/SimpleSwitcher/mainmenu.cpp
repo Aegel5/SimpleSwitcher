@@ -16,7 +16,7 @@ LRESULT CALLBACK DlgProcMainMenu(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 DialogData g_dlgData;
 
 
-void ExitMainMenu()
+TStatus ExitMainMenu(HWND hwnd = NULL)
 {
 	LOG_INFO_1(L"Request to exit gui");
 	if (SettingsGlobal().IsAddToTray())
@@ -29,6 +29,7 @@ void ExitMainMenu()
 	}
 
 	PostQuitMessage(0);
+	RETURN_SUCCESS;
 }
 
 TStatus HandleExitGui(HWND hwnd)
@@ -157,6 +158,20 @@ TStatus InitDialogMainMenu(HWND hwnd)
 	IFS_RET(g_dlgData.smTabs.AddTab(IDD_DIALOG_PAGE_LANG2, (DLGPROC)DlgProcPageLang, GetMessageById(AM_LANG)));
 	IFS_RET(g_dlgData.smTabs.AddTab(IDD_DIALOG_PAGE_ABOUT, (DLGPROC)DlgProcAbout, GetMessageById(AM_ABOUT)));
 
+	g_dlgData.menu = CreateMenu();
+	HMENU hPopMenuFile = CreatePopupMenu();
+	HMENU hPopMenuConfigLua = CreatePopupMenu();
+
+	AppendMenu(hPopMenuFile, MF_STRING, MENU_ID_EXIT, L"Выход");
+	AppendMenu(hPopMenuConfigLua, MF_STRING, MENU_ID_CONFIG_LUA_OPEN, L"Открыть");
+	AppendMenu(hPopMenuConfigLua, MF_STRING, MENU_ID_CONFIG_LUA_RELOAD, L"Перезагрузить");
+
+	AppendMenu(g_dlgData.menu, MF_STRING | MF_POPUP, (UINT)hPopMenuFile, L"File");
+	AppendMenu(g_dlgData.menu, MF_STRING | MF_POPUP, (UINT)hPopMenuConfigLua, L"Config.lua");
+
+	SetMenu(hwnd, g_dlgData.menu);
+
+
 	//auto timeId = SetTimer(hwnd, c_timerGetCurLayout, 250, NULL);
 	//IFW_LOG(timeId != 0);
 
@@ -175,6 +190,41 @@ void HandleCurLayout()
 
 }
 
+TStatus GetPathBinFile(tstring& sFilePath, TStr fileName)
+{
+	IFS_RET(GetPath(sFilePath, PATH_TYPE_SELF_FOLDER, GetSelfBit()));
+	sFilePath += fileName;
+
+	if (!FileUtils::IsFileExists(sFilePath.c_str()))
+	{
+		return SW_ERR_SUCCESS;
+	}
+
+	RETURN_SUCCESS;
+}
+
+TStatus HandleOpenConfigLua(HWND hwnd)
+{
+	tstring sFilePath;
+	IFS_RET(GetPathBinFile(sFilePath, L"config.lua"));
+
+	procstart::CreateProcessParm parm;
+	parm.sExe = L"notepad.exe";
+	parm.sCmd = sFilePath.c_str();
+	parm.mode = procstart::SW_CREATEPROC_SHELLEXE;
+	CAutoHandle hProc;
+	IFS_RET(procstart::SwCreateProcess(parm, hProc));
+
+	RETURN_SUCCESS;
+}
+
+TStatus HandleReloadConfigLua(HWND hwnd)
+{
+	IFS_LOG(SettingsGlobal().Load());
+	PostMsgSettingChanges();
+
+	RETURN_SUCCESS;
+}
 
 
 LRESULT CALLBACK DlgProcMainMenu(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -192,6 +242,12 @@ LRESULT CALLBACK DlgProcMainMenu(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 	if (gui_tools::HandleButton(wmsg, IDOK, HandleExitGui))
 		return TRUE;
 	if (gui_tools::HandleButton(wmsg, IDCANCEL, HandleExitGui))
+		return TRUE;
+	if (gui_tools::HandleButton(wmsg, MENU_ID_EXIT, ExitMainMenu))
+		return TRUE;
+	if (gui_tools::HandleButton(wmsg, MENU_ID_CONFIG_LUA_OPEN, HandleOpenConfigLua))
+		return TRUE;
+	if (gui_tools::HandleButton(wmsg, MENU_ID_CONFIG_LUA_RELOAD, HandleReloadConfigLua))
 		return TRUE;
 
 	if (g_dlgData.smTabs.ProcessMessage(wmsg))
