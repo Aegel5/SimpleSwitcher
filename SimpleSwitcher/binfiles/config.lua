@@ -7,9 +7,12 @@ disableInProgram = ""; -- example: "skype.exe,quake.exe"
 -- Alternate mode settings
 -- Try alternate mode if simpleswitcher not worked in program.
 useAlternateModeByDefault = 0;  -- use for all program
-useAlternateModeInProgram = ""; -- exmaple: "skype.exe,outlook.exe"
+useAlternateModeInProgram = "pythonw.exe"; -- exmaple: "skype.exe,outlook.exe"
 
 msDelayAfterCtrlC = 25; -- possible range [10-210]
+
+-- Log level
+ll = 0; -- 0 - no log, 1 - errors and basic info, 4 - max
 
 
 
