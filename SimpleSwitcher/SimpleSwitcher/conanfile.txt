@@ -6,3 +6,4 @@ gsl_microsoft/2.0.0@bincrafters/stable
 visual_studio
 
 
+#$(Qt_LIBS_);
