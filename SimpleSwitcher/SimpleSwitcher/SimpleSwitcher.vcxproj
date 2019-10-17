@@ -194,15 +194,15 @@
     <ClInclude Include="KeysStruct.h" />
     <ClInclude Include="LuaConfig.h" />
     <ClInclude Include="ProcDll.h" />
-    <ClInclude Include="SimpleSwitcher.h" />
+    <ClInclude Include="Resource.h" />
     <ClInclude Include="resource1.h" />
+    <ClInclude Include="SimpleSwitcher.h" />
     <ClInclude Include="KeyTools.h" />
     <ClInclude Include="SwGui.h" />
     <ClInclude Include="swlocal.h" />
     <ClInclude Include="SwShared.h" />
     <ClInclude Include="SwAutostart.h" />
     <ClInclude Include="SwUtils.h" />
-    <ClInclude Include="Resource.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -240,16 +240,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SimpleSwitcher.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="favicon.ico" />
+    <Manifest Include="simpleswitcher.manifest" />
   </ItemGroup>
   <ItemGroup>
     <None Include="version.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="simpleswitcher.manifest" />
+    <ResourceCompile Include="SimpleSwitcher.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="favicon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

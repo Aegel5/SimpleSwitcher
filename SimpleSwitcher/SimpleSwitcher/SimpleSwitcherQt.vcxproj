@@ -70,6 +70,7 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\common.props" />
+    <Import Project="..\Debug\.conan\conanbuildinfo.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -238,6 +239,8 @@
     <ClInclude Include="KeyTools.h" />
     <ClInclude Include="LuaConfig.h" />
     <ClInclude Include="ProcDll.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="SimpleSwitcher.h" />
     <ClInclude Include="sw-base.h" />
@@ -261,10 +264,17 @@
     <QtRcc Include="SimpleSwitcherQt.qrc" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="SimpleSwitcher.rc" />
     <ResourceCompile Include="SimpleSwitcherQt.rc" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="simpleswitcher.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="version.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="favicon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

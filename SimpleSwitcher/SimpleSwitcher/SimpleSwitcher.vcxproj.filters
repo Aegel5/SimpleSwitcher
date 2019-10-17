@@ -27,17 +27,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Resource.h">
-      <Filter>res</Filter>
-    </ClInclude>
     <ClInclude Include="Hooker.h">
       <Filter>src-main</Filter>
     </ClInclude>
     <ClInclude Include="consts.h">
       <Filter>src-main</Filter>
-    </ClInclude>
-    <ClInclude Include="resource1.h">
-      <Filter>res</Filter>
     </ClInclude>
     <ClInclude Include="SwGui.h">
       <Filter>gui</Filter>
@@ -101,6 +95,12 @@
     </ClInclude>
     <ClInclude Include="CClipWorker.h">
       <Filter>src-main</Filter>
+    </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>res</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>res</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -175,14 +175,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="favicon.ico">
-      <Filter>res</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="SimpleSwitcher.rc">
-      <Filter>res</Filter>
-    </ResourceCompile>
+    <Manifest Include="simpleswitcher.manifest" />
   </ItemGroup>
   <ItemGroup>
     <None Include="version.rc2">
@@ -190,6 +183,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="simpleswitcher.manifest" />
+    <ResourceCompile Include="SimpleSwitcher.rc">
+      <Filter>res</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="favicon.ico">
+      <Filter>res</Filter>
+    </Image>
   </ItemGroup>
 </Project>

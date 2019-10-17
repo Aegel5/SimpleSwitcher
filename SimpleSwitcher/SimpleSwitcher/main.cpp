@@ -115,29 +115,22 @@ TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 	RETURN_SUCCESS;
 }
 
-int main(int argc, char* argv[])
-{
-	QApplication a(argc, argv);
-	SimpleSwitcherQt w;
-	w.show();
-	return a.exec();
-}
+//#include "SimpleSwitcherQt.h"
+//#include <QtWidgets/QApplication>
+//int main(int argc, char* argv[])
+//{
+//	QApplication a(argc, argv);
+//	SimpleSwitcherQt w;
+//	w.show();
+//	return a.exec();
+//}
 
-//int main(int /*argc*/, char* /*argv*/[]) 
-int _WinMainCRTStartup(
-//int APIENTRY _tWinMain(
+int APIENTRY Main1(
 	_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPTSTR    lpCmdLine,
 	_In_ int       nCmdShow)
 {
-
-	//HINSTANCE hInstance = GetHInstance();
-	//HINSTANCE hPrevInstance = GetHPrevInstance();
-	//LPWSTR lpCmdLine = GetLPCmdLine();
-	//int nCmdShow = GetNCmdShow();
-
-
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -148,6 +141,27 @@ int _WinMainCRTStartup(
 	LOG_INFO_1(L"Exit process");
 
 	return status;
+}
+
+int APIENTRY _tWinMain(
+	_In_ HINSTANCE hInstance,
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPTSTR    lpCmdLine,
+	_In_ int       nCmdShow)
+{
+	return Main1(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+}
+
+int main(int argc, char* argv[])
+{
+
+	HINSTANCE hInstance = GetHInstance();
+	HINSTANCE hPrevInstance = GetHPrevInstance();
+	LPWSTR lpCmdLine = GetLPCmdLine();
+	int nCmdShow = GetNCmdShow();
+
+	return Main1(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+
 	
 }
 
