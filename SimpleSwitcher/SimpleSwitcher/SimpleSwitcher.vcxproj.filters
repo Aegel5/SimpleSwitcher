@@ -72,9 +72,6 @@
     <ClInclude Include="Settings.h">
       <Filter>src-main</Filter>
     </ClInclude>
-    <ClInclude Include="CaseAnalazer.h">
-      <Filter>src-main</Filter>
-    </ClInclude>
     <ClInclude Include="LuaConfig.h">
       <Filter>src-main</Filter>
     </ClInclude>
@@ -93,13 +90,16 @@
     <ClInclude Include="CMainWorker.h">
       <Filter>src-main</Filter>
     </ClInclude>
-    <ClInclude Include="CClipWorker.h">
-      <Filter>src-main</Filter>
-    </ClInclude>
     <ClInclude Include="ProcDll.h">
       <Filter>src-main</Filter>
     </ClInclude>
     <ClInclude Include="ver.h">
+      <Filter>src-main</Filter>
+    </ClInclude>
+    <ClInclude Include="CaseAnalazer.h">
+      <Filter>src-main</Filter>
+    </ClInclude>
+    <ClInclude Include="CClipWorker.h">
       <Filter>src-main</Filter>
     </ClInclude>
   </ItemGroup>

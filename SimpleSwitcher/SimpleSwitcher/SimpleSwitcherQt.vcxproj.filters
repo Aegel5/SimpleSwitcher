@@ -88,6 +88,24 @@
     <ClCompile Include="extern\fmt\format.cc">
       <Filter>extern\fmt</Filter>
     </ClCompile>
+    <ClCompile Include="CMainWorker.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooker.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyTools.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaConfig.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleSwitcher.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="SimpleSwitcherQt.qrc">
@@ -134,6 +152,45 @@
     </ClInclude>
     <ClInclude Include="SwGui.h">
       <Filter>gui_winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="CMainWorker.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="consts.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooker.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="HookerWorker.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyTools.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaConfig.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcDll.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleSwitcher.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="ver.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="CClipWorker.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="CaseAnalazer.h">
+      <Filter>main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -100,8 +100,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CMainWorker.cpp" />
     <ClCompile Include="dlghotkey.cpp" />
     <ClCompile Include="extern\fmt\format.cc" />
+    <ClCompile Include="Hooker.cpp" />
+    <ClCompile Include="KeyTools.cpp" />
+    <ClCompile Include="LuaConfig.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainmenu.cpp" />
     <ClCompile Include="msg_en.cpp" />
@@ -114,6 +118,8 @@
     <ClCompile Include="pagelay.cpp" />
     <ClCompile Include="pagemain.cpp" />
     <ClCompile Include="pagewordsep.cpp" />
+    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="SimpleSwitcher.cpp" />
     <ClCompile Include="SimpleSwitcherQt.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -123,12 +129,25 @@
     <ClCompile Include="SwUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CaseAnalazer.h" />
+    <ClInclude Include="CClipWorker.h" />
+    <ClInclude Include="CMainWorker.h" />
+    <ClInclude Include="consts.h" />
+    <ClInclude Include="Hooker.h" />
+    <ClInclude Include="HookerWorker.h" />
+    <ClInclude Include="KeyTools.h" />
+    <ClInclude Include="LuaConfig.h" />
+    <ClInclude Include="ProcDll.h" />
+    <ClInclude Include="Settings.h" />
+    <ClInclude Include="SimpleSwitcher.h" />
     <ClInclude Include="sw-base.h" />
     <ClInclude Include="SwAutostart.h" />
     <ClInclude Include="SwGui.h" />
     <ClInclude Include="swlocal.h" />
     <ClInclude Include="SwShared.h" />
     <ClInclude Include="SwUtils.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="ver.h" />
     <QtMoc Include="SimpleSwitcherQt.h" />
     <ClInclude Include="CAutoProcMonitor.h" />
     <ClInclude Include="InputSender.h" />
