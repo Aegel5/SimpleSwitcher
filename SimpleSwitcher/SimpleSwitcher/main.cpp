@@ -115,7 +115,7 @@ TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 	RETURN_SUCCESS;
 }
 //int main(int /*argc*/, char* /*argv*/[]) 
-int APIENTRY WinMainCRTStartup(_In_ HINSTANCE hInstance,
+int APIENTRY _WinMainCRTStartup(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPTSTR    lpCmdLine,
 	_In_ int       nCmdShow)
