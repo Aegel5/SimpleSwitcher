@@ -100,15 +100,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="dlghotkey.cpp" />
+    <ClCompile Include="extern\fmt\format.cc" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainmenu.cpp" />
+    <ClCompile Include="msg_en.cpp" />
+    <ClCompile Include="msg_ru.cpp" />
+    <ClCompile Include="pageabout.cpp" />
+    <ClCompile Include="pageadv.cpp" />
+    <ClCompile Include="pagebreak.cpp" />
+    <ClCompile Include="pageclip.cpp" />
+    <ClCompile Include="pagelang.cpp" />
+    <ClCompile Include="pagelay.cpp" />
+    <ClCompile Include="pagemain.cpp" />
+    <ClCompile Include="pagewordsep.cpp" />
     <ClCompile Include="SimpleSwitcherQt.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="swlocal.cpp" />
+    <ClCompile Include="SwUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="sw-base.h" />
+    <ClInclude Include="SwAutostart.h" />
+    <ClInclude Include="SwGui.h" />
+    <ClInclude Include="swlocal.h" />
+    <ClInclude Include="SwShared.h" />
+    <ClInclude Include="SwUtils.h" />
     <QtMoc Include="SimpleSwitcherQt.h" />
+    <ClInclude Include="CAutoProcMonitor.h" />
+    <ClInclude Include="InputSender.h" />
+    <ClInclude Include="KeysStruct.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
@@ -119,6 +143,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SimpleSwitcherQt.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="simpleswitcher.manifest" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

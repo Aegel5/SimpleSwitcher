@@ -17,6 +17,21 @@
     <Filter Include="main">
       <UniqueIdentifier>{2320990c-4347-4003-bec7-5ba454267771}</UniqueIdentifier>
     </Filter>
+    <Filter Include="swtools">
+      <UniqueIdentifier>{371c263d-b1fa-4e49-a05c-39c4bdda7534}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Localization">
+      <UniqueIdentifier>{a216e096-c08e-4bd1-af4a-2a6e46e1ce04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui_winapi">
+      <UniqueIdentifier>{d73728fb-4609-49ce-92f9-33fe835fb9e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="extern">
+      <UniqueIdentifier>{7a61cf1d-b189-49ed-93a8-ccba0c80ba94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="extern\fmt">
+      <UniqueIdentifier>{9ec1e636-dc6e-4e9d-b134-13e1f4054fb8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SimpleSwitcherQt.cpp">
@@ -27,6 +42,51 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="SwUtils.cpp">
+      <Filter>swtools</Filter>
+    </ClCompile>
+    <ClCompile Include="msg_en.cpp">
+      <Filter>Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="msg_ru.cpp">
+      <Filter>Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="swlocal.cpp">
+      <Filter>Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="pageabout.cpp">
+      <Filter>gui_winapi</Filter>
+    </ClCompile>
+    <ClCompile Include="dlghotkey.cpp">
+      <Filter>gui_winapi</Filter>
+    </ClCompile>
+    <ClCompile Include="mainmenu.cpp">
+      <Filter>gui_winapi</Filter>
+    </ClCompile>
+    <ClCompile Include="pageclip.cpp">
+      <Filter>gui_winapi</Filter>
+    </ClCompile>
+    <ClCompile Include="pagelang.cpp">
+      <Filter>gui_winapi</Filter>
+    </ClCompile>
+    <ClCompile Include="pagewordsep.cpp">
+      <Filter>gui_winapi</Filter>
+    </ClCompile>
+    <ClCompile Include="pageadv.cpp">
+      <Filter>gui_winapi</Filter>
+    </ClCompile>
+    <ClCompile Include="pagelay.cpp">
+      <Filter>gui_winapi</Filter>
+    </ClCompile>
+    <ClCompile Include="pagemain.cpp">
+      <Filter>gui_winapi</Filter>
+    </ClCompile>
+    <ClCompile Include="pagebreak.cpp">
+      <Filter>gui_winapi</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\fmt\format.cc">
+      <Filter>extern\fmt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -48,10 +108,42 @@
     <ClInclude Include="stdafx.h">
       <Filter>main</Filter>
     </ClInclude>
+    <ClInclude Include="CAutoProcMonitor.h">
+      <Filter>swtools</Filter>
+    </ClInclude>
+    <ClInclude Include="InputSender.h">
+      <Filter>swtools</Filter>
+    </ClInclude>
+    <ClInclude Include="KeysStruct.h">
+      <Filter>swtools</Filter>
+    </ClInclude>
+    <ClInclude Include="SwShared.h">
+      <Filter>swtools</Filter>
+    </ClInclude>
+    <ClInclude Include="SwAutostart.h">
+      <Filter>swtools</Filter>
+    </ClInclude>
+    <ClInclude Include="SwUtils.h">
+      <Filter>swtools</Filter>
+    </ClInclude>
+    <ClInclude Include="sw-base.h">
+      <Filter>swtools</Filter>
+    </ClInclude>
+    <ClInclude Include="swlocal.h">
+      <Filter>Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="SwGui.h">
+      <Filter>gui_winapi</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SimpleSwitcherQt.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="simpleswitcher.manifest">
+      <Filter>main</Filter>
+    </Manifest>
   </ItemGroup>
 </Project>

@@ -78,7 +78,6 @@
     <ClInclude Include="LuaConfig.h">
       <Filter>src-main</Filter>
     </ClInclude>
-    <ClInclude Include="..\libtools\FileCrc.h" />
     <ClInclude Include="targetver.h">
       <Filter>src-main</Filter>
     </ClInclude>
