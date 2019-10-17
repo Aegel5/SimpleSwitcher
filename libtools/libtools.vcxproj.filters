@@ -135,5 +135,6 @@
     <ClInclude Include="utils\WinApiInt.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="WinMainParameters.h" />
   </ItemGroup>
 </Project>

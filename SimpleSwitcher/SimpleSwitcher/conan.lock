@@ -1,0 +1,34 @@
+{
+ "profile": "[settings]\narch=x86_64\narch_build=x86_64\nbuild_type=Release\ncompiler=Visual Studio\ncompiler.runtime=MD\ncompiler.version=15\nos=Windows\nos_build=Windows\n[options]\n[build_requires]\n[env]\n",
+ "graph_lock": {
+  "nodes": {
+   "d58d93f9-f106-11e9-a33d-4ccc6a93710b": {
+    "pref": "Poco/1.9.4@pocoproject/stable#0:fa6584db476868e42c0cc326f16c13a2c52f7646#0",
+    "options": "cxx_14=False\nenable_apacheconnector=False\nenable_cppparser=False\nenable_crypto=True\nenable_data=True\nenable_data_mysql=False\nenable_data_odbc=False\nenable_data_sqlite=True\nenable_json=True\nenable_mongodb=True\nenable_net=True\nenable_netssl=True\nenable_netssl_win=True\nenable_pagecompiler=False\nenable_pagecompiler_file2page=False\nenable_pdf=False\nenable_pocodoc=False\nenable_redis=True\nenable_sevenzip=False\nenable_tests=False\nenable_util=True\nenable_xml=True\nenable_zip=True\nforce_openssl=True\npoco_unbundled=False\nshared=False\nOpenSSL:386=False\nOpenSSL:no_asm=False\nOpenSSL:no_bf=False\nOpenSSL:no_cast=False\nOpenSSL:no_des=False\nOpenSSL:no_dh=False\nOpenSSL:no_dsa=False\nOpenSSL:no_hmac=False\nOpenSSL:no_md2=False\nOpenSSL:no_md5=False\nOpenSSL:no_mdc2=False\nOpenSSL:no_rc2=False\nOpenSSL:no_rc4=False\nOpenSSL:no_rc5=False\nOpenSSL:no_rsa=False\nOpenSSL:no_sha=False\nOpenSSL:no_sse2=False\nOpenSSL:no_threads=False\nOpenSSL:no_zlib=False\nOpenSSL:shared=False\nzlib:minizip=False\nzlib:shared=False",
+    "requires": {
+     "OpenSSL/1.0.2o@conan/stable#0": "d58d93f8-f106-11e9-8802-4ccc6a93710b"
+    }
+   },
+   "d58d93fa-f106-11e9-a91e-4ccc6a93710b": {
+    "pref": "zlib/1.2.11@conan/stable#0:6cc50b139b9c3d27b3e9042d5f5372d327b3a9f7#0",
+    "options": "minizip=False\nshared=False"
+   },
+   "d58d93f8-f106-11e9-8802-4ccc6a93710b": {
+    "pref": "OpenSSL/1.0.2o@conan/stable#0:606fdb601e335c2001bdf31d478826b644747077#0",
+    "options": "386=False\nno_asm=False\nno_bf=False\nno_cast=False\nno_des=False\nno_dh=False\nno_dsa=False\nno_hmac=False\nno_md2=False\nno_md5=False\nno_mdc2=False\nno_rc2=False\nno_rc4=False\nno_rc5=False\nno_rsa=False\nno_sha=False\nno_sse2=False\nno_threads=False\nno_zlib=False\nshared=False\nzlib:minizip=False\nzlib:shared=False",
+    "requires": {
+     "zlib/1.2.11@conan/stable#0": "d58d93fa-f106-11e9-a91e-4ccc6a93710b"
+    }
+   },
+   "d58d93fb-f106-11e9-b3c0-4ccc6a93710b": {
+    "pref": null,
+    "options": "OpenSSL:386=False\nOpenSSL:no_asm=False\nOpenSSL:no_bf=False\nOpenSSL:no_cast=False\nOpenSSL:no_des=False\nOpenSSL:no_dh=False\nOpenSSL:no_dsa=False\nOpenSSL:no_hmac=False\nOpenSSL:no_md2=False\nOpenSSL:no_md5=False\nOpenSSL:no_mdc2=False\nOpenSSL:no_rc2=False\nOpenSSL:no_rc4=False\nOpenSSL:no_rc5=False\nOpenSSL:no_rsa=False\nOpenSSL:no_sha=False\nOpenSSL:no_sse2=False\nOpenSSL:no_threads=False\nOpenSSL:no_zlib=False\nOpenSSL:shared=False\nPoco:cxx_14=False\nPoco:enable_apacheconnector=False\nPoco:enable_cppparser=False\nPoco:enable_crypto=True\nPoco:enable_data=True\nPoco:enable_data_mysql=False\nPoco:enable_data_odbc=False\nPoco:enable_data_sqlite=True\nPoco:enable_json=True\nPoco:enable_mongodb=True\nPoco:enable_net=True\nPoco:enable_netssl=True\nPoco:enable_netssl_win=True\nPoco:enable_pagecompiler=False\nPoco:enable_pagecompiler_file2page=False\nPoco:enable_pdf=False\nPoco:enable_pocodoc=False\nPoco:enable_redis=True\nPoco:enable_sevenzip=False\nPoco:enable_tests=False\nPoco:enable_util=True\nPoco:enable_xml=True\nPoco:enable_zip=True\nPoco:force_openssl=True\nPoco:poco_unbundled=False\nPoco:shared=False\nzlib:minizip=False\nzlib:shared=False",
+    "requires": {
+     "Poco/1.9.4@pocoproject/stable#0": "d58d93f9-f106-11e9-a33d-4ccc6a93710b"
+    },
+    "path": "D:\\github\\SimpleSwitcher2\\SimpleSwitcher\\SimpleSwitcher\\SimpleSwitcher\\conanfile.txt"
+   }
+  }
+ },
+ "version": "0.1"
+}

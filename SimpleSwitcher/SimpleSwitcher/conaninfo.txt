@@ -1,0 +1,84 @@
+[settings]
+    arch=x86_64
+    build_type=Release
+    compiler=Visual Studio
+    compiler.runtime=MD
+    compiler.version=15
+    os=Windows
+
+[requires]
+    Poco/1.Y.Z
+
+[options]
+
+
+[full_settings]
+    arch=x86_64
+    arch_build=x86_64
+    build_type=Release
+    compiler=Visual Studio
+    compiler.runtime=MD
+    compiler.version=15
+    os=Windows
+    os_build=Windows
+
+[full_requires]
+    OpenSSL/1.0.2o@conan/stable:606fdb601e335c2001bdf31d478826b644747077
+    Poco/1.9.4@pocoproject/stable:fa6584db476868e42c0cc326f16c13a2c52f7646
+    zlib/1.2.11@conan/stable:6cc50b139b9c3d27b3e9042d5f5372d327b3a9f7
+
+[full_options]
+    OpenSSL:386=False
+    OpenSSL:no_asm=False
+    OpenSSL:no_bf=False
+    OpenSSL:no_cast=False
+    OpenSSL:no_des=False
+    OpenSSL:no_dh=False
+    OpenSSL:no_dsa=False
+    OpenSSL:no_hmac=False
+    OpenSSL:no_md2=False
+    OpenSSL:no_md5=False
+    OpenSSL:no_mdc2=False
+    OpenSSL:no_rc2=False
+    OpenSSL:no_rc4=False
+    OpenSSL:no_rc5=False
+    OpenSSL:no_rsa=False
+    OpenSSL:no_sha=False
+    OpenSSL:no_sse2=False
+    OpenSSL:no_threads=False
+    OpenSSL:no_zlib=False
+    OpenSSL:shared=False
+    Poco:cxx_14=False
+    Poco:enable_apacheconnector=False
+    Poco:enable_cppparser=False
+    Poco:enable_crypto=True
+    Poco:enable_data=True
+    Poco:enable_data_mysql=False
+    Poco:enable_data_odbc=False
+    Poco:enable_data_sqlite=True
+    Poco:enable_json=True
+    Poco:enable_mongodb=True
+    Poco:enable_net=True
+    Poco:enable_netssl=True
+    Poco:enable_netssl_win=True
+    Poco:enable_pagecompiler=False
+    Poco:enable_pagecompiler_file2page=False
+    Poco:enable_pdf=False
+    Poco:enable_pocodoc=False
+    Poco:enable_redis=True
+    Poco:enable_sevenzip=False
+    Poco:enable_tests=False
+    Poco:enable_util=True
+    Poco:enable_xml=True
+    Poco:enable_zip=True
+    Poco:force_openssl=True
+    Poco:poco_unbundled=False
+    Poco:shared=False
+    zlib:minizip=False
+    zlib:shared=False
+
+[recipe_hash]
+
+
+[env]
+

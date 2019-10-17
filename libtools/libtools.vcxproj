@@ -217,6 +217,7 @@
     <ClInclude Include="utils\SwSyncVal.h" />
     <ClInclude Include="utils\testtime.h" />
     <ClInclude Include="utils\utils-func.h" />
+    <ClInclude Include="WinMainParameters.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

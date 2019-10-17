@@ -3,6 +3,9 @@
 #include "Settings.h"
 #include "SwAutostart.h"
 #include "SwGui.h"
+#include "WinMainParameters.h"
+
+using namespace WinMainParameters;
 
 
 //TStatus MonitorOn(TSWAdmin admin);
@@ -111,12 +114,17 @@ TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 
 	RETURN_SUCCESS;
 }
-
-int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
+//int main(int /*argc*/, char* /*argv*/[]) 
+int APIENTRY WinMainCRTStartup(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPTSTR    lpCmdLine,
 	_In_ int       nCmdShow)
 {
+
+	//HINSTANCE hInstance = GetHInstance();
+	//HINSTANCE hPrevInstance = GetHPrevInstance();
+	//LPWSTR lpCmdLine = GetLPCmdLine();
+	//int nCmdShow = GetNCmdShow();
 
 
 	UNREFERENCED_PARAMETER(hPrevInstance);

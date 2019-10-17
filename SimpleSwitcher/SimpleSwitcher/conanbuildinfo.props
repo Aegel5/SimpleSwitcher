@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="Conan-RootDirs">
+    <Conan-Poco-Root>D:\conan_packages\Poco\1.9.4\pocoproject\stable\package\fa6584db476868e42c0cc326f16c13a2c52f7646</Conan-Poco-Root>
+    <Conan-OpenSSL-Root>D:\conan_packages\OpenSSL\1.0.2o\conan\stable\package\606fdb601e335c2001bdf31d478826b644747077</Conan-OpenSSL-Root>
+    <Conan-zlib-Root>D:\conan_packages\zlib\1.2.11\conan\stable\package\6cc50b139b9c3d27b3e9042d5f5372d327b3a9f7</Conan-zlib-Root>
+  </PropertyGroup>
+  <PropertyGroup Label="ConanVariables">
+    <ConanCompilerFlags></ConanCompilerFlags>
+    <ConanLinkerFlags></ConanLinkerFlags>
+    <ConanPreprocessorDefinitions>POCO_STATIC=ON;POCO_NO_AUTOMATIC_LIBS;</ConanPreprocessorDefinitions>
+    <ConanIncludeDirectories>D:\conan_packages\Poco\1.9.4\pocoproject\stable\package\fa6584db476868e42c0cc326f16c13a2c52f7646\include;D:\conan_packages\OpenSSL\1.0.2o\conan\stable\package\606fdb601e335c2001bdf31d478826b644747077\include;D:\conan_packages\zlib\1.2.11\conan\stable\package\6cc50b139b9c3d27b3e9042d5f5372d327b3a9f7\include;</ConanIncludeDirectories>
+    <ConanResourceDirectories></ConanResourceDirectories>
+    <ConanLibraryDirectories>D:\conan_packages\Poco\1.9.4\pocoproject\stable\package\fa6584db476868e42c0cc326f16c13a2c52f7646\lib;D:\conan_packages\OpenSSL\1.0.2o\conan\stable\package\606fdb601e335c2001bdf31d478826b644747077\lib;D:\conan_packages\zlib\1.2.11\conan\stable\package\6cc50b139b9c3d27b3e9042d5f5372d327b3a9f7\lib;</ConanLibraryDirectories>
+    <ConanBinaryDirectories></ConanBinaryDirectories>
+    <ConanLibraries>PocoMongoDBmd.lib;PocoNetSSLWinmd.lib;PocoNetmd.lib;PocoCryptomd.lib;PocoDataSQLitemd.lib;PocoDatamd.lib;PocoZipmd.lib;PocoUtilmd.lib;PocoXMLmd.lib;PocoJSONmd.lib;PocoRedismd.lib;PocoFoundationmd.lib;Iphlpapi.lib;Crypt32.lib;ssleay32.lib;libeay32.lib;crypt32.lib;msi.lib;ws2_32.lib;zlib.lib;</ConanLibraries>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LocalDebuggerEnvironment>PATH=%PATH%;</LocalDebuggerEnvironment>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ConanIncludeDirectories)%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>$(ConanPreprocessorDefinitions)%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>$(ConanCompilerFlags) %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(ConanLibraryDirectories)%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(ConanLibraries)%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>$(ConanLinkerFlags) %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <Midl>
+      <AdditionalIncludeDirectories>$(ConanIncludeDirectories)%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </Midl>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(ConanIncludeDirectories)%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>$(ConanPreprocessorDefinitions)%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>$(ConanCompilerFlags) %(AdditionalOptions)</AdditionalOptions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>
