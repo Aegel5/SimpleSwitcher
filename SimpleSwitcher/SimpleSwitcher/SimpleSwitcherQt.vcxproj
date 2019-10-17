@@ -82,7 +82,7 @@
       <OutputFile>$(ProjectDir)\..\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\lualib\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>taskschd.lib;Version.lib;Imagehlp.lib;lualib64.lib;Wtsapi32.lib;$(Qt_LIBS_);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>taskschd.lib;Version.lib;Imagehlp.lib;lualib.lib;Wtsapi32.lib;$(Qt_LIBS_);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -104,7 +104,7 @@
       <OutputFile>$(ProjectDir)\..\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\lualib\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>taskschd.lib;Version.lib;Imagehlp.lib;lualib64.lib;Wtsapi32.lib;$(Qt_LIBS_);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>taskschd.lib;Version.lib;Imagehlp.lib;lualib.lib;Wtsapi32.lib;$(Qt_LIBS_);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
