@@ -14,5 +14,5 @@ SimpleSwitcherQt::SimpleSwitcherQt(QWidget *parent)
 
 	ui.setupUi(this);
 
-	connect(ui.pushButton, &QPushButton::clicked, this, &SimpleSwitcherQt::addTask);
+	//connect(ui.pushButton, &QPushButton::clicked, this, &SimpleSwitcherQt::addTask);
 }
