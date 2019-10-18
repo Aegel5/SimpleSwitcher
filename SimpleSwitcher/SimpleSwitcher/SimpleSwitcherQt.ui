@@ -6,101 +6,150 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>741</width>
-    <height>638</height>
+    <width>804</width>
+    <height>671</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>SimpleSwitcherQt</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="horizontalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>30</y>
-      <width>571</width>
-      <height>481</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QListView" name="listView">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QListWidget" name="listWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>150</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustToContents</enum>
+      </property>
+      <property name="batchSize">
+       <number>100</number>
+      </property>
+      <property name="currentRow">
+       <number>0</number>
+      </property>
+      <item>
+       <property name="text">
+        <string>Общие</string>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTabWidget" name="tabWidget">
-       <property name="tabPosition">
-        <enum>QTabWidget::North</enum>
+      </item>
+      <item>
+       <property name="text">
+        <string>CapsLock/ScrollLock</string>
        </property>
-       <property name="tabShape">
-        <enum>QTabWidget::Triangular</enum>
+      </item>
+      <item>
+       <property name="text">
+        <string>Разделение слов</string>
        </property>
-       <property name="currentIndex">
-        <number>0</number>
+      </item>
+      <item>
+       <property name="text">
+        <string>Смена раскладки</string>
        </property>
-       <property name="documentMode">
-        <bool>false</bool>
+      </item>
+      <item>
+       <property name="text">
+        <string>Буфер обмена</string>
        </property>
-       <property name="tabsClosable">
-        <bool>false</bool>
+      </item>
+      <item>
+       <property name="text">
+        <string>Настройки</string>
        </property>
-       <property name="tabBarAutoHide">
-        <bool>false</bool>
+      </item>
+      <item>
+       <property name="text">
+        <string>О программе</string>
        </property>
-       <widget class="QWidget" name="tab">
-        <attribute name="title">
-         <string>Tab 1</string>
-        </attribute>
-        <widget class="QPushButton" name="pushButton_4">
-         <property name="geometry">
-          <rect>
-           <x>30</x>
-           <y>80</y>
-           <width>75</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>PushButton</string>
-         </property>
-        </widget>
+      </item>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="tabPosition">
+       <enum>QTabWidget::North</enum>
+      </property>
+      <property name="tabShape">
+       <enum>QTabWidget::Triangular</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="documentMode">
+       <bool>false</bool>
+      </property>
+      <property name="tabsClosable">
+       <bool>false</bool>
+      </property>
+      <property name="tabBarAutoHide">
+       <bool>false</bool>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Tab 1</string>
+       </attribute>
+       <widget class="QPushButton" name="pushButton_4">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>80</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>PushButton</string>
+        </property>
        </widget>
-       <widget class="QWidget" name="tab_2">
-        <attribute name="title">
-         <string>Tab 2</string>
-        </attribute>
-        <widget class="QPushButton" name="pushButton_5">
-         <property name="geometry">
-          <rect>
-           <x>90</x>
-           <y>70</y>
-           <width>75</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>PushButton</string>
-         </property>
-        </widget>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Tab 2</string>
+       </attribute>
+       <widget class="QPushButton" name="pushButton_5">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>70</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>PushButton</string>
+        </property>
        </widget>
       </widget>
-     </item>
-    </layout>
-   </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>741</width>
+     <width>804</width>
      <height>21</height>
     </rect>
    </property>
