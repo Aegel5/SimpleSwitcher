@@ -1,6 +1,7 @@
 ﻿[requires]
 #Poco/1.9.4@pocoproject/stable
-gsl_microsoft/2.0.0@bincrafters/stable
+#gsl_microsoft/2.0.0@bincrafters/stable
+#qt/5.13.1@bincrafters/stable
 
 #[generators]
 #visual_studio

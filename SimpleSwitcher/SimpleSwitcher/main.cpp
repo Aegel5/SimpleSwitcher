@@ -5,7 +5,7 @@
 #include "SwGui.h"
 #include "WinMainParameters.h"
 #include "SimpleSwitcherQt.h"
-#include <QtWidgets/QApplication>
+#include "QtWidgets/QApplication"
 
 using namespace WinMainParameters;
 
