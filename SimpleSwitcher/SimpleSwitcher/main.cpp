@@ -4,6 +4,8 @@
 #include "SwAutostart.h"
 #include "SwGui.h"
 #include "WinMainParameters.h"
+#include "SimpleSwitcherQt.h"
+#include <QtWidgets/QApplication>
 
 using namespace WinMainParameters;
 
@@ -12,7 +14,7 @@ using namespace WinMainParameters;
 
 TStatus HandleAutostart(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine);
 
-TStatus StartGuiCheck64()
+TStatus StartGuiCheck64(int argc, char* argv[])
 {
 	if (IsSelf64())
 	{
@@ -21,7 +23,19 @@ TStatus StartGuiCheck64()
 	}
 	else
 	{
-		IFS_RET(SwGui::StartGui(true));
+		if (argv != nullptr)
+		{
+			QApplication a(argc, argv);
+			SimpleSwitcherQt w;
+			w.show();
+			auto res = a.exec();
+			LOG_INFO_1(L"End qt application with: %d", res);
+			
+		}
+		else
+		{
+			IFS_RET(SwGui::StartGui(true));
+		}
 	}
 
 	RETURN_SUCCESS;
@@ -29,7 +43,7 @@ TStatus StartGuiCheck64()
 
 
 
-TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, int nCmdShow)
+TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, int nCmdShow, int argc, char* argv[])
 {
 	gdata().hInst = hInstance;
 
@@ -104,12 +118,12 @@ TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 		}
 		else
 		{
-			IFS_RET(StartGuiCheck64());
+			IFS_RET(StartGuiCheck64(argc, argv));
 		}
 	}
 	else
 	{	
-		IFS_RET(StartGuiCheck64());
+		IFS_RET(StartGuiCheck64(argc, argv));
 	}
 
 	RETURN_SUCCESS;
@@ -129,28 +143,29 @@ int APIENTRY Main1(
 	_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPTSTR    lpCmdLine,
-	_In_ int       nCmdShow)
+	_In_ int       nCmdShow,
+	int argc, char* argv[])
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 
 	TStatus status;
-	status = MainInt(lpCmdLine, hInstance, hPrevInstance, nCmdShow);
+	status = MainInt(lpCmdLine, hInstance, hPrevInstance, nCmdShow, argc, argv);
 	IFS_LOG(status);
 	LOG_INFO_1(L"Exit process");
 
 	return status;
 }
 
-int APIENTRY _tWinMain(
-	_In_ HINSTANCE hInstance,
-	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPTSTR    lpCmdLine,
-	_In_ int       nCmdShow)
-{
-	return Main1(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
-}
+//int APIENTRY _tWinMain(
+//	_In_ HINSTANCE hInstance,
+//	_In_opt_ HINSTANCE hPrevInstance,
+//	_In_ LPTSTR    lpCmdLine,
+//	_In_ int       nCmdShow)
+//{
+//	return Main1(hInstance, hPrevInstance, lpCmdLine, nCmdShow, 0, nullptr);
+//}
 
 int main(int argc, char* argv[])
 {
@@ -160,8 +175,7 @@ int main(int argc, char* argv[])
 	LPWSTR lpCmdLine = GetLPCmdLine();
 	int nCmdShow = GetNCmdShow();
 
-	return Main1(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
-
+	return Main1(hInstance, hPrevInstance, lpCmdLine, nCmdShow, argc, argv);
 	
 }
 
