@@ -10,6 +10,9 @@ class SimpleSwitcherQt : public QMainWindow
 public:
 	SimpleSwitcherQt(QWidget *parent = Q_NULLPTR);
 
+public slots:
+	void addTask();
+
 private:
 	Ui::SimpleSwitcherQtClass ui;
 };

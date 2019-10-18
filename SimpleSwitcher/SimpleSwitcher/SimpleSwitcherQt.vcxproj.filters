@@ -216,6 +216,7 @@
     <None Include="version.rc2">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="favicon.ico">
