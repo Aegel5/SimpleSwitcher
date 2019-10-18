@@ -1,9 +1,0 @@
-﻿[requires]
-#Poco/1.9.4@pocoproject/stable
-gsl_microsoft/2.0.0@bincrafters/stable
-
-[generators]
-visual_studio
-
-
-#$(ProjectDir)..\..\lualib\$(Platform)\$(Configuration)\
