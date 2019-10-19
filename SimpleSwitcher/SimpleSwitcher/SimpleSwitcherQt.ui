@@ -234,7 +234,10 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEdit">
+            <widget class="QLineHotKey" name="lineEdit_lastword">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="maximumSize">
               <size>
                <width>200</width>
@@ -256,7 +259,7 @@
             </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QLineEdit" name="lineEdit_2">
+            <widget class="QLineHotKey" name="lineEdit_severalwords">
              <property name="maximumSize">
               <size>
                <width>200</width>
@@ -268,6 +271,9 @@
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -366,6 +372,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QLineHotKey</class>
+   <extends>QLineEdit</extends>
+   <header>qlinehotkey.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="SimpleSwitcherQt.qrc"/>
  </resources>

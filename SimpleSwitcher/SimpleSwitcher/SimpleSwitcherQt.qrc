@@ -1,4 +1,5 @@
 <RCC>
-    <qresource prefix="SimpleSwitcherQt">
+    <qresource prefix="/SimpleSwitcherQt">
+        <file>ChangeHotKey.qml</file>
     </qresource>
 </RCC>

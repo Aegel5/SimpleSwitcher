@@ -11,8 +11,12 @@ public:
 	SimpleSwitcherQt(QWidget *parent = Q_NULLPTR);
 
 public slots:
-	void addTask();
+	//void ChangeHotKey(QLineEdit* lineEdit);
 
 private:
 	Ui::SimpleSwitcherQtClass ui;
+	void ShowChangeHotKey(QLineHotKey* lineEdit);
+
+protected:
+	bool eventFilter(QObject *obj, QEvent *ev) override;
 };
