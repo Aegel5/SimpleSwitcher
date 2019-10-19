@@ -9,4 +9,10 @@ class QLineHotKey : public QLineEdit
 public:
 	QLineHotKey(QWidget *parent);
 	~QLineHotKey();
+protected:
+	//bool eventFilter(QObject *obj, QEvent *ev) override;
+	void mouseDoubleClickEvent(QMouseEvent *event) override;
+
+private:
+	void ShowChangeHotKey();
 };

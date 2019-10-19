@@ -1,10 +1,11 @@
 #pragma once
 
 #include <QWidget>
+#include <qdialog.h>
 #include <QQuickWidget>
 #include "ui_ChangeHotKeyFrame.h"
 
-class ChangeHotKeyFrame : public QWidget
+class ChangeHotKeyFrame : public QDialog
 {
 	Q_OBJECT
 

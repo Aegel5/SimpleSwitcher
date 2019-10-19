@@ -8,6 +8,7 @@ class SimpleSwitcherQt : public QMainWindow
 	Q_OBJECT
 
 public:
+	static SimpleSwitcherQt* Instance() { return instance; }
 	SimpleSwitcherQt(QWidget *parent = Q_NULLPTR);
 
 public slots:
@@ -15,8 +16,6 @@ public slots:
 
 private:
 	Ui::SimpleSwitcherQtClass ui;
-	void ShowChangeHotKey(QLineHotKey* lineEdit);
+	static inline SimpleSwitcherQt* instance;
 
-protected:
-	bool eventFilter(QObject *obj, QEvent *ev) override;
 };

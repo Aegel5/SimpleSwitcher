@@ -3,7 +3,7 @@
 #include <QVBoxLayout>
 
 ChangeHotKeyFrame::ChangeHotKeyFrame(QWidget *parent)
-	: QWidget(parent)
+	: QDialog(parent)
 {
 	ui.setupUi(this);
 

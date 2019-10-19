@@ -1,23 +1,47 @@
-<UI version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ChangeHotKeyFrame</class>
- <widget class="QWidget" name="ChangeHotKeyFrame" >
-  <property name="objectName" >
-   <string notr="true">ChangeHotKeyFrame</string>
-  </property>
-  <property name="geometry" >
+ <widget class="QWidget" name="ChangeHotKeyFrame">
+  <property name="geometry">
    <rect>
-	<x>0</x>
-	<y>0</y>
-	<width>400</width>
-	<height>300</height>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>ChangeHotKeyFrame</string>
   </property>
+  <widget class="QQuickWidget" name="quickWidget">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>40</y>
+     <width>231</width>
+     <height>171</height>
+    </rect>
+   </property>
+   <property name="resizeMode">
+    <enum>QQuickWidget::SizeRootObjectToView</enum>
+   </property>
+   <property name="source">
+    <url>
+     <string>qrc:/SimpleSwitcherQt/ChangeHotKey.qml</string>
+    </url>
+   </property>
+  </widget>
  </widget>
- <layoutDefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
- <resources/>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QQuickWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">QtQuickWidgets/QQuickWidget</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="SimpleSwitcherQt.qrc"/>
+ </resources>
  <connections/>
-</UI>
+</ui>
