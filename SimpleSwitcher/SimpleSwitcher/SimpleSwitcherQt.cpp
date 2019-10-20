@@ -5,10 +5,12 @@
 #include <QDebug>
 
 
-//void SimpleSwitcherQt::ChangeHotKey(QLineEdit* lineEdit)
-//{
-//	qDebug() << "User clicked on the button!";
-//}
+void SimpleSwitcherQt::LeftPanelSelectChanged()
+{
+	qDebug() << "LeftPanelSelectChanged";
+
+	//ui.tabWidget->setCurrentIndex();
+}
 
 SimpleSwitcherQt::SimpleSwitcherQt(QWidget *parent)
 	: QMainWindow(parent)
@@ -17,8 +19,16 @@ SimpleSwitcherQt::SimpleSwitcherQt(QWidget *parent)
 	ui.setupUi(this);
 	instance = this;
 
+	ui.tabWidget->tabBar()->hide();
+	ui.tabWidget->setCurrentIndex(0);
 
-	//connect(ui.lineEdit_lastword, &QLineEdit::mouseDoubleClickEvent, this, &SimpleSwitcherQt::addTask);
+	connect(
+		ui.listWidget,
+		&QListWidget::itemSelectionChanged,
+		this,
+		[this]() {ui.tabWidget->setCurrentIndex(ui.listWidget->currentRow()); }
+	);
+
 }
 
 

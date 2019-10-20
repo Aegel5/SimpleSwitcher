@@ -26,6 +26,8 @@ void QLineHotKey::ShowChangeHotKey()
 {
 	ChangeHotKeyFrame* wnd = new ChangeHotKeyFrame(SimpleSwitcherQt::Instance());
 	wnd->setAttribute(Qt::WA_DeleteOnClose);
+	wnd->setWindowFlag(Qt::Dialog);
+	wnd->setWindowFlag(Qt::MSWindowsFixedSizeDialogHint);
 	wnd->setModal(true);
 	wnd->show();
 }
