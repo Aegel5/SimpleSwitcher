@@ -12,7 +12,7 @@ using namespace WinMainParameters;
 
 //TStatus MonitorOn(TSWAdmin admin);
 
-TStatus HandleAutostart(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine);
+TStatus HandleAutostart(HINSTANCE hInstance, HINSTANCE hPrevInstance);
 
 TStatus StartGuiCheck64(int argc, char* argv[])
 {
@@ -25,10 +25,9 @@ TStatus StartGuiCheck64(int argc, char* argv[])
 	{
 		if (argv != nullptr)
 		{
-			QApplication a(argc, argv);
 			SimpleSwitcherQt w;
 			w.show();
-			auto res = a.exec();
+			auto res = QApplication::exec();
 			LOG_INFO_1(L"End qt application with: %d", res);
 			
 		}
@@ -43,29 +42,28 @@ TStatus StartGuiCheck64(int argc, char* argv[])
 
 
 
-TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, int nCmdShow, int argc, char* argv[])
+TStatus MainInt(HINSTANCE hInstance, HINSTANCE hPrevInstance, int nCmdShow, int argc, char* argv[])
 {
 	gdata().hInst = hInstance;
 
 	IFS_LOG(SettingsGlobal().Load());
 
-	LOG_INFO_1(L"Start %s. Elevated=%d. Version=%s", *lpCmdLine ? lpCmdLine : L"GUI", Utils::IsSelfElevated(), SW_VERSION_L);
+	auto args = QCoreApplication::arguments();
 
-	std::vector<std::wstring> strs;
-	IFS_RET(Str_Utils::Split(lpCmdLine, strs, L' '));
+	LOG_INFO_1(L"Start %s. Elevated=%d. Version=%s", 
+		args.join(" ").toStdWString().c_str(), Utils::IsSelfElevated(), SW_VERSION_L);
 
-
-	if (!strs.empty() && !strs[0].empty())
+	if (args.count() > 1)
 	{
-		std::wstring& cmd = strs[0];
+		std::wstring& cmd = args[1].toStdWString();
 
 		if (cmd == c_sArgHook32)
 		{
-			IFS_RET(StartMonitor(hInstance, hPrevInstance, lpCmdLine, nCmdShow, SW_BIT_32));
+			IFS_RET(StartMonitor(hInstance, hPrevInstance, nCmdShow, SW_BIT_32));
 		}
 		else if (cmd == c_sArgHook64)
 		{
-			IFS_RET(StartMonitor(hInstance, hPrevInstance, lpCmdLine, nCmdShow, SW_BIT_64));
+			IFS_RET(StartMonitor(hInstance, hPrevInstance, nCmdShow, SW_BIT_64));
 		}
 		else if (cmd == c_sArgStarter)
 		{
@@ -73,7 +71,7 @@ TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 		}
 		else if (cmd == c_sArgAutostart)
 		{
-			HandleAutostart(hInstance, hPrevInstance, lpCmdLine);
+			HandleAutostart(hInstance, hPrevInstance);
 
 		}
 		else if (cmd == c_sArgSchedulerON || cmd == c_sArgShedulerOFF)
@@ -91,20 +89,20 @@ TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 		}
 		else if (cmd == c_sArgCapsRemapAdd)
 		{
-			if (strs.size() != 2)
+			if (args.size() != 3)
 			{
 				IFS_RET(SW_ERR_UNKNOWN);
 			}
-			int type = std::stoi(strs[1]);
+			int type = args[2].toInt();
 			IFS_LOG(AddRemap(RemapType(type)));
 		}
 		else if (cmd == c_sArgCapsRemapRemove)
 		{
-			if (strs.size() != 2)
+			if (args.size() != 3)
 			{
 				IFS_RET(SW_ERR_UNKNOWN);
 			}
-			int type = std::stoi(strs[1]);
+			int type = args[2].toInt();
 			IFS_LOG(DelRemap(RemapType(type)));
 		}
 		else if (cmd == L"/?" || cmd == L"-h" || cmd == L"--help")
@@ -142,16 +140,15 @@ TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 int APIENTRY Main1(
 	_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPTSTR    lpCmdLine,
 	_In_ int       nCmdShow,
-	int argc, char* argv[])
+	int argc, 
+	char* argv[])
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
-	UNREFERENCED_PARAMETER(lpCmdLine);
 
 
 	TStatus status;
-	status = MainInt(lpCmdLine, hInstance, hPrevInstance, nCmdShow, argc, argv);
+	status = MainInt(hInstance, hPrevInstance, nCmdShow, argc, argv);
 	IFS_LOG(status);
 	LOG_INFO_1(L"Exit process");
 
@@ -167,19 +164,19 @@ int APIENTRY Main1(
 //	return Main1(hInstance, hPrevInstance, lpCmdLine, nCmdShow, 0, nullptr);
 //}
 
-extern "C" int main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
+	QApplication a(argc, argv);
 
 	HINSTANCE hInstance = GetHInstance();
 	HINSTANCE hPrevInstance = GetHPrevInstance();
-	LPWSTR lpCmdLine = GetLPCmdLine();
 	int nCmdShow = GetNCmdShow();
 
-	return Main1(hInstance, hPrevInstance, lpCmdLine, nCmdShow, argc, argv);
+	return Main1(hInstance, hPrevInstance, nCmdShow, argc, argv);
 	
 }
 
-TStatus HandleAutostart(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine)
+TStatus HandleAutostart(HINSTANCE hInstance, HINSTANCE hPrevInstance)
 {
 	//SettingsGlobal().Load();
 

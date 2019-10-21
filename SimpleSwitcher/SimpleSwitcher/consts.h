@@ -36,17 +36,17 @@ static const TCHAR* c_sClassName = c_sClassName64;
 static const TCHAR* c_sClassName = c_sClassName32;
 #endif 
 
-static const TChar c_sArgShedulerOFF[] = L"/SheduleRemove";
-static const TChar c_sArgSchedulerON[] = L"/SheduleAdd";
-static const TChar c_sArgStarter[] = L"/startMonitor";
+static const TChar c_sArgShedulerOFF[] = L"/sheduleremove";
+static const TChar c_sArgSchedulerON[] = L"/sheduleadd";
+static const TChar c_sArgStarter[] = L"/startmonitor";
 static const TChar c_sArgHook32[] = L"/hook32";
 static const TChar c_sArgHook64[] = L"/hook64";
 static const TChar c_sArgService[] = L"/service";
 static const TChar c_sArgAutostart[] = L"/autostart";
-static const TChar c_sArgCapsRemapAdd[] = L"/CapsRemapAdd";
-static const TChar c_sArgCapsRemapRemove[] = L"/CapsRemapRemove";
-static const TChar c_sArgScrRemapAdd[] = L"/ScrRemapAdd";
-static const TChar c_sArgScrRemapRemove[] = L"/ScrRemapRemove";
+static const TChar c_sArgCapsRemapAdd[] = L"/capsremapadd";
+static const TChar c_sArgCapsRemapRemove[] = L"/capsremapremove";
+static const TChar c_sArgScrRemapAdd[] = L"/scrremapadd";
+static const TChar c_sArgScrRemapRemove[] = L"/scrremapremove";
 
 enum 
 {
