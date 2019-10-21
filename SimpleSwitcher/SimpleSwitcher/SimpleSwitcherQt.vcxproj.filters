@@ -127,6 +127,9 @@
     <ClCompile Include="QLineHotKey.cpp">
       <Filter>gui_qt</Filter>
     </ClCompile>
+    <ClCompile Include="PageMainQt.cpp">
+      <Filter>gui_qt</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="SimpleSwitcherQt.qrc">
@@ -141,6 +144,9 @@
       <Filter>gui_qt</Filter>
     </QtMoc>
     <QtMoc Include="QLineHotKey.h">
+      <Filter>gui_qt</Filter>
+    </QtMoc>
+    <QtMoc Include="PageMainQt.h">
       <Filter>gui_qt</Filter>
     </QtMoc>
   </ItemGroup>

@@ -170,6 +170,7 @@ TStatus AutoAdminOff()
 void PageMainHandleEnable()
 {
 	HWND hwnd = g_dlgData.hwndPageMain;
+
 	if (SettingsGlobal().isEnabled)
 	{
 		IFS_LOG(gdata().procMonitor.Stop());

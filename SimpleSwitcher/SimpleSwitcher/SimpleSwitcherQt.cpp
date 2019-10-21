@@ -5,7 +5,7 @@
 #include <QDebug>
 
 
-void SimpleSwitcherQt::LeftPanelSelectChanged()
+void SimpleSwitcherQt::leftPanelSelectChanged()
 {
 	qDebug() << "LeftPanelSelectChanged";
 
@@ -17,7 +17,10 @@ SimpleSwitcherQt::SimpleSwitcherQt(QWidget *parent)
 {
 
 	ui.setupUi(this);
+	pageMain.init(&ui);
+
 	instance = this;
+
 
 	ui.tabWidget->tabBar()->hide();
 	ui.tabWidget->setCurrentIndex(0);

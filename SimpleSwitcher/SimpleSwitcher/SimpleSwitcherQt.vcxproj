@@ -231,6 +231,7 @@
     <ClCompile Include="pagelang.cpp" />
     <ClCompile Include="pagelay.cpp" />
     <ClCompile Include="pagemain.cpp" />
+    <ClCompile Include="PageMainQt.cpp" />
     <ClCompile Include="pagewordsep.cpp" />
     <ClCompile Include="QLineHotKey.cpp" />
     <ClCompile Include="Settings.cpp" />
@@ -255,6 +256,7 @@
     <ClInclude Include="HookerWorker.h" />
     <ClInclude Include="KeyTools.h" />
     <ClInclude Include="LuaConfig.h" />
+    <QtMoc Include="PageMainQt.h" />
     <ClInclude Include="ProcDll.h" />
     <QtMoc Include="QLineHotKey.h" />
     <ClInclude Include="Resource.h" />

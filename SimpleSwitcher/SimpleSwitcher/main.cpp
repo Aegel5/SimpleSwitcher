@@ -167,7 +167,7 @@ int APIENTRY Main1(
 //	return Main1(hInstance, hPrevInstance, lpCmdLine, nCmdShow, 0, nullptr);
 //}
 
-int main(int argc, char* argv[])
+extern "C" int main(int argc, char* argv[])
 {
 
 	HINSTANCE hInstance = GetHInstance();
