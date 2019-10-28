@@ -161,7 +161,7 @@ TStatus AutoAdminOff()
 	else
 	{
 		IFS_RET(SwCreateProcessOurWaitFinished(
-			c_sArgShedulerOFF,
+			Str_Utils::Utf8ToUtf16(c_sArgShedulerOFF).c_str(),
 			SW_BIT_32,
 			SW_ADMIN_ON));
 	}

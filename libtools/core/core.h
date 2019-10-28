@@ -26,8 +26,12 @@ enum TSWBit
 	SW_BIT_64,
 };
 
+using S_Char = char;
+
 typedef TCHAR TChar;
-typedef const TChar* TStr;
+//typedef const TChar* TStr;
+using TStr = const TChar*;
+using S_Str = const S_Char*;
 
 typedef char TAChar;
 typedef const TAChar* TAStr;

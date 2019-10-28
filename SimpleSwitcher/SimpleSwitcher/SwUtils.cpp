@@ -11,7 +11,7 @@ TStatus CheckService(bool& isAdmin)
 	CAutoSCHandle hSCManager = ::OpenSCManager(NULL, NULL, SC_MANAGER_ENUMERATE_SERVICE);
 	IFW_RET(hSCManager.IsValid());
 
-	CAutoSCHandle hService = ::OpenService(hSCManager, c_sServiceName, SERVICE_QUERY_STATUS);
+	CAutoSCHandle hService = ::OpenService(hSCManager, W16(c_sServiceName), SERVICE_QUERY_STATUS);
 	isAdmin = hService.IsValid();
 
 	RETURN_SUCCESS;
@@ -25,7 +25,7 @@ TStatus CreateService()
 	CAutoSCHandle hSCManager = ::OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
 	IFW_RET(hSCManager.IsValid());
 
-	CAutoSCHandle hService = ::OpenService(hSCManager, c_sServiceName, SERVICE_CHANGE_CONFIG);
+	CAutoSCHandle hService = ::OpenService(hSCManager, W16(c_sServiceName), SERVICE_CHANGE_CONFIG);
 
 	std::wstring sPath;
 	GetPath(sPath, PATH_TYPE_EXE_PATH, SW_BIT_32);

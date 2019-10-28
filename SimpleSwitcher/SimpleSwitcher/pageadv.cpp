@@ -52,8 +52,8 @@ void HandleCapsRemap(HWND hwnd, RemapType rtype)
 		}
 		else
 		{
-			std::wstring cmdline = c_sArgCapsRemapAdd;
-			cmdline += L" " + std::to_wstring(int(rtype));
+			std::string cmdline = c_sArgCapsRemapAdd;
+			cmdline += " " + std::to_string(int(rtype));
 			IFS_LOG(SwCreateProcessOurWaitFinished(
 				cmdline.c_str(),
 				SW_BIT_32,
@@ -68,8 +68,8 @@ void HandleCapsRemap(HWND hwnd, RemapType rtype)
 		}
 		else
 		{
-			std::wstring cmdline = c_sArgCapsRemapRemove;
-			cmdline += L" " + std::to_wstring(int(rtype));
+			std::string cmdline = c_sArgCapsRemapRemove;
+			cmdline += std::to_string(int(rtype));
 			IFS_LOG(SwCreateProcessOurWaitFinished(
 				cmdline.c_str(),
 				SW_BIT_32,

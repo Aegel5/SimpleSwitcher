@@ -79,7 +79,7 @@ struct CHotKeySet
 
 inline TStatus PostMsgSettingChanges()
 {
-	HWND hwnd = FindWindow(c_sClassName32, 0);
+	HWND hwnd = FindWindow(Str_Utils::Utf8ToUtf16(c_sClassName32).c_str(), 0);
 	if (hwnd != NULL)
 	{
 		PostMessage(hwnd, c_MSG_SettingsChanges, 0, 0);

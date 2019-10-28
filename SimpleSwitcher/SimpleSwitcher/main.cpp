@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "SimpleSwitcher.h"
 #include "Settings.h"
 #include "SwAutostart.h"
@@ -55,7 +55,7 @@ TStatus MainInt(HINSTANCE hInstance, HINSTANCE hPrevInstance, int nCmdShow, int 
 
 	if (args.count() > 1)
 	{
-		std::wstring& cmd = args[1].toStdWString();
+		auto cmd = args[1].toStdString();
 
 		if (cmd == c_sArgHook32)
 		{
@@ -105,7 +105,7 @@ TStatus MainInt(HINSTANCE hInstance, HINSTANCE hPrevInstance, int nCmdShow, int 
 			int type = args[2].toInt();
 			IFS_LOG(DelRemap(RemapType(type)));
 		}
-		else if (cmd == L"/?" || cmd == L"-h" || cmd == L"--help")
+		else if (cmd == "/?" || cmd == "-h" || cmd == "--help")
 		{
 			const char* sHelp =
 				"Command line options:\n"
@@ -163,6 +163,7 @@ int APIENTRY Main1(
 //{
 //	return Main1(hInstance, hPrevInstance, lpCmdLine, nCmdShow, 0, nullptr);
 //}
+//#pragma execution_character_set("utf-8")
 
 int main(int argc, char* argv[])
 {

@@ -6,19 +6,19 @@ namespace Startup
 {
 	namespace Int
 	{
-		inline TStatus BuildCmdLine(TStr sPath, TStr sArgs, std::wstring& res)
+		inline TStatus BuildCmdLine(S_Str sPath, S_Str sArgs, std::wstring& res)
 		{
 			TChar buf[0x1000];
 			if (sArgs != nullptr)
 			{
-				if (swprintf_s(buf, L"\"%s\" %s", sPath, sArgs) == -1)
+				if (swprintf_s(buf, L"\"%S\" %S", sPath, sArgs) == -1)
 				{
 					RET_ERRNO();
 				}
 			}
 			else
 			{
-				if (swprintf_s(buf, L"\"%s\"", sPath) == -1)
+				if (swprintf_s(buf, L"\"%S\"", sPath) == -1)
 				{
 					RET_ERRNO();
 				}
@@ -65,7 +65,7 @@ namespace Startup
 
 		RETURN_SUCCESS;
 	}
-	inline TStatus CheckAutoStartUser(bool& isPathEquals, bool& isHasEntry, TStr keyName, TStr sPath, TStr sArgs)
+	inline TStatus CheckAutoStartUser(bool& isPathEquals, bool& isHasEntry, TStr keyName, S_Str sPath, S_Str sArgs)
 	{
 		isPathEquals = false;
 		isHasEntry = false;
@@ -80,7 +80,7 @@ namespace Startup
 
 		RETURN_SUCCESS;
 	}
-	inline TStatus RemoveWindowsRun(TStr keyName)
+	inline TStatus RemoveWindowsRun(S_Str keyName)
 	{
 		CAutoCloseHKey hg;
 		IF_LSTATUS_RET(RegOpenKeyEx(
@@ -89,11 +89,11 @@ namespace Startup
 			0,
 			KEY_ALL_ACCESS,
 			&hg));
-		IF_LSTATUS_RET(RegDeleteValue(hg, keyName));
+		IF_LSTATUS_RET(RegDeleteValue(hg, W16(keyName)));
 
 		RETURN_SUCCESS;
 	}
-	inline TStatus AddWindowsRun(TStr keyName, TStr sPath, TStr sArgs)
+	inline TStatus AddWindowsRun(S_Str keyName, S_Str sPath, S_Str sArgs)
 	{
 		CAutoCloseHKey hg;
 		IF_LSTATUS_RET(RegOpenKeyEx(
@@ -109,7 +109,7 @@ namespace Startup
 		IFS_RET(Int::BuildCmdLine(sPath, sArgs, cmdLine));
 
 		DWORD nSizeInBytes = (DWORD)(cmdLine.size() + 1) * sizeof(TCHAR);
-		IF_LSTATUS_RET(RegSetValueEx(hg, keyName, 0, REG_SZ, (PBYTE)cmdLine.c_str(), nSizeInBytes));
+		IF_LSTATUS_RET(RegSetValueEx(hg, W16(keyName), 0, REG_SZ, (PBYTE)cmdLine.c_str(), nSizeInBytes));
 
 		RETURN_SUCCESS;
 	}

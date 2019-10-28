@@ -3,9 +3,20 @@
 #include <sstream>
 #include <algorithm>
 #include <functional>
+#include <locale>
+#include <codecvt>
+
+#define W16(x) Str_Utils::Utf8ToUtf16(x).c_str()
+// TODO use class thar cast to wchar_t automaticly
 
 namespace Str_Utils
 {
+	static inline auto Utf8ToUtf16(const std::string& utf8)
+	{
+		auto utf16 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.from_bytes(utf8.data());
+		return utf16;
+	}
+
 	// trim from start (in place)
 	static inline void trim_int(std::wstring &s, TStr chars, bool fLeft, bool fRight) 
 	{

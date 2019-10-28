@@ -16,7 +16,7 @@ public:
 		}
 	}
 
-	CAutoProcMonitor(const TChar* sWndName, const TChar* sCmd, TSWBit bit,  bool autoClose) :
+	CAutoProcMonitor(const S_Char* sWndName, const S_Char* sCmd, TSWBit bit,  bool autoClose) :
 		m_sWndName(sWndName), 
 		m_sCmd(sCmd), 
 		m_autoClose(autoClose),
@@ -25,7 +25,7 @@ public:
 	}
 	TStatus Stop()
 	{
-		HWND hwnd = FindWindow(m_sWndName, NULL);
+		HWND hwnd = FindWindow(Str_Utils::Utf8ToUtf16(m_sWndName).c_str(), NULL);
 
 		LOG_INFO_1(L"Stop monitor for hwnd=%p", hwnd);
 
@@ -46,7 +46,7 @@ public:
 	{
 		TSWCheckRunRes res;
 
-		HWND hwnd = FindWindow(m_sWndName, NULL);
+		HWND hwnd = FindWindow(Str_Utils::Utf8ToUtf16(m_sWndName).c_str(), NULL);
 
 		if (hwnd)
 		{
@@ -108,8 +108,8 @@ public:
 		RETURN_SUCCESS;
 	}
 private:
-	const TChar* m_sWndName = 0;
-	const TChar* m_sCmd = 0;
+	const S_Char* m_sWndName = nullptr;
+	const S_Char* m_sCmd = nullptr;
 	TSWBit m_bit = SW_BIT_32;
 	bool m_autoClose = false;
 

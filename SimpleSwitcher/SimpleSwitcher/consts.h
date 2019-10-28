@@ -23,30 +23,30 @@ static const UINT c_msgRevertID = WM_NULL;
 static const WPARAM c_msgWParm = (WPARAM)0x9F899984;
 static const WPARAM c_msgLParm = (WPARAM)0x34729EC9;
 
-static const TCHAR c_sClassName32[] = L"C01D72259X32";
-static const TCHAR c_sClassName64[] = L"C01D72259X64";
-static const TCHAR c_sClassNameGUI[] = L"C03a3bb9a011";
+static const S_Char c_sClassName32[] = "C01D72259X32";
+static const S_Char c_sClassName64[] = "C01D72259X64";
+static const TChar c_sClassNameGUI[] = L"C03a3bb9a011";
 
 static const TChar c_mtxHook32[] = L"Local\\SW_MTX_HOOK_32_12243434";
 static const TChar c_mtxSingltonGui[] = L"Local\\SW_MTX_SINGLTON_GUI_AFSDJF";
 
 #ifdef _WIN64
-static const TCHAR* c_sClassName = c_sClassName64;
+static const S_Char* c_sClassName = c_sClassName64;
 #else
-static const TCHAR* c_sClassName = c_sClassName32;
+static const S_Char* c_sClassName = c_sClassName32;
 #endif 
 
-static const TChar c_sArgShedulerOFF[] = L"/sheduleremove";
-static const TChar c_sArgSchedulerON[] = L"/sheduleadd";
-static const TChar c_sArgStarter[] = L"/startmonitor";
-static const TChar c_sArgHook32[] = L"/hook32";
-static const TChar c_sArgHook64[] = L"/hook64";
-static const TChar c_sArgService[] = L"/service";
-static const TChar c_sArgAutostart[] = L"/autostart";
-static const TChar c_sArgCapsRemapAdd[] = L"/capsremapadd";
-static const TChar c_sArgCapsRemapRemove[] = L"/capsremapremove";
-static const TChar c_sArgScrRemapAdd[] = L"/scrremapadd";
-static const TChar c_sArgScrRemapRemove[] = L"/scrremapremove";
+static const S_Char c_sArgShedulerOFF[] = "/sheduleremove";
+static const S_Char c_sArgSchedulerON[] = "/sheduleadd";
+static const S_Char c_sArgStarter[] = "/startmonitor";
+static const S_Char c_sArgHook32[] = "/hook32";
+static const S_Char c_sArgHook64[] = "/hook64";
+static const S_Char c_sArgService[] = "/service";
+static const S_Char c_sArgAutostart[] = "/autostart";
+static const S_Char c_sArgCapsRemapAdd[] = "/capsremapadd";
+static const S_Char c_sArgCapsRemapRemove[] = "/capsremapremove";
+static const S_Char c_sArgScrRemapAdd[] = "/scrremapadd";
+static const S_Char c_sArgScrRemapRemove[] = "/scrremapremove";
 
 enum 
 {
