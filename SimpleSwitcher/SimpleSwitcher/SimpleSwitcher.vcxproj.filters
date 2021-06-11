@@ -103,6 +103,9 @@
     <ClInclude Include="ver.h">
       <Filter>src-main</Filter>
     </ClInclude>
+    <ClInclude Include="Encrypter.h">
+      <Filter>src-main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

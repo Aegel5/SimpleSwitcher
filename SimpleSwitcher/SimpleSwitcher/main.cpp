@@ -28,6 +28,8 @@ TStatus StartGuiCheck64()
 
 TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, int nCmdShow)
 {
+
+
 	gdata().hInst = hInstance;
 
 	IFS_LOG(SettingsGlobal().Load());

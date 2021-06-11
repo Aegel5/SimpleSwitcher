@@ -49,11 +49,12 @@ inline bool TestMaskAny(T1 V, T2 M)
 template <typename T1, typename T2>
 inline bool TestFlag(T1 V, T2 F)
 {
-	return (V & F) != 0;
+	return TUInt32(V & F) != 0; // TODO: operators for enum == 0 
 }
 
-template <typename T>
-inline void SetFlag(T& V, TUInt32 F)
+
+template <typename T, typename T2>
+inline void SetFlag(T& V, T2 F)
 {
 	V |= F;
 }

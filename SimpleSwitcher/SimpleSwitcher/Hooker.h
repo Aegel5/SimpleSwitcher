@@ -11,7 +11,7 @@
 #include "CaseAnalazer.h"
 #include "CClipWorker.h"
 
-static const int c_nMaxLettersSave = 200;
+static const int c_nMaxLettersSave = 100;
 
 
 
@@ -20,13 +20,7 @@ class Hooker
 private:
 
 
-	struct TKeyHookInfo
-	{
-		CHotKey key;
-		TKeyType type;
-		TKeyHookInfo(CHotKey k, TKeyType t) : key(k), type(t) {}
-		TKeyHookInfo() {}
-	};
+
 
 	typedef std::deque<TKeyHookInfo> TWordList;
 	typedef std::vector<CHotKey> TKeyToRevert;
@@ -126,7 +120,7 @@ public:
 	TStatus ProcessRevert(ContextRevert& ctxRevert);
 	TStatus TimerProcWaitClip2();
 
-	static const int c_maxWordRevert = 10;
+	static const int c_maxWordRevert = 7;
 
 	std::wstring m_sSelfExeName;
 

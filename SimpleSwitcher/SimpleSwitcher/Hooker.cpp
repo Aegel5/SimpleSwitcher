@@ -3,6 +3,7 @@
 #include "Hooker.h"
 #include "Settings.h"
 #include "SimpleSwitcher.h"
+#include "Encrypter.h"
 
 TKeyType Hooker::GetCurKeyType(CHotKey hotkey)
 {
@@ -298,8 +299,6 @@ void Hooker::ClearAllWords()
 
 void Hooker::AddKeyToList(TKeyType type, CHotKey hotkey)
 {
-	//std::unique_lock<std::recursive_mutex> lock(m_mtxKeyList);	
-
 	ClearCycleRevert();
 
 	if (m_wordList.size() >= c_nMaxLettersSave)
@@ -307,12 +306,39 @@ void Hooker::AddKeyToList(TKeyType type, CHotKey hotkey)
 		m_wordList.pop_front();
 	}
 
-	TKeyHookInfo key2(hotkey, type);
+	TKeyHookInfo key2;
+	SwZeroMemory(key2);
+	key2.key() = hotkey;
+	key2.type = type;
+	if (hotkey.ValueKey() == VK_OEM_2 && SettingsGlobal().isTryOEM2) {
+		SetFlag(key2.keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT);
+	}
+
+	IFS_LOG(Encrypter::Encrypt(key2));
 	m_wordList.push_back(key2);
 }
 TStatus Hooker::FillKeyToRevert(TKeyRevert& keyList, HotKeyType typeRevert)
 {
-	//std::unique_lock<std::recursive_mutex> lock(m_mtxKeyList);
+	auto get_decrtypted = [this](int i) {
+		TKeyHookInfo cur;
+		cur.crypted = m_wordList[i].crypted;
+		Encrypter::Decrypt(cur);
+		return cur.key();
+	};
+
+	if (typeRevert == hk_RevertRecentTyped)
+	{
+		// reset this
+		m_nCurrentRevertCycle = -1;
+
+		// get all
+		for (int i = 0; i < (int)m_wordList.size(); ++i)
+		{
+			keyList.push_back(get_decrtypted(i));
+		}
+
+		RETURN_SUCCESS;
+	}
 
 	if (m_nCurrentRevertCycle == -1)
 		RETURN_SUCCESS;
@@ -352,7 +378,7 @@ TStatus Hooker::FillKeyToRevert(TKeyRevert& keyList, HotKeyType typeRevert)
 
 	for (int i = curRevertInfo.nIndexWordList; i < (int)m_wordList.size(); ++i)
 	{
-		keyList.push_back(m_wordList[i].key);
+		keyList.push_back(get_decrtypted(i));
 	}
 
 	RETURN_SUCCESS;
@@ -361,8 +387,6 @@ TStatus Hooker::GenerateCycleRevertList()
 {
 	bool isNeedLangChange = true;
 
-	//std::unique_lock<std::recursive_mutex> lock(m_mtxKeyList);
-
 	m_CycleRevertList.clear();
 
 	int countWords = 0;
@@ -370,12 +394,7 @@ TStatus Hooker::GenerateCycleRevertList()
 	{
 		for (int i = (int)m_wordList.size() - 1; i >= 0; --i)
 		{
-			if (
-				SettingsGlobal().isTryOEM2 
-				&& m_wordList[i].key.ValueKey() == VK_OEM_2
-				//&& (i == m_wordList.size() - 1 || m_wordList[i + 1].type == KEYTYPE_SPACE)
-				&& m_CycleRevertList.empty()
-				)
+			if (TestFlag(m_wordList[i].keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT) && m_CycleRevertList.empty())
 			{
 				CycleRevert cycleRevert = { i, m_CycleRevertList.empty() };
 				m_CycleRevertList.push_back(cycleRevert);
@@ -983,21 +1002,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		isNeedLangChange = m_CycleRevertList[m_nCurrentRevertCycle].fNeedLanguageChange;
 	}
 
-	if (typeRevert == hk_RevertRecentTyped)
-	{
-		// reset this
-		m_nCurrentRevertCycle = -1;
-
-		// get all
-		for (int i = 0; i < (int)m_wordList.size(); ++i)
-		{
-			data.keylist.push_back(m_wordList[i].key);
-		}
-	}
-	else
-	{
-		IFS_RET(FillKeyToRevert(data.keylist, typeRevert));
-	}
+	IFS_RET(FillKeyToRevert(data.keylist, typeRevert));
 	
 	data.flags = SW_CLIENT_PUTTEXT | SW_CLIENT_SetLang | SW_CLIENT_BACKSPACE;
 	data.lay = isNeedLangChange ? (HKL)HKL_NEXT : 0;

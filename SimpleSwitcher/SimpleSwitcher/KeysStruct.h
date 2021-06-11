@@ -1,7 +1,7 @@
 #pragma once
 
 
-enum TKeyType
+enum TKeyType : TUInt8
 {
 	KEYTYPE_NONE,
 
@@ -12,6 +12,33 @@ enum TKeyType
 	KEYTYPE_COMMAND_CLEAR,
 	KEYTYPE_COMMAND_NO_CLEAR,
 };
+
+enum class TKeyFlags : TUInt8 {
+	None = 0,
+	SYMB_SEPARATE_REVERT = 1,
+};
+DEFINE_ENUM_FLAG_OPERATORS(TKeyFlags);
+
+struct TKeyHookInfo
+{
+	union {
+		struct {
+			CHotKey key;
+			TInt64 _random_data;
+		} crypted;
+		char buf[16];
+	};
+
+	CHotKey& key() {
+		return crypted.key;
+	}
+
+	TKeyType type;
+	TKeyFlags keyFlags;
+
+	TKeyHookInfo() {}
+};
+
 
 enum KeyState
 {
