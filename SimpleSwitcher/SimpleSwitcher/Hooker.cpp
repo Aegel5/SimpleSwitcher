@@ -78,7 +78,7 @@ void PrintHwnd(HWND hwnd, const TChar* name=L"name1")
 		DWORD threadid = GetWindowThreadProcessId(hwnd, &pid);
 		//SW_LOG_INFO_2(L"%s=%p, pid=%d threadid=%d", name, hwnd, pid, threadid);
 	}
-}
+} 
 
 
 bool Hooker::GetTypeForKey(CHotKey curkey, HotKeyType& type, bool& isUp)
