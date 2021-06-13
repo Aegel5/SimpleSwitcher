@@ -19,7 +19,6 @@ TStatus InitDlgAbout(HWND hwnd)
 		L"%s %s\r\n"
 		L"Build date: %s\r\n\r\n"
 
-		"%s\r\n"
 		"%s\r\n\r\n"
 
 		"%s\r\n%s",
@@ -30,9 +29,8 @@ TStatus InitDlgAbout(HWND hwnd)
 		SW_UT(__DATE__),
 
 		c_sSiteLink,
-		L"http://simpleswitcher.ru",
 
-		L"Путь до программы:",
+		L"Path to program:",
 		sFilePath.c_str()
 	);
 

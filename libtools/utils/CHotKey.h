@@ -17,6 +17,7 @@ public:
 	HotKeyNames()
 	{
 		SwZeroMemory(vkMap);
+
 		Set(0x41, L"A");
 		Set(0x41, L"A");
 		Set(0x42, L"B");
@@ -54,6 +55,7 @@ public:
 		Set(0x37, L"7");
 		Set(0x38, L"8");
 		Set(0x39, L"9");
+
 		Set(VK_SHIFT, L"Shift");
 		Set(VK_LSHIFT, L"LShift");
 		Set(VK_RSHIFT, L"RShift");
@@ -66,6 +68,23 @@ public:
 		Set(VK_LWIN, L"LWin");
 		Set(VK_RWIN, L"RWin");
 		Set(VK_ESCAPE, L"Esc");
+
+		Set(VK_NUMPAD0, L"NUMPAD0");
+		Set(VK_NUMPAD1, L"NUMPAD1");
+		Set(VK_NUMPAD2, L"NUMPAD2");
+		Set(VK_NUMPAD3, L"NUMPAD3");
+		Set(VK_NUMPAD4, L"NUMPAD4");
+		Set(VK_NUMPAD5, L"NUMPAD5");
+		Set(VK_NUMPAD6, L"NUMPAD6");
+		Set(VK_NUMPAD7, L"NUMPAD7");
+		Set(VK_NUMPAD8, L"NUMPAD8");
+		Set(VK_NUMPAD9, L"NUMPAD9");
+		Set(VK_MULTIPLY, L"MULTIPLY");
+		Set(VK_ADD, L"ADD");
+		Set(VK_SEPARATOR, L"SEPARATOR");
+		Set(VK_SUBTRACT, L"SUBTRACT");
+		Set(VK_DECIMAL, L"DECIMAL");
+		Set(VK_DIVIDE, L"DIVIDE");
 		Set(VK_F1, L"F1");
 		Set(VK_F2, L"F2");
 		Set(VK_F3, L"F3");
@@ -90,6 +109,7 @@ public:
 		Set(VK_F22, L"F22");
 		Set(VK_F23, L"F23");
 		Set(VK_F24, L"F24");
+
 		Set(VK_INSERT, L"Insert");
 		Set(VK_DELETE, L"Delete");
 		Set(VK_HOME, L"Home");
@@ -105,6 +125,12 @@ public:
 		Set(VK_BACK, L"Backspace");
 		Set(VK_RETURN, L"Enter");
 		Set(VK_TAB, L"Tab");
+
+		Set(VK_OEM_4, L"OEM_4");
+		Set(VK_OEM_5, L"OEM_5");
+		Set(VK_OEM_6, L"OEM_6");
+		Set(VK_OEM_7, L"OEM_7");
+		Set(VK_OEM_8, L"OEM_8");
 
 		Set(VK_OEM_AX, L"OEM_AX");
 		Set(VK_OEM_102, L"OEM_102");

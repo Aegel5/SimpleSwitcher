@@ -14,20 +14,22 @@ struct BufScanMap
 		}
 		TKeyCode curKeySrc()
 		{
-			WORD src = HIWORD(curDWORD());
-			SHORT virtcode = MapVirtualKey(src, MAPVK_VSC_TO_VK);
-			return (TKeyCode)virtcode;
+			return curElemSrc().second;
+		}
+		TKeyCode curKeyVal()
+		{
+			return curElemDst().second;
 		}
 		std::pair<WORD, TKeyCode> curElemSrc()
 		{
 			WORD src = HIWORD(curDWORD());
-			SHORT virtcode = MapVirtualKey(src, MAPVK_VSC_TO_VK);
+			SHORT virtcode = MapVirtualKey(src, MAPVK_VSC_TO_VK_EX);
 			return std::make_pair(src, virtcode);
 		}
 		std::pair<WORD, TKeyCode> curElemDst()
 		{
 			WORD src = LOWORD(curDWORD());
-			SHORT virtcode = MapVirtualKey(src, MAPVK_VSC_TO_VK);
+			SHORT virtcode = MapVirtualKey(src, MAPVK_VSC_TO_VK_EX);
 			return std::make_pair(src, virtcode);
 		}
 		size_t Index()
@@ -41,12 +43,12 @@ struct BufScanMap
 		{
 			parent->DWORDI(index) = BufScanMap::PackToDWORD(src, val);
 		}
-		TKeyCode curKeyVal()
+		void set_sc(WORD src, WORD dst)
 		{
-			WORD val = LOWORD(curDWORD());
-			SHORT virtcode = MapVirtualKey(val, MAPVK_VSC_TO_VK);
-			return (TKeyCode)virtcode;
+			DWORD dw = MAKELONG(dst, src);
+			parent->DWORDI(index) = dw;
 		}
+
 		bool IsEnd()
 		{
 			size_t indexInBytes = index * sizeof(DWORD);
@@ -173,12 +175,11 @@ struct BufScanMap
 	{
 		for (auto iter = GetIter(); !iter.IsEnd(); ++iter)
 		{
-			// TODO
-			//if (iter.curElemSrc().first == keySrc)
-			//{
-			//	iter.set(keySrc, keyVal);
-			//	RETURN_SUCCESS;
-			//}
+			if (iter.curElemSrc().first == keySrc)
+			{
+				iter.set_sc((WORD)keySrc, (WORD)keyVal);
+				RETURN_SUCCESS;
+			}
 		}
 
 		DWORD dw = MAKELONG(keyVal, keySrc);
@@ -242,8 +243,8 @@ struct BufScanMap
 		}
 		static DWORD PackToDWORD(TKeyCode src, TKeyCode val)
 		{
-			UINT v = MapVirtualKey(val, MAPVK_VK_TO_VSC);
-			UINT s = MapVirtualKey(src, MAPVK_VK_TO_VSC);
+			UINT v = MapVirtualKey(val, MAPVK_VK_TO_VSC_EX);
+			UINT s = MapVirtualKey(src, MAPVK_VK_TO_VSC_EX);
 
 			return MAKELONG(v, s);
 		}

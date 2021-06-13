@@ -34,7 +34,7 @@ namespace {
 
 		swprintf_s(
 			buf,
-			L"sc: %d, vc: %d, '%s'", sc, vc, HotKeyNames::Global().GetName(vc));
+			L"sc: %d, vk: %d, '%s'", sc, vc, HotKeyNames::Global().GetName(vc));
 
 		return buf;
 	}
