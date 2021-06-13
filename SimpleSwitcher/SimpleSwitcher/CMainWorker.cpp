@@ -7,7 +7,7 @@
 
 TStatus CMainWorker::WorkerInt()
 {
-	IFW_LOG(SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST));
+	IFW_LOG(SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL));
 
 	Hooker hooker;
 	IFS_RET(hooker.Init());

@@ -22,7 +22,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance,_In_ int nCmdShow)
 {
 	LOG_INFO_1(L"StartCycle...");
 
-	IFW_LOG(SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST));
+	IFW_LOG(SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL));
 
 	WNDCLASSEX wcex = { 0 };
 

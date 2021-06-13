@@ -222,7 +222,7 @@ private:
 
 	void ClipboardWorker()
 	{
-		IFW_LOG(SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST));
+		IFW_LOG(SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL));
 
 		TClipMessage msg;
 		while (true)

@@ -334,7 +334,7 @@ LRESULT CALLBACK MainWindowProc(
 }
 TStatus StartCycleGui(int& retFromWnd, bool fShowWnd)
 {
-	IFW_LOG(SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST));
+	//IFW_LOG(SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST));
 
 	WNDCLASSEX wcex = { 0 };
 
