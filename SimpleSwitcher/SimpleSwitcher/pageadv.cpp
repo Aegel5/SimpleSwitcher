@@ -40,11 +40,11 @@ void HandleCapsRemap(HWND hwnd, RemapType rtype)
 		BufScanMap readed;
 		readed.FromRegistry();
 
-		if (readed.size > 0 && HasOtherRemap(readed))
-		{
-			MessageBox(hwnd, GetMessageById(AM_7), GetMessageById(AM_ERROR), MB_ICONERROR);
-			return;
-		}
+		//if (readed.size > 0 && HasOtherRemap(readed))
+		//{
+		//	MessageBox(hwnd, GetMessageById(AM_7), GetMessageById(AM_ERROR), MB_ICONERROR);
+		//	return;
+		//}
 
 		if(Utils::IsSelfElevated())
 		{

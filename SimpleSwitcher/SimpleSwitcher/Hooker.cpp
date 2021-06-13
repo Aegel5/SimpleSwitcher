@@ -563,13 +563,10 @@ TStatus Hooker::GetClipStringCallback()
 	std::wstring data;
 	m_clipWorker.GetData(data);
 
-	//if (m_lastRevertRequest == hk_ChangeTextCase)
-	//{
-	//	m_caseAnalizer.AddOrigText(data);
-	//	RequestChangeCase();
-	//}
-	//else
-	//{
+	if (data.length() > 100) {
+		LOG_INFO_1(L"TOO MANY TO REVERT. SKIP");
+	}
+	else {
 		ContextRevert ctxRev;
 		IFS_LOG(ClipboardToSendData(data, ctxRev.keylist));
 
@@ -583,9 +580,9 @@ TStatus Hooker::GetClipStringCallback()
 		ctxRev.flags = SW_CLIENT_PUTTEXT | SW_CLIENT_SetLang;
 
 		IFS_LOG(ProcessRevert(ctxRev));
+	}
 
-		m_clipWorker.PostMsg(ClipMode_RestoreClipData);
-	//}
+	m_clipWorker.PostMsg(ClipMode_RestoreClipData);
 
 	RETURN_SUCCESS;
 }

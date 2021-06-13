@@ -21,13 +21,13 @@ DEFINE_ENUM_FLAG_OPERATORS(TKeyFlags);
 
 struct TKeyHookInfo
 {
-	union {
+	//union {
 		struct {
 			CHotKey key;
 			TInt64 _random_data;
 		} crypted;
-		char buf[16];
-	};
+	//	char buf[16];
+	//};
 
 	CHotKey& key() {
 		return crypted.key;

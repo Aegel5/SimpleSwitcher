@@ -231,6 +231,8 @@ TStatus StartMonitor(
 
 	LOG_INFO_1(L"StartMonitor...");
 
+	IFW_LOG(SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS));
+
 	gdata().curModeBit = bit;
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
