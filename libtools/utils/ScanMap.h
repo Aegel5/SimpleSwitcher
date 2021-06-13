@@ -18,9 +18,24 @@ struct BufScanMap
 			SHORT virtcode = MapVirtualKey(src, MAPVK_VSC_TO_VK);
 			return (TKeyCode)virtcode;
 		}
+		std::pair<WORD, TKeyCode> curElemSrc()
+		{
+			WORD src = HIWORD(curDWORD());
+			SHORT virtcode = MapVirtualKey(src, MAPVK_VSC_TO_VK);
+			return std::make_pair(src, virtcode);
+		}
+		std::pair<WORD, TKeyCode> curElemDst()
+		{
+			WORD src = LOWORD(curDWORD());
+			SHORT virtcode = MapVirtualKey(src, MAPVK_VSC_TO_VK);
+			return std::make_pair(src, virtcode);
+		}
 		size_t Index()
 		{
 			return index;
+		}
+		size_t logicIndex() {
+			return index - 3;
 		}
 		void set(TKeyCode src, TKeyCode val)
 		{
@@ -110,32 +125,8 @@ struct BufScanMap
 
 		return false;
 	}
-	DWORD& DWORDI(size_t index)
-	{
-		return *(DWORD*)(buf + index * sizeof(DWORD));
-	}
-	static DWORD PackToDWORD(TKeyCode src, TKeyCode val)
-	{
-		UINT v = MapVirtualKey(val, MAPVK_VK_TO_VSC);
-		UINT s = MapVirtualKey(src, MAPVK_VK_TO_VSC);
 
-		return MAKELONG(v, s);
-	}
-	DWORD& SizeInTable()
-	{
-		return DWORDI(2);
-	}
-	void DelByIndex(size_t index)
-	{
-		size_t len = size / sizeof(DWORD);
-		SizeInTable() -= 1;
-		for (size_t i = index + 1; i < len; ++i)
-		{
-			DWORDI(i - 1) = DWORDI(i);
-		}
-		DWORDI(len - 1) = 0;
-		size -= sizeof(DWORD);
-	}
+
 	void DelRemapKey(TKeyCode keySrc)
 	{
 		for (auto iter = GetIter(); !iter.IsEnd();)
@@ -151,20 +142,17 @@ struct BufScanMap
 			}
 		}
 	}
-	TStatus AddToEnd(DWORD dw)
+	void DelRemapKey_ByIndex(int itodel)
 	{
-		if (size >= c_size)
-		{
-			IFS_RET(SW_ERR_BUFFER_TOO_SMALL);
+		for (auto iter = GetIter(); !iter.IsEnd();) {
+			if (itodel == iter.logicIndex()) {
+				DelByIndex(iter.Index());
+				return;
+			}
+			++iter;
 		}
-		size_t len = size / sizeof(DWORD);
-		DWORDI(len - 1) = dw;
-		DWORDI(len) = 0;
-		size += sizeof(DWORD);
-		SizeInTable() += 1;
-
-		RETURN_SUCCESS;
 	}
+
 	TStatus PutRemapKey(TKeyCode keySrc, TKeyCode keyVal)
 	{
 		for (auto iter = GetIter(); !iter.IsEnd(); ++iter)
@@ -180,7 +168,23 @@ struct BufScanMap
 		IFS_RET(AddToEnd(dw));
 
 		RETURN_SUCCESS;
+	}
+	TStatus PutRemapKey_BySc(DWORD keySrc, DWORD keyVal)
+	{
+		for (auto iter = GetIter(); !iter.IsEnd(); ++iter)
+		{
+			// TODO
+			//if (iter.curElemSrc().first == keySrc)
+			//{
+			//	iter.set(keySrc, keyVal);
+			//	RETURN_SUCCESS;
+			//}
+		}
 
+		DWORD dw = MAKELONG(keyVal, keySrc);
+		IFS_RET(AddToEnd(dw));
+
+		RETURN_SUCCESS;
 	}
 	bool GetRemapedKey(TKeyCode keySrc, TKeyCode& keyVal)
 	{
@@ -231,5 +235,46 @@ struct BufScanMap
 		RETURN_SUCCESS;
 
 	}
+	private:
+		DWORD& DWORDI(size_t index)
+		{
+			return *(DWORD*)(buf + index * sizeof(DWORD));
+		}
+		static DWORD PackToDWORD(TKeyCode src, TKeyCode val)
+		{
+			UINT v = MapVirtualKey(val, MAPVK_VK_TO_VSC);
+			UINT s = MapVirtualKey(src, MAPVK_VK_TO_VSC);
+
+			return MAKELONG(v, s);
+		}
+		DWORD& SizeInTable()
+		{
+			return DWORDI(2);
+		}
+		void DelByIndex(size_t index)
+		{
+			size_t len = size / sizeof(DWORD);
+			SizeInTable() -= 1;
+			for (size_t i = index + 1; i < len; ++i)
+			{
+				DWORDI(i - 1) = DWORDI(i);
+			}
+			DWORDI(len - 1) = 0;
+			size -= sizeof(DWORD);
+		}
+		TStatus AddToEnd(DWORD dw)
+		{
+			if (size >= c_size)
+			{
+				IFS_RET(SW_ERR_BUFFER_TOO_SMALL);
+			}
+			size_t len = size / sizeof(DWORD);
+			DWORDI(len - 1) = dw;
+			DWORDI(len) = 0;
+			size += sizeof(DWORD);
+			SizeInTable() += 1;
+
+			RETURN_SUCCESS;
+		}
 };
 

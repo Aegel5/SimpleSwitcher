@@ -28,6 +28,7 @@ namespace SwGui
 
 	LRESULT CALLBACK DlgProcPageLang(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK DlgProcAbout(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	LRESULT CALLBACK DlgProc_Scancode(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
 

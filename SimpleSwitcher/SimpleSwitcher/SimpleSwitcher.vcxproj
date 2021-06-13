@@ -321,6 +321,7 @@
     <ClCompile Include="pageclip.cpp" />
     <ClCompile Include="pagelang.cpp" />
     <ClCompile Include="pagewordsep.cpp" />
+    <ClCompile Include="page_scancode.cpp" />
     <ClCompile Include="SimpleSwitcher.cpp" />
     <ClCompile Include="pageadv.cpp" />
     <ClCompile Include="pagelay.cpp" />

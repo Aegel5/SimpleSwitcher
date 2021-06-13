@@ -177,6 +177,9 @@
     <ClCompile Include="extern\fmt\format.cc">
       <Filter>extern\fmt</Filter>
     </ClCompile>
+    <ClCompile Include="page_scancode.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="favicon.ico">

@@ -209,7 +209,10 @@ TStatus SettingsGui::LoadAutoSettings()
 
 	// Load bools
 	// --------------------------------------------------------------
-	//ParseCfg::GetBool(tsmap, L"enable", isEnabledSaved);
+#ifdef _DEBUG
+	ParseCfg::GetBool(tsmap, L"enable", isEnabledSaved);
+#endif
+
 	ParseCfg::GetBool(tsmap, L"monitorAdmin", isMonitorAdmin);
 	ParseCfg::GetBool(tsmap, L"addToTray", isAddToTray);
 	ParseCfg::GetBool(tsmap, L"OEM2", isTryOEM2);
@@ -319,7 +322,7 @@ void SettingsGui::Save()
 {
 	std::wstring cont;
 
-	//AddBool(cont, L"enable", isEnabledSaved);
+	AddBool(cont, L"enable", isEnabledSaved);
 	AddBool(cont, L"monitorAdmin", isMonitorAdmin);
 	AddBool(cont, L"addToTray", isAddToTray);  
 	AddBool(cont, L"OEM2", isTryOEM2);  

@@ -183,8 +183,8 @@ void PageMainHandleEnable()
 
 	UpdateEnabled(hwnd);
 
-	//SettingsGlobal().isEnabledSaved = SettingsGlobal().isEnabled;
-	//SettingsGlobal().Save();
+	SettingsGlobal().isEnabledSaved = SettingsGlobal().isEnabled;
+	SettingsGlobal().Save();
 }
 
 

@@ -156,6 +156,7 @@ TStatus InitDialogMainMenu(HWND hwnd)
 	IFS_RET(g_dlgData.smTabs.AddTab(GetDialogById(SD_LAY), (DLGPROC)DlgProcPageLay, GetMessageById(AM_3)));
 	IFS_RET(g_dlgData.smTabs.AddTab(IDD_DIALOG_PAGE_CLIP, (DLGPROC)DlgProcPageClip, GetMessageById(AM_PAGE_CLIP_NAME)));
 	IFS_RET(g_dlgData.smTabs.AddTab(IDD_DIALOG_PAGE_LANG2, (DLGPROC)DlgProcPageLang, GetMessageById(AM_LANG)));
+	IFS_RET(g_dlgData.smTabs.AddTab(IDD_DIALOG_PAGE_SCAN, (DLGPROC)DlgProc_Scancode, L"Scancode remap"));
 	IFS_RET(g_dlgData.smTabs.AddTab(IDD_DIALOG_PAGE_ABOUT, (DLGPROC)DlgProcAbout, GetMessageById(AM_ABOUT)));
 
 	g_dlgData.menu = CreateMenu();
