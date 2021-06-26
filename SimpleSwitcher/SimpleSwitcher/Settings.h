@@ -66,6 +66,7 @@ inline const wchar_t* HotKeyTypeName(HotKeyType hk_type)
 
 struct CHotKeySet
 {
+	tstring name = L"unknown";
 	CHotKey key;
 	CHotKey def;
 	CHotKey def2;

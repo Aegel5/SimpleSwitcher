@@ -64,6 +64,7 @@ void SettingsGui::GenerateListHK()
 	auto AddHotKey = [&](HotKeyType type, CHotKeySet& set)
 	{
 		set.hkId = type;
+		set.name = HotKeyTypeName(type);
 		hotkeysList[type] = set;
 	};
 
@@ -120,6 +121,11 @@ void SettingsGui::GenerateListHK()
 		set.fUseDef = true;
 		set.fNeedSavedWord = true;
 		AddHotKey(hk_RevertCycle, set);
+	}
+
+	{
+		CHotKeySet set;
+		AddHotKey(hk_CycleCustomLang, set);
 	}
 
 	{
