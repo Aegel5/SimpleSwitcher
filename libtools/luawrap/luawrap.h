@@ -45,7 +45,7 @@ TStatus LuaGetStrFromStackTrim(lua_State* luaState, std::wstring& data) {
 	Str_Utils::trim(data);
 	RETURN_SUCCESS;
 }
-TStatus LuaParseString(const std::wstring& data, std::vector<std::wstring>& lst)
+TStatus LuaParseStringLowTrim(const std::wstring& data, std::vector<std::wstring>& lst)
 {
 	std::wstring sVal;
 	IFS_RET(Str_Utils::Split(sVal, lst, L','));
@@ -143,7 +143,7 @@ TStatus LuaLoadLowStringList(lua_State* luaState, std::vector<std::wstring>& lst
 	std::wstring sVal;
 	if (LuaGetString(luaState, name, sVal))
 	{
-		IFS_RET(LuaParseString(sVal, lst));
+		IFS_RET(LuaParseStringLowTrim(sVal, lst));
 	}
 	RETURN_SUCCESS;
 }

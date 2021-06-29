@@ -16,5 +16,12 @@ ll = 0; -- 0 - no log, 1 - errors and basic info, 4 - max
 
 
 
+-- Custome lang revert
+CustomLang_List = "ru-RU, en-US";
+CustomLang_RevertLastWorld = "";  -- Ex: Break
+CustomLang_RevertCycle = "";      -- Ex: Shift+Break
+
+
+
 
 

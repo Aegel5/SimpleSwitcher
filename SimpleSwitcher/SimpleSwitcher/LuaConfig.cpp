@@ -65,7 +65,7 @@ TStatus LuaLoadConf(UserConf& conf)
 	LuaGetString(luaState, "hk_ChangeTextCase", conf.s_hk_ChangeTextCase);
 
 	tstring revert_cutomlang;
-	LuaGetString(luaState, "Revert_customLang", revert_cutomlang);
+	LuaGetString(luaState, "CustomLang_List", revert_cutomlang);
 	Str_Utils::trim(revert_cutomlang);
 
 	if (!revert_cutomlang.empty()) {
@@ -88,8 +88,8 @@ TStatus LuaLoadConf(UserConf& conf)
 			RETURN_SUCCESS;
 		};
 
-		IFS_RET(parseKey("RevertLastWord_CustomLang", SettingsGlobal().GetHk(hk_RevertLastWord_CustomLang).key));
-		IFS_RET(parseKey("RevertCycle_CustomLang", SettingsGlobal().GetHk(hk_RevertCycle_CustomLang).key));
+		IFS_RET(parseKey("CustomLang_RevertLastWorld", SettingsGlobal().GetHk(hk_RevertLastWord_CustomLang).key));
+		IFS_RET(parseKey("CustomLang_RevertCycle", SettingsGlobal().GetHk(hk_RevertCycle_CustomLang).key));
 
 	}
 
