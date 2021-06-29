@@ -76,7 +76,7 @@ TStatus LuaLoadConf(UserConf& conf)
 			keydest.Clear();
 
 			tstring key;
-			if (!LuaGetStringLowTrim(luaState, "RevertLastWord_CustomLang", key)) {
+			if (!LuaGetStringLowTrim(luaState, sName, key)) {
 				RETURN_SUCCESS;
 			}
 
