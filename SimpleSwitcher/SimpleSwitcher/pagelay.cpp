@@ -16,32 +16,20 @@ void FillLayList()
 {
 	g_laySize = GetKeyboardLayoutList(SW_ARRAY_SIZE(g_laylist), g_laylist);
 }
-std::wstring GetNameForHKL(HKL hkl)
-{
-	WORD langid = LOWORD(hkl);
 
-	TCHAR buf[512]; 
-	buf[0] = 0;
-
-	int flag = IsWindowsVistaOrGreater() ? LOCALE_SNAME : LOCALE_SLANGUAGE;
-	int len = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, SW_ARRAY_SIZE(buf));
-	IFW_LOG(len != 0);
-
-	return buf;
-
-}
 void CustomLangListToStr(std::vector<HKL>& lst, std::wstring& str)
 {
 	str.clear();
 	for (size_t i = 0; i < lst.size(); ++i)
 	{
-		str += GetNameForHKL(lst[i]);
+		str += Utils::GetNameForHKL(lst[i]);
 		if (i != lst.size() - 1)
 		{
 			str += L", ";
 		}
 	}
 }
+
 
 void FillCombo(HWND hwnd, int id, int indexSettings)
 {
@@ -51,7 +39,7 @@ void FillCombo(HWND hwnd, int id, int indexSettings)
 	{
 		HKL cur = g_laylist[i];
 
-		auto name = GetNameForHKL(cur);
+		auto name = Utils::GetNameForHKL(cur);
 		SendDlgItemMessage(hwnd, id, CB_ADDSTRING, 0, (LPARAM)name.c_str());
 		if (saved == cur)
 		{

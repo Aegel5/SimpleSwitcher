@@ -33,6 +33,9 @@ enum HotKeyType
 
 	//hk_ChangeTextCase = 16,
 
+	hk_RevertLastWord_CustomLang = 17,
+	hk_RevertCycle_CustomLang = 18,
+
 	hk_MAX,
 
 	//hk_RevertFromClip,
@@ -133,6 +136,7 @@ public:
 	//bool fHookDll;
 
 	std::vector<HKL> customLangList;
+	std::vector<HKL> revert_customLangList; 
 	HKL hkl_lay[3] = { 0 };
 
 	SwLang idLang = SLANG_UNKNOWN;

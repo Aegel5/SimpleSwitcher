@@ -19,6 +19,7 @@
 #include <mutex>
 #include <vector>
 #include <string>
+#include <set>
 
 #include "inc_basic.h"
 #include "utils/ScanMap.h"

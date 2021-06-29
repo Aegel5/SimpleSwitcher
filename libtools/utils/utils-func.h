@@ -2,6 +2,21 @@
 
 namespace Utils
 {
+	inline std::wstring GetNameForHKL(HKL hkl)
+	{
+		WORD langid = LOWORD(hkl);
+
+		TCHAR buf[512];
+		buf[0] = 0;
+
+		int flag = IsWindowsVistaOrGreater() ? LOCALE_SNAME : LOCALE_SLANGUAGE;
+		int len = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, SW_ARRAY_SIZE(buf));
+		IFW_LOG(len != 0);
+
+		return buf;
+
+	}
+
 	inline TStatus IsElevated(HANDLE hProc, bool& res)
 	{
 		res = false;

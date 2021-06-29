@@ -5,6 +5,37 @@
 
 #include "luawrap/luawrap.h"
 
+TStatus CustomLangListFromStr(std::vector<HKL>& lst, const std::wstring& str)
+{
+	HKL lays[20] = { 0 };
+	auto sz = GetKeyboardLayoutList(SW_ARRAY_SIZE(lays), lays);
+	std::map<tstring, HKL> mp;
+	for (int i = 0; i < sz; i++) {
+		mp[Utils::GetNameForHKL(lays[i])] = lays[i];
+	}
+
+	std::vector<std::wstring> strs;
+	Str_Utils::Split2(str, strs, L", ", true);
+
+	std::set<HKL> st;
+
+	for (size_t i = 0; i < strs.size(); ++i)
+	{
+		auto& cur = strs[i];
+		auto it = mp.find(cur);
+		if (it != mp.end()) {
+			st.insert(it->second);
+		}
+	}
+
+	lst.clear();
+	for (auto& e : st) {
+		lst.push_back(e);
+	}
+
+	RETURN_SUCCESS;
+}
+
 
 TStatus LuaLoadConf(UserConf& conf)
 {
@@ -13,6 +44,7 @@ TStatus LuaLoadConf(UserConf& conf)
 	sFilePath += L"config.lua";
 	if (!FileUtils::IsFileExists(sFilePath.c_str()))
 	{
+		LOG_INFO_1(L"Config %s not found", sFilePath.c_str());
 		return SW_ERR_SUCCESS;
 	}
 	CAutoLuaState luaState = luaL_newstate();
@@ -31,6 +63,35 @@ TStatus LuaLoadConf(UserConf& conf)
 	LuaGetBool(luaState, "useAlternateModeByDefault", conf.fUseAltMode);
 
 	LuaGetString(luaState, "hk_ChangeTextCase", conf.s_hk_ChangeTextCase);
+
+	tstring revert_cutomlang;
+	LuaGetString(luaState, "Revert_customLang", revert_cutomlang);
+	Str_Utils::trim(revert_cutomlang);
+
+	if (!revert_cutomlang.empty()) {
+		IFS_RET(CustomLangListFromStr(SettingsGlobal().revert_customLangList, revert_cutomlang));
+
+		auto parseKey = [&](const char* sName, CHotKey& keydest) {
+
+			keydest.Clear();
+
+			tstring key;
+			if (!LuaGetStringLowTrim(luaState, "RevertLastWord_CustomLang", key)) {
+				RETURN_SUCCESS;
+			}
+
+			CHotKey key2;
+			IFS_RET(key2.FromString(key));
+
+			keydest = key2;
+
+			RETURN_SUCCESS;
+		};
+
+		IFS_RET(parseKey("RevertLastWord_CustomLang", SettingsGlobal().GetHk(hk_RevertLastWord_CustomLang).key));
+		IFS_RET(parseKey("RevertCycle_CustomLang", SettingsGlobal().GetHk(hk_RevertCycle_CustomLang).key));
+
+	}
 
 	RETURN_SUCCESS;
 }

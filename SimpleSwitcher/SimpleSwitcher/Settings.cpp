@@ -130,6 +130,20 @@ void SettingsGui::GenerateListHK()
 
 	{
 		CHotKeySet set;
+		set.fNeedSavedWord = true;
+		AddHotKey(hk_RevertLastWord_CustomLang, set);
+
+	}
+
+	{
+		CHotKeySet set;
+		set.fNeedSavedWord = true;
+		AddHotKey(hk_RevertCycle_CustomLang, set);
+
+	}
+
+	{
+		CHotKeySet set;
 		set.def2 = CHotKey(VK_PAUSE);
 		set.def = CHotKey(VK_F24);
 		set.fUseDef = true;

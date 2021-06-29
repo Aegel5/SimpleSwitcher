@@ -896,12 +896,10 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		RETURN_SUCCESS;
 	}
 
-	if (typeRevert == hk_CycleCustomLang)
-	{
-		auto& lst = SettingsGlobal().customLangList;
+	auto getNextLang = [this](const std::vector<HKL>& lst) {
 		if (lst.size() < 2)
 		{
-			RETURN_SUCCESS;
+			return std::make_pair(false, (HKL)0);
 		}
 		HKL toSet = 0;
 		for (size_t i = 0; i < lst.size(); ++i)
@@ -911,8 +909,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 				if (i == lst.size() - 1)
 				{
 					toSet = lst[0];
-				}
-				else
+				} else
 				{
 					toSet = lst[i + 1];
 				}
@@ -923,12 +920,18 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		{
 			toSet = lst[0];
 		}
+		return std::make_pair(true, toSet);
+	};
 
+	if (typeRevert == hk_CycleCustomLang)
+	{
+		auto [res, toSet] = getNextLang(SettingsGlobal().customLangList);
+		if (!res)
+			RETURN_SUCCESS;
 		data.flags = SW_CLIENT_SetLang;
 		data.lay = toSet;
 		IFS_RET(ProcessRevert(data));
 		RETURN_SUCCESS;
-
 	}
 
 	if (typeRevert == hk_ChangeLayoutCycle)
@@ -973,17 +976,26 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		IFS_RET(SendCtrlC(CLR_GET_FROM_CLIP));
 		RETURN_SUCCESS;
 	}
-	else if (typeRevert == hk_RevertLastWord || typeRevert == hk_RevertCycle || typeRevert == hk_RevertRecentTyped)
+
+	HKL nextLng = (HKL)HKL_NEXT;
+
+	if (typeRevert == hk_RevertLastWord_CustomLang || typeRevert == hk_RevertCycle_CustomLang)
 	{
-	}
-	else
+		auto [res, toSet] = getNextLang(SettingsGlobal().revert_customLangList);
+		if (!res)
+			RETURN_SUCCESS;
+		nextLng = toSet;
+		typeRevert = typeRevert == hk_RevertLastWord_CustomLang ? hk_RevertLastWord : hk_RevertCycle;
+	} 
+
+	// ---------------classic revert---------------
+
+	if (!(typeRevert == hk_RevertLastWord || typeRevert == hk_RevertCycle || typeRevert == hk_RevertRecentTyped))
 	{
 		IFS_RET(SW_ERR_UNKNOWN, L"Unknown typerevert %d", typeRevert);
 	}
 
 	bool isNeedLangChange = true;
-
-
 
 	if (m_nCurrentRevertCycle == -1)
 	{
@@ -1002,7 +1014,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	IFS_RET(FillKeyToRevert(data.keylist, typeRevert));
 	
 	data.flags = SW_CLIENT_PUTTEXT | SW_CLIENT_SetLang | SW_CLIENT_BACKSPACE;
-	data.lay = isNeedLangChange ? (HKL)HKL_NEXT : 0;
+	data.lay = isNeedLangChange ? nextLng : 0;
 	IFS_RET(ProcessRevert(data));
 
 	RETURN_SUCCESS;
