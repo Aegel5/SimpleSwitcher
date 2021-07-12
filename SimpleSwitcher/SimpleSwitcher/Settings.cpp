@@ -237,6 +237,7 @@ TStatus SettingsGui::LoadAutoSettings()
 	ParseCfg::GetBool(tsmap, L"addToTray", isAddToTray);
 	ParseCfg::GetBool(tsmap, L"OEM2", isTryOEM2);
 	ParseCfg::GetBool(tsmap, L"closeByEsc", fCloseByEsc);
+	ParseCfg::GetBool(tsmap, L"fEnableKeyLoggerDefence", fEnableKeyLoggerDefence);
 	//ParseCfg::GetBool(tsmap, L"isDashSeparate", isDashSeparate);
 	ParseCfg::GetBool(tsmap, L"fDbgMode", fDbgMode);
 	ParseCfg::GetBool(tsmap, L"fClipboardClearFormat", fClipboardClearFormat);
@@ -347,6 +348,7 @@ void SettingsGui::Save()
 	AddBool(cont, L"addToTray", isAddToTray);  
 	AddBool(cont, L"OEM2", isTryOEM2);  
 	AddBool(cont, L"closeByEsc", fCloseByEsc);
+	AddBool(cont, L"fEnableKeyLoggerDefence", fEnableKeyLoggerDefence);
 	AddBool(cont, L"fDbgMode", fDbgMode); 
 	AddBool(cont, L"fClipboardClearFormat", fClipboardClearFormat); 
 	//AddBool(cont, L"isDashSeparate", isDashSeparate); 

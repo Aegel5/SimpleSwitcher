@@ -132,6 +132,7 @@ public:
 	bool fDbgMode;
 	bool fClipboardClearFormat;
 	bool fCloseByEsc;
+	bool fEnableKeyLoggerDefence = false;
 
 	//bool fHookDll;
 

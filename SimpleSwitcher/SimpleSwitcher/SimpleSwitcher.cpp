@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "SimpleSwitcher.h"
 #include "CMainWorker.h"
+#include "Settings.h"
 
 
 
@@ -64,6 +65,11 @@ TStatus StartCycle(_In_ HINSTANCE hInstance,_In_ int nCmdShow)
 		IFS_RET(HookGlobal(hookHandles));
 	}
 
+
+	auto timeId = SetTimer(hWnd, c_timerKeyloggerDefence, 5000, NULL);
+	IFW_LOG(timeId != 0);
+
+
 	MSG msg;
 	while (true)
 	{
@@ -107,7 +113,13 @@ TStatus StartCycle(_In_ HINSTANCE hInstance,_In_ int nCmdShow)
 			{
 				int k = 0;
 			}
-			IFW_LOG(KillTimer(gdata().hWndMonitor, timerId));
+			if (timerId == c_timerKeyloggerDefence) {
+				if (SettingsGlobal().fEnableKeyLoggerDefence) {
+					resethook();
+				}
+			}else{
+				IFW_LOG(KillTimer(gdata().hWndMonitor, timerId));
+			}
 			Worker()->PostMsgW(HWORKER_WM_TIMER, timerId);
 		}
 		else
@@ -187,24 +199,35 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		//}
 	}
 
-	return CallNextHookEx(0, nCode, wParam, lParam);
+	if (SettingsGlobal().fEnableKeyLoggerDefence) {
 
+		return 0;
+
+	} else {
+
+		return CallNextHookEx(0, nCode, wParam, lParam);
+	}
+
+}
+namespace {
+	HookGlobalHandles* hh = nullptr;
+}
+TStatus resethook() {
+	hh->hHookKeyGlobal = WinApiInt::SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, 0, 0);
+	IFW_RET(hh->hHookKeyGlobal.IsValid());
+
+	RETURN_SUCCESS;
 }
 
 TStatus HookGlobal(HookGlobalHandles& handles)
 {
 	LOG_INFO_1(L"HookGlobal...");
 
-	CAutoHMODULE hModUser;
-	if (!IsWindowsVistaOrGreater())
-	{
-		hModUser = LoadLibrary(L"user32.dll");
-	}
-	handles.hHookKeyGlobal = WinApiInt::SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, hModUser, 0);
-	IFW_RET(handles.hHookKeyGlobal.IsValid());
+	hh = &handles;
+	IFS_RET(resethook());
 
 #ifndef _DEBUG
-	handles.hHookMouseGlobal = WinApiInt::SetWindowsHookEx(WH_MOUSE_LL, LowLevelMouseProc, hModUser, 0);
+	handles.hHookMouseGlobal = WinApiInt::SetWindowsHookEx(WH_MOUSE_LL, LowLevelMouseProc, 0, 0);
 	IFW_RET(handles.hHookMouseGlobal.IsValid());
 #endif
 

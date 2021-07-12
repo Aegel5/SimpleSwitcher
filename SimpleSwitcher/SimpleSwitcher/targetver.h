@@ -9,7 +9,7 @@
 
 #define SW_VER_1    2
 #define SW_VER_2    1
-#define SW_VER_3    2
+#define SW_VER_3    3
 #define SW_VER_4    0
 
 #define _SW_QT(X) #X
