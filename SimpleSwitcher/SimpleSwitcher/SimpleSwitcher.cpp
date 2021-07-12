@@ -7,7 +7,7 @@
 #include "Settings.h"
 
 
-
+TStatus resethook();
 
 struct HookGlobalHandles
 {
@@ -119,8 +119,9 @@ TStatus StartCycle(_In_ HINSTANCE hInstance,_In_ int nCmdShow)
 				}
 			}else{
 				IFW_LOG(KillTimer(gdata().hWndMonitor, timerId));
+				Worker()->PostMsgW(HWORKER_WM_TIMER, timerId);
 			}
-			Worker()->PostMsgW(HWORKER_WM_TIMER, timerId);
+
 		}
 		else
 		{
