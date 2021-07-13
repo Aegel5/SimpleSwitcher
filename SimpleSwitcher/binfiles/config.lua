@@ -12,9 +12,7 @@ useAlternateModeInProgram = "pythonw.exe"; -- exmaple: "skype.exe,outlook.exe"
 msDelayAfterCtrlC = 25; -- possible range [10-210]
 
 -- Log level
-ll = 0; -- 0 - no log, 1 - errors and basic info, 4 - max
-
-
+ll = 3; -- 0 - no log, 1 - errors and basic info, 4 - max
 
 -- Custom lang revert
 CustomLang_List = "ru-RU, en-US";
