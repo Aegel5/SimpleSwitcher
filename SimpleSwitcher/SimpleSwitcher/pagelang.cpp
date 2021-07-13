@@ -46,7 +46,8 @@ LRESULT CALLBACK DlgProcPageLang(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 		SetDlgItemText(hwnd, IDC_STATIC_PATH, GetMessageById(AM_DBG_PATH_TO_PRG));
 
 		gui_tools::SetCheckBox(hwnd, IDC_CHECK_DBG_MODE, SettingsGlobal().fDbgMode);
-		gui_tools::SetCheckBox(hwnd, IDC_CHECK_ESC_CLOSE, SettingsGlobal().fCloseByEsc);
+		gui_tools::SetCheckBox(hwnd, IDC_CHECK_ESC_CLOSE, SettingsGlobal().fCloseByEsc); 
+		gui_tools::SetCheckBox(hwnd, IDC_CHECK_KEY_LOG_DEF, SettingsGlobal().fEnableKeyLoggerDefence);
 
 		return FALSE;
 	}
@@ -74,6 +75,11 @@ LRESULT CALLBACK DlgProcPageLang(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 		else if (dlgId == IDC_CHECK_ESC_CLOSE)
 		{
 			SettingsGlobal().fCloseByEsc = gui_tools::IsCheckBox(hwnd, dlgId);
+			SettingsGlobal().SaveAndPostMsg();
+		}
+		else if (dlgId == IDC_CHECK_KEY_LOG_DEF)
+		{
+			SettingsGlobal().fEnableKeyLoggerDefence = gui_tools::IsCheckBox(hwnd, dlgId);
 			SettingsGlobal().SaveAndPostMsg();
 		}
 		//else if (LOWORD(wParam) == IDC_CHECK_USE_DLL_HOOK)

@@ -12,6 +12,7 @@ TStatus resethook();
 struct HookGlobalHandles
 {
 	CAutoHHOOK hHookKeyGlobal;
+	CAutoHHOOK hHookKeyGlobal_2;
 	CAutoHHOOK hHookMouseGlobal;
 	CAutoHWINEVENTHOOK hHookEventGlobal;
 	CAutoHWINEVENTHOOK hHookEventGlobalSwitchDesk;
@@ -174,17 +175,39 @@ LRESULT CALLBACK LowLevelMouseProc(
 	return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
 
+LRESULT CALLBACK KeyboardProc(
+	_In_ int    nCode,
+	_In_ WPARAM wParam,
+	_In_ LPARAM lParam
+)
+{
+	if (nCode < 0) {
+		return CallNextHookEx(0, nCode, wParam, lParam);
+	}
+
+	DWORD key = DWORD(wParam);
+	LOG_INFO_0(L"_PRINTED_ %d", key);
+
+	//if (SettingsGlobal().fEnableKeyLoggerDefence) {
+		return 0;
+	//} else {
+	//	return CallNextHookEx(0, nCode, wParam, lParam);
+	//}
+}
+
 LRESULT CALLBACK LowLevelKeyboardProc(
 	_In_  int nCode,
 	_In_  WPARAM wParam,
 	_In_  LPARAM lParam
 	)
 {
+	if (nCode < 0) {
+		return CallNextHookEx(0, nCode, wParam, lParam);
+	}
+
 	if (nCode == HC_ACTION)
 	{
 		KBDLLHOOKSTRUCT* kStruct = (KBDLLHOOKSTRUCT*)lParam;
-
-		//DWORD dwStart = GetTickCount();
 
 		MainWorkerMsg msg;
 		msg.mode = HWORKER_KeyMsg;
@@ -193,19 +216,11 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		kData.wParam = wParam;
 		Worker()->PostMsg(msg);
 
-		//DWORD dwElapsed = GetTickCount() - dwStart;
-		//if (dwElapsed > 250)
-		//{
-		//	LOG_INFO_1(L"[WARN]. Too long processing: %u", dwElapsed);
-		//}
 	}
 
 	if (SettingsGlobal().fEnableKeyLoggerDefence) {
-
 		return 0;
-
 	} else {
-
 		return CallNextHookEx(0, nCode, wParam, lParam);
 	}
 
@@ -215,6 +230,14 @@ namespace {
 }
 TStatus resethook() {
 	hh->hHookKeyGlobal = WinApiInt::SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, 0, 0);
+
+	//hh->hHookKeyGlobal_2.Cleanup();
+	//if (SettingsGlobal().fEnableKeyLoggerDefence) {
+	//	DWORD dwTheardId = ::GetWindowThreadProcessId(gdata().hWndMonitor, 0);
+	//	hh->hHookKeyGlobal_2 = WinApiInt::SetWindowsHookEx(WH_KEYBOARD, KeyboardProc, GetModuleHandle(NULL), dwTheardId);
+	//	IFW_LOG(hh->hHookKeyGlobal_2.IsValid());
+	//}
+
 	IFW_RET(hh->hHookKeyGlobal.IsValid());
 
 	RETURN_SUCCESS;
