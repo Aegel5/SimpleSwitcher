@@ -394,18 +394,22 @@ TStatus Hooker::GenerateCycleRevertList()
 	{
 		for (int i = (int)m_wordList.size() - 1; i >= 0; --i)
 		{
-			if (TestFlag(m_wordList[i].keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT) && m_CycleRevertList.empty())
-			{
+			auto issep = [&](int i) {return TestFlag(m_wordList[i].keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT); };
+			auto add = [&](int i) {
 				CycleRevert cycleRevert = { i, m_CycleRevertList.empty() };
 				m_CycleRevertList.push_back(cycleRevert);
 				if (++countWords >= c_maxWordRevert)
+					return true;
+				return false;
+			};
+			if (issep(i))
+			{
+				if (add(i)) 
 					break;
 			}
-			else if (m_wordList[i].type != KEYTYPE_SPACE && (i == 0 || m_wordList[i - 1].type == KEYTYPE_SPACE))
+			else if (m_wordList[i].type != KEYTYPE_SPACE && (i == 0 || m_wordList[i - 1].type == KEYTYPE_SPACE || issep(i-1)))
 			{
-				CycleRevert cycleRevert = { i, m_CycleRevertList.empty() };
-				m_CycleRevertList.push_back(cycleRevert);
-				if (++countWords >= c_maxWordRevert)
+				if(add(i)) 
 					break;
 			}
 
