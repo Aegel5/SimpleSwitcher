@@ -383,7 +383,7 @@ void SettingsGui::Save()
 		if(!info.fGui)
 			continue;
 
-		if (!info.key.IsEmpty())
+		//if (!info.key.IsEmpty()) сохраняем все чтобы если указан 0, то он потом не сбрасывался на значение по умолчанию.
 		{
 			TChar sBuf[100];
 			swprintf_s(sBuf, L"0x%I64X -- %s", info.key.AsUInt64(), info.key.ToString().c_str());
