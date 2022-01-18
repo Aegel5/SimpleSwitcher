@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 namespace gui_tools
 {
 	template<UINT WM_TRAYICON, UINT TIMER_ID, UINT ICON_ID>

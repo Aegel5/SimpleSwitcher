@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 
 #include "Settings.h"
 #include "LuaConfig.h"
@@ -383,7 +383,7 @@ void SettingsGui::Save()
 		if(!info.fGui)
 			continue;
 
-		//if (!info.key.IsEmpty()) сохраняем все чтобы если указан 0, то он потом не сбрасывался на значение по умолчанию.
+		//if (!info.key.IsEmpty()) СЃРѕС…СЂР°РЅСЏРµРј РІСЃРµ С‡С‚РѕР±С‹ РµСЃР»Рё СѓРєР°Р·Р°РЅ 0, С‚Рѕ РѕРЅ РїРѕС‚РѕРј РЅРµ СЃР±СЂР°СЃС‹РІР°Р»СЃСЏ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ.
 		{
 			TChar sBuf[100];
 			swprintf_s(sBuf, L"0x%I64X -- %s", info.key.AsUInt64(), info.key.ToString().c_str());

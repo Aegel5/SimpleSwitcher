@@ -1,4 +1,4 @@
-/*
+﻿/*
 ** $Id: lcode.h,v 1.64 2016/01/05 16:22:37 roberto Exp $
 ** Code generator for Lua
 ** See Copyright Notice in lua.h

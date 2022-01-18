@@ -1,4 +1,4 @@
-/*
+﻿/*
 ** $Id: ldo.h,v 2.29 2015/12/21 13:02:14 roberto Exp $
 ** Stack and Call structure of Lua
 ** See Copyright Notice in lua.h

@@ -1,4 +1,4 @@
-// A C++ interface to POSIX functions.
+﻿// A C++ interface to POSIX functions.
 //
 // Copyright (c) 2012 - 2016, Victor Zverovich
 // All rights reserved.

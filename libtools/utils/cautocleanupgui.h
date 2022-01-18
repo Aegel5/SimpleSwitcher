@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 MAKE_AUTO_CLEANUP(HBRUSH, ::DeleteObject, NULL, CAutoCloseHBRUSH)
 MAKE_AUTO_CLEANUP(HICON, ::DestroyIcon, NULL, CAutoHandleIcon)

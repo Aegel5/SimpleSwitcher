@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 template<class TType, class TTypeWrapper>
 class TemplateAutoClose2

@@ -1,4 +1,4 @@
-// Formatting library for C++ - the core API
+﻿// Formatting library for C++ - the core API
 //
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.

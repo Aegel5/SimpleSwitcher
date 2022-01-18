@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Objbase.h"
 
 #include <comdef.h>

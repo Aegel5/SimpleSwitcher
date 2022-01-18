@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 const wchar_t* c_messages[SM_SIZE];
 int c_dialogs[SD_SIZE];

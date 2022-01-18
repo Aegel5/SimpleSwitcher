@@ -163,9 +163,9 @@ TStatus InitDialogMainMenu(HWND hwnd)
 	HMENU hPopMenuFile = CreatePopupMenu();
 	HMENU hPopMenuConfigLua = CreatePopupMenu();
 
-	AppendMenu(hPopMenuFile, MF_STRING, MENU_ID_EXIT, L"Выход");
-	AppendMenu(hPopMenuConfigLua, MF_STRING, MENU_ID_CONFIG_LUA_OPEN, L"Открыть");
-	AppendMenu(hPopMenuConfigLua, MF_STRING, MENU_ID_CONFIG_LUA_RELOAD, L"Перезагрузить");
+	AppendMenu(hPopMenuFile, MF_STRING, MENU_ID_EXIT, L"Exit");
+	AppendMenu(hPopMenuConfigLua, MF_STRING, MENU_ID_CONFIG_LUA_OPEN, L"Open");
+	AppendMenu(hPopMenuConfigLua, MF_STRING, MENU_ID_CONFIG_LUA_RELOAD, L"Reload");
 
 	AppendMenu(g_dlgData.menu, MF_STRING | MF_POPUP, (UINT)hPopMenuFile, L"File");
 	AppendMenu(g_dlgData.menu, MF_STRING | MF_POPUP, (UINT)hPopMenuConfigLua, L"Config.lua");

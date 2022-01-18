@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "SimpleSwitcher.h"
 #include "Settings.h"
 #include "SwAutostart.h"

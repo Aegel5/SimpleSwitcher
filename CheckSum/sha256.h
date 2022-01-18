@@ -1,4 +1,4 @@
-#ifndef SHA256_H
+﻿#ifndef SHA256_H
 #define SHA256_H
 #include <string>
 

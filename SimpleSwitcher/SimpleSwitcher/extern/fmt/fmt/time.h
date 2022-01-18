@@ -1,4 +1,4 @@
-// Formatting library for C++ - time formatting
+﻿// Formatting library for C++ - time formatting
 //
 // Copyright (c) 2012 - 2016, Victor Zverovich
 // All rights reserved.

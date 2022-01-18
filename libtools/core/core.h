@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #define SW_NAMESPACE(X) namespace X {

@@ -1,4 +1,4 @@
-
+﻿
 struct TSWCheckRunRes
 {
 	bool found = false;

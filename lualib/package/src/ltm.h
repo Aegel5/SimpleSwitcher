@@ -1,4 +1,4 @@
-/*
+﻿/*
 ** $Id: ltm.h,v 2.22 2016/02/26 19:20:15 roberto Exp $
 ** Tag methods
 ** See Copyright Notice in lua.h

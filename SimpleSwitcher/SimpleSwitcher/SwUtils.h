@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "utils/procstart.h"
 #include "utils/getpath.h"
 
