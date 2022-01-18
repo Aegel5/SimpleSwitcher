@@ -1,4 +1,4 @@
-/*
+﻿/*
 ** $Id: liolib.c,v 2.151 2016/12/20 18:37:00 roberto Exp $
 ** Standard I/O (and system) library
 ** See Copyright Notice in lua.h

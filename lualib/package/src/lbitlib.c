@@ -1,4 +1,4 @@
-/*
+﻿/*
 ** $Id: lbitlib.c,v 1.30 2015/11/11 19:08:09 roberto Exp $
 ** Standard library for bitwise operations
 ** See Copyright Notice in lua.h

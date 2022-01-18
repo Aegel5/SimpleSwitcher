@@ -1,4 +1,4 @@
-/*
+﻿/*
 ** $Id: lmathlib.c,v 1.119 2016/12/22 13:08:50 roberto Exp $
 ** Standard mathematical library
 ** See Copyright Notice in lua.h

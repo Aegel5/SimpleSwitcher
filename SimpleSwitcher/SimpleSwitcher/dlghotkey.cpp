@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 
 #include "Settings.h"
 //#include "SwShared.h"
@@ -126,7 +126,7 @@ void HandleExit(HWND hwnd, bool fOk)
 		{
 			int res = MessageBox(
 				hwnd, 
-				L"Комбинация Ctrl+Break не поддерживается. Ввести новый hotkey?", 
+				L"РљРѕРјР±РёРЅР°С†РёСЏ Ctrl+Break РЅРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚СЃСЏ. Р’РІРµСЃС‚Рё РЅРѕРІС‹Р№ hotkey?", 
 				SW_PROGRAM_NAME_L,
 				MB_ICONINFORMATION | MB_OKCANCEL);
 			if (res == IDOK)
