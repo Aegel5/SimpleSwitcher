@@ -163,9 +163,9 @@ TStatus InitDialogMainMenu(HWND hwnd)
 	HMENU hPopMenuFile = CreatePopupMenu();
 	HMENU hPopMenuConfigLua = CreatePopupMenu();
 
-	AppendMenu(hPopMenuFile, MF_STRING, MENU_ID_EXIT, L"Выход");
-	AppendMenu(hPopMenuConfigLua, MF_STRING, MENU_ID_CONFIG_LUA_OPEN, L"Открыть");
-	AppendMenu(hPopMenuConfigLua, MF_STRING, MENU_ID_CONFIG_LUA_RELOAD, L"Перезагрузить");
+	AppendMenu(hPopMenuFile, MF_STRING, MENU_ID_EXIT, L"Р’С‹С…РѕРґ");
+	AppendMenu(hPopMenuConfigLua, MF_STRING, MENU_ID_CONFIG_LUA_OPEN, L"РћС‚РєСЂС‹С‚СЊ");
+	AppendMenu(hPopMenuConfigLua, MF_STRING, MENU_ID_CONFIG_LUA_RELOAD, L"РџРµСЂРµР·Р°РіСЂСѓР·РёС‚СЊ");
 
 	AppendMenu(g_dlgData.menu, MF_STRING | MF_POPUP, (UINT)hPopMenuFile, L"File");
 	AppendMenu(g_dlgData.menu, MF_STRING | MF_POPUP, (UINT)hPopMenuConfigLua, L"Config.lua");
@@ -442,7 +442,7 @@ void InitLang()
 {
 	if (SettingsGlobal().idLang == SLANG_UNKNOWN)
 	{
-		// Пока английский не готов, русский всегда по умолчанию.
+		// РџРѕРєР° Р°РЅРіР»РёР№СЃРєРёР№ РЅРµ РіРѕС‚РѕРІ, СЂСѓСЃСЃРєРёР№ РІСЃРµРіРґР° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ.
 		SettingsGlobal().idLang = SLANG_RUS;
 		//SettingsGlobal().idLang = FindWindowsLang();
 

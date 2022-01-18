@@ -1,11 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleSwitcher", "SimpleSwitcher\SimpleSwitcher.vcxproj", "{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{55741B2B-4A80-46EA-86FA-656EF74E6B85} = {55741B2B-4A80-46EA-86FA-656EF74E6B85}
+		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC} = {4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtools", "..\libtools\libtools.vcxproj", "{F51ABB00-9F31-43E2-8EF4-B38BEF592E9D}"

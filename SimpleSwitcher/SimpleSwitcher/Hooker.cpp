@@ -766,20 +766,6 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		}
 	};
 
-	if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT) && TestFlag(ctxRevert.flags, SW_CLIENT_BACKSPACE))
-	{
-		ClearState();
-
-		if (fDels)
-		{
-			IFS_RET(SendDels(ctxRevert.keylist.size()));
-		}
-		else
-		{
-			IFS_RET(SendBacks(ctxRevert.keylist.size()));
-		}
-	}
-
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_SetLang) && ctxRevert.lay)
 	{
 		LOG_INFO_1(L"Try set 0x%x lay", ctxRevert.lay);
@@ -799,6 +785,22 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		}
 
 	}
+
+	if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT) && TestFlag(ctxRevert.flags, SW_CLIENT_BACKSPACE))
+	{
+		ClearState();
+
+		if (fDels)
+		{
+			IFS_RET(SendDels(ctxRevert.keylist.size()));
+		}
+		else
+		{
+			IFS_RET(SendBacks(ctxRevert.keylist.size()));
+		}
+	}
+
+
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT))
 	{
