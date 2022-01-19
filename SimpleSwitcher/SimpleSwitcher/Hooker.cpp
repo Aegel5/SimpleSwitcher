@@ -807,8 +807,6 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		auto start = GetTickCount64();
 		while (true)
 		{
-			DWORD pid;
-			auto threadId = GetWindowThreadProcessId(m_hwndTop, &pid);
 			auto curL = GetKeyboardLayout(m_dwIdThreadTopWnd);
 			if (m_layoutTopWnd != curL) {
 				break;
