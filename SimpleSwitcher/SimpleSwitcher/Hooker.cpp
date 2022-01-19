@@ -815,7 +815,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 			}
 
 			if ((GetTickCount64() - start) >= 200) {
-				LOG_WARN(L"wait timeout language change for proc", m_sTopProcName);
+				LOG_WARN(L"wait timeout language change for proc %s", m_sTopProcName.c_str());
 				break;
 			}
 
