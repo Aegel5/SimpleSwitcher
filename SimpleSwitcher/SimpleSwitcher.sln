@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleSwitcher", "SimpleSwitcher\SimpleSwitcher.vcxproj", "{89721EA7-7D6D-49D2-ADD9-D75FA568BDE6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{55741B2B-4A80-46EA-86FA-656EF74E6B85} = {55741B2B-4A80-46EA-86FA-656EF74E6B85}
+		{B528457E-7D65-4E21-A030-6D4335A84FC3} = {B528457E-7D65-4E21-A030-6D4335A84FC3}
 		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC} = {4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}
 	EndProjectSection
 EndProject
@@ -14,6 +15,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lualib", "..\lualib\lualib.vcxproj", "{55741B2B-4A80-46EA-86FA-656EF74E6B85}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "checksum", "..\CheckSum\CheckSum.vcxproj", "{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "verinc", "..\verinc\verinc.vcxproj", "{B528457E-7D65-4E21-A030-6D4335A84FC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +74,18 @@ Global
 		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Release|Win32.ActiveCfg = Release|Win32
 		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Release|Win32.Build.0 = Release|Win32
 		{4BFF3FB0-FADA-45F4-B3FE-94DC1483B5AC}.Release|x64.ActiveCfg = Release|Win32
+		{B528457E-7D65-4E21-A030-6D4335A84FC3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B528457E-7D65-4E21-A030-6D4335A84FC3}.Debug|Win32.Build.0 = Debug|Win32
+		{B528457E-7D65-4E21-A030-6D4335A84FC3}.Debug|x64.ActiveCfg = Debug|Win32
+		{B528457E-7D65-4E21-A030-6D4335A84FC3}.Debug|x64.Build.0 = Debug|Win32
+		{B528457E-7D65-4E21-A030-6D4335A84FC3}.Release_sign|Win32.ActiveCfg = Release_sign|Win32
+		{B528457E-7D65-4E21-A030-6D4335A84FC3}.Release_sign|Win32.Build.0 = Release_sign|Win32
+		{B528457E-7D65-4E21-A030-6D4335A84FC3}.Release_sign|x64.ActiveCfg = Release_sign|Win32
+		{B528457E-7D65-4E21-A030-6D4335A84FC3}.Release_sign|x64.Build.0 = Release_sign|Win32
+		{B528457E-7D65-4E21-A030-6D4335A84FC3}.Release|Win32.ActiveCfg = Release|Win32
+		{B528457E-7D65-4E21-A030-6D4335A84FC3}.Release|Win32.Build.0 = Release|Win32
+		{B528457E-7D65-4E21-A030-6D4335A84FC3}.Release|x64.ActiveCfg = Release|Win32
+		{B528457E-7D65-4E21-A030-6D4335A84FC3}.Release|x64.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
