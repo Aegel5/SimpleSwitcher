@@ -1,4 +1,7 @@
 # SimpleSwitcher
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/alexzh2/SimpleSwitcher)
+![GitHub all releases](https://img.shields.io/github/downloads/alexzh2/SimpleSwitcher/total?style=plastic)
+
 SimpleSwitcher - программа для быстрого переключения раскладки набранного текста в Windows.
 
 ## Features
