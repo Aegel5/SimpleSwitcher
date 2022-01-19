@@ -13,7 +13,12 @@ namespace Utils
 		int len = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, SW_ARRAY_SIZE(buf));
 		IFW_LOG(len != 0);
 
-		return buf;
+		std::wstring res = buf;
+
+		std::wstringstream stream;
+		stream << buf << " " << std::hex << TUInt32(hkl);
+
+		return stream.str();
 
 	}
 

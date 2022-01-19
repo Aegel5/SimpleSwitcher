@@ -62,7 +62,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			a1++;
 		}
 	}
-	wchar_t buff[100];
+	wchar_t buff[500];
 	 auto f = LR"(
 #define SW_VER_1    %d
 #define SW_VER_2    %d

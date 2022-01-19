@@ -15,7 +15,7 @@ msDelayAfterCtrlC = 25; -- possible range [10-210]
 ll = 3; -- 0 - no log, 1 - errors and basic info, 4 - max
 
 -- Custom lang revert
-CustomLang_List = "ru-RU, en-US";
+CustomLang_List = "en-US 4090409, ru-RU 4190419";
 CustomLang_RevertLastWorld = "";  -- Ex: Break
 CustomLang_RevertCycle = "";      -- Ex: Shift+Break
 
