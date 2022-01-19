@@ -16,7 +16,7 @@ namespace Utils
 		std::wstring res = buf;
 
 		std::wstringstream stream;
-		stream << buf << " " << std::hex << TUInt32(hkl);
+		stream << buf << " " << std::hex << TUInt64(hkl);
 
 		return stream.str();
 
