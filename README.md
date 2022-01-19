@@ -1,5 +1,5 @@
 # SimpleSwitcher
-SimpleSwitcher - программа для быстрого переключения раскладки текста в Windows.
+SimpleSwitcher - программа для быстрого переключения раскладки набранного текста в Windows.
 
 ## Features
 
