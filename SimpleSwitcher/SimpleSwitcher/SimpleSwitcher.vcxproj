@@ -286,7 +286,6 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\libtools\FileCrc.h" />
     <ClInclude Include="CaseAnalazer.h" />
     <ClInclude Include="CAutoProcMonitor.h" />
     <ClInclude Include="CMainWorker.h" />
@@ -354,6 +353,7 @@
     <Image Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="config.lua" />
     <None Include="version.rc2" />
   </ItemGroup>
   <ItemGroup>
