@@ -766,6 +766,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		}
 	};
 
+	bool needWaitLang = false;
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_SetLang) && ctxRevert.lay)
 	{
 		LOG_INFO_1(L"Try set 0x%x lay", ctxRevert.lay);
@@ -784,6 +785,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 			PostMessage(m_hwndTop, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
 		}
 
+		needWaitLang = true;
 	}
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT) && TestFlag(ctxRevert.flags, SW_CLIENT_BACKSPACE))
@@ -800,7 +802,26 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		}
 	}
 
+	if (needWaitLang) {
+		// Дождемся смены языка. Нет смысла переходить в асинхронный режим. Можем ждать прямо здесь.
+		auto start = GetTickCount64();
+		while (true)
+		{
+			DWORD pid;
+			auto threadId = GetWindowThreadProcessId(m_hwndTop, &pid);
+			auto curL = GetKeyboardLayout(m_dwIdThreadTopWnd);
+			if (m_layoutTopWnd != curL) {
+				break;
+			}
 
+			if ((GetTickCount64() - start) >= 200) {
+				LOG_WARN(L"wait timeout language change for proc", m_sTopProcName);
+				break;
+			}
+
+			Sleep(5);
+		}
+	}
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT))
 	{
