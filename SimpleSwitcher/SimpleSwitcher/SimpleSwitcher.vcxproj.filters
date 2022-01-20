@@ -105,6 +105,9 @@
     <ClInclude Include="Encrypter.h">
       <Filter>src-main</Filter>
     </ClInclude>
+    <ClInclude Include="noname.h">
+      <Filter>src-main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -178,6 +181,9 @@
     </ClCompile>
     <ClCompile Include="page_scancode.cpp">
       <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="noname.cpp">
+      <Filter>src-main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -297,6 +297,7 @@
     <ClInclude Include="InputSender.h" />
     <ClInclude Include="KeysStruct.h" />
     <ClInclude Include="LuaConfig.h" />
+    <ClInclude Include="noname.h" />
     <ClInclude Include="ProcDll.h" />
     <ClInclude Include="SimpleSwitcher.h" />
     <ClInclude Include="resource1.h" />
@@ -316,6 +317,7 @@
   <ItemGroup>
     <ClCompile Include="CMainWorker.cpp" />
     <ClCompile Include="extern\fmt\format.cc" />
+    <ClCompile Include="noname.cpp" />
     <ClCompile Include="pageabout.cpp" />
     <ClCompile Include="dlghotkey.cpp" />
     <ClCompile Include="Hooker.cpp" />
