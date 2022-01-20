@@ -1,1 +1,1 @@
-git clone https://github.com/wxWidgets/wxWidgets.git -b v3.1.5
+https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.5/wxWidgets-3.1.5.7z
