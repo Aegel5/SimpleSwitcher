@@ -11,3 +11,4 @@
 **/ipch/*
 **/.vs
 /.project
+/wxWidgets
