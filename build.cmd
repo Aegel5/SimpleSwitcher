@@ -1,1 +1,1 @@
-﻿
+﻿git clone https://github.com/wxWidgets/wxWidgets.git -b v3.1.5
