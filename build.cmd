@@ -1,4 +1,5 @@
 ﻿download last release wxWidgets and unpack to folder wxWidgets
+build release and debug with non shared runtime
 
 
 $(SolutionDir)$(Configuration)\verinc.exe "$(ProjectDir)\ver.h"
