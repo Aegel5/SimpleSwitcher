@@ -75,9 +75,6 @@
     <ClInclude Include="CaseAnalazer.h">
       <Filter>src-main</Filter>
     </ClInclude>
-    <ClInclude Include="LuaConfig.h">
-      <Filter>src-main</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>src-main</Filter>
     </ClInclude>
@@ -161,9 +158,6 @@
     <ClCompile Include="pagewordsep.cpp">
       <Filter>gui</Filter>
     </ClCompile>
-    <ClCompile Include="LuaConfig.cpp">
-      <Filter>src-main</Filter>
-    </ClCompile>
     <ClCompile Include="pageabout.cpp">
       <Filter>gui</Filter>
     </ClCompile>
@@ -194,7 +188,6 @@
     <None Include="version.rc2">
       <Filter>res</Filter>
     </None>
-    <None Include="config.lua" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="simpleswitcher.manifest" />

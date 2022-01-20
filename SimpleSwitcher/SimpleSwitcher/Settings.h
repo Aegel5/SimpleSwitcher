@@ -91,10 +91,11 @@ inline TStatus PostMsgSettingChanges()
 	RETURN_SUCCESS;
 }
 using TStrList = std::vector<std::wstring>;
+
 struct UserConf
 {
 	TStrList disableInProcess;
-	int ll = 0;
+	int ll = 3;
 	std::wstring s_hk_ChangeTextCase;
 	bool fUseAltMode = false;
 	TStrList altModePrg;

@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 
 #include "Settings.h"
-#include "LuaConfig.h"
+//#include "LuaConfig.h"
 #include "utils/parsecfg.h"
 
 
@@ -11,14 +11,14 @@
 
 
 
-TStatus LoadUserConf(UserConf& conf)
-{
-	IFS_RET(LuaLoadConf(conf));
-
-	RETURN_SUCCESS;
-
-
-}
+//TStatus LoadUserConf(UserConf& conf)
+//{
+//	IFS_RET(LuaLoadConf(conf));
+//
+//	RETURN_SUCCESS;
+//
+//
+//}
 
 
 void SettingsGui::ResetToDef()
@@ -193,7 +193,7 @@ TStatus SettingsGui::Load()
 
 	// Load user config
 	// -------------------------------------------
-	IFS_LOG(LoadUserConf(u_conf));
+	//IFS_LOG(LoadUserConf(u_conf));
 
 	// log level
 	if (fDbgMode && u_conf.ll != 0)

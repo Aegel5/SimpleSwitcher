@@ -58,18 +58,22 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\common.props" />
+    <Import Project="..\..\wxWidgets\wxwidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\common.props" />
+    <Import Project="..\..\wxWidgets\wxwidgets.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\common.props" />
+    <Import Project="..\..\wxWidgets\wxwidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\common.props" />
+    <Import Project="..\..\wxWidgets\wxwidgets.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -106,7 +110,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(ProjectDir)\..\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>Crypt32.lib;taskschd.lib;Version.lib;Imagehlp.lib;lualib.lib;Wtsapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Crypt32.lib;taskschd.lib;Version.lib;Imagehlp.lib;Wtsapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\lualib\$(Configuration)\</AdditionalLibraryDirectories>
@@ -130,7 +134,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(ProjectDir)\..\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>Crypt32.lib;taskschd.lib;Version.lib;Imagehlp.lib;lualib64.lib;Wtsapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Crypt32.lib;taskschd.lib;Version.lib;Imagehlp.lib;Wtsapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\lualib\$(Configuration)\</AdditionalLibraryDirectories>
     </Link>
     <ResourceCompile>
@@ -155,7 +159,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>$(ProjectDir)\..\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>Crypt32.lib;taskschd.lib;Version.lib;Imagehlp.lib;lualib.lib;Wtsapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Crypt32.lib;taskschd.lib;Version.lib;Imagehlp.lib;Wtsapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\lualib\$(Configuration)\</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -185,7 +189,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>$(ProjectDir)\..\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>Crypt32.lib;taskschd.lib;Version.lib;Imagehlp.lib;lualib64.lib;Wtsapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Crypt32.lib;taskschd.lib;Version.lib;Imagehlp.lib;Wtsapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\lualib\$(Configuration)\</AdditionalLibraryDirectories>
     </Link>
     <ResourceCompile>
@@ -203,7 +207,6 @@
     <ClInclude Include="HookerWorker.h" />
     <ClInclude Include="InputSender.h" />
     <ClInclude Include="KeysStruct.h" />
-    <ClInclude Include="LuaConfig.h" />
     <ClInclude Include="ProcDll.h" />
     <ClInclude Include="SimpleSwitcher.h" />
     <ClInclude Include="resource1.h" />
@@ -226,7 +229,6 @@
     <ClCompile Include="pageabout.cpp" />
     <ClCompile Include="dlghotkey.cpp" />
     <ClCompile Include="Hooker.cpp" />
-    <ClCompile Include="LuaConfig.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainmenu.cpp" />
     <ClCompile Include="msg_en.cpp" />
@@ -258,7 +260,6 @@
     <Image Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="config.lua" />
     <None Include="version.rc2" />
   </ItemGroup>
   <ItemGroup>
