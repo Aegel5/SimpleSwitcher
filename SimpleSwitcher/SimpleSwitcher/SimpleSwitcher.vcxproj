@@ -203,6 +203,7 @@
     <ClInclude Include="CClipWorker.h" />
     <ClInclude Include="consts.h" />
     <ClInclude Include="Encrypter.h" />
+    <ClInclude Include="gen_ui\noname.h" />
     <ClInclude Include="Hooker.h" />
     <ClInclude Include="HookerWorker.h" />
     <ClInclude Include="InputSender.h" />
@@ -226,6 +227,7 @@
   <ItemGroup>
     <ClCompile Include="CMainWorker.cpp" />
     <ClCompile Include="extern\fmt\format.cc" />
+    <ClCompile Include="gen_ui\noname.cpp" />
     <ClCompile Include="pageabout.cpp" />
     <ClCompile Include="dlghotkey.cpp" />
     <ClCompile Include="Hooker.cpp" />

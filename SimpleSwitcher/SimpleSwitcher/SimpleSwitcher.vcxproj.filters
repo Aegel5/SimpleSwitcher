@@ -25,6 +25,9 @@
     <Filter Include="extern\fmt">
       <UniqueIdentifier>{a657321d-fca9-4813-9978-95f6f7fb2d5d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gen_ui">
+      <UniqueIdentifier>{9c00d466-d285-4d0c-be1e-6e725cc8f529}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -102,6 +105,9 @@
     <ClInclude Include="Encrypter.h">
       <Filter>src-main</Filter>
     </ClInclude>
+    <ClInclude Include="gen_ui\noname.h">
+      <Filter>gen_ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -172,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="page_scancode.cpp">
       <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="gen_ui\noname.cpp">
+      <Filter>gen_ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

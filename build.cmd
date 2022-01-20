@@ -1,4 +1,4 @@
-﻿download last release wxwidgets
+﻿download last release wxWidgets and unpack to folder wxWidgets
 
 
 $(SolutionDir)$(Configuration)\verinc.exe "$(ProjectDir)\ver.h"
