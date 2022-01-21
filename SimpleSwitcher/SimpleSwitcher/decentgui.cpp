@@ -1,16 +1,16 @@
 #include "stdafx.h"
 
-// For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
+#include "decent_utils.h"
+
+#include "gen_ui/noname.h" 
+
+#include "Settings.h"
 
 
-// for all others, include the necessary headers (this file is usually all you
-// need because it includes almost all "standard" wxWidgets headers)
-#ifndef WX_PRECOMP
-#include "wx/wx.h"
-#endif
 
-#include "gen_ui/noname.h"
+SW_NAMESPACE(SwGui)
+extern bool ChangeHotKey2(HotKeyType type, HWND hwnd);
+SW_NAMESPACE_END
 
 class MyApp : public wxApp
 {
@@ -28,11 +28,42 @@ wxIMPLEMENT_APP(MyApp);
 
 class MainWnd : public MyFrame4
 {
+private:
+    void SetupToHotCtrl(wxTextCtrl* elem, HotKeyType type) {
+        elem->SetClientData((void*)type);
+        elem->SetEditable(false);
+        elem->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
+    }
+
+    void onHotKeyChange(wxMouseEvent& ev) {
+
+        auto obj = wxDynamicCast(ev.GetEventObject(), wxTextCtrl);
+        if (!obj)
+            return;
+        HotKeyType type = (HotKeyType)(TUInt32)obj->GetClientData();
+        if (SwGui::ChangeHotKey2(type, nullptr)) {
+            auto res = SettingsGlobal().GetHk(type).key.ToString();
+            obj->SetValue(res);
+        }
+
+    }
 public:
     // ctor(s)
     MainWnd():MyFrame4(nullptr) {
-
+        SetupToHotCtrl(m_textLastword, hk_RevertLastWord);
+        SetupToHotCtrl(m_textSeveralWords, hk_RevertCycle);
+        SetupToHotCtrl(m_textSelected, hk_RevertSel);
     }
+
+    void onExit(wxCommandEvent& event) override {
+        Close(true);
+    }
+
+    void onEnable(wxCommandEvent& event) override {
+        auto cur = m_checkBoxEnable->IsChecked();
+    }
+
+
 
 };
 

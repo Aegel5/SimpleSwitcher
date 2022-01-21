@@ -111,6 +111,12 @@
     <ClInclude Include="gen_ui\noname.h">
       <Filter>gen_ui</Filter>
     </ClInclude>
+    <ClInclude Include="decent_utils.h">
+      <Filter>decent_gui</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreWorker.h">
+      <Filter>src-main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

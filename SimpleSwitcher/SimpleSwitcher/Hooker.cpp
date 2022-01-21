@@ -592,9 +592,9 @@ TStatus Hooker::GetClipStringCallback()
 }
 TStatus Hooker::TimerProcWaitClip2()
 {
-	if (m_clipRequest == CLR_GET_FROM_CLIP)
+	if (m_clipRequest == CLRMY_GET_FROM_CLIP)
 	{
-		m_clipRequest = CLR_NONE;
+		m_clipRequest = CLRMY_NONE;
 
 		LOG_INFO_1(L"Actual get clip");
 
@@ -622,9 +622,9 @@ TStatus Hooker::ClipboardChangedInt()
 	bool isRecent = dwTime <= 500;
 
 	EClipRequest request = m_clipRequest;
-	m_clipRequest = CLR_NONE;
+	m_clipRequest = CLRMY_NONE;
 
-	if (request == CLR_NONE)
+	if (request == CLRMY_NONE)
 	{
 		LOG_INFO_1(L"Reqest not found");
 	}
@@ -649,7 +649,7 @@ TStatus Hooker::ClipboardChangedInt()
 			SettingsGlobal().fClipboardClearFormat,
 			GetClipboardSequenceNumber());
 
-		if (request == CLR_GET_FROM_CLIP)
+		if (request == CLRMY_GET_FROM_CLIP)
 		{
 			DWORD deltSec = GetClipboardSequenceNumber() - m_clipCounter;
 			LOG_INFO_1(L"delt=%u", deltSec);
@@ -660,7 +660,7 @@ TStatus Hooker::ClipboardChangedInt()
 			//bool fUncomplete = deltSec <= 7;
 			auto timeout = clipTimeoutDefault;// fUncomplete ? clipTimeoutSpecific : clipTimeoutDefault;
 			LOG_INFO_1(L"delay=%u", timeout);
-			m_clipRequest = CLR_GET_FROM_CLIP;
+			m_clipRequest = CLRMY_GET_FROM_CLIP;
 			auto timeId = SetTimer(gdata().hWndMonitor, c_timerWaitClip, timeout, NULL);
 			IFW_LOG(timeId != 0);
 
@@ -668,7 +668,7 @@ TStatus Hooker::ClipboardChangedInt()
 			RETURN_SUCCESS;
 		}
 
-		if (request == CLR_hk_COPY)
+		if (request == CLRMY_hk_COPY)
 		{
 			if (m_lastRevertRequest == hk_EmulCopyNoFormat)
 			{
@@ -903,7 +903,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	if (typeRevert == hk_EmulCopyNoFormat || typeRevert == hk_EmulCopyWithFormat)
 	{
 		//IFS_RET(SendUpForKey(m_curKey));
-		IFS_RET(SendCtrlC(CLR_hk_COPY));
+		IFS_RET(SendCtrlC(CLRMY_hk_COPY));
 		RETURN_SUCCESS;
 	}
 
@@ -998,7 +998,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	//}
 	if (typeRevert == hk_RevertSel)
 	{
-		IFS_RET(SendCtrlC(CLR_GET_FROM_CLIP));
+		IFS_RET(SendCtrlC(CLRMY_GET_FROM_CLIP));
 		RETURN_SUCCESS;
 	}
 

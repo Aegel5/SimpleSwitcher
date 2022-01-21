@@ -228,8 +228,8 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 namespace {
 	HookGlobalHandles* hh = nullptr;
 }
-TStatus resethook() {
-	hh->hHookKeyGlobal = WinApiInt::SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, 0, 0);
+TStatus resethook(HookGlobalHandles* hok) {
+	hok->hHookKeyGlobal = WinApiInt::SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, 0, 0);
 
 	//hh->hHookKeyGlobal_2.Cleanup();
 	//if (SettingsGlobal().fEnableKeyLoggerDefence) {
@@ -238,7 +238,7 @@ TStatus resethook() {
 	//	IFW_LOG(hh->hHookKeyGlobal_2.IsValid());
 	//}
 
-	IFW_RET(hh->hHookKeyGlobal.IsValid());
+	IFW_RET(hok->hHookKeyGlobal.IsValid());
 
 	RETURN_SUCCESS;
 }
@@ -248,7 +248,7 @@ TStatus HookGlobal(HookGlobalHandles& handles)
 	LOG_INFO_1(L"HookGlobal...");
 
 	hh = &handles;
-	IFS_RET(resethook());
+	IFS_RET(resethook(hh));
 
 #ifndef _DEBUG
 	handles.hHookMouseGlobal = WinApiInt::SetWindowsHookEx(WH_MOUSE_LL, LowLevelMouseProc, 0, 0);
@@ -302,6 +302,24 @@ TStatus StartMonitor(
 
 	RETURN_SUCCESS;
 }
+
+
+struct CoreHolders {
+
+	std::unique_ptr<HookGlobalHandles> hooks;
+
+	TStatus Init() {
+		hooks.reset(new HookGlobalHandles());
+		IFS_RET(HookGlobal(*hooks));
+		RETURN_SUCCESS;
+	}
+	TStatus Reset() {
+		IFS_RET(resethook(hooks.get()));
+		RETURN_SUCCESS;
+	}
+
+};
+
 
 
 

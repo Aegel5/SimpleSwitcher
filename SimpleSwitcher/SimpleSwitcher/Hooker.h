@@ -76,7 +76,7 @@ public:
 	{
 		LOG_INFO_1(L"RequestChangeCase");
 		tstring data;
-		RequestWaitClip(CLR_hk_INSERT);
+		RequestWaitClip(CLRMY_hk_INSERT);
 		m_caseAnalizer.GenerateNexCurKeys(data);
 		m_clipWorker.SetData(data);
 
@@ -88,7 +88,7 @@ public:
 
 
 
-	EClipRequest m_clipRequest = CLR_NONE;
+	EClipRequest m_clipRequest = CLRMY_NONE;
 	DWORD m_clipCounter = 0;
 
 	DWORD m_dwIdThreadForeground = -1;

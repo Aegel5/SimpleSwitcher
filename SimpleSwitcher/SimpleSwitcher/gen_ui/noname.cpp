@@ -14,6 +14,7 @@
 MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
 
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
@@ -56,8 +57,8 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_staticText3->Wrap( -1 );
 	bSizer5->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_textCtrl1 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer5->Add( m_textCtrl1, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	m_textLastword = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer5->Add( m_textLastword, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 
 	sbSizer2->Add( bSizer5, 0, wxEXPAND, 5 );
@@ -69,8 +70,8 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_staticText7->Wrap( -1 );
 	bSizer51->Add( m_staticText7, 0, wxALL, 5 );
 
-	m_textCtrl2 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Ctrl + F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer51->Add( m_textCtrl2, 1, wxALL|wxEXPAND, 5 );
+	m_textSeveralWords = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Ctrl + F24"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer51->Add( m_textSeveralWords, 1, wxALL|wxEXPAND, 5 );
 
 
 	sbSizer2->Add( bSizer51, 0, wxEXPAND, 5 );
@@ -82,8 +83,8 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_staticText31->Wrap( -1 );
 	bSizer52->Add( m_staticText31, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_textCtrl11 = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer52->Add( m_textCtrl11, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	m_textSelected = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer52->Add( m_textSelected, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 
 	sbSizer2->Add( bSizer52, 1, wxEXPAND, 5 );
@@ -107,7 +108,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	sbSizer3->Add( m_button3, 0, wxALL, 5 );
 
 
-	bSizer3->Add( sbSizer3, 0, wxALL|wxEXPAND, 5 );
+	bSizer3->Add( sbSizer3, 1, wxALL|wxEXPAND, 5 );
 
 
 	m_panelMain->SetSizer( bSizer3 );
@@ -140,7 +141,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_button1 = new wxButton( this, wxID_ANY, wxT("Exit"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer15->Add( m_button1, 0, wxALL, 5 );
 
-	m_button2 = new wxButton( this, wxID_ANY, wxT("Close"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button2 = new wxButton( this, wxID_ANY, wxT("To tray"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer15->Add( m_button2, 0, wxALL, 5 );
 
 
@@ -151,8 +152,16 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	this->Layout();
 
 	this->Centre( wxBOTH );
+
+	// Connect Events
+	m_checkBoxEnable->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnable ), NULL, this );
+	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onExit ), NULL, this );
 }
 
 MyFrame4::~MyFrame4()
 {
+	// Disconnect Events
+	m_checkBoxEnable->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnable ), NULL, this );
+	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onExit ), NULL, this );
+
 }

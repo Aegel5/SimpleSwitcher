@@ -47,11 +47,11 @@ class MyFrame4 : public wxFrame
 		wxStaticText* m_staticTextScheduler;
 		wxCheckBox* m_checkBoxWorkInAdmin;
 		wxStaticText* m_staticText3;
-		wxTextCtrl* m_textCtrl1;
+		wxTextCtrl* m_textLastword;
 		wxStaticText* m_staticText7;
-		wxTextCtrl* m_textCtrl2;
+		wxTextCtrl* m_textSeveralWords;
 		wxStaticText* m_staticText31;
-		wxTextCtrl* m_textCtrl11;
+		wxTextCtrl* m_textSelected;
 		wxChoice* m_choice1;
 		wxTextCtrl* m_textCtrl4;
 		wxButton* m_button3;
@@ -63,9 +63,14 @@ class MyFrame4 : public wxFrame
 		wxButton* m_button1;
 		wxButton* m_button2;
 
+		// Virtual event handlers, override them in your derived class
+		virtual void onEnable( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onExit( wxCommandEvent& event ) { event.Skip(); }
+
+
 	public:
 
-		MyFrame4( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("KasandraSwitcher"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 733,450 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MyFrame4( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("SimpleSwitcher"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 733,450 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~MyFrame4();
 

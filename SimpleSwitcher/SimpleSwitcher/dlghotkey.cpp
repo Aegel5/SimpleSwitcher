@@ -267,4 +267,29 @@ bool ChangeHotKey(HotKeyType type, int dlgId, HWND hwnd, bool fAltDisable)
 	return false;
 }
 
+bool ChangeHotKey2(HotKeyType type, HWND hwnd)
+{
+	DlgHotKeyData data;
+	data.keyRevert = SettingsGlobal().GetHk(type).key;
+	data.keyDefault = SettingsGlobal().GetHk(type).def;
+	data.keyDefault2 = SettingsGlobal().GetHk(type).def2;
+
+	data.fAltDisable = true;
+	DialogBoxParam(
+		gdata().hInst,
+		MAKEINTRESOURCE(IDD_DIALOG_HOTKEY),
+		g_dlgData.hwndMainMenu,
+		(DLGPROC)DlgProcHotKey,
+		(LPARAM)&data);
+	if (data.fOk)
+	{
+		SettingsGlobal().GetHk(type).key = data.keyRevert;
+		//KeyToDlg(data.keyRevert, dlgId, hwnd);
+		SettingsGlobal().SaveAndPostMsg();
+
+		return true;
+	}
+	return false;
+}
+
 SW_NAMESPACE_END

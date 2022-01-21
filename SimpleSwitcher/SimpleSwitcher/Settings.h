@@ -3,7 +3,7 @@
 #include "SimpleSwitcher.h"
 
 
-enum HotKeyType
+enum HotKeyType : TUInt32
 {
 	hk_RevertLastWord = 0,
 	hk_RevertCycle = 1,

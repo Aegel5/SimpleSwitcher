@@ -8,6 +8,7 @@ struct HotKeyHolders;
 class CMainWorker;
 
 
+
 struct CommonData
 {
 	HINSTANCE hInst;

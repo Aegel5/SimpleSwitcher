@@ -13,11 +13,11 @@ enum ClipMode
 
 enum EClipRequest
 {
-	CLR_NONE = 0,
+	CLRMY_NONE = 0,
 
-	CLR_GET_FROM_CLIP,
-	CLR_hk_COPY,
-	CLR_hk_INSERT,
+	CLRMY_GET_FROM_CLIP,
+	CLRMY_hk_COPY,
+	CLRMY_hk_INSERT,
 };
 
 struct TClipMessage
