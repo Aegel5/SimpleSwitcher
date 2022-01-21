@@ -20,7 +20,7 @@ struct HookGlobalHandles
 
 TStatus HookGlobal(HookGlobalHandles& handles);
 
-TStatus StartCycle(_In_ HINSTANCE hInstance,_In_ int nCmdShow)
+TStatus StartCycle(_In_ HINSTANCE hInstance)
 {
 	LOG_INFO_1(L"StartCycle...");
 
@@ -228,8 +228,8 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 namespace {
 	HookGlobalHandles* hh = nullptr;
 }
-TStatus resethook(HookGlobalHandles* hok) {
-	hok->hHookKeyGlobal = WinApiInt::SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, 0, 0);
+TStatus resethook() {
+	hh->hHookKeyGlobal = WinApiInt::SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, 0, 0);
 
 	//hh->hHookKeyGlobal_2.Cleanup();
 	//if (SettingsGlobal().fEnableKeyLoggerDefence) {
@@ -238,7 +238,7 @@ TStatus resethook(HookGlobalHandles* hok) {
 	//	IFW_LOG(hh->hHookKeyGlobal_2.IsValid());
 	//}
 
-	IFW_RET(hok->hHookKeyGlobal.IsValid());
+	IFW_RET(hh->hHookKeyGlobal.IsValid());
 
 	RETURN_SUCCESS;
 }
@@ -248,7 +248,7 @@ TStatus HookGlobal(HookGlobalHandles& handles)
 	LOG_INFO_1(L"HookGlobal...");
 
 	hh = &handles;
-	IFS_RET(resethook(hh));
+	IFS_RET(resethook());
 
 #ifndef _DEBUG
 	handles.hHookMouseGlobal = WinApiInt::SetWindowsHookEx(WH_MOUSE_LL, LowLevelMouseProc, 0, 0);
@@ -270,9 +270,6 @@ TStatus HookGlobal(HookGlobalHandles& handles)
 
 TStatus StartMonitor(
 	_In_ HINSTANCE hInstance,
-	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPTSTR    lpCmdLine,
-	_In_ int       nCmdShow,
 	TSWBit bit)
 {
 
@@ -281,9 +278,6 @@ TStatus StartMonitor(
 	IFW_LOG(SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS));
 
 	gdata().curModeBit = bit;
-
-	UNREFERENCED_PARAMETER(hPrevInstance);
-	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	if(bit == SW_BIT_32)
 	{
@@ -298,27 +292,27 @@ TStatus StartMonitor(
 	IFS_RET(mainWorker.Init());
 	gdata().mainWorker = &mainWorker;
 
-	IFS_RET(StartCycle(hInstance, nCmdShow));
+	IFS_RET(StartCycle(hInstance));
 
 	RETURN_SUCCESS;
 }
 
 
-struct CoreHolders {
-
-	std::unique_ptr<HookGlobalHandles> hooks;
-
-	TStatus Init() {
-		hooks.reset(new HookGlobalHandles());
-		IFS_RET(HookGlobal(*hooks));
-		RETURN_SUCCESS;
-	}
-	TStatus Reset() {
-		IFS_RET(resethook(hooks.get()));
-		RETURN_SUCCESS;
-	}
-
-};
+//struct CoreHolders {
+//
+//	std::unique_ptr<HookGlobalHandles> hooks;
+//
+//	TStatus Init() {
+//		hooks.reset(new HookGlobalHandles());
+//		IFS_RET(HookGlobal(*hooks));
+//		RETURN_SUCCESS;
+//	}
+//	TStatus Reset() {
+//		IFS_RET(resethook(hooks.get()));
+//		RETURN_SUCCESS;
+//	}
+//
+//};
 
 
 

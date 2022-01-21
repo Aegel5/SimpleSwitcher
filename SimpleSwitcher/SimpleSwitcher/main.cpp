@@ -46,11 +46,11 @@ TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 
 		if (cmd == c_sArgHook32)
 		{
-			IFS_RET(StartMonitor(hInstance, hPrevInstance, lpCmdLine, nCmdShow, SW_BIT_32));
+			IFS_RET(StartMonitor(hInstance, SW_BIT_32));
 		}
 		else if (cmd == c_sArgHook64)
 		{
-			IFS_RET(StartMonitor(hInstance, hPrevInstance, lpCmdLine, nCmdShow, SW_BIT_64));
+			IFS_RET(StartMonitor(hInstance, SW_BIT_64));
 		}
 		else if (cmd == c_sArgStarter)
 		{

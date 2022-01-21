@@ -6,6 +6,8 @@
 
 #include "Settings.h"
 
+#include "CoreWorker.h"
+
 
 
 SW_NAMESPACE(SwGui)
@@ -29,6 +31,8 @@ wxIMPLEMENT_APP(MyApp);
 class MainWnd : public MyFrame4
 {
 private:
+    CoreWorker coreWork;
+
     void SetupToHotCtrl(wxTextCtrl* elem, HotKeyType type) {
         elem->SetClientData((void*)type);
         elem->SetEditable(false);
@@ -47,13 +51,21 @@ private:
         }
 
     }
+    void updateEnable() {
+        m_checkBoxEnable->SetValue(coreWork.IsStarted());
+    }
 public:
     // ctor(s)
     MainWnd():MyFrame4(nullptr) {
         SetupToHotCtrl(m_textLastword, hk_RevertLastWord);
         SetupToHotCtrl(m_textSeveralWords, hk_RevertCycle);
         SetupToHotCtrl(m_textSelected, hk_RevertSel);
+
+        coreWork.Start();
+        updateEnable();
     }
+
+
 
     void onExit(wxCommandEvent& event) override {
         Close(true);
@@ -61,6 +73,13 @@ public:
 
     void onEnable(wxCommandEvent& event) override {
         auto cur = m_checkBoxEnable->IsChecked();
+        if (cur) {
+            coreWork.Start();
+        }
+        else {
+            coreWork.Stop();
+        }
+        updateEnable();
     }
 
 
@@ -69,6 +88,12 @@ public:
 
 bool MyApp::OnInit()
 {
+    if (Utils::ProcSingleton(c_mtxSingltonGui))
+    {
+        LOG_INFO_1(L"Gui already running.Exit");
+        RETURN_SUCCESS;
+    }
+
     // call the base class initialization method, currently it only parses a
     // few common command-line options but it could be do more in the future
     if (!wxApp::OnInit())

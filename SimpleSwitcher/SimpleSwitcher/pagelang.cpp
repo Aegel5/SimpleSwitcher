@@ -40,7 +40,7 @@ LRESULT CALLBACK DlgProcPageLang(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 		SendDlgItemMessage(hwnd, IDC_COMBO_LANG, CB_ADDSTRING, 0, (LPARAM)L"Russian");
 		SendDlgItemMessage(hwnd, IDC_COMBO_LANG, CB_ADDSTRING, 0, (LPARAM)L"English");
 
-		SendDlgItemMessage(hwnd, IDC_COMBO_LANG, CB_SETCURSEL, (WPARAM)SettingsGui::Global().idLang, (LPARAM)0);
+		SendDlgItemMessage(hwnd, IDC_COMBO_LANG, CB_SETCURSEL, (WPARAM)SettingsGlobal().idLang, (LPARAM)0);
 
 		SetDlgItemText(hwnd, IDC_CHECK_DBG_MODE, GetMessageById(AM_DBG_MODE));
 		SetDlgItemText(hwnd, IDC_STATIC_PATH, GetMessageById(AM_DBG_PATH_TO_PRG));
