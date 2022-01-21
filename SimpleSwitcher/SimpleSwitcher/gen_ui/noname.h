@@ -18,10 +18,13 @@
 #include <wx/stattext.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
-#include <wx/panel.h>
+#include <wx/textctrl.h>
+#include <wx/choice.h>
+#include <wx/button.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
+#include <wx/panel.h>
 #include <wx/notebook.h>
 #include <wx/frame.h>
 
@@ -43,13 +46,26 @@ class MyFrame4 : public wxFrame
 		wxStaticText* m_staticTextRegisr;
 		wxStaticText* m_staticTextScheduler;
 		wxCheckBox* m_checkBoxWorkInAdmin;
+		wxStaticText* m_staticText3;
+		wxTextCtrl* m_textCtrl1;
+		wxStaticText* m_staticText7;
+		wxTextCtrl* m_textCtrl2;
+		wxStaticText* m_staticText31;
+		wxTextCtrl* m_textCtrl11;
+		wxChoice* m_choice1;
+		wxTextCtrl* m_textCtrl4;
+		wxButton* m_button3;
 		wxPanel* m_panel14;
 		wxPanel* m_panel15;
+		wxPanel* m_panel5;
 		wxPanel* m_panel16;
+		wxPanel* m_panel6;
+		wxButton* m_button1;
+		wxButton* m_button2;
 
 	public:
 
-		MyFrame4( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("GardaSwitcher"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 700,433 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MyFrame4( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("KasandraSwitcher"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 733,450 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~MyFrame4();
 

@@ -226,6 +226,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CMainWorker.cpp" />
+    <ClCompile Include="decentgui.cpp" />
     <ClCompile Include="extern\fmt\format.cc" />
     <ClCompile Include="gen_ui\noname.cpp" />
     <ClCompile Include="pageabout.cpp" />

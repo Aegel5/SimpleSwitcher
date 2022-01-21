@@ -28,6 +28,9 @@
     <Filter Include="gen_ui">
       <UniqueIdentifier>{9c00d466-d285-4d0c-be1e-6e725cc8f529}</UniqueIdentifier>
     </Filter>
+    <Filter Include="decent_gui">
+      <UniqueIdentifier>{edd48a0b-47f2-40fc-86c1-7ec2fc42d225}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -181,6 +184,9 @@
     </ClCompile>
     <ClCompile Include="gen_ui\noname.cpp">
       <Filter>gen_ui</Filter>
+    </ClCompile>
+    <ClCompile Include="decentgui.cpp">
+      <Filter>decent_gui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

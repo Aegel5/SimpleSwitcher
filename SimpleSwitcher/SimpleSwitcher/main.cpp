@@ -114,25 +114,25 @@ TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 	RETURN_SUCCESS;
 }
 
-int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
-	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPTSTR    lpCmdLine,
-	_In_ int       nCmdShow)
-{
-
-
-	UNREFERENCED_PARAMETER(hPrevInstance);
-	UNREFERENCED_PARAMETER(lpCmdLine);
-
-
-	TStatus status;
-	status = MainInt(lpCmdLine, hInstance, hPrevInstance, nCmdShow);
-	IFS_LOG(status);
-	LOG_INFO_1(L"Exit process");
-
-	return status;
-	
-}
+//int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
+//	_In_opt_ HINSTANCE hPrevInstance,
+//	_In_ LPTSTR    lpCmdLine,
+//	_In_ int       nCmdShow)
+//{
+//
+//
+//	UNREFERENCED_PARAMETER(hPrevInstance);
+//	UNREFERENCED_PARAMETER(lpCmdLine);
+//
+//
+//	TStatus status;
+//	status = MainInt(lpCmdLine, hInstance, hPrevInstance, nCmdShow);
+//	IFS_LOG(status);
+//	LOG_INFO_1(L"Exit process");
+//
+//	return status;
+//	
+//}
 
 TStatus HandleAutostart(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine)
 {
