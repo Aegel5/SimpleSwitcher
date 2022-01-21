@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "resource.h"
-#include "SimpleSwitcher.h"
+#include "Dispatcher.h"
 #include "Settings.h"
 
 #include "gui/inc_all.h"

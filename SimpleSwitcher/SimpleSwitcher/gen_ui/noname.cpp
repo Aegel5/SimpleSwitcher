@@ -28,18 +28,15 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panelMain, wxID_ANY, wxT("Base") ), wxVERTICAL );
 
 	m_checkBoxEnable = new wxCheckBox( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Enable"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxEnable->SetValue(true);
 	sbSizer1->Add( m_checkBoxEnable, 0, wxALL, 5 );
 
 	m_checkAddToAutoStart = new wxCheckBox( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Add to autostart"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_checkAddToAutoStart, 0, wxALL, 5 );
 
-	m_staticTextRegisr = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, wxT("          Registry:"), wxPoint( -1,-1 ), wxDefaultSize, 0 );
-	m_staticTextRegisr->Wrap( -1 );
-	sbSizer1->Add( m_staticTextRegisr, 0, wxALL, 2 );
-
-	m_staticTextScheduler = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, wxT("          Scheduler:"), wxPoint( -1,-1 ), wxDefaultSize, 0 );
-	m_staticTextScheduler->Wrap( -1 );
-	sbSizer1->Add( m_staticTextScheduler, 0, wxALL, 2 );
+	m_staticTextExplain = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, wxT("          Registry: djkfjdkfjdkjf\n          Scheduler: fasfdasdf"), wxPoint( -1,-1 ), wxDefaultSize, 0 );
+	m_staticTextExplain->Wrap( -1 );
+	sbSizer1->Add( m_staticTextExplain, 0, wxALL, 2 );
 
 	m_checkBoxWorkInAdmin = new wxCheckBox( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Work in programs running by admin"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_checkBoxWorkInAdmin, 0, wxALL, 5 );
@@ -155,6 +152,8 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	// Connect Events
 	m_checkBoxEnable->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnable ), NULL, this );
+	m_checkAddToAutoStart->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAutocheck ), NULL, this );
+	m_checkBoxWorkInAdmin->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onWorkInAdminCheck ), NULL, this );
 	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onExit ), NULL, this );
 }
 
@@ -162,6 +161,8 @@ MyFrame4::~MyFrame4()
 {
 	// Disconnect Events
 	m_checkBoxEnable->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnable ), NULL, this );
+	m_checkAddToAutoStart->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAutocheck ), NULL, this );
+	m_checkBoxWorkInAdmin->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onWorkInAdminCheck ), NULL, this );
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onExit ), NULL, this );
 
 }

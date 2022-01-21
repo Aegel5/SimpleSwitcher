@@ -2,7 +2,7 @@
 
 #include "Hooker.h"
 #include "Settings.h"
-#include "SimpleSwitcher.h"
+#include "Dispatcher.h"
 #include "Encrypter.h"
 
 TKeyType Hooker::GetCurKeyType(CHotKey hotkey)
@@ -85,7 +85,7 @@ bool Hooker::GetTypeForKey(CHotKey curkey, HotKeyType& type, bool& isUp)
 {
 	for (int iPrior = 0; iPrior < 2; ++iPrior)
 	{
-		for (auto it : SettingsGlobal().hotkeysList)
+		for (auto it : settings_thread.hotkeysList)
 		{
 			auto& info = it.second;
 			auto hkId = it.first;
@@ -229,7 +229,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	}
 
 	// Чтобы не очищался буфер клавиш на нажатии наших хоткеев.
-	for (auto& it : SettingsGlobal().hotkeysList)
+	for (auto& it : settings_thread.hotkeysList)
 	{
 		auto& info = it.second;
 		auto hkId = it.first;
@@ -310,7 +310,7 @@ void Hooker::AddKeyToList(TKeyType type, CHotKey hotkey)
 	SwZeroMemory(key2);
 	key2.key() = hotkey;
 	key2.type = type;
-	if (hotkey.ValueKey() == VK_OEM_2 && SettingsGlobal().isTryOEM2) {
+	if (hotkey.ValueKey() == VK_OEM_2 && settings_thread.isTryOEM2) {
 		SetFlag(key2.keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT);
 	}
 
@@ -611,7 +611,7 @@ DWORD GetClipTimeout(std::wstring& procName)
 	if (procName == L"qip.exe")
 		return 90;
 
-	return SettingsGlobal().u_conf.msDelayAfterCtrlC;
+	return u_conf.msDelayAfterCtrlC;
 
 }
 TStatus Hooker::ClipboardChangedInt()
@@ -646,7 +646,7 @@ TStatus Hooker::ClipboardChangedInt()
 			L"dwTime=%u, request=%u, clear=%u, sec=%u",
 			dwTime,
 			request,
-			SettingsGlobal().fClipboardClearFormat,
+			settings_thread.fClipboardClearFormat,
 			GetClipboardSequenceNumber());
 
 		if (request == CLRMY_GET_FROM_CLIP)
@@ -655,7 +655,7 @@ TStatus Hooker::ClipboardChangedInt()
 			LOG_INFO_1(L"delt=%u", deltSec);
 
 			//auto clipTimeoutSpecific = GetClipTimeout(m_sTopProcName);
-			TUInt32 clipTimeoutDefault = (TUInt32)SettingsGlobal().u_conf.msDelayAfterCtrlC;
+			TUInt32 clipTimeoutDefault = (TUInt32)u_conf.msDelayAfterCtrlC;
 
 			//bool fUncomplete = deltSec <= 7;
 			auto timeout = clipTimeoutDefault;// fUncomplete ? clipTimeoutSpecific : clipTimeoutDefault;
@@ -692,7 +692,7 @@ TStatus Hooker::ClipboardChangedInt()
 
 	// --- This is user request ----
 
-	if (SettingsGlobal().fClipboardClearFormat)
+	if (settings_thread.fClipboardClearFormat)
 	{
 		IFS_LOG(RequestClearFormat());
 	}
@@ -774,7 +774,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		HKL lay = ctxRevert.lay;
 
 
-		if (fUseAltMode || SettingsGlobal().u_conf.fUseAltMode)
+		if (fUseAltMode || u_conf.fUseAltMode)
 		{
 			ClearState();
 			IFS_RET(SwitchLangByEmulate(lay));
@@ -915,7 +915,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		RETURN_SUCCESS;
 	}
 
-	if (SettingsGlobal().IsSkipProgram(m_sTopProcName))
+	if (u_conf.IsSkipProgram(m_sTopProcName))
 	{
 		LOG_INFO_1(L"Skip process %s because of disableInProcess", m_sTopProcName.c_str());
 		RETURN_SUCCESS;
@@ -950,7 +950,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
 	if (typeRevert == hk_CycleCustomLang)
 	{
-		auto [res, toSet] = getNextLang(SettingsGlobal().customLangList);
+		auto [res, toSet] = getNextLang(settings_thread.customLangList);
 		if (!res)
 			RETURN_SUCCESS;
 		data.flags = SW_CLIENT_SetLang;
@@ -971,11 +971,11 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	{
 		HKL hkl = 0;
 		if (typeRevert == hk_ChangeSetLayout_1)
-			hkl = SettingsGlobal().hkl_lay[SettingsGui::SW_HKL_1];
+			hkl = settings_thread.hkl_lay[SettingsGui::SW_HKL_1];
 		else if (typeRevert == hk_ChangeSetLayout_2)
-			hkl = SettingsGlobal().hkl_lay[SettingsGui::SW_HKL_2];
+			hkl = settings_thread.hkl_lay[SettingsGui::SW_HKL_2];
 		else if (typeRevert == hk_ChangeSetLayout_3)
-			hkl = SettingsGlobal().hkl_lay[SettingsGui::SW_HKL_3];
+			hkl = settings_thread.hkl_lay[SettingsGui::SW_HKL_3];
 
 		data.flags = SW_CLIENT_SetLang;
 		data.lay = (HKL)hkl;
@@ -1006,7 +1006,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
 	if (typeRevert == hk_RevertLastWord_CustomLang || typeRevert == hk_RevertCycle_CustomLang)
 	{
-		auto [res, toSet] = getNextLang(SettingsGlobal().revert_customLangList);
+		auto [res, toSet] = getNextLang(settings_thread.revert_customLangList);
 		if (!res)
 			RETURN_SUCCESS;
 		nextLng = toSet;

@@ -43,8 +43,7 @@ class MyFrame4 : public wxFrame
 		wxPanel* m_panelMain;
 		wxCheckBox* m_checkBoxEnable;
 		wxCheckBox* m_checkAddToAutoStart;
-		wxStaticText* m_staticTextRegisr;
-		wxStaticText* m_staticTextScheduler;
+		wxStaticText* m_staticTextExplain;
 		wxCheckBox* m_checkBoxWorkInAdmin;
 		wxStaticText* m_staticText3;
 		wxTextCtrl* m_textLastword;
@@ -65,6 +64,8 @@ class MyFrame4 : public wxFrame
 
 		// Virtual event handlers, override them in your derived class
 		virtual void onEnable( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onAutocheck( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onWorkInAdminCheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onExit( wxCommandEvent& event ) { event.Skip(); }
 
 

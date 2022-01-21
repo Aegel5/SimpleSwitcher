@@ -8,6 +8,8 @@
 
 #include "CoreWorker.h"
 
+#include "SwAutostart.h"
+
 
 
 SW_NAMESPACE(SwGui)
@@ -52,7 +54,73 @@ private:
 
     }
     void updateEnable() {
+        if (!startOk()) {
+            coreWork.Stop();
+        }
         m_checkBoxEnable->SetValue(coreWork.IsStarted());
+    }
+    void UpdateAutostartExplain()
+    {
+        Startup::CheckTaskSheduleParm parm;
+        parm.taskName = c_wszTaskName;
+        IFS_LOG(Startup::CheckTaskShedule(parm));
+
+        bool isHasEntry = false;
+        std::wstring value;
+        IFS_LOG(Startup::GetString_AutoStartUser(c_sRegRunValue, isHasEntry, value));
+
+        std::wstring registryRes = L"none";
+        std::wstring schedulRes = L"none";
+
+        if (isHasEntry)        {
+            registryRes = value;
+        }
+
+        if (parm.isTaskExists)        {
+            schedulRes = parm.pathValue;
+        }
+
+        std::wstring sLabel = fmt::format(L"         Registry: {}\r\n         Scheduler: {}", registryRes, schedulRes);
+
+        m_staticTextExplain->SetLabelText(sLabel);
+    }
+    void updateAutoStart() {
+
+        bool isUserAllOk = false;
+        bool isUserHasTask = false;
+        IFS_LOG(CheckRegRun(isUserAllOk, isUserHasTask));
+
+        bool isAdminAllOk = false;
+        bool isAdminHasTask = false;
+        IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
+
+        if (isUserHasTask)
+        {
+            if (!isUserAllOk || SettingsGlobal().isMonitorAdmin)
+            {
+                IFS_LOG(DelRegRun());
+                IFS_LOG(CheckRegRun(isUserAllOk, isUserHasTask));
+            }
+        }
+
+        if (isAdminHasTask && Utils::IsSelfElevated())
+        {
+            if (!isAdminAllOk || !SettingsGlobal().isMonitorAdmin)
+            {
+                IFS_LOG(DelSchedule());
+                IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
+            }
+        }
+
+        m_checkAddToAutoStart->SetValue(SettingsGlobal().isMonitorAdmin ? isAdminAllOk : isUserAllOk);
+        UpdateAutostartExplain();
+
+    }
+    void ShowNeedAdmin() {
+        wxMessageBox("Need admin rights");
+    }
+    bool startOk() {
+        return Utils::IsSelfElevated() || !SettingsGlobal().isMonitorAdmin;
     }
 public:
     // ctor(s)
@@ -61,38 +129,84 @@ public:
         SetupToHotCtrl(m_textSeveralWords, hk_RevertCycle);
         SetupToHotCtrl(m_textSelected, hk_RevertSel);
 
-        coreWork.Start();
+        if (startOk()) {
+            coreWork.Start();
+        }
         updateEnable();
+        updateAutoStart();
     }
-
 
 
     void onExit(wxCommandEvent& event) override {
         Close(true);
     }
 
+    void onWorkInAdminCheck(wxCommandEvent& event) override {
+        SettingsGlobal().isMonitorAdmin = m_checkBoxWorkInAdmin->GetValue();
+        SettingsGlobal().Save();
+        updateAutoStart();
+        updateEnable();
+    }
+    void onAutocheck(wxCommandEvent& event) override {
+        if (SettingsGlobal().isMonitorAdmin) {
+            if (Utils::IsSelfElevated())  {
+                if (m_checkAddToAutoStart->GetValue()) {
+                    IFS_LOG(SetSchedule());
+                }
+                else {
+                    IFS_LOG(DelSchedule());
+                }
+            }
+            else            {
+                ShowNeedAdmin();
+            }
+        }
+        else {
+            if (m_checkAddToAutoStart->GetValue()) {
+                SetRegRun();
+            }
+            else {
+                DelRegRun();
+            }
+        }
+        updateAutoStart();
+    }
+
     void onEnable(wxCommandEvent& event) override {
         auto cur = m_checkBoxEnable->IsChecked();
         if (cur) {
-            coreWork.Start();
+            if (startOk()) {
+                coreWork.Start();
+            }
+            else {
+                ShowNeedAdmin();
+            }
         }
         else {
             coreWork.Stop();
         }
         updateEnable();
     }
-
-
-
 };
+
+TStatus Init() {
+
+    IFS_RET(SettingsGlobal().Load());
+    RETURN_SUCCESS;
+}
 
 bool MyApp::OnInit()
 {
     if (Utils::ProcSingleton(c_mtxSingltonGui))
     {
         LOG_INFO_1(L"Gui already running.Exit");
-        RETURN_SUCCESS;
+        return false;
     }
+
+    auto res = Init();
+    IFS_LOG(res);
+    if (res != SW_ERR_SUCCESS)
+        return false;
 
     // call the base class initialization method, currently it only parses a
     // few common command-line options but it could be do more in the future

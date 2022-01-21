@@ -96,7 +96,7 @@ inline void AnalizeProblemByName(std::wstring& sPath, std::wstring& sProc, bool&
 	}
 	else
 	{
-		for (auto& name : SettingsGlobal().u_conf.altModePrg)
+		for (auto& name : u_conf.altModePrg)
 		{
 			if (sProc == name)
 			{

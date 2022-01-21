@@ -69,7 +69,7 @@
     <ClInclude Include="CAutoProcMonitor.h">
       <Filter>swtools</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleSwitcher.h">
+    <ClInclude Include="Dispatcher.h">
       <Filter>src-main</Filter>
     </ClInclude>
     <ClInclude Include="swlocal.h">
@@ -149,7 +149,7 @@
     <ClCompile Include="pagelay.cpp">
       <Filter>gui</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleSwitcher.cpp">
+    <ClCompile Include="Dispatcher.cpp">
       <Filter>src-main</Filter>
     </ClCompile>
     <ClCompile Include="swlocal.cpp">

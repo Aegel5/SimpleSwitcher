@@ -2,7 +2,7 @@
 
 #include "CMainWorker.h"
 #include "Hooker.h"
-#include "SimpleSwitcher.h"
+#include "Dispatcher.h"
 
 
 TStatus CMainWorker::WorkerInt()
@@ -63,7 +63,8 @@ TStatus CMainWorker::WorkerInt()
 		}
 		else if (mode == HWORKER_LoadSettings)
 		{
-			IFS_LOG(SettingsGlobal().Load());
+			// todo load not from file but from safe copy.
+			IFS_LOG(settings_thread.Load());
 			//IFS_LOG(ResetAllHotKey(*gdata().hotkeyHolders));
 		}
 		else

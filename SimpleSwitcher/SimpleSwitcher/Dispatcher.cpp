@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "SimpleSwitcher.h"
+#include "Dispatcher.h"
 #include "CMainWorker.h"
 #include "Settings.h"
 
@@ -273,20 +273,22 @@ TStatus StartMonitor(
 	TSWBit bit)
 {
 
+	IFS_RET(settings_thread.Load());
+
 	LOG_INFO_1(L"StartMonitor...");
 
 	IFW_LOG(SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS));
 
 	gdata().curModeBit = bit;
 
-	if(bit == SW_BIT_32)
-	{
-		if (Utils::ProcSingleton(c_mtxHook32))
-		{
-			LOG_INFO_1(L"hook32 already running. Exit");
-			RETURN_SUCCESS;
-		}
-	}
+	//if(bit == SW_BIT_32)
+	//{
+	//	if (Utils::ProcSingleton(c_mtxHook32))
+	//	{
+	//		LOG_INFO_1(L"hook32 already running. Exit");
+	//		RETURN_SUCCESS;
+	//	}
+	//}
 
 	CMainWorker mainWorker;
 	IFS_RET(mainWorker.Init());

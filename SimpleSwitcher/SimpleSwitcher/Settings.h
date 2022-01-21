@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "SimpleSwitcher.h"
+#include "Dispatcher.h"
 
 
 enum HotKeyType : TUInt32
@@ -100,6 +100,20 @@ struct UserConf
 	bool fUseAltMode = false;
 	TStrList altModePrg;
 	int msDelayAfterCtrlC = 25;
+
+	bool IsSkipProgram(std::wstring sExeName)
+	{
+		for (auto& sProc : disableInProcess)
+		{
+			if (sExeName == sProc)
+			{
+				return true;
+				LOG_INFO_1(L"Skip process %s because of disableInProcess", sProc.c_str());
+				RETURN_SUCCESS;
+			}
+		}
+		return false;
+	}
 };
 
 
@@ -189,26 +203,13 @@ public:
 		PostMsgSettingChanges();
 	}
 
-	bool IsSkipProgram(std::wstring sExeName)
-	{
-		for (auto& sProc : u_conf.disableInProcess)
-		{
-			if (sExeName == sProc)
-			{
-				return true;
-				LOG_INFO_1(L"Skip process %s because of disableInProcess", sProc.c_str());
-				RETURN_SUCCESS;
-			}
-		}
-		return false;
-	}
+
 
 	static SettingsGui& Global()
 	{
 		static SettingsGui settings;
 		return settings;
 	}
-	UserConf u_conf;
 private:
 
 	std::wstring GetPathIni()
@@ -222,6 +223,10 @@ private:
 	}
 	
 };
+
+inline UserConf u_conf;
+
+inline SettingsGui settings_thread;
 
 inline SettingsGui& SettingsGlobal() { return SettingsGui::Global(); }
 //inline LuaConfig& LuaGlobal() { return SettingsGlobal().luaCfg; }

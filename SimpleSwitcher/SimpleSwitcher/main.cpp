@@ -1,5 +1,5 @@
 ﻿#include "stdafx.h"
-#include "SimpleSwitcher.h"
+#include "Dispatcher.h"
 #include "Settings.h"
 #include "SwAutostart.h"
 #include "SwGui.h"

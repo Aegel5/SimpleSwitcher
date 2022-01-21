@@ -19,9 +19,6 @@ class Hooker
 {
 private:
 
-
-
-
 	typedef std::deque<TKeyHookInfo> TWordList;
 	typedef std::vector<CHotKey> TKeyToRevert;
 
