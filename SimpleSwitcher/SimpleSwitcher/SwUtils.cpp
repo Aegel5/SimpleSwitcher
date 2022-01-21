@@ -2,7 +2,7 @@
 #include <Shellapi.h>
 
 #include "SwUtils.h"
-#include "SimpleSwitcher.h"
+//#include "SimpleSwitcher.h"
 
 
 

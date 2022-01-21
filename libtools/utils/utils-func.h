@@ -13,13 +13,14 @@ namespace Utils
 		int len = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, SW_ARRAY_SIZE(buf));
 		IFW_LOG(len != 0);
 
-		std::wstring res = buf;
+		return buf;
+	}
 
+	inline std::wstring GetNameForHKL_Unique(HKL hkl)
+	{
 		std::wstringstream stream;
-		stream << buf << " " << std::hex << TUInt64(hkl);
-
+		stream << GetNameForHKL(hkl) << " " << std::hex << TUInt64(hkl);
 		return stream.str();
-
 	}
 
 	inline TStatus IsElevated(HANDLE hProc, bool& res)

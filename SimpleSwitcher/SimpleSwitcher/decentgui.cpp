@@ -13,7 +13,7 @@
 
 
 SW_NAMESPACE(SwGui)
-extern bool ChangeHotKey2(HotKeyType type, HWND hwnd);
+extern bool ChangeHotKey2(HotKeyType type, HWND hwnd); // todo
 SW_NAMESPACE_END
 
 class MyApp : public wxApp
@@ -75,14 +75,51 @@ private:
         if (isHasEntry)        {
             registryRes = value;
         }
-
         if (parm.isTaskExists)        {
             schedulRes = parm.pathValue;
         }
-
         std::wstring sLabel = fmt::format(L"         Registry: {}\r\n         Scheduler: {}", registryRes, schedulRes);
-
         m_staticTextExplain->SetLabelText(sLabel);
+    }
+    HKL lay_buf[50] = { 0 };
+    int lay_size = 0;
+    void FillCombo() {
+        m_choiceLayFilter->Clear();
+        lay_size = GetKeyboardLayoutList(SW_ARRAY_SIZE(lay_buf), lay_buf);
+        for (int i = 0; i < lay_size; i++) {
+            auto name = Utils::GetNameForHKL(lay_buf[i]);
+            m_choiceLayFilter->AppendString(name);
+        }
+    }
+    void onLayChoice(wxCommandEvent& event) override {
+        auto cur = event.GetSelection();
+        auto lay = lay_buf[cur];
+        for (auto& elem : SettingsGlobal().customLangList) {
+            if (elem == lay)
+                return;
+        }
+        SettingsGlobal().customLangList.push_back(lay);
+        updateLayFilter();
+        SettingsGlobal().SaveAndPostMsg();
+
+    }
+    void onClearFilter(wxCommandEvent& event) override {
+        SettingsGlobal().customLangList.clear();
+        updateLayFilter();
+        SettingsGlobal().SaveAndPostMsg();
+    }
+    void updateLayFilter() {
+        std::wstring res;
+        auto& lst = SettingsGlobal().customLangList;
+        for (size_t i = 0; i <lst.size(); ++i)
+        {
+            res += Utils::GetNameForHKL(lst[i]);
+            if (i != lst.size() - 1)
+            {
+                res += L", ";
+            }
+        }
+        m_textFilterLay->SetValue(res);
     }
     void updateAutoStart() {
 
@@ -134,6 +171,8 @@ public:
         }
         updateEnable();
         updateAutoStart();
+        FillCombo();
+        updateLayFilter();
     }
 
 
@@ -189,11 +228,11 @@ public:
     }
 };
 
-TStatus Init() {
-
-    IFS_RET(SettingsGlobal().Load());
-    RETURN_SUCCESS;
-}
+//TStatus Init() {
+//
+//    IFS_RET(SettingsGlobal().Load());
+//    RETURN_SUCCESS;
+//}
 
 bool MyApp::OnInit()
 {
@@ -203,10 +242,11 @@ bool MyApp::OnInit()
         return false;
     }
 
-    auto res = Init();
-    IFS_LOG(res);
-    if (res != SW_ERR_SUCCESS)
-        return false;
+    IFS_LOG(SettingsGlobal().Load());
+    //auto res = Init();
+    //IFS_LOG(res);
+    //if (res != SW_ERR_SUCCESS)
+    //    return false;
 
     // call the base class initialization method, currently it only parses a
     // few common command-line options but it could be do more in the future

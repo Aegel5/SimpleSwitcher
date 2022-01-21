@@ -51,13 +51,27 @@ class MyFrame4 : public wxFrame
 		wxTextCtrl* m_textSeveralWords;
 		wxStaticText* m_staticText31;
 		wxTextCtrl* m_textSelected;
-		wxChoice* m_choice1;
-		wxTextCtrl* m_textCtrl4;
+		wxChoice* m_choiceLayFilter;
+		wxTextCtrl* m_textFilterLay;
 		wxButton* m_button3;
 		wxPanel* m_panel14;
+		wxStaticText* m_staticText32;
+		wxTextCtrl* m_textLastword1;
+		wxChoice* m_choiceLayFilter1;
+		wxTextCtrl* m_textLastword11;
+		wxChoice* m_choiceLayFilter11;
+		wxTextCtrl* m_textLastword111;
+		wxChoice* m_choiceLayFilter12;
+		wxTextCtrl* m_textLastword112;
 		wxPanel* m_panel15;
 		wxPanel* m_panel5;
+		wxStaticText* m_staticText10;
+		wxCheckBox* m_checkBox5;
+		wxStaticText* m_staticText321;
+		wxTextCtrl* m_textLastword12;
 		wxPanel* m_panel16;
+		wxCheckBox* m_checkBox6;
+		wxCheckBox* m_checkBox7;
 		wxPanel* m_panel6;
 		wxButton* m_button1;
 		wxButton* m_button2;
@@ -66,6 +80,8 @@ class MyFrame4 : public wxFrame
 		virtual void onEnable( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onAutocheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onWorkInAdminCheck( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onLayChoice( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onClearFilter( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onExit( wxCommandEvent& event ) { event.Skip(); }
 
 
