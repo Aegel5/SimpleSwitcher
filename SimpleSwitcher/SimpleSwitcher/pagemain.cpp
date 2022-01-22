@@ -128,11 +128,11 @@ TStatus InitDialogPageMain(HWND hwnd)
 	UpdateAutoStart(hwnd);
 	UpdateAddToTray(hwnd);
 
-	if (SettingsGlobal().isEnabledSaved != SettingsGlobal().isEnabled)
-	{
-		PageMainHandleEnable();
-		UpdateEnabled(hwnd);
-	}
+	//if (SettingsGlobal().isEnabledSaved != SettingsGlobal().isEnabled)
+	//{
+	//	PageMainHandleEnable();
+	//	UpdateEnabled(hwnd);
+	//}
 
 	RETURN_SUCCESS;
 }

@@ -41,7 +41,7 @@ LRESULT CALLBACK DlgProcPageClip(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 		WORD dlgId = LOWORD(wParam);
 		if (dlgId == IDC_CHECK_CLIPCLEAR)
 		{
-			SettingsGlobal().fClipboardClearFormat = gui_tools::IsCheckBox(hwnd, IDC_CHECK_CLIPCLEAR);
+			//SettingsGlobal().fClipboardClearFormat = gui_tools::IsCheckBox(hwnd, IDC_CHECK_CLIPCLEAR);
 			SettingsGlobal().SaveAndPostMsg();
 			return TRUE;
 		}

@@ -338,10 +338,10 @@ void SettingsGui::Save()
 	AddBool(cont, L"monitorAdmin", isMonitorAdmin);
 	//AddBool(cont, L"addToTray", isAddToTray);  
 	AddBool(cont, L"OEM2", isTryOEM2);  
-	AddBool(cont, L"closeByEsc", fCloseByEsc);
+	//AddBool(cont, L"closeByEsc", fCloseByEsc);
 	AddBool(cont, L"fEnableKeyLoggerDefence", fEnableKeyLoggerDefence);
 	AddBool(cont, L"fDbgMode", fDbgMode); 
-	AddBool(cont, L"fClipboardClearFormat", fClipboardClearFormat); 
+	//AddBool(cont, L"fClipboardClearFormat", fClipboardClearFormat); 
 	//AddBool(cont, L"isDashSeparate", isDashSeparate); 
 	AddInt(cont, L"idLang", idLang);
 	//AddBool(cont, L"fHookDll", fHookDll);

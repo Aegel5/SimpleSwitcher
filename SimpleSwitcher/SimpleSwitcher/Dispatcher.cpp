@@ -54,11 +54,11 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 		}
 	}
 
-	if (WinApiInt::ChangeWindowMessageFilterEx)
-	{
-		IFW_LOG(WinApiInt::ChangeWindowMessageFilterEx(hWnd, c_MSG_Quit, MSGFLT_ALLOW, 0));
-		IFW_LOG(WinApiInt::ChangeWindowMessageFilterEx(hWnd, c_MSG_SettingsChanges, MSGFLT_ALLOW, 0));
-	}
+	//if (WinApiInt::ChangeWindowMessageFilterEx)
+	//{
+	//	IFW_LOG(WinApiInt::ChangeWindowMessageFilterEx(hWnd, c_MSG_Quit, MSGFLT_ALLOW, 0));
+	//	IFW_LOG(WinApiInt::ChangeWindowMessageFilterEx(hWnd, c_MSG_SettingsChanges, MSGFLT_ALLOW, 0));
+	//}
 
 	HookGlobalHandles hookHandles;
 	if (gdata().curModeBit == SW_BIT_32)

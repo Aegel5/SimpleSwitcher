@@ -29,7 +29,7 @@ TStatus ExitMainMenu(HWND hwnd = NULL)
 	//}
 
 	//PostQuitMessage(0);
-	//RETURN_SUCCESS;
+	RETURN_SUCCESS;
 }
 
 TStatus HandleExitGui(HWND hwnd)
@@ -468,6 +468,7 @@ TStatus APIENTRY StartGui(bool fShowWnd)
 		}
 		RETURN_SUCCESS;
 	}
+
 	if (Utils::ProcSingleton(c_mtxSingltonGui))
 	{
 		LOG_INFO_1(L"Gui already running.Exit");

@@ -1,14 +1,12 @@
 #include "stdafx.h"
-
 #include "decent_utils.h"
-
 #include "gen_ui/noname.h" 
-
 #include "Settings.h"
-
 #include "CoreWorker.h"
-
 #include "SwAutostart.h"
+#include "decent_tray.h"
+
+#include <wx/taskbar.h>
 
 
 
@@ -16,24 +14,47 @@ SW_NAMESPACE(SwGui)
 extern bool ChangeHotKey2(HotKeyType type, HWND hwnd); // todo
 SW_NAMESPACE_END
 
-class MyApp : public wxApp
+enum
 {
-public:
-    // override base class virtuals
-    // ----------------------------
+    // menu items
+    Minimal_Quit = wxID_EXIT,
 
-    // this one is called on application startup and is a good place for the app
-    // initialization (doing it here and not in the ctor allows to have an error
-    // return: if OnInit() returns false, the application terminates)
-    virtual bool OnInit() wxOVERRIDE;
+    // it is important for the id corresponding to the "About" command to have
+    // this standard value as otherwise it won't be handled properly under Mac
+    // (where it is special and put into the "Apple" menu)
+    Minimal_About = wxID_ABOUT,
+
+    Minimal_Show = wxID_HIGHEST + 1
+};
+//void onExit(wxCommandEvent& event) {
+//    return;
+//}
+class MyTray : public wxTaskBarIcon {
+public:
+    MyTray() {
+        //Connect(Minimal_Quit, wxMouseEventHandler(MyTray::onExit), NULL, this);
+
+    }
+
+    virtual wxMenu* CreatePopupMenu() override {
+        auto menu = new wxMenu();
+        menu->Append(Minimal_Show, "Show");
+        menu->Append(Minimal_Quit, "Exit");
+        return menu;
+    }
 };
 
-wxIMPLEMENT_APP(MyApp);
+
+
 
 class MainWnd : public MyFrame4
 {
 private:
+    //wxDECLARE_EVENT_TABLE();
     CoreWorker coreWork;
+    //DecentTray tray;
+    MyTray myTray;
+    wxIcon icon;
 
     void SetupToHotCtrl(wxTextCtrl* elem, HotKeyType type) {
         elem->SetClientData((void*)type);
@@ -159,6 +180,11 @@ private:
     bool startOk() {
         return Utils::IsSelfElevated() || !SettingsGlobal().isMonitorAdmin;
     }
+    //virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override
+    //{
+    //    // Pass the messages to the original WinAPI window procedure
+    //    return MyFrame4::MSWWindowProc(nMsg, wParam, lParam);
+    //}
 public:
     // ctor(s)
     MainWnd():MyFrame4(nullptr) {
@@ -173,8 +199,26 @@ public:
         updateAutoStart();
         FillCombo();
         updateLayFilter();
+
+        //tray.Init(this);
+        //tray.SetEnabled(true);
+        
+
+        icon = wxIcon("#136");
+        if (myTray.IsAvailable()) {
+            myTray.SetIcon(icon);
+            myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
+            myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
+        }
+        //Connect(EVT_TASKBAR_LEFT_DCLICK, wxMouseEventHandler(MainWnd::onExit), NULL, this);
     }
 
+    void onShow(wxCommandEvent& event) {
+        Show(true);
+    }
+    void onCloseToTray(wxCommandEvent& event)     { 
+        Hide();
+    }
 
     void onExit(wxCommandEvent& event) override {
         Close(true);
@@ -228,40 +272,23 @@ public:
     }
 };
 
+//wxBEGIN_EVENT_TABLE(MainWnd, MyFrame4)
+//EVT_MENU(Minimal_Show, MainWnd::onExit)
+//wxEND_EVENT_TABLE()
+
+
+
+void StartMainGui(bool show) {
+    MainWnd* frame = new MainWnd();
+
+    // and show it (the frames, unlike simple controls, are not shown when
+    // created initially)
+    frame->Show(show);
+}
+
 //TStatus Init() {
 //
 //    IFS_RET(SettingsGlobal().Load());
 //    RETURN_SUCCESS;
 //}
 
-bool MyApp::OnInit()
-{
-    if (Utils::ProcSingleton(c_mtxSingltonGui))
-    {
-        LOG_INFO_1(L"Gui already running.Exit");
-        return false;
-    }
-
-    IFS_LOG(SettingsGlobal().Load());
-    //auto res = Init();
-    //IFS_LOG(res);
-    //if (res != SW_ERR_SUCCESS)
-    //    return false;
-
-    // call the base class initialization method, currently it only parses a
-    // few common command-line options but it could be do more in the future
-    if (!wxApp::OnInit())
-        return false;
-
-    // create the main application window
-    MainWnd* frame = new MainWnd();
-
-    // and show it (the frames, unlike simple controls, are not shown when
-    // created initially)
-    frame->Show(true);
-
-    // success: wxApp::OnRun() will be called which will enter the main message
-    // loop and the application will run. If we returned false here, the
-    // application would exit immediately.
-    return true;
-}

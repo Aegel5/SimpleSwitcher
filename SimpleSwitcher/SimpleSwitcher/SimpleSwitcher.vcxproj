@@ -203,6 +203,7 @@
     <ClInclude Include="CClipWorker.h" />
     <ClInclude Include="consts.h" />
     <ClInclude Include="CoreWorker.h" />
+    <ClInclude Include="decent_tray.h" />
     <ClInclude Include="decent_utils.h" />
     <ClInclude Include="Encrypter.h" />
     <ClInclude Include="gen_ui\noname.h" />
@@ -228,7 +229,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CMainWorker.cpp" />
-    <ClCompile Include="decentgui.cpp" />
+    <ClCompile Include="decent_gui.cpp" />
+    <ClCompile Include="decent_app.cpp" />
     <ClCompile Include="extern\fmt\format.cc" />
     <ClCompile Include="gen_ui\noname.cpp" />
     <ClCompile Include="pageabout.cpp" />

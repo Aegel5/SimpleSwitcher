@@ -239,7 +239,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer24;
 	bSizer24 = new wxBoxSizer( wxVERTICAL );
 
-	m_checkBox6 = new wxCheckBox( m_panel16, wxID_ANY, wxT("Enable log"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox6 = new wxCheckBox( m_panel16, wxID_ANY, wxT("Enable debug log"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer24->Add( m_checkBox6, 0, wxALL, 5 );
 
 	m_checkBox7 = new wxCheckBox( m_panel16, wxID_ANY, wxT("Prevent other program to hook keyboard events"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -284,6 +284,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_choiceLayFilter11->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_choiceLayFilter12->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onExit ), NULL, this );
+	m_button2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onCloseToTray ), NULL, this );
 }
 
 MyFrame4::~MyFrame4()
@@ -298,5 +299,6 @@ MyFrame4::~MyFrame4()
 	m_choiceLayFilter11->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_choiceLayFilter12->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onExit ), NULL, this );
+	m_button2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onCloseToTray ), NULL, this );
 
 }

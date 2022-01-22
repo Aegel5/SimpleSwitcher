@@ -117,6 +117,9 @@
     <ClInclude Include="CoreWorker.h">
       <Filter>src-main</Filter>
     </ClInclude>
+    <ClInclude Include="decent_tray.h">
+      <Filter>decent_gui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -191,7 +194,10 @@
     <ClCompile Include="gen_ui\noname.cpp">
       <Filter>gen_ui</Filter>
     </ClCompile>
-    <ClCompile Include="decentgui.cpp">
+    <ClCompile Include="decent_gui.cpp">
+      <Filter>decent_gui</Filter>
+    </ClCompile>
+    <ClCompile Include="decent_app.cpp">
       <Filter>decent_gui</Filter>
     </ClCompile>
   </ItemGroup>

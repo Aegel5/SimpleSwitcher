@@ -83,6 +83,7 @@ class MyFrame4 : public wxFrame
 		virtual void onLayChoice( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onClearFilter( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onExit( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onCloseToTray( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:
