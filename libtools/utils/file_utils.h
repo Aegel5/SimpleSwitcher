@@ -10,7 +10,7 @@
 
 namespace FileUtils
 {
-	DWORD CalcCrcForFile(const TCHAR*sName)
+	inline DWORD CalcCrcForFile(const TCHAR*sName)
 	{
 		return 0;
 		//std::streamsize const  buffer_size = 1024;
