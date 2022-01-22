@@ -18,32 +18,32 @@ DialogData g_dlgData;
 
 TStatus ExitMainMenu(HWND hwnd = NULL)
 {
-	LOG_INFO_1(L"Request to exit gui");
-	if (SettingsGlobal().IsAddToTray())
-	{
-		if (SettingsGlobal().isEnabled)
-		{
-			IFS_LOG(gdata().procMonitor.Stop());
-		}
-		g_dlgData.trayIcon.SetEnabled(false);
-	}
+	//LOG_INFO_1(L"Request to exit gui");
+	//if (SettingsGlobal().IsAddToTray())
+	//{
+	//	if (SettingsGlobal().isEnabled)
+	//	{
+	//		IFS_LOG(gdata().procMonitor.Stop());
+	//	}
+	//	g_dlgData.trayIcon.SetEnabled(false);
+	//}
 
-	PostQuitMessage(0);
-	RETURN_SUCCESS;
+	//PostQuitMessage(0);
+	//RETURN_SUCCESS;
 }
 
 TStatus HandleExitGui(HWND hwnd)
 {
-	LOG_INFO_1(L"Request to close gui");
+	//LOG_INFO_1(L"Request to close gui");
 
-	if (SettingsGlobal().IsAddToTray())
-	{
-		ShowWindow(hwnd, SW_HIDE);
-	}
-	else
-	{
-		ExitMainMenu();
-	}
+	//if (SettingsGlobal().IsAddToTray())
+	//{
+	//	ShowWindow(hwnd, SW_HIDE);
+	//}
+	//else
+	//{
+	//	ExitMainMenu();
+	//}
 	RETURN_SUCCESS;
 }
 
@@ -395,11 +395,11 @@ TStatus StartCycleGui(int& retFromWnd, bool fShowWnd)
 			auto nVirtKey = msg.wParam;
 			if (nVirtKey == VK_ESCAPE)
 			{
-				if (SettingsGlobal().fCloseByEsc)
-				{
-					fdispatch = false;
-					HandleExitGui(hWnd);
-				}
+				//if (SettingsGlobal().fCloseByEsc)
+				//{
+				//	fdispatch = false;
+				//	HandleExitGui(hWnd);
+				//}
 			}
 		}
 		else if(msg.message == WM_INPUTLANGCHANGEREQUEST)

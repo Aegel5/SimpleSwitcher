@@ -183,7 +183,7 @@ void PageMainHandleEnable()
 
 	UpdateEnabled(hwnd);
 
-	SettingsGlobal().isEnabledSaved = SettingsGlobal().isEnabled;
+	//SettingsGlobal().isEnabledSaved = SettingsGlobal().isEnabled;
 	SettingsGlobal().Save();
 }
 
@@ -191,8 +191,8 @@ void PageMainHandleEnable()
 
 void UpdateAddToTray(HWND hwnd)
 {
-	gui_tools::SetCheckBox(hwnd, IDC_CHECK_ADDTOTRAY, SettingsGlobal().isAddToTray);
-	g_dlgData.trayIcon.SetEnabled(SettingsGlobal().IsAddToTray());
+	//gui_tools::SetCheckBox(hwnd, IDC_CHECK_ADDTOTRAY, SettingsGlobal().isAddToTray);
+	//g_dlgData.trayIcon.SetEnabled(SettingsGlobal().IsAddToTray());
 }
 void EnsureAutostart(bool needAdded)
 {
@@ -270,9 +270,9 @@ void HandleAdmin(HWND hwnd)
 
 void HandleAddToTray(HWND hwnd)
 {
-	SettingsGlobal().isAddToTray = gui_tools::IsCheckBox(hwnd, IDC_CHECK_ADDTOTRAY);
-	SettingsGlobal().Save();
-	UpdateAddToTray(hwnd);
+	//SettingsGlobal().isAddToTray = gui_tools::IsCheckBox(hwnd, IDC_CHECK_ADDTOTRAY);
+	//SettingsGlobal().Save();
+	//UpdateAddToTray(hwnd);
 }
 
 BOOL CALLBACK HandleWMCommand(WPARAM wParam, HWND hwnd)

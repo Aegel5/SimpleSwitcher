@@ -139,14 +139,14 @@ public:
 	// Saved data
 	// -------------------------
 
-	bool isEnabledSaved;
-	bool isMonitorAdmin;
-	bool isAddToTray;
-	bool isTryOEM2;
+	//bool isEnabledSaved;
+	bool isMonitorAdmin = false;
+	//bool isAddToTray;
+	bool isTryOEM2 = true;
 	//bool isDashSeparate;
-	bool fDbgMode;
-	bool fClipboardClearFormat;
-	bool fCloseByEsc;
+	bool fDbgMode = false;
+	//bool fClipboardClearFormat;
+	//bool fCloseByEsc;
 	bool fEnableKeyLoggerDefence = false;
 
 	//bool fHookDll;
@@ -189,7 +189,7 @@ public:
 	};
 
 	void ResetToDef();
-	bool IsAddToTray() { return isAddToTray; }
+	//bool IsAddToTray() { return isAddToTray; }
 
 	void GenerateListHK();
 

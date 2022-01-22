@@ -147,10 +147,10 @@ TStatus HandleAutostart(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpC
 
 	IFS_LOG(gdata().procMonitor.EnsureStarted(admin));
 
-	if (SettingsGlobal().IsAddToTray())
-	{
-		IFS_LOG(SwGui::StartGui(false));
-	}
+	//if (SettingsGlobal().IsAddToTray())
+	//{
+	//	IFS_LOG(SwGui::StartGui(false));
+	//}
 
 	RETURN_SUCCESS;
 }

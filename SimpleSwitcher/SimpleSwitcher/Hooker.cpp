@@ -642,12 +642,12 @@ TStatus Hooker::ClipboardChangedInt()
 			RETURN_SUCCESS;
 		}
 
-		LOG_INFO_1(
-			L"dwTime=%u, request=%u, clear=%u, sec=%u",
-			dwTime,
-			request,
-			settings_thread.fClipboardClearFormat,
-			GetClipboardSequenceNumber());
+		//LOG_INFO_1(
+		//	L"dwTime=%u, request=%u, clear=%u, sec=%u",
+		//	dwTime,
+		//	request,
+		//	settings_thread.fClipboardClearFormat,
+		//	GetClipboardSequenceNumber());
 
 		if (request == CLRMY_GET_FROM_CLIP)
 		{
@@ -692,10 +692,10 @@ TStatus Hooker::ClipboardChangedInt()
 
 	// --- This is user request ----
 
-	if (settings_thread.fClipboardClearFormat)
-	{
-		IFS_LOG(RequestClearFormat());
-	}
+	//if (settings_thread.fClipboardClearFormat)
+	//{
+	//	IFS_LOG(RequestClearFormat());
+	//}
 
 	RETURN_SUCCESS;
 }

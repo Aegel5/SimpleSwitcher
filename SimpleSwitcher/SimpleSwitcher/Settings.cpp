@@ -36,11 +36,7 @@ void SettingsGui::ResetToDef()
 		}
 	}
 
-	isEnabledSaved = true;
-	isMonitorAdmin = false;
-	isAddToTray = true;
-	isTryOEM2 = true;
-	fCloseByEsc = true;
+	//fCloseByEsc = true;
 	//isDashSeparate = true;
 
 	fDbgMode =
@@ -49,14 +45,9 @@ void SettingsGui::ResetToDef()
 #else
 		false;
 #endif
-	fClipboardClearFormat = false;
 	//fHookDll = false;
 
-	idLang = SLANG_UNKNOWN;
 
-	customLangList.clear();
-
-	SwZeroMemory(hkl_lay);
 }
 
 void SettingsGui::GenerateListHK()
@@ -229,18 +220,18 @@ TStatus SettingsGui::LoadAutoSettings()
 
 	// Load bools
 	// --------------------------------------------------------------
-#ifdef _DEBUG
-	ParseCfg::GetBool(tsmap, L"enable", isEnabledSaved);
-#endif
+//#ifdef _DEBUG
+//	ParseCfg::GetBool(tsmap, L"enable", isEnabledSaved);
+//#endif
 
 	ParseCfg::GetBool(tsmap, L"monitorAdmin", isMonitorAdmin);
-	ParseCfg::GetBool(tsmap, L"addToTray", isAddToTray);
+	//ParseCfg::GetBool(tsmap, L"addToTray", isAddToTray);
 	ParseCfg::GetBool(tsmap, L"OEM2", isTryOEM2);
-	ParseCfg::GetBool(tsmap, L"closeByEsc", fCloseByEsc);
+	//ParseCfg::GetBool(tsmap, L"closeByEsc", fCloseByEsc);
 	ParseCfg::GetBool(tsmap, L"fEnableKeyLoggerDefence", fEnableKeyLoggerDefence);
 	//ParseCfg::GetBool(tsmap, L"isDashSeparate", isDashSeparate);
 	ParseCfg::GetBool(tsmap, L"fDbgMode", fDbgMode);
-	ParseCfg::GetBool(tsmap, L"fClipboardClearFormat", fClipboardClearFormat);
+	//ParseCfg::GetBool(tsmap, L"fClipboardClearFormat", fClipboardClearFormat);
 
 	ParseCfg::GetInt(tsmap, L"idLang", idLang);
 
@@ -343,9 +334,9 @@ void SettingsGui::Save()
 {
 	std::wstring cont;
 
-	AddBool(cont, L"enable", isEnabledSaved);
+	//AddBool(cont, L"enable", isEnabledSaved);
 	AddBool(cont, L"monitorAdmin", isMonitorAdmin);
-	AddBool(cont, L"addToTray", isAddToTray);  
+	//AddBool(cont, L"addToTray", isAddToTray);  
 	AddBool(cont, L"OEM2", isTryOEM2);  
 	AddBool(cont, L"closeByEsc", fCloseByEsc);
 	AddBool(cont, L"fEnableKeyLoggerDefence", fEnableKeyLoggerDefence);
@@ -383,7 +374,7 @@ void SettingsGui::Save()
 		if(!info.fGui)
 			continue;
 
-		//if (!info.key.IsEmpty()) сохраняем все чтобы если указан 0, то он потом не сбрасывался на значение по умолчанию.
+		// if (info.key != info.def)  // todo сравнивать со структурой после resettodef
 		{
 			TChar sBuf[100];
 			swprintf_s(sBuf, L"0x%I64X -- %s", info.key.AsUInt64(), info.key.ToString().c_str());

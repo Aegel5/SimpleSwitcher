@@ -22,7 +22,7 @@ LRESULT CALLBACK DlgProcPageClip(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 	if (msg == WM_INITDIALOG)
 	{
 		SetDlgItemText(hwnd, IDC_CHECK_CLIPCLEAR, GetMessageById(AM_CHECK_CLIPCLEAR_NAME));
-		gui_tools::SetCheckBox(hwnd, IDC_CHECK_CLIPCLEAR, SettingsGlobal().fClipboardClearFormat);
+		//gui_tools::SetCheckBox(hwnd, IDC_CHECK_CLIPCLEAR, SettingsGlobal().fClipboardClearFormat);
 
 		KeyToDlg(hk_EmulCopyNoFormat, IDC_EDIT_BREAK, hwnd);
 		KeyToDlg(hk_EmulCopyWithFormat, IDC_EDIT_BREAK2, hwnd);
