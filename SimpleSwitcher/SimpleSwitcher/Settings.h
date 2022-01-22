@@ -114,6 +114,8 @@ struct UserConf
 		}
 		return false;
 	}
+
+	void Load();
 };
 
 

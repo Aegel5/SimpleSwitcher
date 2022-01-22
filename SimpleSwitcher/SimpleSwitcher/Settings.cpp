@@ -4,11 +4,20 @@
 //#include "LuaConfig.h"
 #include "utils/parsecfg.h"
 
+#include "extern/rapidjson/document.h"
 
 
 
+using namespace rapidjson;
 
-
+void UserConf::Load() {
+	const wchar_t* json = L"{\"project\":\"rapidjson\",\"stars\":10}";
+	GenericDocument<UTF16<>> doc;
+	using TVal = GenericValue<UTF16<>>;
+	doc.Parse(json);
+	TVal& s = doc[L"project"];
+	auto res = s.GetString();
+}
 
 
 //TStatus LoadUserConf(UserConf& conf)
