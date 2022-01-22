@@ -203,7 +203,6 @@
     <ClInclude Include="CClipWorker.h" />
     <ClInclude Include="consts.h" />
     <ClInclude Include="CoreWorker.h" />
-    <ClInclude Include="decent_tray.h" />
     <ClInclude Include="decent_utils.h" />
     <ClInclude Include="Encrypter.h" />
     <ClInclude Include="gen_ui\noname.h" />

@@ -4,7 +4,7 @@
 #include "Settings.h"
 #include "CoreWorker.h"
 #include "SwAutostart.h"
-#include "decent_tray.h"
+//#include "decent_tray.h"
 
 #include <wx/taskbar.h>
 
@@ -34,6 +34,9 @@ public:
     MyTray() {
         //Connect(Minimal_Quit, wxMouseEventHandler(MyTray::onExit), NULL, this);
 
+    }
+    ~MyTray() {
+        return;
     }
 
     virtual wxMenu* CreatePopupMenu() override {
@@ -210,7 +213,6 @@ public:
             myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
             myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
         }
-        //Connect(EVT_TASKBAR_LEFT_DCLICK, wxMouseEventHandler(MainWnd::onExit), NULL, this);
     }
 
     void onShow(wxCommandEvent& event) {

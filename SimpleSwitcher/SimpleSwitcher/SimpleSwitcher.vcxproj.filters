@@ -117,9 +117,6 @@
     <ClInclude Include="CoreWorker.h">
       <Filter>src-main</Filter>
     </ClInclude>
-    <ClInclude Include="decent_tray.h">
-      <Filter>decent_gui</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
