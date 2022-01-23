@@ -12,3 +12,4 @@
 **/.vs
 /.project
 **.bak
+/package_build
