@@ -11,4 +11,4 @@
 **/ipch/*
 **/.vs
 /.project
-/wxWidgets
+**.bak

@@ -11,9 +11,7 @@ file(GLOB_RECURSE TARGET_SOURCES  src/*.cpp src/*.cc)
 
 #file(GLOB_RECURSE TARGET_PRIVATE_HEADERS     src/*.hpp     src/*.h)
 
-
-
-add_subdirectory(extern/wxWidgets)
+add_subdirectory(../wxWidgets wxWidgets)
 add_executable (SimpleSwitcher WIN32 ${TARGET_SOURCES})
 target_link_libraries(SimpleSwitcher wx::net wx::core wx::base "Crypt32.lib")
 target_include_directories(SimpleSwitcher PRIVATE "../libtools")
