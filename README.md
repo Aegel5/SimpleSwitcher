@@ -17,11 +17,13 @@ SimpleSwitcher - программа для быстрого переключен
 ## Getting started
 
 **Рекомендуемый способ получения программы - это СБОРКА из исходного кода**
+- `git clone --recurse-submodules https://github.com/Aegel5/SimpleSwitcher.git`
+- `build`
 
 ## License
 
 `GPL-3.0 License`  
-Copyright © 2022 Alexsandr Zhigay
+Copyright © 2022 Aegel5
 
 ## Donate
 
