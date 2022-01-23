@@ -23,7 +23,7 @@ SimpleSwitcher - программа для быстрого переключен
 ## License
 
 `GPL-3.0 License`  
-Copyright © 2022 Alexsandr Zhigay
+Copyright © 2022 Aegel5
 
 ## Donate
 
