@@ -8,7 +8,7 @@ set(wxUSE_STC OFF)
 set(wxBUILD_SHARED OFF)
 set(wxBUILD_USE_STATIC_RUNTIME ON)
 
-file(GLOB_RECURSE TARGET_SOURCES  src/*.cpp src/*.cc)
+file(GLOB_RECURSE TARGET_SOURCES  src/*.cpp src/*.cc src/myres.rc)
 
 #file(GLOB_RECURSE TARGET_PRIVATE_HEADERS     src/*.hpp     src/*.h)
 
