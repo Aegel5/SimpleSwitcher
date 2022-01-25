@@ -8,7 +8,7 @@
 
 #include <wx/taskbar.h>
 
-extern bool ChangeHotKey(wxFrame* frame, HotKeyType type);
+extern bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key);
 
 enum
 {
@@ -67,7 +67,10 @@ private:
         if (!obj)
             return;
         HotKeyType type = (HotKeyType)(TUInt32)obj->GetClientData();
-        if (ChangeHotKey(this, type)) {
+        CHotKey newkey;
+        if (ChangeHotKey(this, type, newkey)) {
+            setsgui.hotkeysList[type].key = newkey;
+            setsgui.SaveAndPostMsg();
             auto res = setsgui.GetHk(type).key.ToString();
             obj->SetValue(res);
         }

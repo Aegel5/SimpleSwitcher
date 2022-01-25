@@ -33,7 +33,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 	wcex.hInstance = hInstance;
 	wcex.lpszClassName = c_sClassName;
 
-	IFW_RET(RegisterClassEx(&wcex) != 0);
+	IFW_LOG(RegisterClassEx(&wcex) != 0);
 
 	HWND hWnd = CreateWindow(
 		c_sClassName,
