@@ -21,6 +21,8 @@ set(wxUSE_MEDIA OFF)
 #set(wxUSE_GL OFF)
 #set(wxUSE_AUI OFF)
 
+#set(wxUSE_LIBJPEG OFF)
+
 
 file(GLOB_RECURSE TARGET_SOURCES  src/*.cpp src/*.cc src/myres.rc)
 
