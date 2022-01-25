@@ -1,6 +1,6 @@
 #include "stdafx.h"
 //#include "decent_utils.h"
-#include "gen_ui/noname.h" 
+#include "noname.h" 
 #include "Settings.h"
 #include "CoreWorker.h"
 #include "SwAutostart.h"

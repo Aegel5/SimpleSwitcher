@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Settings.h"
-#include "gen_ui/noname.h"
+#include "noname.h"
 
 namespace {
 
