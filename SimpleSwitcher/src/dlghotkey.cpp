@@ -91,11 +91,11 @@ void InitDialogHotKey(HWND hwnd, LPARAM lparam)
 	g_hkdata->hwndEditRevert = GetDlgItem(hwnd, IDC_EDIT_BREAK);
 
 	
-	if(g_hkdata->keyRevert == g_hkdata->keyDefault)
+	if(g_hkdata->keyRevert.CompareRaw(g_hkdata->keyDefault))
 	{
 		SetRadio(IDC_RADIO_DEFAULT, hwnd);
 	}
-	else if (g_hkdata->keyRevert == g_hkdata->keyDefault2)
+	else if (g_hkdata->keyRevert.CompareRaw(g_hkdata->keyDefault2))
 	{
 		SetRadio(IDC_RADIO_DEFAULT2, hwnd);
 	}

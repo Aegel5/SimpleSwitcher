@@ -5,6 +5,8 @@
 
 enum HotKeyType : TUInt32
 {
+    hk_NULL = 0xFFFFFF,
+
 	hk_RevertLastWord = 0,
 	hk_RevertCycle = 1,
 	hk_RevertSel = 2,
@@ -37,6 +39,8 @@ enum HotKeyType : TUInt32
 	hk_RevertCycle_CustomLang = 18,
 
 	hk_MAX,
+
+	
 
 	//hk_RevertFromClip,
 };
@@ -78,7 +82,7 @@ struct CHotKeySet
 	bool fUseDef = false;
 	//bool fGui = true;
 	//bool fDisabled = false;
-	TUInt32 hkId = -1;
+    HotKeyType hkId = hk_NULL;
 };
 
 inline TStatus PostMsgSettingChanges()

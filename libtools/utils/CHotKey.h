@@ -378,6 +378,9 @@ public:
 		COMPARE_IGNORE_HOLD = 0x2,
 		COMPARE_IGNORE_KEYUP = 0x4,
 	};
+	bool CompareRaw(CHotKey& other) {
+		return this->AsUInt64() == other.AsUInt64();
+	}
 	bool Compare(CHotKey& other, TCompareFlags flags = COMPARE_NORMAL)
 	{
 		if(size != other.size)
@@ -490,8 +493,8 @@ public:
 		return false;
 	}
 	CHotKey& Clear(){value = 0; return *this;}
-	bool operator== ( CHotKey& other) {return Compare(other);}
-	bool operator!= ( CHotKey& other) { return !(*this == other); }
+	//bool operator== ( CHotKey& other) {return Compare(other);}
+	//bool operator!= ( CHotKey& other) { return !(*this == other); }
 	static TKeyCode Normalize(TKeyCode key)
 	{
 		switch (key)

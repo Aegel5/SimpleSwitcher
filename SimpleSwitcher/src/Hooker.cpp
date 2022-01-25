@@ -158,7 +158,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	{
 		CHotKey hk_save = m_curKeyState;
 		m_curKeyState.Add(vkCode,  CHotKey::ADDKEY_ORDERED | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
-		if (m_curKeyState == hk_save)
+		if (m_curKeyState.Compare(hk_save))
 		{
 			if (m_curKeyState.IsHold()) // already hold
 			{

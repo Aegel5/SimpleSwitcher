@@ -324,6 +324,8 @@ void SettingsGui::Save()
 		}
 	}
 
+	SettingsGui defaults;
+
 	for (auto& it : hotkeysList)
 	{
 		auto hkId = it.first;
@@ -332,7 +334,7 @@ void SettingsGui::Save()
 		//if(!info.fGui)
 		//	continue;
 
-		if (info.key != info.def) // нет смысла сохранять def
+		if (!info.key.CompareRaw(defaults.hotkeysList[info.hkId].key)) // нет смысла сохранять def
 		{
 			TChar sBuf[100];
 			swprintf_s(sBuf, L"0x%I64X -- %s", info.key.AsUInt64(), info.key.ToString().c_str());
