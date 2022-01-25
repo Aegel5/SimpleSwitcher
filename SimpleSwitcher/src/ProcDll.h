@@ -34,7 +34,7 @@
 //}
 //TStatus ResetAllHotKey(HotKeyHolders& keys)
 //{
-//	for(auto& it : SettingsGlobal().hotkeysList)
+//	for(auto& it : setsgui.hotkeysList)
 //	{
 //		auto hkId = it.first;
 //		CHotKeySet& set = it.second;

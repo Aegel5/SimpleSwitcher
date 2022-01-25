@@ -33,7 +33,7 @@ void CustomLangListToStr(std::vector<HKL>& lst, std::wstring& str)
 
 void FillCombo(HWND hwnd, int id, int indexSettings)
 {
-	HKL saved = indexSettings >= 0 ? SettingsGlobal().hkl_lay[indexSettings] : NULL;
+	HKL saved = indexSettings >= 0 ? setsgui.hkl_lay[indexSettings] : NULL;
 	bool found = false;
 	for (int i = 0; i < g_laySize; i++)
 	{
@@ -55,7 +55,7 @@ void FillCombo(HWND hwnd, int id, int indexSettings)
 void CustomLangToGui(HWND hwnd)
 {
 	std::wstring LstName;
-	CustomLangListToStr(SettingsGlobal().customLangList, LstName);
+	CustomLangListToStr(setsgui.customLangList, LstName);
 	SetDlgItemText(hwnd, IDC_EDIT_K6, LstName.c_str());
 }
 void ComboChanged(HWND hwnd, int id)
@@ -66,14 +66,14 @@ void ComboChanged(HWND hwnd, int id)
 		if (id == IDC_COMBO_K5)
 		{
 			HKL hlk = g_laylist[curItemIndex];
-			auto pos = std::find(SettingsGlobal().customLangList.begin(), SettingsGlobal().customLangList.end(), hlk);
-			if (pos != SettingsGlobal().customLangList.end())
+			auto pos = std::find(setsgui.customLangList.begin(), setsgui.customLangList.end(), hlk);
+			if (pos != setsgui.customLangList.end())
 			{
-				//SettingsGlobal().customLangList.erase(pos);
+				//setsgui.customLangList.erase(pos);
 			}
 			else
 			{
-				SettingsGlobal().customLangList.push_back(hlk);
+				setsgui.customLangList.push_back(hlk);
 			}
 
 			CustomLangToGui(hwnd);
@@ -90,10 +90,10 @@ void ComboChanged(HWND hwnd, int id)
 			else
 				return;
 
-			SettingsGlobal().hkl_lay[index] = g_laylist[curItemIndex];
+			setsgui.hkl_lay[index] = g_laylist[curItemIndex];
 		}
 
-		SettingsGlobal().Save();
+		setsgui.Save();
 		PostMsgSettingChanges();
 	}
 }
@@ -173,9 +173,9 @@ LRESULT CALLBACK DlgProcPageLay(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 		}
 		else if (LOWORD(wParam) == IDC_BUTTON_K6)
 		{
-			SettingsGlobal().customLangList.clear();
+			setsgui.customLangList.clear();
 			CustomLangToGui(hwnd);
-			SettingsGlobal().SaveAndPostMsg();
+			setsgui.SaveAndPostMsg();
 			return TRUE;
 		}
 	}

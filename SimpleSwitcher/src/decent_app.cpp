@@ -26,7 +26,7 @@ bool MyApp::OnInit()
         return false;
     }
 
-    IFS_LOG(SettingsGlobal().Load());
+    IFS_LOG(setsgui.Load());
     u_conf.Load();
 
     COM::CAutoCOMInitialize autoCom;

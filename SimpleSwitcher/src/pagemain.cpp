@@ -17,14 +17,14 @@ void UpdateAutostartExplain(HWND hwnd);
 
 void UpdateAdmin(HWND hwnd)
 {
-	gui_tools::SetCheckBox(hwnd, IDC_CHECK_ADMIN, SettingsGlobal().isMonitorAdmin);
+	gui_tools::SetCheckBox(hwnd, IDC_CHECK_ADMIN, setsgui.isMonitorAdmin);
 }
 void UpdateEnabled(HWND hwnd)
 {
 	TSWCheckRunRes res = gdata().procMonitor.CheckRunning();
 	if(res.found)
 	{
-		if(SettingsGlobal().isMonitorAdmin != res.admin)
+		if(setsgui.isMonitorAdmin != res.admin)
 		{
 			if (res.admin == false)
 			{
@@ -34,10 +34,10 @@ void UpdateEnabled(HWND hwnd)
 		}
 	}
 
-	SettingsGlobal().isEnabled = res.found;
+	setsgui.isEnabled = res.found;
 
-	LOG_INFO_1(L"Set enabled=%u", SettingsGlobal().isEnabled);
-	gui_tools::SetCheckBox(hwnd, IDC_CHECK_ENABLE, SettingsGlobal().isEnabled);
+	LOG_INFO_1(L"Set enabled=%u", setsgui.isEnabled);
+	gui_tools::SetCheckBox(hwnd, IDC_CHECK_ENABLE, setsgui.isEnabled);
 }
 void UpdateAutoStart(HWND hwnd)
 {
@@ -52,7 +52,7 @@ void UpdateAutoStart(HWND hwnd)
 
 	if (isUserHasTask)
 	{
-		if (!isUserAllOk || SettingsGlobal().isMonitorAdmin)
+		if (!isUserAllOk || setsgui.isMonitorAdmin)
 		{
 			IFS_LOG(DelRegRun());
 			IFS_LOG(CheckRegRun(isUserAllOk, isUserHasTask));
@@ -61,16 +61,16 @@ void UpdateAutoStart(HWND hwnd)
 
 	if(isAdminHasTask && Utils::IsSelfElevated())
 	{
-		if (!isAdminAllOk || !SettingsGlobal().isMonitorAdmin)
+		if (!isAdminAllOk || !setsgui.isMonitorAdmin)
 		{
 			IFS_LOG(DelSchedule());
 			IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
 		}
 	}
 
-	SettingsGlobal().isAddToAutoStart = SettingsGlobal().isMonitorAdmin ? isAdminAllOk : (isAdminAllOk || isUserAllOk);
+	setsgui.isAddToAutoStart = setsgui.isMonitorAdmin ? isAdminAllOk : (isAdminAllOk || isUserAllOk);
 
-	gui_tools::SetCheckBox(hwnd, IDC_CHECK_AUTOSTART, SettingsGlobal().isAddToAutoStart);
+	gui_tools::SetCheckBox(hwnd, IDC_CHECK_AUTOSTART, setsgui.isAddToAutoStart);
 
 	UpdateAutostartExplain(hwnd);
 }
@@ -118,7 +118,7 @@ TStatus InitDialogPageMain(HWND hwnd)
 
 	if (!IsWindowsVistaOrGreater())
 	{
-		SettingsGlobal().isMonitorAdmin = false;
+		setsgui.isMonitorAdmin = false;
 		EnableWindow(GetDlgItem(hwnd, IDC_CHECK_ADMIN), FALSE);
 
 	}
@@ -128,7 +128,7 @@ TStatus InitDialogPageMain(HWND hwnd)
 	UpdateAutoStart(hwnd);
 	UpdateAddToTray(hwnd);
 
-	//if (SettingsGlobal().isEnabledSaved != SettingsGlobal().isEnabled)
+	//if (setsgui.isEnabledSaved != setsgui.isEnabled)
 	//{
 	//	PageMainHandleEnable();
 	//	UpdateEnabled(hwnd);
@@ -170,29 +170,29 @@ TStatus AutoAdminOff()
 void PageMainHandleEnable()
 {
 	HWND hwnd = g_dlgData.hwndPageMain;
-	if (SettingsGlobal().isEnabled)
+	if (setsgui.isEnabled)
 	{
 		IFS_LOG(gdata().procMonitor.Stop());
 	}
 	else
 	{
 		IFS_LOG(gdata().procMonitor.EnsureStarted(
-			SettingsGlobal().isMonitorAdmin ? SW_ADMIN_ON : SW_ADMIN_SELF
+			setsgui.isMonitorAdmin ? SW_ADMIN_ON : SW_ADMIN_SELF
 		));
 	}
 
 	UpdateEnabled(hwnd);
 
-	//SettingsGlobal().isEnabledSaved = SettingsGlobal().isEnabled;
-	SettingsGlobal().Save();
+	//setsgui.isEnabledSaved = setsgui.isEnabled;
+	setsgui.Save();
 }
 
 
 
 void UpdateAddToTray(HWND hwnd)
 {
-	//gui_tools::SetCheckBox(hwnd, IDC_CHECK_ADDTOTRAY, SettingsGlobal().isAddToTray);
-	//g_dlgData.trayIcon.SetEnabled(SettingsGlobal().IsAddToTray());
+	//gui_tools::SetCheckBox(hwnd, IDC_CHECK_ADDTOTRAY, setsgui.isAddToTray);
+	//g_dlgData.trayIcon.SetEnabled(setsgui.IsAddToTray());
 }
 void EnsureAutostart(bool needAdded)
 {
@@ -204,8 +204,8 @@ void EnsureAutostart(bool needAdded)
 	bool isUserEntry = false;
 	IFS_LOG(CheckRegRun(isUser, isUserEntry));
 
-	bool needAdmin = needAdded && SettingsGlobal().isMonitorAdmin;
-	bool needUser = needAdded && !SettingsGlobal().isMonitorAdmin;
+	bool needAdmin = needAdded && setsgui.isMonitorAdmin;
+	bool needUser = needAdded && !setsgui.isMonitorAdmin;
 
 	if (needAdmin)
 	{
@@ -241,24 +241,24 @@ void EnsureAutostart(bool needAdded)
 }
 void HandleAutostart(HWND hwnd)
 {
-	EnsureAutostart(!SettingsGlobal().isAddToAutoStart);
+	EnsureAutostart(!setsgui.isAddToAutoStart);
 	UpdateAutoStart(hwnd);
 }
 
 void HandleAdmin(HWND hwnd)
 {
-	SettingsGlobal().isMonitorAdmin = gui_tools::IsCheckBox(hwnd, IDC_CHECK_ADMIN);
-	SettingsGlobal().Save();
+	setsgui.isMonitorAdmin = gui_tools::IsCheckBox(hwnd, IDC_CHECK_ADMIN);
+	setsgui.Save();
 
-	if (SettingsGlobal().isAddToAutoStart)
+	if (setsgui.isAddToAutoStart)
 	{
 		EnsureAutostart(true);
 	}
 
-	if (SettingsGlobal().isEnabled)
+	if (setsgui.isEnabled)
 	{
 		IFS_LOG(gdata().procMonitor.EnsureStarted(
-			SettingsGlobal().isMonitorAdmin ? SW_ADMIN_ON : SW_ADMIN_SELF
+			setsgui.isMonitorAdmin ? SW_ADMIN_ON : SW_ADMIN_SELF
 			));
 	}
 
@@ -270,8 +270,8 @@ void HandleAdmin(HWND hwnd)
 
 void HandleAddToTray(HWND hwnd)
 {
-	//SettingsGlobal().isAddToTray = gui_tools::IsCheckBox(hwnd, IDC_CHECK_ADDTOTRAY);
-	//SettingsGlobal().Save();
+	//setsgui.isAddToTray = gui_tools::IsCheckBox(hwnd, IDC_CHECK_ADDTOTRAY);
+	//setsgui.Save();
 	//UpdateAddToTray(hwnd);
 }
 

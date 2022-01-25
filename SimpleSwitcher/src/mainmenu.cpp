@@ -19,9 +19,9 @@ DialogData g_dlgData;
 TStatus ExitMainMenu(HWND hwnd = NULL)
 {
 	//LOG_INFO_1(L"Request to exit gui");
-	//if (SettingsGlobal().IsAddToTray())
+	//if (setsgui.IsAddToTray())
 	//{
-	//	if (SettingsGlobal().isEnabled)
+	//	if (setsgui.isEnabled)
 	//	{
 	//		IFS_LOG(gdata().procMonitor.Stop());
 	//	}
@@ -36,7 +36,7 @@ TStatus HandleExitGui(HWND hwnd)
 {
 	//LOG_INFO_1(L"Request to close gui");
 
-	//if (SettingsGlobal().IsAddToTray())
+	//if (setsgui.IsAddToTray())
 	//{
 	//	ShowWindow(hwnd, SW_HIDE);
 	//}
@@ -69,7 +69,7 @@ void ShowPopupMenu()
 
 	MENUITEMINFO inf = { 0 };
 	inf.cbSize = sizeof(inf);
-	inf.fState = SettingsGlobal().isEnabled ? MF_CHECKED : MFS_UNCHECKED;
+	inf.fState = setsgui.isEnabled ? MF_CHECKED : MFS_UNCHECKED;
 	inf.fMask = MIIM_STATE;
 	IFW_LOG(SetMenuItemInfo(hPopupMenu, ID_TRAYITEM_ENABLE, false, &inf));
 
@@ -221,7 +221,7 @@ TStatus HandleOpenConfigLua(HWND hwnd)
 
 TStatus HandleReloadConfigLua(HWND hwnd)
 {
-	IFS_LOG(SettingsGlobal().Load());
+	IFS_LOG(setsgui.Load());
 	PostMsgSettingChanges();
 
 	RETURN_SUCCESS;
@@ -395,7 +395,7 @@ TStatus StartCycleGui(int& retFromWnd, bool fShowWnd)
 			auto nVirtKey = msg.wParam;
 			if (nVirtKey == VK_ESCAPE)
 			{
-				//if (SettingsGlobal().fCloseByEsc)
+				//if (setsgui.fCloseByEsc)
 				//{
 				//	fdispatch = false;
 				//	HandleExitGui(hWnd);
@@ -440,16 +440,16 @@ SwLang FindWindowsLang()
 }
 void InitLang()
 {
-	if (SettingsGlobal().idLang == SLANG_UNKNOWN)
+	if (setsgui.idLang == SLANG_UNKNOWN)
 	{
 		// Пока английский не готов, русский всегда по умолчанию.
-		SettingsGlobal().idLang = SLANG_RUS;
-		//SettingsGlobal().idLang = FindWindowsLang();
+		setsgui.idLang = SLANG_RUS;
+		//setsgui.idLang = FindWindowsLang();
 
-		SettingsGlobal().Save();
+		setsgui.Save();
 	}
 
-	InitializeLang(SettingsGlobal().idLang);
+	InitializeLang(setsgui.idLang);
 }
 
 TStatus APIENTRY StartGui(bool fShowWnd)

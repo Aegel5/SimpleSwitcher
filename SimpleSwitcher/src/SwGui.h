@@ -70,7 +70,7 @@ namespace SwGui
 	inline void KeyToDlg(HotKeyType type, int dlgId, HWND hwnd)
 	{
 		std::wstring sKeyRevert;
-		CHotKey key = SettingsGlobal().GetHk(type).key;
+		CHotKey key = setsgui.GetHk(type).key;
 		key.ToString(sKeyRevert);
 		SetDlgItemText(hwnd, dlgId, sKeyRevert.c_str());
 	}

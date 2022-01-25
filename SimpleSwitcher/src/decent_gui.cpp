@@ -72,7 +72,7 @@ private:
             return;
         HotKeyType type = (HotKeyType)(TUInt32)obj->GetClientData();
         if (SwGui::ChangeHotKey2(type, nullptr)) {
-            auto res = SettingsGlobal().GetHk(type).key.ToString();
+            auto res = setsgui.GetHk(type).key.ToString();
             obj->SetValue(res);
         }
 
@@ -118,23 +118,23 @@ private:
     void onLayChoice(wxCommandEvent& event) override {
         auto cur = event.GetSelection();
         auto lay = lay_buf[cur];
-        for (auto& elem : SettingsGlobal().customLangList) {
+        for (auto& elem : setsgui.customLangList) {
             if (elem == lay)
                 return;
         }
-        SettingsGlobal().customLangList.push_back(lay);
+        setsgui.customLangList.push_back(lay);
         updateLayFilter();
-        SettingsGlobal().SaveAndPostMsg();
+        setsgui.SaveAndPostMsg();
 
     }
     void onClearFilter(wxCommandEvent& event) override {
-        SettingsGlobal().customLangList.clear();
+        setsgui.customLangList.clear();
         updateLayFilter();
-        SettingsGlobal().SaveAndPostMsg();
+        setsgui.SaveAndPostMsg();
     }
     void updateLayFilter() {
         std::wstring res;
-        auto& lst = SettingsGlobal().customLangList;
+        auto& lst = setsgui.customLangList;
         for (size_t i = 0; i <lst.size(); ++i)
         {
             res += Utils::GetNameForHKL(lst[i]);
@@ -157,7 +157,7 @@ private:
 
         if (isUserHasTask)
         {
-            if (!isUserAllOk || SettingsGlobal().isMonitorAdmin)
+            if (!isUserAllOk || setsgui.isMonitorAdmin)
             {
                 IFS_LOG(DelRegRun());
                 IFS_LOG(CheckRegRun(isUserAllOk, isUserHasTask));
@@ -166,14 +166,14 @@ private:
 
         if (isAdminHasTask && Utils::IsSelfElevated())
         {
-            if (!isAdminAllOk || !SettingsGlobal().isMonitorAdmin)
+            if (!isAdminAllOk || !setsgui.isMonitorAdmin)
             {
                 IFS_LOG(DelSchedule());
                 IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
             }
         }
 
-        m_checkAddToAutoStart->SetValue(SettingsGlobal().isMonitorAdmin ? isAdminAllOk : isUserAllOk);
+        m_checkAddToAutoStart->SetValue(setsgui.isMonitorAdmin ? isAdminAllOk : isUserAllOk);
         UpdateAutostartExplain();
 
     }
@@ -181,7 +181,7 @@ private:
         wxMessageBox("Need admin rights");
     }
     bool startOk() {
-        return Utils::IsSelfElevated() || !SettingsGlobal().isMonitorAdmin;
+        return Utils::IsSelfElevated() || !setsgui.isMonitorAdmin;
     }
     //virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override
     //{
@@ -207,14 +207,18 @@ public:
         //tray.SetEnabled(true);
         
 
-        icon = wxIcon("#136");
+        icon = wxIcon("appicon");
+        SetIcon(icon);
         if (myTray.IsAvailable()) {
             myTray.SetIcon(icon);
-            myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
+            myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit); 
             myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
+            myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
         }
     }
-
+    void onShow2(wxTaskBarIconEvent& event) {
+        Show(true);
+    }
     void onShow(wxCommandEvent& event) {
         Show(true);
     }
@@ -227,13 +231,13 @@ public:
     }
 
     void onWorkInAdminCheck(wxCommandEvent& event) override {
-        SettingsGlobal().isMonitorAdmin = m_checkBoxWorkInAdmin->GetValue();
-        SettingsGlobal().Save();
+        setsgui.isMonitorAdmin = m_checkBoxWorkInAdmin->GetValue();
+        setsgui.Save();
         updateAutoStart();
         updateEnable();
     }
     void onAutocheck(wxCommandEvent& event) override {
-        if (SettingsGlobal().isMonitorAdmin) {
+        if (setsgui.isMonitorAdmin) {
             if (Utils::IsSelfElevated())  {
                 if (m_checkAddToAutoStart->GetValue()) {
                     IFS_LOG(SetSchedule());
@@ -290,7 +294,7 @@ void StartMainGui(bool show) {
 
 //TStatus Init() {
 //
-//    IFS_RET(SettingsGlobal().Load());
+//    IFS_RET(setsgui.Load());
 //    RETURN_SUCCESS;
 //}
 

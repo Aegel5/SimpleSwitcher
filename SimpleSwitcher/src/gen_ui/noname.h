@@ -65,13 +65,14 @@ class MyFrame4 : public wxFrame
 		wxTextCtrl* m_textLastword112;
 		wxPanel* m_panel15;
 		wxPanel* m_panel5;
-		wxStaticText* m_staticText10;
 		wxCheckBox* m_checkBox5;
 		wxStaticText* m_staticText321;
 		wxTextCtrl* m_textLastword12;
 		wxPanel* m_panel16;
 		wxCheckBox* m_checkBox6;
 		wxCheckBox* m_checkBox7;
+		wxCheckBox* m_checkBox71;
+		wxCheckBox* m_checkBox8;
 		wxPanel* m_panel6;
 		wxButton* m_button1;
 		wxButton* m_button2;

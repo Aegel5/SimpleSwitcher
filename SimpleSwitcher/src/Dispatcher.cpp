@@ -115,7 +115,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 				int k = 0;
 			}
 			if (timerId == c_timerKeyloggerDefence) {
-				if (SettingsGlobal().fEnableKeyLoggerDefence) {
+				if (setsgui.fEnableKeyLoggerDefence) {
 					resethook();
 				}
 			}else{
@@ -188,7 +188,7 @@ LRESULT CALLBACK KeyboardProc(
 	DWORD key = DWORD(wParam);
 	LOG_INFO_0(L"_PRINTED_ %d", key);
 
-	//if (SettingsGlobal().fEnableKeyLoggerDefence) {
+	//if (setsgui.fEnableKeyLoggerDefence) {
 		return 0;
 	//} else {
 	//	return CallNextHookEx(0, nCode, wParam, lParam);
@@ -218,7 +218,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 
 	}
 
-	if (SettingsGlobal().fEnableKeyLoggerDefence) {
+	if (setsgui.fEnableKeyLoggerDefence) {
 		return 0;
 	} else {
 		return CallNextHookEx(0, nCode, wParam, lParam);
@@ -232,7 +232,7 @@ TStatus resethook() {
 	hh->hHookKeyGlobal = WinApiInt::SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, 0, 0);
 
 	//hh->hHookKeyGlobal_2.Cleanup();
-	//if (SettingsGlobal().fEnableKeyLoggerDefence) {
+	//if (setsgui.fEnableKeyLoggerDefence) {
 	//	DWORD dwTheardId = ::GetWindowThreadProcessId(gdata().hWndMonitor, 0);
 	//	hh->hHookKeyGlobal_2 = WinApiInt::SetWindowsHookEx(WH_KEYBOARD, KeyboardProc, GetModuleHandle(NULL), dwTheardId);
 	//	IFW_LOG(hh->hHookKeyGlobal_2.IsValid());

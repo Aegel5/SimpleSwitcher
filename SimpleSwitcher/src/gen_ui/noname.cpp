@@ -111,18 +111,18 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panelMain->SetSizer( bSizer3 );
 	m_panelMain->Layout();
 	bSizer3->Fit( m_panelMain );
-	m_notebook2->AddPage( m_panelMain, wxT("Main"), true );
+	m_notebook2->AddPage( m_panelMain, wxT("Main"), false );
 	m_panel14 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
 
 	wxStaticBoxSizer* sbSizer4;
-	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_panel14, wxID_ANY, wxT("CycleChange") ), wxVERTICAL );
+	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_panel14, wxID_ANY, wxT("Cycle change") ), wxVERTICAL );
 
 	wxBoxSizer* bSizer53;
 	bSizer53 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_staticText32 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Change with filters"), wxDefaultPosition, wxSize( 150,-1 ), 0 );
+	m_staticText32 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Next layout"), wxDefaultPosition, wxSize( 150,-1 ), 0 );
 	m_staticText32->Wrap( -1 );
 	bSizer53->Add( m_staticText32, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -136,7 +136,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer4->Add( sbSizer4, 0, wxEXPAND, 5 );
 
 	wxStaticBoxSizer* sbSizer5;
-	sbSizer5 = new wxStaticBoxSizer( new wxStaticBox( m_panel14, wxID_ANY, wxT("SetLayout") ), wxVERTICAL );
+	sbSizer5 = new wxStaticBoxSizer( new wxStaticBox( m_panel14, wxID_ANY, wxT("Set layout") ), wxVERTICAL );
 
 	wxBoxSizer* bSizer531;
 	bSizer531 = new wxBoxSizer( wxHORIZONTAL );
@@ -192,6 +192,8 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer4->Fit( m_panel14 );
 	m_notebook2->AddPage( m_panel14, wxT("Change Layout"), false );
 	m_panel15 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panel15->Hide();
+
 	wxBoxSizer* bSizer19;
 	bSizer19 = new wxBoxSizer( wxVERTICAL );
 
@@ -199,17 +201,13 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel15->SetSizer( bSizer19 );
 	m_panel15->Layout();
 	bSizer19->Fit( m_panel15 );
-	m_notebook2->AddPage( m_panel15, wxT("Change Rules"), false );
+	m_notebook2->AddPage( m_panel15, wxT("Words separation"), false );
 	m_panel5 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer20;
 	bSizer20 = new wxBoxSizer( wxVERTICAL );
 
 	wxStaticBoxSizer* sbSizer6;
 	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( m_panel5, wxID_ANY, wxT("CapsLock remap") ), wxVERTICAL );
-
-	m_staticText10 = new wxStaticText( sbSizer6->GetStaticBox(), wxID_ANY, wxT("Capslock = Capslock"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText10->Wrap( -1 );
-	sbSizer6->Add( m_staticText10, 0, wxALL, 5 );
 
 	m_checkBox5 = new wxCheckBox( sbSizer6->GetStaticBox(), wxID_ANY, wxT("Remap Capslock as F24"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer6->Add( m_checkBox5, 0, wxALL, 5 );
@@ -242,9 +240,15 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBox6 = new wxCheckBox( m_panel16, wxID_ANY, wxT("Enable debug log"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer24->Add( m_checkBox6, 0, wxALL, 5 );
 
-	m_checkBox7 = new wxCheckBox( m_panel16, wxID_ANY, wxT("Prevent other program to hook keyboard events"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox7 = new wxCheckBox( m_panel16, wxID_ANY, wxT("Prevent other program to hook keyboard (may cause problems in games and other apps)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBox7->SetValue(true);
 	bSizer24->Add( m_checkBox7, 0, wxALL, 5 );
+
+	m_checkBox71 = new wxCheckBox( m_panel16, wxID_ANY, wxT("Disable the accessibility shortcut keys (5 SHIFT and others)"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer24->Add( m_checkBox71, 0, wxALL, 5 );
+
+	m_checkBox8 = new wxCheckBox( m_panel16, wxID_ANY, wxT("Clear text format on Ctrl-C"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer24->Add( m_checkBox8, 0, wxALL, 5 );
 
 
 	m_panel16->SetSizer( bSizer24 );
@@ -252,7 +256,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer24->Fit( m_panel16 );
 	m_notebook2->AddPage( m_panel16, wxT("Settings"), false );
 	m_panel6 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_notebook2->AddPage( m_panel6, wxT("About"), false );
+	m_notebook2->AddPage( m_panel6, wxT("About"), true );
 
 	bSizer1->Add( m_notebook2, 1, wxEXPAND | wxALL, 0 );
 

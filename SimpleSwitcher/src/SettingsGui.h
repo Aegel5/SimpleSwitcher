@@ -71,5 +71,5 @@ private:
 	
 };
 
-inline SettingsGui& SettingsGlobal() { return SettingsGui::Global(); }
+inline SettingsGui& setsgui { return SettingsGui::Global(); }
 

@@ -16,6 +16,7 @@ add_subdirectory(../wxWidgets wxWidgets)
 
 set(CMAKE_CXX_STANDARD 17)
 add_executable (SimpleSwitcher WIN32 ${TARGET_SOURCES})
+target_precompile_headers(SimpleSwitcher PRIVATE src/stdafx.h )
 target_link_libraries(SimpleSwitcher wx::core wx::base "Crypt32.lib")
 target_include_directories(SimpleSwitcher PRIVATE "../libtools")
 

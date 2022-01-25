@@ -19,8 +19,8 @@ LRESULT CALLBACK DlgProcPageWordSep(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 
 	if (msg == WM_INITDIALOG)
 	{
-		gui_tools::SetCheckBox(hwnd, IDC_CHECK_OEM2_R, SettingsGlobal().isTryOEM2);
-		//SetCheckBox(hwnd, IDC_CHECK_DASH_R, SettingsGlobal().isDashSeparate);
+		gui_tools::SetCheckBox(hwnd, IDC_CHECK_OEM2_R, setsgui.isTryOEM2);
+		//SetCheckBox(hwnd, IDC_CHECK_DASH_R, setsgui.isDashSeparate);
 
 		return FALSE;
 	}
@@ -29,13 +29,13 @@ LRESULT CALLBACK DlgProcPageWordSep(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 		WORD dlgId = LOWORD(wParam);
 		//if (dlgId == IDC_CHECK_DASH_R)
 		//{
-			//SettingsGlobal().isDashSeparate = IsCheckBox(hwnd, dlgId);
-			//SettingsGlobal().SaveAndPostMsg();
+			//setsgui.isDashSeparate = IsCheckBox(hwnd, dlgId);
+			//setsgui.SaveAndPostMsg();
 		//}
 		if (dlgId == IDC_CHECK_OEM2_R)
 		{
-			SettingsGlobal().isTryOEM2 = gui_tools::IsCheckBox(hwnd, dlgId);
-			SettingsGlobal().SaveAndPostMsg();
+			setsgui.isTryOEM2 = gui_tools::IsCheckBox(hwnd, dlgId);
+			setsgui.SaveAndPostMsg();
 		}
 	}
 	return FALSE;

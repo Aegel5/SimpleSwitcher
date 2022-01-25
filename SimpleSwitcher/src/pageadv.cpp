@@ -83,12 +83,12 @@ void HandleCapsRemap(HWND hwnd, RemapType rtype)
 //	BufScanMap buf;
 //	buf.FromRegistry();
 //	TKeyCode inreg = buf.RemapedKey();
-//	TKeyCode saved = SettingsGlobal().capsRemapApply;
-//	if ((curTime != SettingsGlobal().bootTime && saved != inreg) || curTime == 0)
+//	TKeyCode saved = setsgui.capsRemapApply;
+//	if ((curTime != setsgui.bootTime && saved != inreg) || curTime == 0)
 //	{
-//		SettingsGlobal().capsRemapApply = buf.RemapedKey();
-//		SettingsGlobal().bootTime = curTime;
-//		SettingsGlobal().Save();
+//		setsgui.capsRemapApply = buf.RemapedKey();
+//		setsgui.bootTime = curTime;
+//		setsgui.Save();
 //	}
 //}
 void UpdateCapsRemap(HWND hwnd, bool fNeedRestart = false)

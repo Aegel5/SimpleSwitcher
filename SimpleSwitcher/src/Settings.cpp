@@ -6,58 +6,25 @@
 
 #include "extern/rapidjson/document.h"
 
-
-
 using namespace rapidjson;
 
-void UserConf::Load() {
-	const wchar_t* json = L"{\"project\":\"rapidjson\",\"stars\":10}";
-	GenericDocument<UTF16<>> doc;
-	using TVal = GenericValue<UTF16<>>;
-	doc.Parse(json);
-	TVal& s = doc[L"project"];
-	auto res = s.GetString();
-}
-
-
-//TStatus LoadUserConf(UserConf& conf)
-//{
-//	IFS_RET(LuaLoadConf(conf));
-//
-//	RETURN_SUCCESS;
-//
-//
-//}
-
-
-void SettingsGui::ResetToDef()
+void UserConf::Load()
 {
-	for (auto& it : hotkeysList)
-	{
-		auto& hk = it.second;
-		if (hk.fUseDef)
-		{
-			hk.key = hk.def;
-		}
-		else
-		{
-			hk.key.Clear();
-		}
-	}
+    const wchar_t* json = L"{\"project\":\"rapidjson\",\"stars\":10}";
+    GenericDocument<UTF16<>> doc;
+    using TVal = GenericValue<UTF16<>>;
+    doc.Parse(json);
+    TVal& s  = doc[L"project"];
+    auto res = s.GetString();
 
-	//fCloseByEsc = true;
-	//isDashSeparate = true;
-
-	fDbgMode =
-#ifdef _DEBUG
-		true;
-#else
-		false;
-#endif
-	//fHookDll = false;
-
+    if (setsgui.fDbgMode && u_conf.ll != 0) {
+        LOG_INFO_1(L"Set ll %u", u_conf.ll);
+        SetLogLevel((TLogLevel)u_conf.ll);
+    }
 
 }
+
+
 
 void SettingsGui::GenerateListHK()
 {
@@ -158,19 +125,19 @@ void SettingsGui::GenerateListHK()
 	//	AddHotKey(hk_ChangeCase, set);
 	//}
 
-	{
-		CHotKeySet set;
-		set.def = CHotKey(VK_SHIFT, VK_CONTROL, VK_F24);
-		set.def2 = CHotKey(VK_F23);
-		AddHotKey(hk_EmulCopyNoFormat, set);
-	}
+	//{
+	//	CHotKeySet set;
+	//	set.def = CHotKey(VK_SHIFT, VK_CONTROL, VK_F24);
+	//	set.def2 = CHotKey(VK_F23);
+	//	AddHotKey(hk_EmulCopyNoFormat, set);
+	//}
 
-	{
-		CHotKeySet set;
-		set.def = CHotKey(VK_SHIFT, VK_CONTROL, VK_F24);
-		set.def2 = CHotKey(VK_F23);
-		AddHotKey(hk_EmulCopyWithFormat, set);
-	}
+	//{
+	//	CHotKeySet set;
+	//	set.def = CHotKey(VK_SHIFT, VK_CONTROL, VK_F24);
+	//	set.def2 = CHotKey(VK_F23);
+	//	AddHotKey(hk_EmulCopyWithFormat, set);
+	//}
 
 	//{
 	//	CHotKeySet set;
@@ -188,34 +155,16 @@ void SettingsGui::GenerateListHK()
 
 TStatus SettingsGui::Load()
 {
-	IFS_LOG(LoadAutoSettings());
-
-
-	// Load user config
-	// -------------------------------------------
-	//IFS_LOG(LoadUserConf(u_conf));
-
-	// log level
-	if (fDbgMode && u_conf.ll != 0)
-	{
-		LOG_INFO_1(L"Set ll %u", u_conf.ll);
-		SetLogLevel((TLogLevel)u_conf.ll);
-	}
-
-	// hotkeys
-	//if (!u_conf.s_hk_ChangeTextCase.empty())
-	//{
-	//	hotkeysList[hk_ChangeTextCase].key = ParseStringHK(u_conf.s_hk_ChangeTextCase);
-	//	auto s = hotkeysList[hk_ChangeTextCase].key.ToString();
-	//	LOG_INFO_1(L"hk_ChangeTextCase is %s", s.c_str());
-	//}
+    SettingsGui loc;
+    IFS_LOG(loc.LoadAutoSettings());
+    *this = loc;
 
 	RETURN_SUCCESS;
 }
 
 TStatus SettingsGui::LoadAutoSettings()
 {
-	ResetToDef();
+	//ResetToDef();
 	SetLogLevelBySettings();
 
 	auto sPathIni = GetPathIni();
@@ -240,7 +189,7 @@ TStatus SettingsGui::LoadAutoSettings()
 	ParseCfg::GetBool(tsmap, L"fEnableKeyLoggerDefence", fEnableKeyLoggerDefence);
 	//ParseCfg::GetBool(tsmap, L"isDashSeparate", isDashSeparate);
 	ParseCfg::GetBool(tsmap, L"fDbgMode", fDbgMode);
-	//ParseCfg::GetBool(tsmap, L"fClipboardClearFormat", fClipboardClearFormat);
+	ParseCfg::GetBool(tsmap, L"fClipboardClearFormat", fClipboardClearFormat);
 
 	ParseCfg::GetInt(tsmap, L"idLang", idLang);
 
@@ -291,8 +240,8 @@ TStatus SettingsGui::LoadAutoSettings()
 		auto hkId = it.first;
 		CHotKeySet& set = it.second;
 
-		if(!set.fGui)
-			continue;
+		//if(!set.fGui)
+		//	continue;
 
 		std::wstring sName = L"hotkey";
 		sName += std::to_wstring(set.hkId);
@@ -350,7 +299,7 @@ void SettingsGui::Save()
 	//AddBool(cont, L"closeByEsc", fCloseByEsc);
 	AddBool(cont, L"fEnableKeyLoggerDefence", fEnableKeyLoggerDefence);
 	AddBool(cont, L"fDbgMode", fDbgMode); 
-	//AddBool(cont, L"fClipboardClearFormat", fClipboardClearFormat); 
+	AddBool(cont, L"fClipboardClearFormat", fClipboardClearFormat); 
 	//AddBool(cont, L"isDashSeparate", isDashSeparate); 
 	AddInt(cont, L"idLang", idLang);
 	//AddBool(cont, L"fHookDll", fHookDll);
@@ -380,10 +329,10 @@ void SettingsGui::Save()
 		auto hkId = it.first;
 		auto& info = it.second;
 
-		if(!info.fGui)
-			continue;
+		//if(!info.fGui)
+		//	continue;
 
-		// if (info.key != info.def)  // todo сравнивать со структурой после resettodef
+		if (info.key != info.def) // нет смысла сохранять def
 		{
 			TChar sBuf[100];
 			swprintf_s(sBuf, L"0x%I64X -- %s", info.key.AsUInt64(), info.key.ToString().c_str());

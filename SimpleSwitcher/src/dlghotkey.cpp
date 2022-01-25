@@ -246,9 +246,9 @@ LRESULT CALLBACK DlgProcHotKey(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
 bool ChangeHotKey(HotKeyType type, int dlgId, HWND hwnd, bool fAltDisable)
 {
 	DlgHotKeyData data;
-	data.keyRevert = SettingsGlobal().GetHk(type).key;
-	data.keyDefault = SettingsGlobal().GetHk(type).def;
-	data.keyDefault2 = SettingsGlobal().GetHk(type).def2;
+	data.keyRevert = setsgui.GetHk(type).key;
+	data.keyDefault = setsgui.GetHk(type).def;
+	data.keyDefault2 = setsgui.GetHk(type).def2;
 
 	data.fAltDisable = fAltDisable;
 	DialogBoxParam(
@@ -259,9 +259,9 @@ bool ChangeHotKey(HotKeyType type, int dlgId, HWND hwnd, bool fAltDisable)
 		(LPARAM)&data);
 	if (data.fOk)
 	{
-		SettingsGlobal().GetHk(type).key = data.keyRevert;
+		setsgui.GetHk(type).key = data.keyRevert;
 		KeyToDlg(data.keyRevert, dlgId, hwnd);
-		SettingsGlobal().SaveAndPostMsg();
+		setsgui.SaveAndPostMsg();
 		return true;
 	}
 	return false;
@@ -270,9 +270,9 @@ bool ChangeHotKey(HotKeyType type, int dlgId, HWND hwnd, bool fAltDisable)
 bool ChangeHotKey2(HotKeyType type, HWND hwnd)
 {
 	DlgHotKeyData data;
-	data.keyRevert = SettingsGlobal().GetHk(type).key;
-	data.keyDefault = SettingsGlobal().GetHk(type).def;
-	data.keyDefault2 = SettingsGlobal().GetHk(type).def2;
+	data.keyRevert = setsgui.GetHk(type).key;
+	data.keyDefault = setsgui.GetHk(type).def;
+	data.keyDefault2 = setsgui.GetHk(type).def2;
 
 	data.fAltDisable = true;
 	DialogBoxParam(
@@ -283,9 +283,9 @@ bool ChangeHotKey2(HotKeyType type, HWND hwnd)
 		(LPARAM)&data);
 	if (data.fOk)
 	{
-		SettingsGlobal().GetHk(type).key = data.keyRevert;
+		setsgui.GetHk(type).key = data.keyRevert;
 		//KeyToDlg(data.keyRevert, dlgId, hwnd);
-		SettingsGlobal().SaveAndPostMsg();
+		setsgui.SaveAndPostMsg();
 
 		return true;
 	}

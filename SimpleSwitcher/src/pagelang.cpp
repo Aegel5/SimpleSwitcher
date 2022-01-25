@@ -15,9 +15,9 @@ void LangChanged(HWND hwnd, int id)
 	int cur = (int)SendDlgItemMessage(hwnd, id, CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
 	if (cur != CB_ERR)
 	{
-		SettingsGlobal().idLang = (SwLang)cur;
-		InitializeLang(SettingsGlobal().idLang);
-		SettingsGlobal().Save();
+		setsgui.idLang = (SwLang)cur;
+		InitializeLang(setsgui.idLang);
+		setsgui.Save();
 		int res = MessageBox(hwnd, GetMessageById(AM_NEED_REST), SW_PROGRAM_NAME_L, MB_ICONINFORMATION | MB_OKCANCEL);
 		if (res == IDOK)
 		{
@@ -40,14 +40,14 @@ LRESULT CALLBACK DlgProcPageLang(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 		SendDlgItemMessage(hwnd, IDC_COMBO_LANG, CB_ADDSTRING, 0, (LPARAM)L"Russian");
 		SendDlgItemMessage(hwnd, IDC_COMBO_LANG, CB_ADDSTRING, 0, (LPARAM)L"English");
 
-		SendDlgItemMessage(hwnd, IDC_COMBO_LANG, CB_SETCURSEL, (WPARAM)SettingsGlobal().idLang, (LPARAM)0);
+		SendDlgItemMessage(hwnd, IDC_COMBO_LANG, CB_SETCURSEL, (WPARAM)setsgui.idLang, (LPARAM)0);
 
 		SetDlgItemText(hwnd, IDC_CHECK_DBG_MODE, GetMessageById(AM_DBG_MODE));
 		SetDlgItemText(hwnd, IDC_STATIC_PATH, GetMessageById(AM_DBG_PATH_TO_PRG));
 
-		gui_tools::SetCheckBox(hwnd, IDC_CHECK_DBG_MODE, SettingsGlobal().fDbgMode);
-		//gui_tools::SetCheckBox(hwnd, IDC_CHECK_ESC_CLOSE, SettingsGlobal().fCloseByEsc); 
-		gui_tools::SetCheckBox(hwnd, IDC_CHECK_KEY_LOG_DEF, SettingsGlobal().fEnableKeyLoggerDefence);
+		gui_tools::SetCheckBox(hwnd, IDC_CHECK_DBG_MODE, setsgui.fDbgMode);
+		//gui_tools::SetCheckBox(hwnd, IDC_CHECK_ESC_CLOSE, setsgui.fCloseByEsc); 
+		gui_tools::SetCheckBox(hwnd, IDC_CHECK_KEY_LOG_DEF, setsgui.fEnableKeyLoggerDefence);
 
 		return FALSE;
 	}
@@ -68,24 +68,24 @@ LRESULT CALLBACK DlgProcPageLang(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 		}
 		else if (dlgId == IDC_CHECK_DBG_MODE)
 		{
-			SettingsGlobal().fDbgMode = gui_tools::IsCheckBox(hwnd, dlgId);
-			SettingsGlobal().SaveAndPostMsg();
-			SettingsGlobal().SetLogLevelBySettings();
+			setsgui.fDbgMode = gui_tools::IsCheckBox(hwnd, dlgId);
+			setsgui.SaveAndPostMsg();
+			setsgui.SetLogLevelBySettings();
 		}
 		else if (dlgId == IDC_CHECK_ESC_CLOSE)
 		{
-			//SettingsGlobal().fCloseByEsc = gui_tools::IsCheckBox(hwnd, dlgId);
-			SettingsGlobal().SaveAndPostMsg();
+			//setsgui.fCloseByEsc = gui_tools::IsCheckBox(hwnd, dlgId);
+			setsgui.SaveAndPostMsg();
 		}
 		else if (dlgId == IDC_CHECK_KEY_LOG_DEF)
 		{
-			SettingsGlobal().fEnableKeyLoggerDefence = gui_tools::IsCheckBox(hwnd, dlgId);
-			SettingsGlobal().SaveAndPostMsg();
+			setsgui.fEnableKeyLoggerDefence = gui_tools::IsCheckBox(hwnd, dlgId);
+			setsgui.SaveAndPostMsg();
 		}
 		//else if (LOWORD(wParam) == IDC_CHECK_USE_DLL_HOOK)
 		//{
-		//	SettingsGlobal().fHookDll = (SendDlgItemMessage(hwnd, IDC_CHECK_USE_DLL_HOOK, BM_GETCHECK, 0, 0) == BST_CHECKED);
-		//	SettingsGlobal().SaveAndPostMsg();
+		//	setsgui.fHookDll = (SendDlgItemMessage(hwnd, IDC_CHECK_USE_DLL_HOOK, BM_GETCHECK, 0, 0) == BST_CHECKED);
+		//	setsgui.SaveAndPostMsg();
 		//}
 
 	}

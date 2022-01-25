@@ -26,8 +26,8 @@ enum HotKeyType : TUInt32
 
 	hk_ScrollGenerate = 12,
 
-	hk_EmulCopyNoFormat = 13,
-	hk_EmulCopyWithFormat = 14,
+	//hk_EmulCopyNoFormat = 13,
+	//hk_EmulCopyWithFormat = 14,
 
 	hk_RevertRecentTyped = 15,
 
@@ -58,8 +58,8 @@ inline const wchar_t* HotKeyTypeName(HotKeyType hk_type)
 	case hk_CycleCustomLang:return L"hk_CycleCustomLang";
 	//case hk_ChangeCase:return L"hk_ChangeCase";
 	case hk_ScrollGenerate:return L"hk_ScrollGenerate";
-	case hk_EmulCopyNoFormat:return L"hk_EmulCopyNoFormat";
-	case hk_EmulCopyWithFormat:return L"hk_EmulCopyWithFormat";
+	//case hk_EmulCopyNoFormat:return L"hk_EmulCopyNoFormat";
+	//case hk_EmulCopyWithFormat:return L"hk_EmulCopyWithFormat";
 	case hk_RevertRecentTyped:return L"hk_RevertRecentTyped";
 	//case hk_ChangeTextCase:return L"hk_ChangeTextCase";
 	case hk_MAX:return L"hk_MAX";
@@ -76,7 +76,7 @@ struct CHotKeySet
 	//bool fReserveHotKey = true;
 	bool fNeedSavedWord = false;
 	bool fUseDef = false;
-	bool fGui = true;
+	//bool fGui = true;
 	//bool fDisabled = false;
 	TUInt32 hkId = -1;
 };
@@ -122,11 +122,24 @@ struct UserConf
 class SettingsGui
 {
 public:
-	SettingsGui()
-	{
-		GenerateListHK();
-		ResetToDef();
-	}
+    SettingsGui()
+    {
+        GenerateListHK();
+
+        for (auto& it : hotkeysList) {
+            auto& hk = it.second;
+            if (hk.fUseDef) {
+                hk.key = hk.def;
+            }
+        }
+
+        fDbgMode =
+#ifdef _DEBUG
+            true;
+#else
+            false;
+#endif
+    }
 	~SettingsGui()
 	{
 
@@ -147,7 +160,7 @@ public:
 	bool isTryOEM2 = true;
 	//bool isDashSeparate;
 	bool fDbgMode = false;
-	//bool fClipboardClearFormat;
+	bool fClipboardClearFormat;
 	//bool fCloseByEsc;
 	bool fEnableKeyLoggerDefence = false;
 
@@ -190,7 +203,7 @@ public:
 		SW_HKL_3,
 	};
 
-	void ResetToDef();
+	//void ResetToDef();
 	//bool IsAddToTray() { return isAddToTray; }
 
 	void GenerateListHK();
@@ -206,12 +219,6 @@ public:
 	}
 
 
-
-	static SettingsGui& Global()
-	{
-		static SettingsGui settings;
-		return settings;
-	}
 private:
 
 	std::wstring GetPathIni()
@@ -229,9 +236,10 @@ private:
 inline UserConf u_conf;
 
 inline SettingsGui settings_thread;
+inline SettingsGui setsgui;
 
-inline SettingsGui& SettingsGlobal() { return SettingsGui::Global(); }
-//inline LuaConfig& LuaGlobal() { return SettingsGlobal().luaCfg; }
+//inline SettingsGui& setsgui { return SettingsGui::Global(); }
+//inline LuaConfig& LuaGlobal() { return setsgui.luaCfg; }
 
 
 

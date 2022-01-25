@@ -32,7 +32,7 @@ TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 
 	gdata().hInst = hInstance;
 
-	IFS_LOG(SettingsGlobal().Load());
+	IFS_LOG(setsgui.Load());
 
 	LOG_INFO_1(L"Start %s. Elevated=%d. Version=%s", *lpCmdLine ? lpCmdLine : L"GUI", Utils::IsSelfElevated(), SW_VERSION_L);
 
@@ -136,18 +136,18 @@ TStatus MainInt(LPTSTR lpCmdLine, HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 
 TStatus HandleAutostart(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine)
 {
-	//SettingsGlobal().Load();
+	//setsgui.Load();
 
 	TSWAdmin admin = SW_ADMIN_SELF;
 
-	//if (IsSelfElevated() && !SettingsGlobal().isMonitorAdmin)
+	//if (IsSelfElevated() && !setsgui.isMonitorAdmin)
 	//{
 	//	admin = SW_ADMIN_OFF;
 	//}
 
 	IFS_LOG(gdata().procMonitor.EnsureStarted(admin));
 
-	//if (SettingsGlobal().IsAddToTray())
+	//if (setsgui.IsAddToTray())
 	//{
 	//	IFS_LOG(SwGui::StartGui(false));
 	//}

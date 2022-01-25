@@ -39,7 +39,7 @@ TKeyType Hooker::GetCurKeyType(CHotKey hotkey)
 			return KEYTYPE_BACKSPACE;
 	}
 
-	//if(SettingsGlobal().isDashSeparate)
+	//if(setsgui.isDashSeparate)
 	//{
 	//	if(key.ValueKey() == 189 && key.Size() == 1)
 	//	{
@@ -642,12 +642,12 @@ TStatus Hooker::ClipboardChangedInt()
 			RETURN_SUCCESS;
 		}
 
-		//LOG_INFO_1(
-		//	L"dwTime=%u, request=%u, clear=%u, sec=%u",
-		//	dwTime,
-		//	request,
-		//	settings_thread.fClipboardClearFormat,
-		//	GetClipboardSequenceNumber());
+		LOG_INFO_1(
+			L"dwTime=%u, request=%u, clear=%u, sec=%u",
+			dwTime,
+			request,
+			settings_thread.fClipboardClearFormat,
+			GetClipboardSequenceNumber());
 
 		if (request == CLRMY_GET_FROM_CLIP)
 		{
@@ -670,10 +670,10 @@ TStatus Hooker::ClipboardChangedInt()
 
 		if (request == CLRMY_hk_COPY)
 		{
-			if (m_lastRevertRequest == hk_EmulCopyNoFormat)
-			{
-				IFS_LOG(RequestClearFormat());
-			}
+			//if (m_lastRevertRequest == hk_EmulCopyNoFormat)
+			//{
+			//	IFS_LOG(RequestClearFormat());
+			//}
 			RETURN_SUCCESS;
 		}
 
@@ -692,10 +692,10 @@ TStatus Hooker::ClipboardChangedInt()
 
 	// --- This is user request ----
 
-	//if (settings_thread.fClipboardClearFormat)
-	//{
-	//	IFS_LOG(RequestClearFormat());
-	//}
+	if (settings_thread.fClipboardClearFormat)
+	{
+		IFS_LOG(RequestClearFormat());
+	}
 
 	RETURN_SUCCESS;
 }
@@ -900,12 +900,12 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		RETURN_SUCCESS;
 	}
 
-	if (typeRevert == hk_EmulCopyNoFormat || typeRevert == hk_EmulCopyWithFormat)
-	{
-		//IFS_RET(SendUpForKey(m_curKey));
-		IFS_RET(SendCtrlC(CLRMY_hk_COPY));
-		RETURN_SUCCESS;
-	}
+	//if (typeRevert == hk_EmulCopyNoFormat || typeRevert == hk_EmulCopyWithFormat)
+	//{
+	//	//IFS_RET(SendUpForKey(m_curKey));
+	//	IFS_RET(SendCtrlC(CLRMY_hk_COPY));
+	//	RETURN_SUCCESS;
+	//}
 
 	IFS_RET(AnalizeTopWnd());
 
