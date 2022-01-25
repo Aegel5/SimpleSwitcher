@@ -493,8 +493,8 @@ public:
 		return false;
 	}
 	CHotKey& Clear(){value = 0; return *this;}
-	//bool operator== ( CHotKey& other) {return Compare(other);}
-	//bool operator!= ( CHotKey& other) { return !(*this == other); }
+	bool operator== ( CHotKey& other) {return Compare(other);}
+	bool operator!= ( CHotKey& other) { return !(*this == other); }
 	static TKeyCode Normalize(TKeyCode key)
 	{
 		switch (key)

@@ -4,9 +4,23 @@
 cmake_minimum_required (VERSION 3.18)
 project(SimpleSwitcher VERSION 1.0 LANGUAGES CXX)
 
-set(wxUSE_STC OFF)
 set(wxBUILD_SHARED OFF)
 set(wxBUILD_USE_STATIC_RUNTIME ON)
+
+set(wxUSE_STC OFF)
+#set(wxUSE_XRC OFF)
+#set(wxUSE_XML OFF)
+#set(wxUSE_WEBVIEW OFF)
+#set(wxUSE_RIGHTEXT OFF)
+#set(wxUSE_RIBBON OFF)
+##set(wxUSE_QA OFF)
+##set(wxUSE_PROPGRID OFF)
+##set(wxUSE_NET OFF)
+set(wxUSE_MEDIA OFF)
+#set(wxUSE_HTML OFF)
+#set(wxUSE_GL OFF)
+#set(wxUSE_AUI OFF)
+
 
 file(GLOB_RECURSE TARGET_SOURCES  src/*.cpp src/*.cc src/myres.rc)
 

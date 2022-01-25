@@ -31,6 +31,9 @@ public:
         m_radioBox1->SetString(1, info.def2.ToString());
 
         key = info.key;
+        if (key == info.def2) {
+            m_radioBox1->SetSelection(1);
+        }
         updateField();
 
         curwnd = GetHWND();
@@ -57,6 +60,7 @@ private:
         }
         updateField();
     }
+
     virtual void onclear(wxCommandEvent& event)
     {
         key.Clear();
