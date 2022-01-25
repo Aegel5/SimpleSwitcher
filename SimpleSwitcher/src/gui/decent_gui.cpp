@@ -8,7 +8,7 @@
 
 #include <wx/taskbar.h>
 
-extern bool ChangeHotKey(HotKeyType type);
+extern bool ChangeHotKey(wxFrame* frame, HotKeyType type);
 
 enum
 {
@@ -67,7 +67,7 @@ private:
         if (!obj)
             return;
         HotKeyType type = (HotKeyType)(TUInt32)obj->GetClientData();
-        if (ChangeHotKey(type)) {
+        if (ChangeHotKey(this, type)) {
             auto res = setsgui.GetHk(type).key.ToString();
             obj->SetValue(res);
         }
@@ -187,6 +187,7 @@ private:
 public:
     // ctor(s)
     MainWnd():MyFrame4(nullptr) {
+        m_notebook2->SetSelection(0);
         SetupToHotCtrl(m_textLastword, hk_RevertLastWord);
         SetupToHotCtrl(m_textSeveralWords, hk_RevertCycle);
         SetupToHotCtrl(m_textSelected, hk_RevertSel);

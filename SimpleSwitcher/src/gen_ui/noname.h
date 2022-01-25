@@ -109,6 +109,7 @@ class MyDialog1 : public wxDialog
 		wxCheckBox* m_checkBox12;
 		wxCheckBox* m_checkBox13;
 		wxTextCtrl* m_textKey;
+		wxButton* m_button6;
 		wxButton* m_button4;
 		wxButton* m_button5;
 
@@ -116,6 +117,7 @@ class MyDialog1 : public wxDialog
 		virtual void onSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onSetLeftRight( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onSetKeyup( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onclear( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onOk( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onCancel( wxCommandEvent& event ) { event.Skip(); }
 

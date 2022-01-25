@@ -132,6 +132,8 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	TKeyCode vkCode = (TKeyCode)k->vkCode;
 	KeyState curKeyState = GetKeyState(wParam);
 
+	//SW_LOG_INFO(L"hooker: %s", HotKeyNames::Global().GetName(vkCode));
+
 	if (TestFlag(k->flags, LLKHF_INJECTED))
 	{
 		LOG_INFO_3(L"skip enjected");
