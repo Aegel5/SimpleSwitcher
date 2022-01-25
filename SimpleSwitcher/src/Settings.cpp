@@ -191,7 +191,7 @@ TStatus SettingsGui::LoadAutoSettings()
 	ParseCfg::GetBool(tsmap, L"fDbgMode", fDbgMode);
 	ParseCfg::GetBool(tsmap, L"fClipboardClearFormat", fClipboardClearFormat);
 
-	ParseCfg::GetInt(tsmap, L"idLang", idLang);
+	//ParseCfg::GetInt(tsmap, L"idLang", idLang);
 
 	SetLogLevelBySettings();
 
@@ -243,7 +243,7 @@ TStatus SettingsGui::LoadAutoSettings()
 		//if(!set.fGui)
 		//	continue;
 
-		std::wstring sName = L"hotkey";
+		std::wstring sName = L"hk_";
 		sName += std::to_wstring(set.hkId);
 		// try by id
 		if(!ParseCfg::GetInt(tsmap, sName.c_str(), set.key.AsUInt64()))
@@ -301,7 +301,7 @@ void SettingsGui::Save()
 	AddBool(cont, L"fDbgMode", fDbgMode); 
 	AddBool(cont, L"fClipboardClearFormat", fClipboardClearFormat); 
 	//AddBool(cont, L"isDashSeparate", isDashSeparate); 
-	AddInt(cont, L"idLang", idLang);
+	//AddInt(cont, L"idLang", idLang);
 	//AddBool(cont, L"fHookDll", fHookDll);
 
 	std::wstring customLangListStr;
@@ -324,7 +324,7 @@ void SettingsGui::Save()
 		}
 	}
 
-	SettingsGui defaults;
+	//SettingsGui defaults;
 
 	for (auto& it : hotkeysList)
 	{
@@ -334,11 +334,11 @@ void SettingsGui::Save()
 		//if(!info.fGui)
 		//	continue;
 
-		if (!info.key.CompareRaw(defaults.hotkeysList[info.hkId].key)) // нет смысла сохранять def
+		//if (!info.key.CompareRaw(defaults.hotkeysList[info.hkId].key)) // нет смысла сохранять def
 		{
 			TChar sBuf[100];
-			swprintf_s(sBuf, L"0x%I64X -- %s", info.key.AsUInt64(), info.key.ToString().c_str());
-			AddStr(cont, HotKeyTypeName(hkId), sBuf);
+            swprintf_s(sBuf, L"0x%I64X -- %s=%s", info.key.AsUInt64(), HotKeyTypeName(info.hkId), info.key.ToString().c_str());
+            AddStr(cont,  (L"hk_" + std::to_wstring(hkId)).c_str(), sBuf);
 			//AddHex(cont, HotKeyTypeName(hkId), info.key.AsUInt64());
 		}
 	}

@@ -8,7 +8,7 @@
 #include <list>
 
 #include "InputSender.h"
-#include "CaseAnalazer.h"
+//#include "CaseAnalazer.h"
 #include "CClipWorker.h"
 
 static const int c_nMaxLettersSave = 100;
@@ -24,7 +24,7 @@ private:
 
 	//TSyncVal32 requestCount = 0;
 
-	CaseAnalazer m_caseAnalizer;
+	//CaseAnalazer m_caseAnalizer;
 
 public:
 
@@ -69,16 +69,16 @@ public:
 		m_clipCounter = GetClipboardSequenceNumber();
 		m_dwLastCtrlCReqvest = GetTick();
 	}
-	void RequestChangeCase()
-	{
-		LOG_INFO_1(L"RequestChangeCase");
-		tstring data;
-		RequestWaitClip(CLRMY_hk_INSERT);
-		m_caseAnalizer.GenerateNexCurKeys(data);
-		m_clipWorker.SetData(data);
+	//void RequestChangeCase()
+	//{
+	//	LOG_INFO_1(L"RequestChangeCase");
+	//	tstring data;
+	//	RequestWaitClip(CLRMY_hk_INSERT);
+	//	m_caseAnalizer.GenerateNexCurKeys(data);
+	//	m_clipWorker.SetData(data);
 
-		m_clipWorker.PostMsg(ClipMode_InsertData);
-	}
+	//	m_clipWorker.PostMsg(ClipMode_InsertData);
+	//}
 public:
 
 	DWORD m_dwLastCtrlCReqvest = 0;

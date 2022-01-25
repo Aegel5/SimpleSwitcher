@@ -27,6 +27,8 @@
 #include <wx/panel.h>
 #include <wx/notebook.h>
 #include <wx/frame.h>
+#include <wx/radiobox.h>
+#include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -92,6 +94,37 @@ class MyFrame4 : public wxFrame
 		MyFrame4( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("SimpleSwitcher"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 733,450 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~MyFrame4();
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class MyDialog1
+///////////////////////////////////////////////////////////////////////////////
+class MyDialog1 : public wxDialog
+{
+	private:
+
+	protected:
+		wxRadioBox* m_radioBox1;
+		wxCheckBox* m_checkBox12;
+		wxCheckBox* m_checkBox13;
+		wxTextCtrl* m_textKey;
+		wxButton* m_button4;
+		wxButton* m_button5;
+
+		// Virtual event handlers, override them in your derived class
+		virtual void onSelected( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onSetLeftRight( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onSetKeyup( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onOk( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onCancel( wxCommandEvent& event ) { event.Skip(); }
+
+
+	public:
+
+		MyDialog1( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Set hotkey"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 420,250 ), long style = wxDEFAULT_DIALOG_STYLE );
+
+		~MyDialog1();
 
 };
 

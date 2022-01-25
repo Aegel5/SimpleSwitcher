@@ -174,7 +174,7 @@ public:
 	std::vector<HKL> revert_customLangList; 
 	HKL hkl_lay[3] = { 0 };
 
-	SwLang idLang = SLANG_UNKNOWN;
+	//SwLang idLang = SLANG_UNKNOWN;
 
 	
 	typedef std::map<HotKeyType, CHotKeySet> THotKeyMap;

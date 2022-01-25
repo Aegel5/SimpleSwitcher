@@ -24,7 +24,7 @@
 #include "inc_basic.h"
 #include "utils/ScanMap.h"
 #include "consts.h"
-#include "swlocal.h"
+
 #include "SwUtils.h"
 #include "KeysStruct.h"
 

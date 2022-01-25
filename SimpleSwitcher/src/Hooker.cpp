@@ -247,7 +247,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	if (CHotKey::IsKnownMods(vkCode))
 		RETURN_SUCCESS;
 
-	m_caseAnalizer.Clear();
+	//m_caseAnalizer.Clear();
 
 	HandleSymbolDown();
 
@@ -274,7 +274,7 @@ void Hooker::ClearAllWords()
 {
 	LOG_INFO_2(L"ClearsKeys");
 
-	m_caseAnalizer.Clear();
+	//m_caseAnalizer.Clear();
 
 	{
 		//std::unique_lock<std::recursive_mutex > lock(m_mtxKeyList);

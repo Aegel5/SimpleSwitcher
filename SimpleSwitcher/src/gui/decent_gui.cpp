@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "decent_utils.h"
+//#include "decent_utils.h"
 #include "gen_ui/noname.h" 
 #include "Settings.h"
 #include "CoreWorker.h"
@@ -8,11 +8,7 @@
 
 #include <wx/taskbar.h>
 
-
-
-SW_NAMESPACE(SwGui)
-extern bool ChangeHotKey2(HotKeyType type, HWND hwnd); // todo
-SW_NAMESPACE_END
+extern bool ChangeHotKey(HotKeyType type);
 
 enum
 {
@@ -71,7 +67,7 @@ private:
         if (!obj)
             return;
         HotKeyType type = (HotKeyType)(TUInt32)obj->GetClientData();
-        if (SwGui::ChangeHotKey2(type, nullptr)) {
+        if (ChangeHotKey(type)) {
             auto res = setsgui.GetHk(type).key.ToString();
             obj->SetValue(res);
         }
