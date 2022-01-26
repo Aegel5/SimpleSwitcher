@@ -17,6 +17,7 @@ SimpleSwitcher - программа для быстрого переключен
 ## Getting started
 
 **Рекомендуемый способ получения программы - это СБОРКА из исходного кода**
+- Установить Visual Studio и CMake
 - `git clone --recurse-submodules https://github.com/Aegel5/SimpleSwitcher.git`
 - `build`
 
