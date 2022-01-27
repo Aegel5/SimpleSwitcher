@@ -76,7 +76,7 @@ class MyFrame4 : public wxFrame
 		wxPanel* m_panel16;
 		wxCheckBox* m_checkBox6;
 		wxCheckBox* m_checkBox7;
-		wxCheckBox* m_checkBox71;
+		wxCheckBox* m_checkBoxDisablAcc;
 		wxCheckBox* m_checkBox8;
 		wxPanel* m_panel6;
 		wxButton* m_button1;

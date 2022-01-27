@@ -123,11 +123,9 @@ struct UserConf
 };
 
 
-class SettingsGui
-{
+class SettingsGui {
 public:
-    SettingsGui()
-    {
+    SettingsGui() {
         GenerateListHK();
 
         fDbgMode =
@@ -172,25 +170,19 @@ public:
     // --------------------------------
     // Functions
 
-    CHotKeySet& GetHk(HotKeyType type)
-    {
+    CHotKeySet& GetHk(HotKeyType type) {
         return hotkeysList[type];
     }
 
-    void SetLogLevelBySettings()
-    {
-        if (fDbgMode)
-            {
-                SetLogLevel(LOG_LEVEL_1);
-            }
-        else
-            {
-                SetLogLevel(LOG_LEVEL_0);
-            }
+    void SetLogLevelBySettings() {
+        if (fDbgMode) {
+            SetLogLevel(LOG_LEVEL_1);
+        } else {
+            SetLogLevel(LOG_LEVEL_0);
+        }
     }
 
-    enum
-    {
+    enum {
         SW_HKL_1 = 0,
         SW_HKL_2,
         SW_HKL_3,
@@ -205,15 +197,13 @@ public:
     TStatus LoadAutoSettings();
 
     void Save();
-    void SaveAndPostMsg()
-    {
+    void SaveAndPostMsg() {
         Save();
         PostMsgSettingChanges();
     }
 
 private:
-    std::wstring GetPathIni()
-    {
+    std::wstring GetPathIni() {
         std::wstring sCurFolder;
         GetPath(sCurFolder, PATH_TYPE_SELF_FOLDER, GetSelfBit());
 

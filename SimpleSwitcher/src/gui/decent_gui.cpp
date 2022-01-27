@@ -6,6 +6,8 @@
 #include "SwAutostart.h"
 //#include "decent_tray.h"
 
+#include "tools/accessibil.h"
+
 #include <wx/taskbar.h>
 
 extern bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key);
@@ -108,14 +110,18 @@ private:
         setsgui.fEnableKeyLoggerDefence = event.IsChecked();
         setsgui.SaveAndPostMsg();
     }
-    virtual void onClearFormat(wxCommandEvent& event)
-    {
+    virtual void onClearFormat(wxCommandEvent& event) {
         setsgui.fClipboardClearFormat = event.IsChecked();
         setsgui.SaveAndPostMsg();
     }
-    virtual void onDisableAccessebl(wxCommandEvent& event)
-    {
-        
+
+    void handleDisableAccess() {
+        if (m_checkBoxDisablAcc->GetValue()) {
+            AllowAccessibilityShortcutKeys(false);
+        }
+    }
+    virtual void onDisableAccessebl(wxCommandEvent& event) {
+        handleDisableAccess();
     }
 
     void updateCapsTab()
