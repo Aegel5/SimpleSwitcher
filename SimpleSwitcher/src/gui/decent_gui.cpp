@@ -84,6 +84,8 @@ public:
         }
 
         updateCapsTab();
+
+        SetTitle(fmt::format(L"{}{}", GetTitle(), Utils::IsSelfElevated() ? L" Administrator" : L""));
     }
 
 private:
@@ -98,6 +100,16 @@ private:
         elem->SetEditable(false);
         elem->SetValue(setsgui.GetHk(type).key.ToString());
         elem->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
+    }
+
+    void BindBoolVal(wxCheckBox* elem, std::function<bool&()>) {
+    }
+
+    void updateBools() {
+        m_checkBoxWorkInAdmin->SetValue(setsgui.isMonitorAdmin);
+        m_checkBoxWorkInAdmin->SetValue(setsgui.fClipboardClearFormat);
+        m_checkBoxWorkInAdmin->SetValue(setsgui.fEnableKeyLoggerDefence);
+        m_checkBoxWorkInAdmin->SetValue(setsgui.fDbgMode);
     }
 
     virtual void onEnableLog(wxCommandEvent& event)
