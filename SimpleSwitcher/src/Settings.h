@@ -130,13 +130,6 @@ public:
     {
         GenerateListHK();
 
-        for (auto& it : hotkeysList) {
-            auto& hk = it.second;
-            if (hk.fUseDef) {
-                hk.key = hk.def;
-            }
-        }
-
         fDbgMode =
 #ifdef _DEBUG
             true;
@@ -144,97 +137,90 @@ public:
             false;
 #endif
     }
-	~SettingsGui()
-	{
 
-	}
+    // Runtime data
+    // -----------------------------
 
-	// Runtime data
-	// -----------------------------
+    // bool isEnabled = false;
+    // bool isAddToAutoStart = false;
 
-	bool isEnabled = false;
-	bool isAddToAutoStart = false;
+    // Saved data
+    // -------------------------
 
-	// Saved data
-	// -------------------------
+    // bool isEnabledSaved;
+    bool isMonitorAdmin = false;
+    // bool isAddToTray;
+    bool isTryOEM2 = true;
+    // bool isDashSeparate;
+    bool fDbgMode              = false;
+    bool fClipboardClearFormat = false;
+    // bool fCloseByEsc;
+    bool fEnableKeyLoggerDefence = false;
+    bool disableAccessebility    = false;
 
-	//bool isEnabledSaved;
-	bool isMonitorAdmin = false;
-	//bool isAddToTray;
-	bool isTryOEM2 = true;
-	//bool isDashSeparate;
-	bool fDbgMode = false;
-	bool fClipboardClearFormat;
-	//bool fCloseByEsc;
-	bool fEnableKeyLoggerDefence = false;
+    // bool fHookDll;
 
-	//bool fHookDll;
+    std::vector<HKL> customLangList;
+    // std::vector<HKL> revert_customLangList;
+    HKL hkl_lay[3] = {0};
 
-	std::vector<HKL> customLangList;
-	std::vector<HKL> revert_customLangList; 
-	HKL hkl_lay[3] = { 0 };
+    // SwLang idLang = SLANG_UNKNOWN;
 
-	//SwLang idLang = SLANG_UNKNOWN;
+    typedef std::map<HotKeyType, CHotKeySet> THotKeyMap;
+    THotKeyMap hotkeysList;
 
-	
-	typedef std::map<HotKeyType, CHotKeySet> THotKeyMap;
-	THotKeyMap hotkeysList;
+    // --------------------------------
+    // Functions
 
-	// --------------------------------
-	// Functions
+    CHotKeySet& GetHk(HotKeyType type)
+    {
+        return hotkeysList[type];
+    }
 
-	CHotKeySet& GetHk(HotKeyType type)
-	{
-		return hotkeysList[type];
-	}
+    void SetLogLevelBySettings()
+    {
+        if (fDbgMode)
+            {
+                SetLogLevel(LOG_LEVEL_1);
+            }
+        else
+            {
+                SetLogLevel(LOG_LEVEL_0);
+            }
+    }
 
-	void SetLogLevelBySettings()
-	{
-		if (fDbgMode)
-		{
-			SetLogLevel(LOG_LEVEL_1);
-		}
-		else
-		{
-			SetLogLevel(LOG_LEVEL_0);
-		}
-	}
+    enum
+    {
+        SW_HKL_1 = 0,
+        SW_HKL_2,
+        SW_HKL_3,
+    };
 
-	enum
-	{
-		SW_HKL_1 = 0,
-		SW_HKL_2,
-		SW_HKL_3,
-	};
+    // void ResetToDef();
+    // bool IsAddToTray() { return isAddToTray; }
 
-	//void ResetToDef();
-	//bool IsAddToTray() { return isAddToTray; }
+    void GenerateListHK();
 
-	void GenerateListHK();
+    TStatus Load();
+    TStatus LoadAutoSettings();
 
-	TStatus Load();
-	TStatus LoadAutoSettings();
-
-	void Save();
-	void SaveAndPostMsg()
-	{
-		Save();
-		PostMsgSettingChanges();
-	}
-
+    void Save();
+    void SaveAndPostMsg()
+    {
+        Save();
+        PostMsgSettingChanges();
+    }
 
 private:
+    std::wstring GetPathIni()
+    {
+        std::wstring sCurFolder;
+        GetPath(sCurFolder, PATH_TYPE_SELF_FOLDER, GetSelfBit());
 
-	std::wstring GetPathIni()
-	{
-		std::wstring sCurFolder;
-		GetPath(sCurFolder, PATH_TYPE_SELF_FOLDER, GetSelfBit());
+        std::wstring res = sCurFolder + L"settings.ini";
 
-		std::wstring res = sCurFolder + L"settings.ini";
-
-		return res;
-	}
-	
+        return res;
+    }
 };
 
 inline UserConf u_conf;

@@ -198,8 +198,8 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxStaticBoxSizer* sbSizer6;
 	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( m_panel5, wxID_ANY, wxT("Capslock") ), wxVERTICAL );
 
-	m_checkBox5 = new wxCheckBox( sbSizer6->GetStaticBox(), wxID_ANY, wxT("Remap Capslock as F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer6->Add( m_checkBox5, 0, wxALL, 5 );
+	m_checkcapsrem = new wxCheckBox( sbSizer6->GetStaticBox(), wxID_ANY, wxT("Remap Capslock as F24"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer6->Add( m_checkcapsrem, 0, wxALL, 5 );
 
 	wxBoxSizer* bSizer532;
 	bSizer532 = new wxBoxSizer( wxHORIZONTAL );
@@ -208,8 +208,8 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_staticText321->Wrap( -1 );
 	bSizer532->Add( m_staticText321, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_textLastword12 = new wxTextCtrl( sbSizer6->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer532->Add( m_textLastword12, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	m_textcapsgen = new wxTextCtrl( sbSizer6->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer532->Add( m_textcapsgen, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 
 	sbSizer6->Add( bSizer532, 0, wxEXPAND, 5 );
@@ -229,10 +229,10 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	bSizer20->Add( bSizer19, 0, wxEXPAND, 5 );
 
-	m_listBox1 = new wxListBox( m_panel5, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
-	m_listBox1->Append( wxT("123") );
-	m_listBox1->Append( wxT("1222") );
-	bSizer20->Add( m_listBox1, 1, wxALL|wxEXPAND, 5 );
+	m_listBoxRemap = new wxListBox( m_panel5, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	m_listBoxRemap->Append( wxT("123") );
+	m_listBoxRemap->Append( wxT("1222") );
+	bSizer20->Add( m_listBoxRemap, 1, wxALL|wxEXPAND, 5 );
 
 
 	m_panel5->SetSizer( bSizer20 );
@@ -260,9 +260,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel16->SetSizer( bSizer24 );
 	m_panel16->Layout();
 	bSizer24->Fit( m_panel16 );
-	m_notebook2->AddPage( m_panel16, wxT("Settings"), false );
+	m_notebook2->AddPage( m_panel16, wxT("Settings"), true );
 	m_panel6 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_notebook2->AddPage( m_panel6, wxT("About"), true );
+	m_notebook2->AddPage( m_panel6, wxT("About"), false );
 
 	bSizer1->Add( m_notebook2, 1, wxEXPAND | wxALL, 0 );
 
@@ -293,6 +293,13 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_choiceset1->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_choiceset2->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_choiceset3->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
+	m_checkcapsrem->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
+	m_button7->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onUpdateRemap ), NULL, this );
+	m_button8->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onDeleteRemap ), NULL, this );
+	m_checkBox6->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
+	m_checkBox7->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onPrevent ), NULL, this );
+	m_checkBox71->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onDisableAccessebl ), NULL, this );
+	m_checkBox8->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onClearFormat ), NULL, this );
 	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onExit ), NULL, this );
 	m_button2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onCloseToTray ), NULL, this );
 }
@@ -308,6 +315,13 @@ MyFrame4::~MyFrame4()
 	m_choiceset1->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_choiceset2->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_choiceset3->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
+	m_checkcapsrem->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
+	m_button7->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onUpdateRemap ), NULL, this );
+	m_button8->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onDeleteRemap ), NULL, this );
+	m_checkBox6->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
+	m_checkBox7->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onPrevent ), NULL, this );
+	m_checkBox71->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onDisableAccessebl ), NULL, this );
+	m_checkBox8->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onClearFormat ), NULL, this );
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onExit ), NULL, this );
 	m_button2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onCloseToTray ), NULL, this );
 

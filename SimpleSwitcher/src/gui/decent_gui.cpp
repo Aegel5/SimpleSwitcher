@@ -52,13 +52,14 @@ public:
     MainWnd() : MyFrame4(nullptr)
     {
         m_notebook2->SetSelection(0);
-        SetupToHotCtrl(m_textLastword, hk_RevertLastWord);
-        SetupToHotCtrl(m_textSeveralWords, hk_RevertCycle);
-        SetupToHotCtrl(m_textSelected, hk_RevertSel);
-        SetupToHotCtrl(m_textCycleLay, hk_CycleCustomLang);
-        SetupToHotCtrl(m_textSetlay1, hk_ChangeSetLayout_1);
-        SetupToHotCtrl(m_textSetlay2, hk_ChangeSetLayout_2);
-        SetupToHotCtrl(m_textSetlay3, hk_ChangeSetLayout_3);
+        BindHotCtrl(m_textLastword, hk_RevertLastWord);
+        BindHotCtrl(m_textSeveralWords, hk_RevertCycle);
+        BindHotCtrl(m_textSelected, hk_RevertSel);
+        BindHotCtrl(m_textCycleLay, hk_CycleCustomLang);
+        BindHotCtrl(m_textSetlay1, hk_ChangeSetLayout_1);
+        BindHotCtrl(m_textSetlay2, hk_ChangeSetLayout_2);
+        BindHotCtrl(m_textSetlay3, hk_ChangeSetLayout_3);
+        BindHotCtrl(m_textcapsgen, hk_CapsGenerate);
 
         if (startOk()) {
             coreWork.Start();
@@ -79,6 +80,8 @@ public:
             myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
             myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
         }
+
+        updateCapsTab();
     }
 
 private:
@@ -88,11 +91,73 @@ private:
     MyTray myTray;
     wxIcon icon;
 
-    void SetupToHotCtrl(wxTextCtrl* elem, HotKeyType type) {
+    void BindHotCtrl(wxTextCtrl* elem, HotKeyType type) {
         elem->SetClientData((void*)type);
         elem->SetEditable(false);
         elem->SetValue(setsgui.GetHk(type).key.ToString());
         elem->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
+    }
+
+    virtual void onEnableLog(wxCommandEvent& event)
+    {
+        setsgui.fDbgMode = event.IsChecked();
+        setsgui.SaveAndPostMsg();
+    }
+    virtual void onPrevent(wxCommandEvent& event)
+    {
+        setsgui.fEnableKeyLoggerDefence = event.IsChecked();
+        setsgui.SaveAndPostMsg();
+    }
+    virtual void onClearFormat(wxCommandEvent& event)
+    {
+        setsgui.fClipboardClearFormat = event.IsChecked();
+        setsgui.SaveAndPostMsg();
+    }
+    virtual void onDisableAccessebl(wxCommandEvent& event)
+    {
+        
+    }
+
+    void updateCapsTab()
+    {
+        BufScanMap remap;
+        IFS_LOG(remap.FromRegistry());
+
+        TKeyCode caps;
+        remap.GetRemapedKey(VK_CAPITAL, caps);
+
+        m_checkcapsrem->SetValue(caps == VK_F24);
+
+        auto caption = [](DWORD sc, DWORD vc) {
+            return fmt::format(L"sc: {}, vk: {}, '{}'", sc, vc, HotKeyNames::Global().GetName(vc));
+        };
+
+        m_listBoxRemap->Clear();
+        for (auto iter = remap.GetIter(); !iter.IsEnd(); ++iter) {
+            auto [sc, vc]   = iter.curElemSrc();
+            auto [sc2, vc2] = iter.curElemDst();
+            m_listBoxRemap->Append(fmt::format(L"{} -> {}", caption(sc, vc), caption(sc2, vc2)));
+        }
+    }
+    virtual void onRemapCaps(wxCommandEvent& event)
+    {
+        //if (!Utils::IsSelfElevated()) {
+        //    m_checkcapsrem->SetValue(!m_checkcapsrem->GetValue());
+        //    ShowNeedAdmin();
+        //    return;
+        //}
+
+        BufScanMap remap;
+        IFS_LOG(remap.FromRegistry());
+
+        if (m_checkcapsrem->GetValue()) {
+            remap.PutRemapKey(VK_CAPITAL, VK_F24);
+        } else {
+            remap.DelRemapKey(VK_CAPITAL);
+        }
+        IFS_LOG(remap.ToRegistry());
+
+        updateCapsTab();
     }
 
     void onHotKeyChange(wxMouseEvent& ev) {

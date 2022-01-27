@@ -28,131 +28,136 @@ void UserConf::Load()
 
 void SettingsGui::GenerateListHK()
 {
-	auto AddHotKey = [&](HotKeyType type, CHotKeySet& set)
-	{
-		set.hkId = type;
-		set.name = HotKeyTypeName(type);
-		hotkeysList[type] = set;
-	};
+    auto AddHotKey = [&](HotKeyType type, CHotKeySet& set) {
+        set.hkId          = type;
+        set.name          = HotKeyTypeName(type);
+        hotkeysList[type] = set;
+    };
 
-	{
-		CHotKeySet set;
-		set.def2 = CHotKey(VK_PAUSE);
-		set.def = CHotKey(VK_F24);
-		set.fUseDef = true;
-		set.fNeedSavedWord = true;
-		AddHotKey(hk_RevertLastWord, set);
-	}
+    {
+        CHotKeySet set;
+        set.def2           = CHotKey(VK_PAUSE);
+        set.def            = CHotKey(VK_F24);
+        set.fUseDef        = true;
+        set.fNeedSavedWord = true;
+        AddHotKey(hk_RevertLastWord, set);
+    }
 
+    //{
+    //	CHotKeySet set;
+    //	set.def = CHotKey(VK_LSHIFT, VK_RSHIFT);
+    //	AddHotKey(hk_ChangeLayoutCycle, set);
+    //}
 
-	//{
-	//	CHotKeySet set;
-	//	set.def = CHotKey(VK_LSHIFT, VK_RSHIFT);
-	//	AddHotKey(hk_ChangeLayoutCycle, set);
-	//}
+    {
+        CHotKeySet set;
+        set.def = CHotKey().Add(VK_LCONTROL).SetLeftRightMode(true).SetKeyup(true);
+        AddHotKey(hk_ChangeSetLayout_1, set);
+    }
 
-	{
-		CHotKeySet set;
-		set.def = CHotKey().Add(VK_LCONTROL).SetLeftRightMode(true).SetKeyup(true);
-		AddHotKey(hk_ChangeSetLayout_1, set);
-	}
+    {
+        CHotKeySet set;
+        set.def = CHotKey().Add(VK_RCONTROL).SetLeftRightMode(true).SetKeyup(true);
+        AddHotKey(hk_ChangeSetLayout_2, set);
+    }
 
-	{
-		CHotKeySet set;
-		set.def = CHotKey().Add(VK_RCONTROL).SetLeftRightMode(true).SetKeyup(true);
-		AddHotKey(hk_ChangeSetLayout_2, set);
-	}
+    {
+        CHotKeySet set;
+        set.def = CHotKey();
+        AddHotKey(hk_ChangeSetLayout_3, set);
+    }
 
-	{
-		CHotKeySet set;
-		set.def = CHotKey();
-		AddHotKey(hk_ChangeSetLayout_3, set);
-	}
+    {
+        CHotKeySet set;
+        set.def = CHotKey(VK_F24, VK_CONTROL);
+        AddHotKey(hk_CapsGenerate, set);
+    }
 
-	{
-		CHotKeySet set;
-		set.def = CHotKey(VK_F24, VK_CONTROL);
-		AddHotKey(hk_CapsGenerate, set);
-	}
+    {
+        CHotKeySet set;
+        set.def = CHotKey(VK_F23, VK_CONTROL);
+        AddHotKey(hk_ScrollGenerate, set);
+    }
 
-	{
-		CHotKeySet set;
-		set.def = CHotKey(VK_F23, VK_CONTROL);
-		AddHotKey(hk_ScrollGenerate, set);
-	}
+    {
+        CHotKeySet set;
+        set.def2           = CHotKey(VK_SHIFT, VK_PAUSE);
+        set.def            = CHotKey(VK_SHIFT, VK_F24);
+        set.fUseDef        = true;
+        set.fNeedSavedWord = true;
+        AddHotKey(hk_RevertCycle, set);
+    }
 
-	{
-		CHotKeySet set;
-		set.def2 = CHotKey(VK_SHIFT, VK_PAUSE);
-		set.def = CHotKey(VK_SHIFT, VK_F24);
-		set.fUseDef = true;
-		set.fNeedSavedWord = true;
-		AddHotKey(hk_RevertCycle, set);
-	}
-
-	{
-		CHotKeySet set;
+    {
+        CHotKeySet set;
         set.def = CHotKey(VK_LSHIFT, VK_RSHIFT);
         set.def.SetLeftRightMode(true);
-		AddHotKey(hk_CycleCustomLang, set);
-	}
+        AddHotKey(hk_CycleCustomLang, set);
+    }
 
-	//{
-	//	CHotKeySet set;
-	//	set.fNeedSavedWord = true;
-	//	AddHotKey(hk_RevertLastWord_CustomLang, set);
+    //{
+    //	CHotKeySet set;
+    //	set.fNeedSavedWord = true;
+    //	AddHotKey(hk_RevertLastWord_CustomLang, set);
 
-	//}
+    //}
 
-	//{
-	//	CHotKeySet set;
-	//	set.fNeedSavedWord = true;
-	//	AddHotKey(hk_RevertCycle_CustomLang, set);
+    //{
+    //	CHotKeySet set;
+    //	set.fNeedSavedWord = true;
+    //	AddHotKey(hk_RevertCycle_CustomLang, set);
 
-	//}
+    //}
 
-	{
-		CHotKeySet set;
-		set.def2 = CHotKey(VK_PAUSE);
-		set.def = CHotKey(VK_F24);
-		set.fUseDef = true;
-		AddHotKey(hk_RevertSel, set);
-	}
+    {
+        CHotKeySet set;
+        set.def2    = CHotKey(VK_PAUSE);
+        set.def     = CHotKey(VK_F24);
+        set.fUseDef = true;
+        AddHotKey(hk_RevertSel, set);
+    }
 
-	//{
-	//	CHotKeySet set;
-	//	set.def2 = CHotKey(VK_SHIFT, VK_SCROLL);
-	//	set.def = CHotKey(VK_F23);
-	//	set.fFillFromDef = true;
-	//	AddHotKey(hk_ChangeCase, set);
-	//}
+    //{
+    //	CHotKeySet set;
+    //	set.def2 = CHotKey(VK_SHIFT, VK_SCROLL);
+    //	set.def = CHotKey(VK_F23);
+    //	set.fFillFromDef = true;
+    //	AddHotKey(hk_ChangeCase, set);
+    //}
 
-	//{
-	//	CHotKeySet set;
-	//	set.def = CHotKey(VK_SHIFT, VK_CONTROL, VK_F24);
-	//	set.def2 = CHotKey(VK_F23);
-	//	AddHotKey(hk_EmulCopyNoFormat, set);
-	//}
+    //{
+    //	CHotKeySet set;
+    //	set.def = CHotKey(VK_SHIFT, VK_CONTROL, VK_F24);
+    //	set.def2 = CHotKey(VK_F23);
+    //	AddHotKey(hk_EmulCopyNoFormat, set);
+    //}
 
-	//{
-	//	CHotKeySet set;
-	//	set.def = CHotKey(VK_SHIFT, VK_CONTROL, VK_F24);
-	//	set.def2 = CHotKey(VK_F23);
-	//	AddHotKey(hk_EmulCopyWithFormat, set);
-	//}
+    //{
+    //	CHotKeySet set;
+    //	set.def = CHotKey(VK_SHIFT, VK_CONTROL, VK_F24);
+    //	set.def2 = CHotKey(VK_F23);
+    //	AddHotKey(hk_EmulCopyWithFormat, set);
+    //}
 
-	//{
-	//	CHotKeySet set;
-	//	set.def = CHotKey(VK_F24).SetHold(true);
-	//	set.fFillFromDef = true;
-	//	AddHotKey(hk_RevertRecentTyped, set);
-	//}
+    //{
+    //	CHotKeySet set;
+    //	set.def = CHotKey(VK_F24).SetHold(true);
+    //	set.fFillFromDef = true;
+    //	AddHotKey(hk_RevertRecentTyped, set);
+    //}
 
-	//{
-	//	CHotKeySet set;
-	//	set.fGui = false;
-	//	AddHotKey(hk_ChangeTextCase, set);
-	//}
+    //{
+    //	CHotKeySet set;
+    //	set.fGui = false;
+    //	AddHotKey(hk_ChangeTextCase, set);
+    //}
+
+    for (auto& it : hotkeysList) {
+        auto& hk = it.second;
+        if (hk.fUseDef) {
+            hk.key = hk.def;
+        }
+    }
 }
 
 TStatus SettingsGui::Load()

@@ -67,12 +67,12 @@ class MyFrame4 : public wxFrame
 		wxChoice* m_choiceset3;
 		wxTextCtrl* m_textSetlay3;
 		wxPanel* m_panel5;
-		wxCheckBox* m_checkBox5;
+		wxCheckBox* m_checkcapsrem;
 		wxStaticText* m_staticText321;
-		wxTextCtrl* m_textLastword12;
+		wxTextCtrl* m_textcapsgen;
 		wxButton* m_button7;
 		wxButton* m_button8;
-		wxListBox* m_listBox1;
+		wxListBox* m_listBoxRemap;
 		wxPanel* m_panel16;
 		wxCheckBox* m_checkBox6;
 		wxCheckBox* m_checkBox7;
@@ -88,6 +88,13 @@ class MyFrame4 : public wxFrame
 		virtual void onWorkInAdminCheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onLayChoice( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onClearFilter( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onRemapCaps( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onUpdateRemap( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onDeleteRemap( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onEnableLog( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onPrevent( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onDisableAccessebl( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onClearFormat( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onExit( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onCloseToTray( wxCommandEvent& event ) { event.Skip(); }
 
