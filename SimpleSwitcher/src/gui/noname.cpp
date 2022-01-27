@@ -126,8 +126,8 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_staticText32->Wrap( -1 );
 	bSizer53->Add( m_staticText32, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_textLastword1 = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer53->Add( m_textLastword1, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	m_textCycleLay = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer53->Add( m_textCycleLay, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 
 	sbSizer4->Add( bSizer53, 0, wxEXPAND, 5 );
@@ -141,14 +141,14 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer531;
 	bSizer531 = new wxBoxSizer( wxHORIZONTAL );
 
-	wxString m_choiceLayFilter1Choices[] = { wxT("us-US"), wxT("ru") };
-	int m_choiceLayFilter1NChoices = sizeof( m_choiceLayFilter1Choices ) / sizeof( wxString );
-	m_choiceLayFilter1 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxSize( 150,-1 ), m_choiceLayFilter1NChoices, m_choiceLayFilter1Choices, 0 );
-	m_choiceLayFilter1->SetSelection( 0 );
-	bSizer531->Add( m_choiceLayFilter1, 0, wxALL, 5 );
+	wxString m_choiceset1Choices[] = { wxT("us-US"), wxT("ru") };
+	int m_choiceset1NChoices = sizeof( m_choiceset1Choices ) / sizeof( wxString );
+	m_choiceset1 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxSize( 150,-1 ), m_choiceset1NChoices, m_choiceset1Choices, 0 );
+	m_choiceset1->SetSelection( 0 );
+	bSizer531->Add( m_choiceset1, 0, wxALL, 5 );
 
-	m_textLastword11 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer531->Add( m_textLastword11, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	m_textSetlay1 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer531->Add( m_textSetlay1, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 
 	sbSizer5->Add( bSizer531, 0, wxEXPAND, 5 );
@@ -156,14 +156,14 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer5311;
 	bSizer5311 = new wxBoxSizer( wxHORIZONTAL );
 
-	wxString m_choiceLayFilter11Choices[] = { wxT("us-US"), wxT("ru") };
-	int m_choiceLayFilter11NChoices = sizeof( m_choiceLayFilter11Choices ) / sizeof( wxString );
-	m_choiceLayFilter11 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxSize( 150,-1 ), m_choiceLayFilter11NChoices, m_choiceLayFilter11Choices, 0 );
-	m_choiceLayFilter11->SetSelection( 0 );
-	bSizer5311->Add( m_choiceLayFilter11, 0, wxALL, 5 );
+	wxString m_choiceset2Choices[] = { wxT("us-US"), wxT("ru") };
+	int m_choiceset2NChoices = sizeof( m_choiceset2Choices ) / sizeof( wxString );
+	m_choiceset2 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxSize( 150,-1 ), m_choiceset2NChoices, m_choiceset2Choices, 0 );
+	m_choiceset2->SetSelection( 0 );
+	bSizer5311->Add( m_choiceset2, 0, wxALL, 5 );
 
-	m_textLastword111 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer5311->Add( m_textLastword111, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	m_textSetlay2 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer5311->Add( m_textSetlay2, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 
 	sbSizer5->Add( bSizer5311, 0, wxEXPAND, 5 );
@@ -171,14 +171,14 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer5312;
 	bSizer5312 = new wxBoxSizer( wxHORIZONTAL );
 
-	wxString m_choiceLayFilter12Choices[] = { wxT("us-US"), wxT("ru") };
-	int m_choiceLayFilter12NChoices = sizeof( m_choiceLayFilter12Choices ) / sizeof( wxString );
-	m_choiceLayFilter12 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxSize( 150,-1 ), m_choiceLayFilter12NChoices, m_choiceLayFilter12Choices, 0 );
-	m_choiceLayFilter12->SetSelection( 0 );
-	bSizer5312->Add( m_choiceLayFilter12, 0, wxALL, 5 );
+	wxString m_choiceset3Choices[] = { wxT("us-US"), wxT("ru") };
+	int m_choiceset3NChoices = sizeof( m_choiceset3Choices ) / sizeof( wxString );
+	m_choiceset3 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxSize( 150,-1 ), m_choiceset3NChoices, m_choiceset3Choices, 0 );
+	m_choiceset3->SetSelection( 0 );
+	bSizer5312->Add( m_choiceset3, 0, wxALL, 5 );
 
-	m_textLastword112 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer5312->Add( m_textLastword112, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	m_textSetlay3 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer5312->Add( m_textSetlay3, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 
 	sbSizer5->Add( bSizer5312, 0, wxEXPAND, 5 );
@@ -190,18 +190,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel14->SetSizer( bSizer4 );
 	m_panel14->Layout();
 	bSizer4->Fit( m_panel14 );
-	m_notebook2->AddPage( m_panel14, wxT("Change Layout"), false );
-	m_panel15 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_panel15->Hide();
-
-	wxBoxSizer* bSizer19;
-	bSizer19 = new wxBoxSizer( wxVERTICAL );
-
-
-	m_panel15->SetSizer( bSizer19 );
-	m_panel15->Layout();
-	bSizer19->Fit( m_panel15 );
-	m_notebook2->AddPage( m_panel15, wxT("Words separation"), false );
+	m_notebook2->AddPage( m_panel14, wxT("Change Layout"), true );
 	m_panel5 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer20;
 	bSizer20 = new wxBoxSizer( wxVERTICAL );
@@ -256,7 +245,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer24->Fit( m_panel16 );
 	m_notebook2->AddPage( m_panel16, wxT("Settings"), false );
 	m_panel6 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_notebook2->AddPage( m_panel6, wxT("About"), true );
+	m_notebook2->AddPage( m_panel6, wxT("About"), false );
 
 	bSizer1->Add( m_notebook2, 1, wxEXPAND | wxALL, 0 );
 
@@ -284,9 +273,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBoxWorkInAdmin->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onWorkInAdminCheck ), NULL, this );
 	m_choiceLayFilter->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_button3->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onClearFilter ), NULL, this );
-	m_choiceLayFilter1->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
-	m_choiceLayFilter11->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
-	m_choiceLayFilter12->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
+	m_choiceset1->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
+	m_choiceset2->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
+	m_choiceset3->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onExit ), NULL, this );
 	m_button2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onCloseToTray ), NULL, this );
 }
@@ -299,9 +288,9 @@ MyFrame4::~MyFrame4()
 	m_checkBoxWorkInAdmin->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onWorkInAdminCheck ), NULL, this );
 	m_choiceLayFilter->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_button3->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onClearFilter ), NULL, this );
-	m_choiceLayFilter1->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
-	m_choiceLayFilter11->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
-	m_choiceLayFilter12->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
+	m_choiceset1->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
+	m_choiceset2->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
+	m_choiceset3->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onExit ), NULL, this );
 	m_button2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onCloseToTray ), NULL, this );
 
@@ -314,7 +303,7 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* bSizer16;
 	bSizer16 = new wxBoxSizer( wxVERTICAL );
 
-	wxString m_radioBox1Choices[] = { wxT("123"), wxT("333") };
+	wxString m_radioBox1Choices[] = { wxT("Input"), wxT("123"), wxT("333") };
 	int m_radioBox1NChoices = sizeof( m_radioBox1Choices ) / sizeof( wxString );
 	m_radioBox1 = new wxRadioBox( this, wxID_ANY, wxT("Hotkey"), wxDefaultPosition, wxDefaultSize, m_radioBox1NChoices, m_radioBox1Choices, 1, wxRA_SPECIFY_COLS );
 	m_radioBox1->SetSelection( 0 );

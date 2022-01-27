@@ -48,6 +48,39 @@ public:
 
 class MainWnd : public MyFrame4
 {
+public:
+    MainWnd() : MyFrame4(nullptr)
+    {
+        m_notebook2->SetSelection(0);
+        SetupToHotCtrl(m_textLastword, hk_RevertLastWord);
+        SetupToHotCtrl(m_textSeveralWords, hk_RevertCycle);
+        SetupToHotCtrl(m_textSelected, hk_RevertSel);
+        SetupToHotCtrl(m_textCycleLay, hk_CycleCustomLang);
+        SetupToHotCtrl(m_textSetlay1, hk_ChangeSetLayout_1);
+        SetupToHotCtrl(m_textSetlay2, hk_ChangeSetLayout_2);
+        SetupToHotCtrl(m_textSetlay3, hk_ChangeSetLayout_3);
+
+        if (startOk()) {
+            coreWork.Start();
+        }
+        updateEnable();
+        updateAutoStart();
+        FillCombo();
+        updateLayFilter();
+
+        // tray.Init(this);
+        // tray.SetEnabled(true);
+
+        icon = wxIcon("appicon");
+        SetIcon(icon);
+        if (myTray.IsAvailable()) {
+            myTray.SetIcon(icon);
+            myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
+            myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
+            myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
+        }
+    }
+
 private:
     //wxDECLARE_EVENT_TABLE();
     CoreWorker coreWork;
@@ -58,6 +91,7 @@ private:
     void SetupToHotCtrl(wxTextCtrl* elem, HotKeyType type) {
         elem->SetClientData((void*)type);
         elem->SetEditable(false);
+        elem->SetValue(setsgui.GetHk(type).key.ToString());
         elem->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
     }
 
@@ -76,6 +110,7 @@ private:
         }
 
     }
+
     void updateEnable() {
         if (!startOk()) {
             coreWork.Stop();
@@ -106,25 +141,64 @@ private:
     }
     HKL lay_buf[50] = { 0 };
     int lay_size = 0;
+    wxChoice* getByIndex(int i) {
+        if (i == 0)            return m_choiceset1;
+        if(i == 1)            return m_choiceset2;
+        if (i == 2)
+            return m_choiceset3;
+        return nullptr;
+    }
     void FillCombo() {
         m_choiceLayFilter->Clear();
+        for (int i = 0; i < 3; i++) {
+            getByIndex(i)->Clear();
+        }
         lay_size = GetKeyboardLayoutList(SW_ARRAY_SIZE(lay_buf), lay_buf);
         for (int i = 0; i < lay_size; i++) {
             auto name = Utils::GetNameForHKL(lay_buf[i]);
             m_choiceLayFilter->AppendString(name);
+
+            for (int i = 0; i < 3; i++) {
+                getByIndex(i)->AppendString(name);
+            }
+        }
+
+        for (int i = 0; i < 3; i++) {
+            auto cur = setsgui.hkl_lay[i];
+            for (int j = 0; j < lay_size; j++) {
+                if (lay_buf[j] == cur) {
+                    getByIndex(i)->SetSelection(j);
+                    break;
+                }
+            }
         }
     }
     void onLayChoice(wxCommandEvent& event) override {
+
+        auto obj = wxDynamicCast(event.GetEventObject(), wxChoice);
+        if (!obj)
+            return;
         auto cur = event.GetSelection();
         auto lay = lay_buf[cur];
-        for (auto& elem : setsgui.customLangList) {
-            if (elem == lay)
-                return;
-        }
-        setsgui.customLangList.push_back(lay);
-        updateLayFilter();
-        setsgui.SaveAndPostMsg();
 
+        if (obj == m_choiceLayFilter) {
+            for (auto& elem : setsgui.customLangList) {
+                if (elem == lay)
+                    return;
+            }
+            setsgui.customLangList.push_back(lay);
+            updateLayFilter();
+            setsgui.SaveAndPostMsg();
+        } else {
+            if (obj == m_choiceset1) {
+                setsgui.hkl_lay[0] = lay;
+            } else if (obj == m_choiceset2) {
+                setsgui.hkl_lay[1] = lay;
+            } else {
+                setsgui.hkl_lay[2] = lay;
+            }
+            setsgui.SaveAndPostMsg();
+        }
     }
     void onClearFilter(wxCommandEvent& event) override {
         setsgui.customLangList.clear();
@@ -189,33 +263,7 @@ private:
     //}
 public:
     // ctor(s)
-    MainWnd():MyFrame4(nullptr) {
-        m_notebook2->SetSelection(0);
-        SetupToHotCtrl(m_textLastword, hk_RevertLastWord);
-        SetupToHotCtrl(m_textSeveralWords, hk_RevertCycle);
-        SetupToHotCtrl(m_textSelected, hk_RevertSel);
 
-        if (startOk()) {
-            coreWork.Start();
-        }
-        updateEnable();
-        updateAutoStart();
-        FillCombo();
-        updateLayFilter();
-
-        //tray.Init(this);
-        //tray.SetEnabled(true);
-        
-
-        icon = wxIcon("appicon");
-        SetIcon(icon);
-        if (myTray.IsAvailable()) {
-            myTray.SetIcon(icon);
-            myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit); 
-            myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
-            myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
-        }
-    }
     void onShow2(wxTaskBarIconEvent& event) {
         Show(true);
     }

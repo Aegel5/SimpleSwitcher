@@ -58,14 +58,13 @@ class MyFrame4 : public wxFrame
 		wxButton* m_button3;
 		wxPanel* m_panel14;
 		wxStaticText* m_staticText32;
-		wxTextCtrl* m_textLastword1;
-		wxChoice* m_choiceLayFilter1;
-		wxTextCtrl* m_textLastword11;
-		wxChoice* m_choiceLayFilter11;
-		wxTextCtrl* m_textLastword111;
-		wxChoice* m_choiceLayFilter12;
-		wxTextCtrl* m_textLastword112;
-		wxPanel* m_panel15;
+		wxTextCtrl* m_textCycleLay;
+		wxChoice* m_choiceset1;
+		wxTextCtrl* m_textSetlay1;
+		wxChoice* m_choiceset2;
+		wxTextCtrl* m_textSetlay2;
+		wxChoice* m_choiceset3;
+		wxTextCtrl* m_textSetlay3;
 		wxPanel* m_panel5;
 		wxCheckBox* m_checkBox5;
 		wxStaticText* m_staticText321;
@@ -124,7 +123,7 @@ class MyDialog1 : public wxDialog
 
 	public:
 
-		MyDialog1( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Set hotkey"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 420,250 ), long style = wxDEFAULT_DIALOG_STYLE );
+		MyDialog1( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Set hotkey"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 454,270 ), long style = wxDEFAULT_DIALOG_STYLE );
 
 		~MyDialog1();
 

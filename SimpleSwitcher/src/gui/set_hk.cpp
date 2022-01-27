@@ -27,17 +27,17 @@ class HotKeyDlg : public MyDialog1
 public:
     HotKeyDlg(CHotKeySet& info, wxFrame* frame) : MyDialog1(frame), info(info)
     {
-        m_radioBox1->SetString(0, info.def.ToString());
-        m_radioBox1->SetString(1, info.def2.ToString());
+        key     = info.key;
 
-        key = info.key;
-        if (key == info.def2) {
-            m_radioBox1->SetSelection(1);
-        }
+        auto ss = [](CHotKey key) { return key.IsEmpty() ? L"[None]" : key.ToString(); };
+
+        m_radioBox1->SetString(1, ss(info.def));
+        m_radioBox1->SetString(2, ss(info.def2));
+
         updateField();
 
         curwnd = GetHWND();
-        hook = WinApiInt::SetWindowsHookEx(WH_KEYBOARD_LL, &LowLevelKeyboardProc, 0, 0);
+        hook   = WinApiInt::SetWindowsHookEx(WH_KEYBOARD_LL, &LowLevelKeyboardProc, 0, 0);
         IFW_LOG(hook.IsValid());
     }
     CHotKey key;
@@ -47,6 +47,14 @@ private:
     void updateField()
     {
         m_textKey->SetValue(key.ToString());
+
+        if (key.Compare(info.def)) {
+            m_radioBox1->SetSelection(1);
+        } else if (key.Compare(info.def2)) {
+            m_radioBox1->SetSelection(2);
+        } else {
+            m_radioBox1->SetSelection(0);
+        }
     }
     CHotKeySet info;
 
@@ -54,6 +62,9 @@ private:
     {
         auto cur = m_radioBox1->GetSelection();
         if (cur == 0) {
+            key.Clear();
+        }
+        else if (cur == 1) {
             key = info.def;
         } else {
             key = info.def2;

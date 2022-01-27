@@ -328,19 +328,19 @@ TStatus Hooker::FillKeyToRevert(TKeyRevert& keyList, HotKeyType typeRevert)
 		return cur.key();
 	};
 
-	if (typeRevert == hk_RevertRecentTyped)
-	{
-		// reset this
-		m_nCurrentRevertCycle = -1;
+	//if (typeRevert == hk_RevertRecentTyped)
+	//{
+	//	// reset this
+	//	m_nCurrentRevertCycle = -1;
 
-		// get all
-		for (int i = 0; i < (int)m_wordList.size(); ++i)
-		{
-			keyList.push_back(get_decrtypted(i));
-		}
+	//	// get all
+	//	for (int i = 0; i < (int)m_wordList.size(); ++i)
+	//	{
+	//		keyList.push_back(get_decrtypted(i));
+	//	}
 
-		RETURN_SUCCESS;
-	}
+	//	RETURN_SUCCESS;
+	//}
 
 	if (m_nCurrentRevertCycle == -1)
 		RETURN_SUCCESS;
@@ -924,10 +924,13 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	}
 
 	auto getNextLang = [this](const std::vector<HKL>& lst) {
-		if (lst.size() < 2)
-		{
-			return std::make_pair(false, (HKL)0);
-		}
+        if (lst.size() == 0) {
+            return std::make_pair(true, (HKL)HKL_NEXT);
+        }
+        if (lst.size() == 1) {
+            return std::make_pair(false, (HKL)0);
+        }
+
 		HKL toSet = 0;
 		for (size_t i = 0; i < lst.size(); ++i)
 		{
@@ -943,8 +946,9 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 				break;
 			}
 		}
-		if (toSet == 0)
+		if (toSet == 0) // not found
 		{
+            LOG_WARN(L"not found hwnd lay in our list");
 			toSet = lst[0];
 		}
 		return std::make_pair(true, toSet);
@@ -961,13 +965,13 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		RETURN_SUCCESS;
 	}
 
-	if (typeRevert == hk_ChangeLayoutCycle)
-	{
-		data.flags = SW_CLIENT_SetLang;
-		data.lay = (HKL)HKL_NEXT;
-		IFS_RET(ProcessRevert(data));
-		RETURN_SUCCESS;
-	}
+	//if (typeRevert == hk_ChangeLayoutCycle)
+	//{
+	//	data.flags = SW_CLIENT_SetLang;
+	//	data.lay = (HKL)HKL_NEXT;
+	//	IFS_RET(ProcessRevert(data));
+	//	RETURN_SUCCESS;
+	//}
 
 	if (typeRevert == hk_ChangeSetLayout_1 || typeRevert == hk_ChangeSetLayout_2 || typeRevert == hk_ChangeSetLayout_3)
 	{
@@ -1004,20 +1008,23 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		RETURN_SUCCESS;
 	}
 
-	HKL nextLng = (HKL)HKL_NEXT;
+	auto [res, nextLng] = getNextLang(settings_thread.customLangList);
+    if (!res) {
+        RETURN_SUCCESS;
+    }
 
-	if (typeRevert == hk_RevertLastWord_CustomLang || typeRevert == hk_RevertCycle_CustomLang)
-	{
-		auto [res, toSet] = getNextLang(settings_thread.revert_customLangList);
-		if (!res)
-			RETURN_SUCCESS;
-		nextLng = toSet;
-		typeRevert = typeRevert == hk_RevertLastWord_CustomLang ? hk_RevertLastWord : hk_RevertCycle;
-	} 
+	//if (typeRevert == hk_RevertLastWord_CustomLang || typeRevert == hk_RevertCycle_CustomLang)
+	//{
+	//	auto [res, toSet] = getNextLang(settings_thread.revert_customLangList);
+	//	if (!res)
+	//		RETURN_SUCCESS;
+	//	nextLng = toSet;
+	//	typeRevert = typeRevert == hk_RevertLastWord_CustomLang ? hk_RevertLastWord : hk_RevertCycle;
+	//} 
 
 	// ---------------classic revert---------------
 
-	if (!(typeRevert == hk_RevertLastWord || typeRevert == hk_RevertCycle || typeRevert == hk_RevertRecentTyped))
+	if (!(typeRevert == hk_RevertLastWord || typeRevert == hk_RevertCycle))
 	{
 		IFS_RET(SW_ERR_UNKNOWN, L"Unknown typerevert %d", typeRevert);
 	}

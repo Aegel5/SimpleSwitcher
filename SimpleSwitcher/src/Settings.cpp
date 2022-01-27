@@ -45,11 +45,11 @@ void SettingsGui::GenerateListHK()
 	}
 
 
-	{
-		CHotKeySet set;
-		set.def = CHotKey(VK_LSHIFT, VK_RSHIFT);
-		AddHotKey(hk_ChangeLayoutCycle, set);
-	}
+	//{
+	//	CHotKeySet set;
+	//	set.def = CHotKey(VK_LSHIFT, VK_RSHIFT);
+	//	AddHotKey(hk_ChangeLayoutCycle, set);
+	//}
 
 	{
 		CHotKeySet set;
@@ -92,22 +92,24 @@ void SettingsGui::GenerateListHK()
 
 	{
 		CHotKeySet set;
+        set.def = CHotKey(VK_LSHIFT, VK_RSHIFT);
+        set.def.SetLeftRightMode(true);
 		AddHotKey(hk_CycleCustomLang, set);
 	}
 
-	{
-		CHotKeySet set;
-		set.fNeedSavedWord = true;
-		AddHotKey(hk_RevertLastWord_CustomLang, set);
+	//{
+	//	CHotKeySet set;
+	//	set.fNeedSavedWord = true;
+	//	AddHotKey(hk_RevertLastWord_CustomLang, set);
 
-	}
+	//}
 
-	{
-		CHotKeySet set;
-		set.fNeedSavedWord = true;
-		AddHotKey(hk_RevertCycle_CustomLang, set);
+	//{
+	//	CHotKeySet set;
+	//	set.fNeedSavedWord = true;
+	//	AddHotKey(hk_RevertCycle_CustomLang, set);
 
-	}
+	//}
 
 	{
 		CHotKeySet set;

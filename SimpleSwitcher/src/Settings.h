@@ -14,7 +14,7 @@ enum HotKeyType : TUInt32
 	//hk_RevertAdv = 3,
 	//hk_RevertCycleAdv = 4,
 
-	hk_ChangeLayoutCycle = 5,
+	//hk_ChangeLayoutCycle = 5,
 
 	hk_ChangeSetLayout_1 = 6,
 	hk_ChangeSetLayout_2 = 7,
@@ -31,12 +31,12 @@ enum HotKeyType : TUInt32
 	//hk_EmulCopyNoFormat = 13,
 	//hk_EmulCopyWithFormat = 14,
 
-	hk_RevertRecentTyped = 15,
+	//hk_RevertRecentTyped = 15,
 
 	//hk_ChangeTextCase = 16,
 
-	hk_RevertLastWord_CustomLang = 17,
-	hk_RevertCycle_CustomLang = 18,
+	//hk_RevertLastWord_CustomLang = 17,
+	//hk_RevertCycle_CustomLang = 18,
 
 	hk_MAX,
 
@@ -54,7 +54,7 @@ inline const wchar_t* HotKeyTypeName(HotKeyType hk_type)
 	case hk_RevertSel: return L"hk_RevertSel";
 	//case hk_RevertAdv: return "hk_RevertAdv";
 	//case hk_RevertCycleAdv:return "hk_RevertCycleAdv";
-	case hk_ChangeLayoutCycle:return L"hk_ChangeLayoutCycle";
+	//case hk_ChangeLayoutCycle:return L"hk_ChangeLayoutCycle";
 	case hk_ChangeSetLayout_1:return L"hk_ChangeSetLayout_1";
 	case hk_ChangeSetLayout_2:return L"hk_ChangeSetLayout_2";
 	case hk_ChangeSetLayout_3:return L"hk_ChangeSetLayout_3";
@@ -64,7 +64,7 @@ inline const wchar_t* HotKeyTypeName(HotKeyType hk_type)
 	case hk_ScrollGenerate:return L"hk_ScrollGenerate";
 	//case hk_EmulCopyNoFormat:return L"hk_EmulCopyNoFormat";
 	//case hk_EmulCopyWithFormat:return L"hk_EmulCopyWithFormat";
-	case hk_RevertRecentTyped:return L"hk_RevertRecentTyped";
+	//case hk_RevertRecentTyped:return L"hk_RevertRecentTyped";
 	//case hk_ChangeTextCase:return L"hk_ChangeTextCase";
 	case hk_MAX:return L"hk_MAX";
 	default: return L"Unknown";
