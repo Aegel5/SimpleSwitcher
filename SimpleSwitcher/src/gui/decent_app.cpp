@@ -43,7 +43,7 @@ bool MyApp::OnInit()
 
     bool show = true;
     for (int i = 0; i < wxApp::argc; i++) {
-        auto& cur = wxApp::argv[i];
+        auto cur = wxApp::argv[i];
         if (cur == c_sArgAutostart) {
             show = false;
             break;

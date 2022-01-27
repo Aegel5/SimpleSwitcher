@@ -54,7 +54,7 @@ public:
 
 			DWORD pid = 0;
 			GetWindowThreadProcessId(hwnd, &pid);
-			if (Utils::IsElevated(pid))
+			if (Utils::IsElevatedByPid(pid))
 				res.admin = true;
 		}
 

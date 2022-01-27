@@ -92,7 +92,7 @@ namespace Startup
 			CAuto_Bstr bsArgs;
 			IFH_RET(actExec->get_Arguments(&bsArgs));
 
-			std::wstring actPath = bsPath;
+			std::wstring actPath(bsPath.get(), SysStringLen(bsPath.get()));
 			Str_Utils::trim(actPath, L" \"");
 
 			parm.pathValue = actPath;
@@ -225,7 +225,8 @@ namespace Startup
 		{
 			CComPtr<IRegistrationInfo> pRegInfo;
 			IFH_RET(pTask->get_RegistrationInfo(&pRegInfo));
-			IFH_RET(pRegInfo->put_Author(L"12345"));
+			_bstr_t bstrVal(_T("123"));
+			IFH_RET(pRegInfo->put_Author(bstrVal));
 		}
 
 		// principal
@@ -250,7 +251,8 @@ namespace Startup
 			IFH_RET(pSettings->put_DisallowStartIfOnBatteries(VARIANT_FALSE));
 			IFH_RET(pSettings->put_StopIfGoingOnBatteries(VARIANT_FALSE));
 
-			IFH_RET(pSettings->put_ExecutionTimeLimit(TEXT("PT0S")));
+			_bstr_t bstrVal(_T("PT0S"));
+			IFH_RET(pSettings->put_ExecutionTimeLimit(bstrVal));
 			IFH_RET(pSettings->put_AllowHardTerminate(VARIANT_FALSE));
 
 			IFH_RET(pSettings->put_RunOnlyIfNetworkAvailable(VARIANT_FALSE));

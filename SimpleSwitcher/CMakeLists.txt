@@ -24,11 +24,15 @@ set(wxUSE_MEDIA OFF)
 #set(wxUSE_LIBJPEG OFF)
 
 
-file(GLOB_RECURSE TARGET_SOURCES  src/*.cpp src/*.cc src/myres.rc)
+file(GLOB_RECURSE TARGET_SOURCES  
+src/*.cpp 
+src/*.cc
+src/myres.rc)
 
 #file(GLOB_RECURSE TARGET_PRIVATE_HEADERS     src/*.hpp     src/*.h)
 
 add_subdirectory(../wxWidgets wxWidgets)
+#set(CMAKE_CXX20_STANDARD_COMPILE_OPTION "-std:c++latest")
 
 set(CMAKE_CXX_STANDARD 17)
 add_executable (SimpleSwitcher WIN32 ${TARGET_SOURCES})

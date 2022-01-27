@@ -18,7 +18,6 @@
 
 #include "utils/WinApiInt.h"
 
-#include "utils/CAutoCleanupGUI.h"
 #include "utils/CAutoCleanupWin.h"
 #include "utils/COM_utils.h"
 

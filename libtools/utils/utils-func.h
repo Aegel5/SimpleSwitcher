@@ -54,7 +54,7 @@ namespace Utils
 
 	TStatus GetTokenNormalUser(CAutoHandle& token);
 
-	inline bool IsElevated(DWORD procId)
+	inline bool IsElevatedByPid(DWORD procId)
 	{
 		if (!IsWindowsVistaOrGreater())
 			return false;

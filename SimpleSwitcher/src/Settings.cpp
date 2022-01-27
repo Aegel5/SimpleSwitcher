@@ -197,6 +197,7 @@ TStatus SettingsGui::LoadAutoSettings()
 	//ParseCfg::GetBool(tsmap, L"isDashSeparate", isDashSeparate);
 	ParseCfg::GetBool(tsmap, L"fDbgMode", fDbgMode);
 	ParseCfg::GetBool(tsmap, L"fClipboardClearFormat", fClipboardClearFormat);
+    ParseCfg::GetBool(tsmap, L"disableAccessebility", disableAccessebility);
 
 	//ParseCfg::GetInt(tsmap, L"idLang", idLang);
 
@@ -289,7 +290,7 @@ void AddHex(std::wstring& cont, const TChar* name, TUInt64 val)
 }
 void AddInt(std::wstring& cont, const TChar* name, TUInt64 val)
 {
-	AddStr(cont, name, std::to_wstring(val));
+	AddStr(cont, name, std::to_wstring(val).c_str());
 }
 void AddBool(std::wstring& cont, const TChar* name, bool val)
 {
@@ -307,6 +308,7 @@ void SettingsGui::Save()
 	AddBool(cont, L"fEnableKeyLoggerDefence", fEnableKeyLoggerDefence);
 	AddBool(cont, L"fDbgMode", fDbgMode); 
 	AddBool(cont, L"fClipboardClearFormat", fClipboardClearFormat); 
+	AddBool(cont, L"disableAccessebility", disableAccessebility); 
 	//AddBool(cont, L"isDashSeparate", isDashSeparate); 
 	//AddInt(cont, L"idLang", idLang);
 	//AddBool(cont, L"fHookDll", fHookDll);
