@@ -25,6 +25,7 @@
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/panel.h>
+#include <wx/listbox.h>
 #include <wx/notebook.h>
 #include <wx/frame.h>
 #include <wx/radiobox.h>
@@ -69,6 +70,9 @@ class MyFrame4 : public wxFrame
 		wxCheckBox* m_checkBox5;
 		wxStaticText* m_staticText321;
 		wxTextCtrl* m_textLastword12;
+		wxButton* m_button7;
+		wxButton* m_button8;
+		wxListBox* m_listBox1;
 		wxPanel* m_panel16;
 		wxCheckBox* m_checkBox6;
 		wxCheckBox* m_checkBox7;

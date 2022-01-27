@@ -190,7 +190,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel14->SetSizer( bSizer4 );
 	m_panel14->Layout();
 	bSizer4->Fit( m_panel14 );
-	m_notebook2->AddPage( m_panel14, wxT("Change Layout"), true );
+	m_notebook2->AddPage( m_panel14, wxT("Change Layout"), false );
 	m_panel5 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer20;
 	bSizer20 = new wxBoxSizer( wxVERTICAL );
@@ -217,11 +217,28 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	bSizer20->Add( sbSizer6, 0, wxEXPAND, 5 );
 
+	wxBoxSizer* bSizer19;
+	bSizer19 = new wxBoxSizer( wxHORIZONTAL );
+
+	m_button7 = new wxButton( m_panel5, wxID_ANY, wxT("Update"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer19->Add( m_button7, 0, wxALL, 5 );
+
+	m_button8 = new wxButton( m_panel5, wxID_ANY, wxT("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer19->Add( m_button8, 0, wxALL, 5 );
+
+
+	bSizer20->Add( bSizer19, 0, wxEXPAND, 5 );
+
+	m_listBox1 = new wxListBox( m_panel5, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	m_listBox1->Append( wxT("123") );
+	m_listBox1->Append( wxT("1222") );
+	bSizer20->Add( m_listBox1, 1, wxALL|wxEXPAND, 5 );
+
 
 	m_panel5->SetSizer( bSizer20 );
 	m_panel5->Layout();
 	bSizer20->Fit( m_panel5 );
-	m_notebook2->AddPage( m_panel5, wxT("Key Remap"), false );
+	m_notebook2->AddPage( m_panel5, wxT("Key Remap"), true );
 	m_panel16 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer24;
 	bSizer24 = new wxBoxSizer( wxVERTICAL );
@@ -229,7 +246,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBox6 = new wxCheckBox( m_panel16, wxID_ANY, wxT("Enable debug log"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer24->Add( m_checkBox6, 0, wxALL, 5 );
 
-	m_checkBox7 = new wxCheckBox( m_panel16, wxID_ANY, wxT("Prevent other program to hook keyboard (may cause problems in games and other apps)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox7 = new wxCheckBox( m_panel16, wxID_ANY, wxT("Prevent other programs to hook keyboard (may cause problems in games and other apps)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBox7->SetValue(true);
 	bSizer24->Add( m_checkBox7, 0, wxALL, 5 );
 
