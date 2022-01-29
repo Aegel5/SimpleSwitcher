@@ -272,6 +272,11 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_hyperlink1 = new wxHyperlinkCtrl( m_panel6, wxID_ANY, wxEmptyString, wxT("https://github.com/Aegel5/SimpleSwitcher"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
 	bSizer191->Add( m_hyperlink1, 0, wxALL, 5 );
 
+	m_bitmap1 = new wxStaticBitmap( m_panel6, wxID_ANY, wxIcon( wxT("appicon"), wxBITMAP_TYPE_ICO_RESOURCE, 256, 256 ), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+	m_bitmap1->Hide();
+
+	bSizer191->Add( m_bitmap1, 1, wxALL|wxEXPAND, 5 );
+
 
 	m_panel6->SetSizer( bSizer191 );
 	m_panel6->Layout();

@@ -90,6 +90,8 @@ public:
 
         updateCapsTab();
         handleDisableAccess();
+
+
     }
 
 private:
@@ -318,6 +320,38 @@ private:
         }
         m_textFilterLay->SetValue(res);
     }
+
+    void ensureAuto(bool enable) {
+        if (setsgui.isMonitorAdmin) {
+            if (enable) {
+                IFS_LOG(SetSchedule());
+            } else {
+                IFS_LOG(DelSchedule());
+            }
+
+            bool isUserAllOk   = false;
+            bool isUserHasTask = false;
+            IFS_LOG(CheckRegRun(isUserAllOk, isUserHasTask));
+            if (isUserHasTask) {
+                DelRegRun();
+            }
+
+        } else {
+            if (enable) {
+                SetRegRun();
+            } else {
+                DelRegRun();
+            }
+
+            bool isAdminAllOk   = false;
+            bool isAdminHasTask = false;
+            IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
+            if (isAdminHasTask) {
+                IFS_LOG(DelSchedule());
+            }
+        }
+    }
+
     void updateAutoStart() {
 
         bool isUserAllOk = false;
@@ -328,25 +362,8 @@ private:
         bool isAdminHasTask = false;
         IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
 
-        if (isUserHasTask)
-        {
-            if (!isUserAllOk || setsgui.isMonitorAdmin)
-            {
-                IFS_LOG(DelRegRun());
-                IFS_LOG(CheckRegRun(isUserAllOk, isUserHasTask));
-            }
-        }
-
-        if (isAdminHasTask && Utils::IsSelfElevated())
-        {
-            if (!isAdminAllOk || !setsgui.isMonitorAdmin)
-            {
-                IFS_LOG(DelSchedule());
-                IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
-            }
-        }
-
-        m_checkAddToAutoStart->SetValue(setsgui.isMonitorAdmin ? isAdminAllOk : isUserAllOk);
+        m_checkAddToAutoStart->SetValue(setsgui.isMonitorAdmin ? isAdminAllOk && !isUserHasTask
+                                                               : isUserAllOk && !isAdminHasTask);
         UpdateAutostartExplain();
 
     }
@@ -385,27 +402,12 @@ public:
         updateEnable();
     }
     void onAutocheck(wxCommandEvent& event) override {
-        if (setsgui.isMonitorAdmin) {
-            if (Utils::IsSelfElevated())  {
-                if (m_checkAddToAutoStart->GetValue()) {
-                    IFS_LOG(SetSchedule());
-                }
-                else {
-                    IFS_LOG(DelSchedule());
-                }
-            }
-            else            {
-                ShowNeedAdmin();
-            }
+        if (setsgui.isMonitorAdmin && !Utils::IsSelfElevated()) {
+            m_checkAddToAutoStart->SetValue(!m_checkAddToAutoStart->GetValue());
+            ShowNeedAdmin();
+            return;
         }
-        else {
-            if (m_checkAddToAutoStart->GetValue()) {
-                SetRegRun();
-            }
-            else {
-                DelRegRun();
-            }
-        }
+        ensureAuto(m_checkAddToAutoStart->GetValue());
         updateAutoStart();
     }
 

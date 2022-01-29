@@ -27,6 +27,7 @@
 #include <wx/panel.h>
 #include <wx/listbox.h>
 #include <wx/hyperlink.h>
+#include <wx/statbmp.h>
 #include <wx/notebook.h>
 #include <wx/frame.h>
 #include <wx/radiobox.h>
@@ -82,6 +83,7 @@ class MyFrame4 : public wxFrame
 		wxPanel* m_panel6;
 		wxStaticText* m_staticTextBuildDate;
 		wxHyperlinkCtrl* m_hyperlink1;
+		wxStaticBitmap* m_bitmap1;
 		wxButton* m_button1;
 		wxButton* m_button2;
 
