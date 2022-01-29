@@ -804,6 +804,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		}
 	}
 
+	//needWaitLang = false;
 	if (needWaitLang && m_layoutTopWnd != 0) {
 		// Дождемся смены языка. Нет смысла переходить в асинхронный режим. Можем ждать прямо здесь.
 		auto start = GetTickCount64();

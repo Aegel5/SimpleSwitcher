@@ -39,10 +39,7 @@ TStatus UserConf::Load2() {
         }
     }
 
-    if (setsgui.fDbgMode && u_conf.ll != 0) {
-        LOG_INFO_1(L"Set ll %u", u_conf.ll);
-        SetLogLevel((TLogLevel)u_conf.ll);
-    }
+
 
     RETURN_SUCCESS;
 }
@@ -193,9 +190,6 @@ TStatus SettingsGui::Load()
 
 TStatus SettingsGui::LoadAutoSettings()
 {
-	//ResetToDef();
-	SetLogLevelBySettings();
-
 	auto sPathIni = GetPathIni();
 	if (!FileUtils::IsFileExists(sPathIni.c_str()))
 	{
@@ -222,9 +216,6 @@ TStatus SettingsGui::LoadAutoSettings()
     ParseCfg::GetBool(tsmap, L"disableAccessebility", disableAccessebility);
 
 	//ParseCfg::GetInt(tsmap, L"idLang", idLang);
-
-	SetLogLevelBySettings();
-
 	LOG_INFO_1(L"Load settings...");
 	if (GetLogLevel() >= 1)
 	{

@@ -26,8 +26,13 @@ bool MyApp::OnInit()
     //    return false;
     //}
 
+    SetLogLevel(setsgui.fDbgMode ? LOG_LEVEL_1 : LOG_LEVEL_0);
     IFS_LOG(setsgui.Load());
     IFS_LOG(u_conf.Load2());
+    if (setsgui.fDbgMode && u_conf.ll != 0) {
+        LOG_INFO_1(L"Set ll %u", u_conf.ll);
+        SetLogLevel((TLogLevel)u_conf.ll);
+    }
 
     COM::CAutoCOMInitialize autoCom;
     IFS_LOG(autoCom.Init());

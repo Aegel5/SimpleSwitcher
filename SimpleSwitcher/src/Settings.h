@@ -175,13 +175,7 @@ public:
         return hotkeysList[type];
     }
 
-    void SetLogLevelBySettings() {
-        if (fDbgMode) {
-            SetLogLevel(LOG_LEVEL_1);
-        } else {
-            SetLogLevel(LOG_LEVEL_0);
-        }
-    }
+
 
     enum {
         SW_HKL_1 = 0,

@@ -57,6 +57,7 @@ private:
 		DWORD dwerr = GetLastError();
 
 		LOG_INFO_1(L"unlock res=%u, err=%u", res, dwerr);
+		LOG_INFO_4(L"getted data. text='%s'", sTextSrc);
 
 		RETURN_SUCCESS;
 
@@ -112,7 +113,6 @@ private:
 			LOG_INFO_1(L"Found format %u", format);
 			if (format == 0)
 			{
-
 				if (GetLastError() != ERROR_SUCCESS)
 				{
 					IFW_LOG(FALSE);
@@ -122,6 +122,7 @@ private:
 			if (format >= 40000)
 			{
 				fFound = true;
+                break;
 			}
 		}
 
@@ -185,7 +186,9 @@ private:
 
 		BOOL res = GlobalUnlock(lock);
 		DWORD dwerr = GetLastError();
+
 		LOG_INFO_1(L"unlock put res=%u, err=%u", res, dwerr);
+		LOG_INFO_4(L"putted text data='%s'",sTextDst);
 
 		//m_clipboardOurPut = true;
 		//LOG_INFO_1(L"put to buf: %s, size: %u", data.c_str(), data.length());
