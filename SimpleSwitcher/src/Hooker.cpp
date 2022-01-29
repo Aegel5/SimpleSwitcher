@@ -804,7 +804,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		}
 	}
 
-	if (needWaitLang) {
+	if (needWaitLang && m_layoutTopWnd != 0) {
 		// Дождемся смены языка. Нет смысла переходить в асинхронный режим. Можем ждать прямо здесь.
 		auto start = GetTickCount64();
 		while (true)
@@ -924,11 +924,14 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	}
 
 	auto getNextLang = [this](const std::vector<HKL>& lst) {
-        if (lst.size() == 0) {
-            return std::make_pair(true, (HKL)HKL_NEXT);
+
+        if (lst.size() <= 1) {
+            return (HKL)HKL_NEXT;
         }
-        if (lst.size() == 1) {
-            return std::make_pair(false, (HKL)0);
+
+		if (m_layoutTopWnd == 0) {
+			// к сожалению наш список работать не будет (
+            return (HKL)HKL_NEXT;
         }
 
 		HKL toSet = 0;
@@ -951,19 +954,15 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
             LOG_WARN(L"not found hwnd lay in our list");
 			toSet = lst[0];
 		}
-		return std::make_pair(true, toSet);
+		return toSet;
 	};
 
-	if (typeRevert == hk_CycleCustomLang)
-	{
-		auto [res, toSet] = getNextLang(settings_thread.customLangList);
-		if (!res)
-			RETURN_SUCCESS;
-		data.flags = SW_CLIENT_SetLang;
-		data.lay = toSet;
-		IFS_RET(ProcessRevert(data));
-		RETURN_SUCCESS;
-	}
+	if (typeRevert == hk_CycleCustomLang) {
+        data.flags = SW_CLIENT_SetLang;
+        data.lay   = getNextLang(settings_thread.customLangList);
+        IFS_RET(ProcessRevert(data));
+        RETURN_SUCCESS;
+    }
 
 	//if (typeRevert == hk_ChangeLayoutCycle)
 	//{
@@ -1008,10 +1007,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		RETURN_SUCCESS;
 	}
 
-	auto [res, nextLng] = getNextLang(settings_thread.customLangList);
-    if (!res) {
-        RETURN_SUCCESS;
-    }
+	auto nextLng = getNextLang(settings_thread.customLangList);
 
 	//if (typeRevert == hk_RevertLastWord_CustomLang || typeRevert == hk_RevertCycle_CustomLang)
 	//{
