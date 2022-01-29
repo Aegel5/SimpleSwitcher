@@ -105,6 +105,16 @@ private:
     void BindBoolVal(wxCheckBox* elem, std::function<bool&()>) {
     }
 
+   virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override {
+
+        //if (nMsg == WM_INPUTLANGCHANGE) {
+        //    HKL newLayout = (HKL)lParam;
+        //    LOG_INFO_1(L"mainguid new layout: 0x%x", newLayout);
+        //}
+
+        return MyFrame4::MSWWindowProc(nMsg, wParam, lParam);
+   }
+
     void updateBools() {
         m_checkBoxWorkInAdmin->SetValue(setsgui.isMonitorAdmin);
         m_checkBoxWorkInAdmin->SetValue(setsgui.fClipboardClearFormat);

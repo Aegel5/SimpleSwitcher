@@ -20,11 +20,11 @@ wxIMPLEMENT_APP(MyApp);
 
 bool MyApp::OnInit()
 {
-    if (Utils::ProcSingleton(c_mtxSingltonGui))
-    {
-        LOG_INFO_1(L"Gui already running.Exit");
-        return false;
-    }
+    //if (Utils::ProcSingleton(c_mtxSingltonGui))
+    //{
+    //    LOG_INFO_1(L"Gui already running.Exit");
+    //    return false;
+    //}
 
     IFS_LOG(setsgui.Load());
     u_conf.Load();

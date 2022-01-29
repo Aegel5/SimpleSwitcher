@@ -931,6 +931,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
 		if (m_layoutTopWnd == 0) {
 			// к сожалению наш список работать не будет (
+			// TODO возможно будет работать если послать несколь NEXT чтобы пропустить ненужную раскладку (нужен монитор тек языка)
             return (HKL)HKL_NEXT;
         }
 

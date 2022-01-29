@@ -86,6 +86,9 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 
 		auto mesg = msg.message;
 
+		//auto curl = GetKeyboardLayout(0);
+  //      LOG_INFO_1(L"loop new layout: 0x%x", curl);
+
 		if (mesg == WM_HOTKEY)
 		{
 		}
@@ -95,7 +98,11 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 			{
 				Worker()->PostMsg(HWORKER_LoadSettings);
 			}
-		}
+        } 
+		//else if (mesg == WM_INPUTLANGCHANGE) {
+  //          HKL newLayout = (HKL)msg.lParam;
+  //          LOG_INFO_1(L"loop new layout: 0x%x", newLayout);
+  //      }
 		else if (mesg == c_MSG_Quit)
 		{
 			PostQuitMessage(0);
