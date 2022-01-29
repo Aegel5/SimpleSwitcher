@@ -120,6 +120,7 @@ struct UserConf
 	}
 
 	void Load();
+    TStatus Load2();
 };
 
 

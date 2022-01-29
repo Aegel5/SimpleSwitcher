@@ -26,6 +26,7 @@
 #include <wx/icon.h>
 #include <wx/panel.h>
 #include <wx/listbox.h>
+#include <wx/hyperlink.h>
 #include <wx/notebook.h>
 #include <wx/frame.h>
 #include <wx/radiobox.h>
@@ -74,11 +75,13 @@ class MyFrame4 : public wxFrame
 		wxButton* m_button8;
 		wxListBox* m_listBoxRemap;
 		wxPanel* m_panel16;
-		wxCheckBox* m_checkBox6;
-		wxCheckBox* m_checkBox7;
+		wxCheckBox* m_checkDebuglog;
+		wxCheckBox* m_checkBoxKeyDef;
 		wxCheckBox* m_checkBoxDisablAcc;
-		wxCheckBox* m_checkBox8;
+		wxCheckBox* m_checkBoxClearForm;
 		wxPanel* m_panel6;
+		wxStaticText* m_staticTextBuildDate;
+		wxHyperlinkCtrl* m_hyperlink1;
 		wxButton* m_button1;
 		wxButton* m_button2;
 

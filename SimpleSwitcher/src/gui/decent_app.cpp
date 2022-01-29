@@ -27,7 +27,7 @@ bool MyApp::OnInit()
     //}
 
     IFS_LOG(setsgui.Load());
-    u_conf.Load();
+    IFS_LOG(u_conf.Load2());
 
     COM::CAutoCOMInitialize autoCom;
     IFS_LOG(autoCom.Init());

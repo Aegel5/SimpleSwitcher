@@ -243,26 +243,40 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer24;
 	bSizer24 = new wxBoxSizer( wxVERTICAL );
 
-	m_checkBox6 = new wxCheckBox( m_panel16, wxID_ANY, wxT("Enable debug log"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer24->Add( m_checkBox6, 0, wxALL, 5 );
+	m_checkDebuglog = new wxCheckBox( m_panel16, wxID_ANY, wxT("Enable debug log"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer24->Add( m_checkDebuglog, 0, wxALL, 5 );
 
-	m_checkBox7 = new wxCheckBox( m_panel16, wxID_ANY, wxT("Prevent other programs to hook keyboard (may cause problems in games and other apps)"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBox7->SetValue(true);
-	bSizer24->Add( m_checkBox7, 0, wxALL, 5 );
+	m_checkBoxKeyDef = new wxCheckBox( m_panel16, wxID_ANY, wxT("Prevent other programs to hook keyboard (may cause problems in games and other apps)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxKeyDef->SetValue(true);
+	bSizer24->Add( m_checkBoxKeyDef, 0, wxALL, 5 );
 
 	m_checkBoxDisablAcc = new wxCheckBox( m_panel16, wxID_ANY, wxT("Disable the accessibility shortcut keys (5 SHIFT and others)"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer24->Add( m_checkBoxDisablAcc, 0, wxALL, 5 );
 
-	m_checkBox8 = new wxCheckBox( m_panel16, wxID_ANY, wxT("Clear text format on Ctrl-C"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer24->Add( m_checkBox8, 0, wxALL, 5 );
+	m_checkBoxClearForm = new wxCheckBox( m_panel16, wxID_ANY, wxT("Clear text format on Ctrl-C"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer24->Add( m_checkBoxClearForm, 0, wxALL, 5 );
 
 
 	m_panel16->SetSizer( bSizer24 );
 	m_panel16->Layout();
 	bSizer24->Fit( m_panel16 );
-	m_notebook2->AddPage( m_panel16, wxT("Settings"), true );
+	m_notebook2->AddPage( m_panel16, wxT("Settings"), false );
 	m_panel6 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_notebook2->AddPage( m_panel6, wxT("About"), false );
+	wxBoxSizer* bSizer191;
+	bSizer191 = new wxBoxSizer( wxVERTICAL );
+
+	m_staticTextBuildDate = new wxStaticText( m_panel6, wxID_ANY, wxT("Build date:"), wxDefaultPosition, wxDefaultSize, 0|wxBORDER_RAISED );
+	m_staticTextBuildDate->Wrap( -1 );
+	bSizer191->Add( m_staticTextBuildDate, 0, wxALL, 5 );
+
+	m_hyperlink1 = new wxHyperlinkCtrl( m_panel6, wxID_ANY, wxEmptyString, wxT("https://github.com/Aegel5/SimpleSwitcher"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	bSizer191->Add( m_hyperlink1, 0, wxALL, 5 );
+
+
+	m_panel6->SetSizer( bSizer191 );
+	m_panel6->Layout();
+	bSizer191->Fit( m_panel6 );
+	m_notebook2->AddPage( m_panel6, wxT("About"), true );
 
 	bSizer1->Add( m_notebook2, 1, wxEXPAND | wxALL, 0 );
 
@@ -296,10 +310,10 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkcapsrem->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
 	m_button7->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onUpdateRemap ), NULL, this );
 	m_button8->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onDeleteRemap ), NULL, this );
-	m_checkBox6->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
-	m_checkBox7->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onPrevent ), NULL, this );
+	m_checkDebuglog->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
+	m_checkBoxKeyDef->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onPrevent ), NULL, this );
 	m_checkBoxDisablAcc->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onDisableAccessebl ), NULL, this );
-	m_checkBox8->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onClearFormat ), NULL, this );
+	m_checkBoxClearForm->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onClearFormat ), NULL, this );
 	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onExit ), NULL, this );
 	m_button2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onCloseToTray ), NULL, this );
 }
@@ -318,10 +332,10 @@ MyFrame4::~MyFrame4()
 	m_checkcapsrem->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
 	m_button7->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onUpdateRemap ), NULL, this );
 	m_button8->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onDeleteRemap ), NULL, this );
-	m_checkBox6->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
-	m_checkBox7->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onPrevent ), NULL, this );
+	m_checkDebuglog->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
+	m_checkBoxKeyDef->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onPrevent ), NULL, this );
 	m_checkBoxDisablAcc->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onDisableAccessebl ), NULL, this );
-	m_checkBox8->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onClearFormat ), NULL, this );
+	m_checkBoxClearForm->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onClearFormat ), NULL, this );
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onExit ), NULL, this );
 	m_button2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onCloseToTray ), NULL, this );
 

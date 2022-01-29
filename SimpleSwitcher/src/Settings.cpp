@@ -8,22 +8,44 @@
 
 using namespace rapidjson;
 
-void UserConf::Load()
-{
-    const wchar_t* json = L"{\"project\":\"rapidjson\",\"stars\":10}";
+TStatus UserConf::Load2() {
+
+    std::wstring sCurFolder;
+    IFS_RET(GetPath(sCurFolder, PATH_TYPE_SELF_FOLDER, GetSelfBit()));
+    std::wstring res = sCurFolder + L"config.json";
+
+    if (!FileUtils::IsFileExists(res.c_str())) {
+        RETURN_SUCCESS;
+    }
+
+    std::wifstream ifs(res);
+    std::wstring content((std::istreambuf_iterator<wchar_t>(ifs)), (std::istreambuf_iterator<wchar_t>()));
+
     GenericDocument<UTF16<>> doc;
     using TVal = GenericValue<UTF16<>>;
-    doc.Parse(json);
-    TVal& s  = doc[L"project"];
-    auto res = s.GetString();
+    ParseResult ok = doc.Parse<kParseCommentsFlag | kParseTrailingCommasFlag>(content.c_str());
+    if (ok.IsError()) {
+        LOG_INFO_1(L"json parse error");
+        RETURN_SUCCESS;
+    }
+    TVal& s  = doc[L"ll"];
+    if (s.IsInt()) {
+        ll = s.GetInt();
+    }
+    s        = doc[L"disableInPrograms"];
+    if (s.IsArray()) {
+        for (auto& elem : s.GetArray()) {
+            disableInProcess.push_back(elem.GetString());
+        }
+    }
 
     if (setsgui.fDbgMode && u_conf.ll != 0) {
         LOG_INFO_1(L"Set ll %u", u_conf.ll);
         SetLogLevel((TLogLevel)u_conf.ll);
     }
 
+    RETURN_SUCCESS;
 }
-
 
 
 void SettingsGui::GenerateListHK()

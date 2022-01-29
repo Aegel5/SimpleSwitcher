@@ -53,27 +53,6 @@ class MainWnd : public MyFrame4
 public:
     MainWnd() : MyFrame4(nullptr)
     {
-        m_notebook2->SetSelection(0);
-        BindHotCtrl(m_textLastword, hk_RevertLastWord);
-        BindHotCtrl(m_textSeveralWords, hk_RevertCycle);
-        BindHotCtrl(m_textSelected, hk_RevertSel);
-        BindHotCtrl(m_textCycleLay, hk_CycleCustomLang);
-        BindHotCtrl(m_textSetlay1, hk_ChangeSetLayout_1);
-        BindHotCtrl(m_textSetlay2, hk_ChangeSetLayout_2);
-        BindHotCtrl(m_textSetlay3, hk_ChangeSetLayout_3);
-        BindHotCtrl(m_textcapsgen, hk_CapsGenerate);
-
-        if (startOk()) {
-            coreWork.Start();
-        }
-        updateEnable();
-        updateAutoStart();
-        FillCombo();
-        updateLayFilter();
-
-        // tray.Init(this);
-        // tray.SetEnabled(true);
-
         icon = wxIcon("appicon");
         SetIcon(icon);
         if (myTray.IsAvailable()) {
@@ -83,11 +62,34 @@ public:
             myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
         }
 
-        updateCapsTab();
-
-        SetTitle(fmt::format(L"{}{}", GetTitle(), Utils::IsSelfElevated() ? L" Administrator" : L""));
-
+        SetTitle(fmt::format(L"{} {}{}", GetTitle(), SW_VERSION_L, Utils::IsSelfElevated() ? L" Administrator" : L""));
         SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION);
+
+        m_staticTextBuildDate->SetLabelText(fmt::format(L"Built on '{}'", SW_UT(__DATE__)));
+
+        m_notebook2->SetSelection(0);
+
+        BindHotCtrl(m_textLastword, hk_RevertLastWord);
+        BindHotCtrl(m_textSeveralWords, hk_RevertCycle);
+        BindHotCtrl(m_textSelected, hk_RevertSel);
+        BindHotCtrl(m_textCycleLay, hk_CycleCustomLang);
+        BindHotCtrl(m_textSetlay1, hk_ChangeSetLayout_1);
+        BindHotCtrl(m_textSetlay2, hk_ChangeSetLayout_2);
+        BindHotCtrl(m_textSetlay3, hk_ChangeSetLayout_3);
+        BindHotCtrl(m_textcapsgen, hk_CapsGenerate);
+
+        updateBools();
+
+        if (startOk()) {
+            coreWork.Start();
+        }
+        updateEnable();
+        updateAutoStart();
+        FillCombo();
+        updateLayFilter();
+
+        updateCapsTab();
+        handleDisableAccess();
     }
 
 private:
@@ -119,9 +121,10 @@ private:
 
     void updateBools() {
         m_checkBoxWorkInAdmin->SetValue(setsgui.isMonitorAdmin);
-        m_checkBoxWorkInAdmin->SetValue(setsgui.fClipboardClearFormat);
-        m_checkBoxWorkInAdmin->SetValue(setsgui.fEnableKeyLoggerDefence);
-        m_checkBoxWorkInAdmin->SetValue(setsgui.fDbgMode);
+        m_checkBoxClearForm->SetValue(setsgui.fClipboardClearFormat);
+        m_checkBoxKeyDef->SetValue(setsgui.fEnableKeyLoggerDefence);
+        m_checkBoxDisablAcc->SetValue(setsgui.disableAccessebility);
+        m_checkDebuglog->SetValue(setsgui.fDbgMode);
     }
 
     virtual void onEnableLog(wxCommandEvent& event)
@@ -129,8 +132,7 @@ private:
         setsgui.fDbgMode = event.IsChecked();
         setsgui.SaveAndPostMsg();
     }
-    virtual void onPrevent(wxCommandEvent& event)
-    {
+    virtual void onPrevent(wxCommandEvent& event){
         setsgui.fEnableKeyLoggerDefence = event.IsChecked();
         setsgui.SaveAndPostMsg();
     }
@@ -140,11 +142,14 @@ private:
     }
 
     void handleDisableAccess() {
-        if (m_checkBoxDisablAcc->GetValue()) {
+        if (setsgui.disableAccessebility) {
             AllowAccessibilityShortcutKeys(false);
         }
     }
     virtual void onDisableAccessebl(wxCommandEvent& event) {
+        setsgui.disableAccessebility = event.IsChecked();
+        setsgui.SaveAndPostMsg();
+
         handleDisableAccess();
     }
 
