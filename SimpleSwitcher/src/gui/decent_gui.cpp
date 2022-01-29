@@ -86,6 +86,8 @@ public:
         updateCapsTab();
 
         SetTitle(fmt::format(L"{}{}", GetTitle(), Utils::IsSelfElevated() ? L" Administrator" : L""));
+
+        SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION);
     }
 
 private:
