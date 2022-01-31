@@ -30,12 +30,14 @@ TStatus UserConf::Load2() {
     }
     TVal& s  = doc[L"ll"];
     if (s.IsInt()) {
-        ll = s.GetInt();
+        ll = (TLogLevel)s.GetInt();
     }
     s        = doc[L"disableInPrograms"];
     if (s.IsArray()) {
         for (auto& elem : s.GetArray()) {
-            disableInProcess.push_back(elem.GetString());
+            std::wstring cur = elem.GetString();
+            Str_Utils::ToLower(cur);
+            disableInProcess.insert(cur);
         }
     }
 

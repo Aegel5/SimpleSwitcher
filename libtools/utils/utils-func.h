@@ -206,21 +206,22 @@ namespace Utils
 		RETURN_SUCCESS;
 
 	}
-	inline TStatus CenterWindow(HWND hwndMain, HWND hwndClient)
-	{
-		RECT rect;
-		IFW_RET(GetWindowRect(hwndClient, &rect));
-		int wDlg = rect.right - rect.left;
-		int hDlg = rect.bottom - rect.top;
-		IFW_RET(GetWindowRect(hwndMain, &rect));
-		int wMain = rect.right - rect.left;
-		int hMain = rect.bottom - rect.top;
-		int widthMain = rect.right - rect.left;
-		int x = (wMain - wDlg) / 2;
-		int y = (hMain - hDlg) / 2;
-		SetWindowPos(hwndClient, 0, x + rect.left, y + rect.top, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
-		RETURN_SUCCESS;
-	}
+
+	//inline TStatus CenterWindow(HWND hwndMain, HWND hwndClient)
+	//{
+	//	RECT rect;
+	//	IFW_RET(GetWindowRect(hwndClient, &rect));
+	//	int wDlg = rect.right - rect.left;
+	//	int hDlg = rect.bottom - rect.top;
+	//	IFW_RET(GetWindowRect(hwndMain, &rect));
+	//	int wMain = rect.right - rect.left;
+	//	int hMain = rect.bottom - rect.top;
+	//	int widthMain = rect.right - rect.left;
+	//	int x = (wMain - wDlg) / 2;
+	//	int y = (hMain - hDlg) / 2;
+	//	SetWindowPos(hwndClient, 0, x + rect.left, y + rect.top, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
+	//	RETURN_SUCCESS;
+	//}
 
 
 

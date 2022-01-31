@@ -165,15 +165,6 @@ inline void SW_LOG_INFO(const TChar* Format, ...)
 }
 
 
-inline void SetLogLevel(TLogLevel logLevel)
-{
-	SwLoggerGlobal().SetLogLevel(logLevel);
-}
-inline TLogLevel GetLogLevel()
-{
-	return SwLoggerGlobal().GetLogLevel();
-}
-
 #define LOG_INFO_4(...) {if(GetLogLevel() >= LOG_LEVEL_4){SW_LOG_INFO(__VA_ARGS__);}}
 #define LOG_INFO_3(...) {if(GetLogLevel() >= LOG_LEVEL_3){SW_LOG_INFO(__VA_ARGS__);}}
 #define LOG_INFO_2(...) {if(GetLogLevel() >= LOG_LEVEL_2){SW_LOG_INFO(__VA_ARGS__);}}
@@ -186,6 +177,21 @@ inline TLogLevel GetLogLevel()
 #define RETURN_SUCCESS {return SW_ERR_SUCCESS; }
 inline bool SW_SUCCESS(TStatus stat) { return stat == SW_ERR_SUCCESS; }
 inline bool SW_ERROR(TStatus stat) { return !SW_SUCCESS(stat); }
+
+inline TLogLevel GetLogLevel()
+{
+	return SwLoggerGlobal().GetLogLevel();
+}
+inline void SetLogLevel(TLogLevel logLevel)
+{
+	SwLoggerGlobal().SetLogLevel(logLevel);
+}
+inline void SetLogLevel2(TLogLevel logLevel)
+{
+	SwLoggerGlobal().SetLogLevel(logLevel);
+	LOG_INFO_1(L"Log level now %d", logLevel);
+}
+
 
 class WinErrBOOL
 {

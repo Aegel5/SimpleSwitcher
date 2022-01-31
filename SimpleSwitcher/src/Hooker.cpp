@@ -787,8 +787,10 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 			PostMessage(m_hwndTop, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
 		}
 
-		needWaitLang = true;
+		// на остальное забиваем
+		needWaitLang = m_sTopProcName == L"searchapp.exe";
 	}
+
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT) && TestFlag(ctxRevert.flags, SW_CLIENT_BACKSPACE))
 	{
@@ -804,8 +806,14 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		}
 	}
 
+
+	if (m_layoutTopWnd == 0 || m_sTopProcName == L"far.exe") {
+        needWaitLang = false;
+    }
+
 	//needWaitLang = false;
-	if (needWaitLang && m_layoutTopWnd != 0) {
+	if (needWaitLang) {
+
 		// Дождемся смены языка. Нет смысла переходить в асинхронный режим. Можем ждать прямо здесь.
 		auto start = GetTickCount64();
 		while (true)

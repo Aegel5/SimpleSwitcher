@@ -96,30 +96,25 @@ inline TStatus PostMsgSettingChanges()
 }
 using TStrList = std::vector<std::wstring>;
 
+
 struct UserConf
 {
-	TStrList disableInProcess;
-	int ll = 3;
-	std::wstring s_hk_ChangeTextCase;
+	std::set<std::wstring> disableInProcess;
+    TLogLevel ll = LOG_LEVEL_3;
+	//std::wstring s_hk_ChangeTextCase;
 	bool fUseAltMode = false;
 	TStrList altModePrg;
 	int msDelayAfterCtrlC = 25;
 
-	bool IsSkipProgram(std::wstring sExeName)
-	{
-		for (auto& sProc : disableInProcess)
-		{
-			if (sExeName == sProc)
-			{
-				return true;
-				LOG_INFO_1(L"Skip process %s because of disableInProcess", sProc.c_str());
-				RETURN_SUCCESS;
-			}
-		}
-		return false;
-	}
+	bool IsSkipProgram(std::wstring sExeName) {
+        auto has = disableInProcess.find(sExeName) != disableInProcess.end();
+        if (has) {
+            LOG_INFO_1(L"Skip process %s because of disableInProcess", sExeName.c_str());
+            return true;
+        }
+        return false;
+    }
 
-	void Load();
     TStatus Load2();
 };
 
