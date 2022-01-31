@@ -753,8 +753,8 @@ void Hooker::HandleSymbolDown()
 
 TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 {
-	bool fUseAltMode;
-	bool fDels;
+	bool fUseAltMode = false;
+	bool fDels = false;
 	AnalizeProblemByName(m_sTopProcPath, m_sTopProcName, fUseAltMode, fDels);
 	LOG_INFO_2(L"fpnw=%u",  fUseAltMode);
 	bool fClearedState = false;
