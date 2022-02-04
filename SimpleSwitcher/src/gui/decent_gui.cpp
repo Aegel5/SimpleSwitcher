@@ -179,23 +179,29 @@ private:
     }
     virtual void onRemapCaps(wxCommandEvent& event)
     {
-        //if (!Utils::IsSelfElevated()) {
-        //    m_checkcapsrem->SetValue(!m_checkcapsrem->GetValue());
-        //    ShowNeedAdmin();
-        //    return;
-        //}
+        if (!Utils::IsSelfElevated()) {
+            m_checkcapsrem->SetValue(!m_checkcapsrem->GetValue());
+            ShowNeedAdmin();
+            return;
+        }
 
         BufScanMap remap;
         IFS_LOG(remap.FromRegistry());
 
+        bool showmsg = false;
         if (m_checkcapsrem->GetValue()) {
             remap.PutRemapKey(VK_CAPITAL, VK_F24);
+            showmsg = true;
+
         } else {
             remap.DelRemapKey(VK_CAPITAL);
         }
         IFS_LOG(remap.ToRegistry());
 
         updateCapsTab();
+
+        if(showmsg)
+            wxMessageBox("Will be applied after PC reboot");
     }
 
     void onHotKeyChange(wxMouseEvent& ev) {
