@@ -330,31 +330,31 @@ private:
 
     void ensureAuto(bool enable) {
         if (setsgui.isMonitorAdmin) {
+
+            IFS_LOG(DelRegRun());
+
             if (enable) {
                 IFS_LOG(SetSchedule());
             } else {
                 IFS_LOG(DelSchedule());
             }
 
-            bool isUserAllOk   = false;
-            bool isUserHasTask = false;
-            IFS_LOG(CheckRegRun(isUserAllOk, isUserHasTask));
-            if (isUserHasTask) {
-                DelRegRun();
-            }
-
         } else {
-            if (enable) {
-                SetRegRun();
-            } else {
-                DelRegRun();
-            }
 
             bool isAdminAllOk   = false;
             bool isAdminHasTask = false;
             IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
             if (isAdminHasTask) {
-                IFS_LOG(DelSchedule());
+                if (Utils::IsSelfElevated()) {
+                    IFS_LOG(DelSchedule());
+                } else
+                    return; // exit because can't delete old
+            }
+
+            if (enable) {
+                IFS_LOG(SetRegRun());
+            } else {
+                IFS_LOG(DelRegRun());
             }
         }
     }
