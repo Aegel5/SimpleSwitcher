@@ -104,7 +104,7 @@ struct UserConf
 	//std::wstring s_hk_ChangeTextCase;
 	bool fUseAltMode = false;
 	TStrList altModePrg;
-	int msDelayAfterCtrlC = 25;
+	//int msDelayAfterCtrlC = 25;
 
 	bool IsSkipProgram(std::wstring sExeName) {
         auto has = disableInProcess.find(sExeName) != disableInProcess.end();

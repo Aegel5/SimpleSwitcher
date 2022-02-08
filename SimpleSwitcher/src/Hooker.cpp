@@ -566,10 +566,12 @@ TStatus Hooker::GetClipStringCallback()
 {
 	LOG_INFO_1(L"GetClipStringCallback");
 
-	std::wstring data;
-	m_clipWorker.GetData(data);
+	std::wstring data = m_clipWorker.TakeData();
 
-	if (data.length() > 100) {
+	if (data.empty()) {
+        LOG_INFO_1(L"data empty");
+    }
+	else if (data.length() > 100) {
 		LOG_INFO_1(L"TOO MANY TO REVERT. SKIP");
 	}
 	else {
@@ -592,30 +594,30 @@ TStatus Hooker::GetClipStringCallback()
 
 	RETURN_SUCCESS;
 }
-TStatus Hooker::TimerProcWaitClip2()
-{
-	if (m_clipRequest == CLRMY_GET_FROM_CLIP)
-	{
-		m_clipRequest = CLRMY_NONE;
+//TStatus Hooker::TimerProcWaitClip2()
+//{
+//	if (m_clipRequest == CLRMY_GET_FROM_CLIP)
+//	{
+//		m_clipRequest = CLRMY_NONE;
+//
+//		LOG_INFO_1(L"Actual get clip");
+//
+//		m_clipWorker.PostMsg(ClipMode_GetClipString);
+//	}
+//
+//	RETURN_SUCCESS;
+//}
 
-		LOG_INFO_1(L"Actual get clip");
-
-		m_clipWorker.PostMsg(ClipMode_GetClipString);
-	}
-
-	RETURN_SUCCESS;
-}
-
-DWORD GetClipTimeout(std::wstring& procName)
-{
-	if (procName == L"searchui.exe")
-		return 210;
-	if (procName == L"qip.exe")
-		return 90;
-
-	return u_conf.msDelayAfterCtrlC;
-
-}
+//DWORD GetClipTimeout(std::wstring& procName)
+//{
+//	if (procName == L"searchui.exe")
+//		return 210;
+//	if (procName == L"qip.exe")
+//		return 90;
+//
+//	return u_conf.msDelayAfterCtrlC;
+//
+//}
 TStatus Hooker::ClipboardChangedInt()
 {
 	LOG_INFO_1(L"ClipboardChangedInt");
@@ -638,33 +640,22 @@ TStatus Hooker::ClipboardChangedInt()
 			RETURN_SUCCESS;
 		}
 
-		if (!IsClipboardFormatAvailable(CF_UNICODETEXT))
-		{
-			LOG_INFO_1(L"skip no unicodetext");
-			RETURN_SUCCESS;
-		}
 
-		LOG_INFO_1(
-			L"dwTime=%u, request=%u, clear=%u, sec=%u",
-			dwTime,
-			request,
-			settings_thread.fClipboardClearFormat,
-			GetClipboardSequenceNumber());
+		//LOG_INFO_1(
+		//	L"dwTime=%u, request=%u, clear=%u, sec=%u",
+		//	dwTime,
+		//	request,
+		//	settings_thread.fClipboardClearFormat,
+		//	GetClipboardSequenceNumber());
 
 		if (request == CLRMY_GET_FROM_CLIP)
 		{
-			DWORD deltSec = GetClipboardSequenceNumber() - m_clipCounter;
-			LOG_INFO_1(L"delt=%u", deltSec);
+			//DWORD deltSec = GetClipboardSequenceNumber() - m_clipCounter;
+			//LOG_INFO_1(L"delt=%u", deltSec);
 
-			//auto clipTimeoutSpecific = GetClipTimeout(m_sTopProcName);
-			TUInt32 clipTimeoutDefault = (TUInt32)u_conf.msDelayAfterCtrlC;
+			Sleep(25); // wait here, no need async
 
-			//bool fUncomplete = deltSec <= 7;
-			auto timeout = clipTimeoutDefault;// fUncomplete ? clipTimeoutSpecific : clipTimeoutDefault;
-			LOG_INFO_1(L"delay=%u", timeout);
-			m_clipRequest = CLRMY_GET_FROM_CLIP;
-			auto timeId = SetTimer(gdata().hWndMonitor, c_timerWaitClip, timeout, NULL);
-			IFW_LOG(timeId != 0);
+            m_clipWorker.PostMsg(ClipMode_GetClipString);
 
 
 			RETURN_SUCCESS;

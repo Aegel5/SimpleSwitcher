@@ -64,6 +64,10 @@ private:
 	}
 	TStatus OpenAndGetFromClipBoardOur(std::wstring& data)
 	{
+        if (!IsClipboardFormatAvailable(CF_UNICODETEXT)) {
+            LOG_INFO_1(L"skip no unicodetext");
+            RETURN_SUCCESS;
+        }
 		CAutoClipBoard clip;
 		IFS_RET(clip.Open(gdata().hWndMonitor));
 		IFS_RET(GetFromClipBoardOur(data));
@@ -71,24 +75,6 @@ private:
 		RETURN_SUCCESS;
 	}
 
-	TStatus SaveClipboardText(std::wstring& data)
-	{
-		LOG_INFO_1(L"SaveClipboardText");
-
-		data.clear();
-
-		if (!IsClipboardFormatAvailable(CF_UNICODETEXT))
-		{
-			RETURN_SUCCESS;
-		}
-
-		CAutoClipBoard clip;
-		IFS_RET(clip.Open(gdata().hWndMonitor));
-
-		IFS_RET(GetFromClipBoardOur(data));
-
-		RETURN_SUCCESS;
-	}
 
 	TStatus ClipboardClearFormat()
 	{
@@ -142,31 +128,8 @@ private:
 			RETURN_SUCCESS;
 		}
 
-		//std::wstring f100 = data.substr(0, 1000);
-
-		////LOG_INFO_1(
-		////	L"data: %s\n, f100: %s\n, m_sLastClipFormatFree: %s", 
-		////	data.c_str(), 
-		////	f100.c_str(),
-		////	m_sLastClipFormatFree.c_str());
-
-		//if (f100 == m_sLastClipFormatFree)
-		//{
-		//	LOG_INFO_1(L"Skip clear format for same");
-		//	RETURN_SUCCESS;
-		//}
-		//m_sLastClipFormatFree = data.substr(0, 1000);
-
 		IFS_RET(PutToClipBoardOur(data));
 
-
-		//if (statPut != SW_ERR_SUCCESS)
-		//{
-		//	LOG_INFO_1(L"try another...");
-		//	CAutoClipBoard clip;
-		//	IFS_RET(clip.Open(CommonDataGlobal().hWndMonitor));
-		//	IFS_RET(PutToClipBoardOur(data));
-		//}
 
 		RETURN_SUCCESS;
 	}
@@ -199,26 +162,12 @@ private:
 
 	TStatus OpenAndPutToClipBoardOur(std::wstring& data)
 	{
+        if (data.empty())
+            RETURN_SUCCESS;
+
 		CAutoClipBoard clip;
 		IFS_RET(clip.Open(gdata().hWndMonitor));
 		IFS_RET(PutToClipBoardOur(data));
-
-		RETURN_SUCCESS;
-	}
-
-	TStatus RestoreClipboardText()
-	{
-		LOG_INFO_1(L"RestoreClipboardText...");
-
-		std::wstring data = m_clipboardSave;
-		m_clipboardSave.clear();
-
-		if (data.empty())
-		{
-			RETURN_SUCCESS;
-		}
-
-		IFS_RET(OpenAndPutToClipBoardOur(data));
 
 		RETURN_SUCCESS;
 	}
@@ -252,27 +201,21 @@ private:
 				}
 				else
 				{
-					{
-						std::unique_lock<std::mutex> lock(mtxClipboardData);
-						m_sClipData = data;
-					}
-
+                    SetData(data);
 					Worker()->PostMsg(HWORKER_GetClipStringCallback);
-					//PostMessage(CommonDataGlobal().hWndMonitor, WM_ClipDataArrave, 0, 0);
 				}
 			}
 			else if (mode == ClipMode_SavePrevData)
 			{
 				std::wstring data;
 				IFS_LOG(OpenAndGetFromClipBoardOur(data));
-
-				m_clipboardSave = data;
-
+				SetData(data);
 				Worker()->PostMsgW(HWORKER_SavePrevDataCallback, (WPARAM)msg.request);
 			}
 			else if (mode == ClipMode_RestoreClipData)
 			{
-				IFS_LOG(RestoreClipboardText());
+                std::wstring data = TakeData();
+                IFS_LOG(OpenAndPutToClipBoardOur(data));
 			}
 			else if (mode == ClipMode_ClipClearFormat)
 			{
@@ -280,23 +223,17 @@ private:
 			}
 			else if (mode == ClipMode_InsertData)
 			{
-				std::wstring data;
-				{
-					std::unique_lock<std::mutex> lock(mtxClipboardData);
-					data = m_sClipData;
-				}
-
+                std::wstring data = TakeData();
 				IFS_LOG(OpenAndPutToClipBoardOur(data));
 			}
 		}
 		LOG_INFO_1(L"Exit clip worker");
 	}
 public:
-	void GetData(tstring& data)
+    tstring TakeData()
 	{
 		std::unique_lock<std::mutex> lock(mtxClipboardData);
-		data = m_sClipData;
-		m_sClipData.clear();
+        return std::move(m_sClipData);
 	}
 	void SetData(tstring& data)
 	{

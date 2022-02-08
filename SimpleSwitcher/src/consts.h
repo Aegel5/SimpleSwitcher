@@ -16,7 +16,7 @@ static const UINT WM_HWorker = 0xBFFF - 30;
 static const UINT c_timerIdClearFormat = 7;
 static const UINT c_timerIdAddToTray = 8;
 static const UINT c_timerPrintAlive = 9;
-static const UINT c_timerWaitClip = 10;
+//static const UINT c_timerWaitClip = 10;
 static const UINT c_timerGetCurLayout = 11;
 static const UINT c_timerKeyloggerDefence = 12;
 

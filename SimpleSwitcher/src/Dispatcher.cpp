@@ -123,7 +123,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 			}
 			if (timerId == c_timerKeyloggerDefence) {
 				if (setsgui.fEnableKeyLoggerDefence) {
-					resethook();
+					resethook(); // ???
 				}
 			}else{
 				IFW_LOG(KillTimer(gdata().hWndMonitor, timerId));

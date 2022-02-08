@@ -115,7 +115,7 @@ public:
 	TStatus GenerateCycleRevertList();
 	TStatus FillKeyToRevert(TKeyRevert& keyList, HotKeyType typeRevert);
 	TStatus ProcessRevert(ContextRevert& ctxRevert);
-	TStatus TimerProcWaitClip2();
+	//TStatus TimerProcWaitClip2();
 
 	static const int c_maxWordRevert = 7;
 

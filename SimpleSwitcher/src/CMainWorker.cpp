@@ -52,10 +52,10 @@ TStatus CMainWorker::WorkerInt()
 			{
 				IFS_LOG(hooker.ClipboardClearFormat2());
 			}
-			else if (timerId == c_timerWaitClip)
-			{
-				IFS_LOG(hooker.TimerProcWaitClip2());
-			}
+			//else if (timerId == c_timerWaitClip)
+			//{
+			//	IFS_LOG(hooker.TimerProcWaitClip2());
+			//}
 			else
 			{
 				LOG_INFO_1(L"[WARN] Unknown timerId=%Iu", timerId);
