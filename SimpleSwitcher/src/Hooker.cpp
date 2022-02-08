@@ -590,7 +590,11 @@ TStatus Hooker::GetClipStringCallback()
 		IFS_LOG(ProcessRevert(ctxRev));
 	}
 
-	m_clipWorker.PostMsg(ClipMode_RestoreClipData);
+	if (!m_savedClipData.empty()) {
+        m_clipWorker.SetData(m_savedClipData);
+        m_clipWorker.PostMsg(ClipMode_RestoreClipData);
+        m_savedClipData.clear();
+    }
 
 	RETURN_SUCCESS;
 }
@@ -857,6 +861,8 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 
 TStatus Hooker::SavePrevDataCallback(EClipRequest clRequest)
 {
+    m_savedClipData = m_clipWorker.TakeData();
+
 	RequestWaitClip(clRequest);
 
 	LOG_INFO_1(L"Send ctrlc...");

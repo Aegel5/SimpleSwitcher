@@ -66,7 +66,7 @@ public:
 	void RequestWaitClip(EClipRequest clRequest)
 	{
 		m_clipRequest = clRequest;
-		m_clipCounter = GetClipboardSequenceNumber();
+		//m_clipCounter = GetClipboardSequenceNumber();
 		m_dwLastCtrlCReqvest = GetTick();
 	}
 	//void RequestChangeCase()
@@ -86,7 +86,7 @@ public:
 
 
 	EClipRequest m_clipRequest = CLRMY_NONE;
-	DWORD m_clipCounter = 0;
+	//DWORD m_clipCounter = 0;
 
 	DWORD m_dwIdThreadForeground = -1;
 	DWORD m_dwIdProcoreground = -1;
@@ -100,6 +100,8 @@ public:
 	std::wstring m_sTopProcPath;
 
 	CClipWorker m_clipWorker;
+
+	tstring m_savedClipData;
 
 
 

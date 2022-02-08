@@ -35,7 +35,7 @@ class CClipWorker
 private:
 	std::mutex  mtxClipboardData;
 	std::wstring m_sClipData;
-	std::wstring m_clipboardSave;
+	//std::wstring m_clipboardSave;
 	ThreadQueue::CThreadQueue<TClipMessage> m_queueClip;
 
 	TStatus GetFromClipBoardOur(std::wstring& data)
@@ -232,10 +232,14 @@ private:
 public:
     tstring TakeData()
 	{
-		std::unique_lock<std::mutex> lock(mtxClipboardData);
-        return std::move(m_sClipData);
+        tstring loc;
+        { 
+			std::unique_lock<std::mutex> lock(mtxClipboardData);
+            loc = std::move(m_sClipData);
+		}
+        return loc;
 	}
-	void SetData(tstring& data)
+	void SetData(const tstring& data)
 	{
 		std::unique_lock<std::mutex> lock(mtxClipboardData);
 		m_sClipData = data;
