@@ -598,30 +598,7 @@ TStatus Hooker::GetClipStringCallback()
 
 	RETURN_SUCCESS;
 }
-//TStatus Hooker::TimerProcWaitClip2()
-//{
-//	if (m_clipRequest == CLRMY_GET_FROM_CLIP)
-//	{
-//		m_clipRequest = CLRMY_NONE;
-//
-//		LOG_INFO_1(L"Actual get clip");
-//
-//		m_clipWorker.PostMsg(ClipMode_GetClipString);
-//	}
-//
-//	RETURN_SUCCESS;
-//}
 
-//DWORD GetClipTimeout(std::wstring& procName)
-//{
-//	if (procName == L"searchui.exe")
-//		return 210;
-//	if (procName == L"qip.exe")
-//		return 90;
-//
-//	return u_conf.msDelayAfterCtrlC;
-//
-//}
 TStatus Hooker::ClipboardChangedInt()
 {
 	LOG_INFO_1(L"ClipboardChangedInt");
@@ -632,18 +609,13 @@ TStatus Hooker::ClipboardChangedInt()
 	EClipRequest request = m_clipRequest;
 	m_clipRequest = CLRMY_NONE;
 
-	if (request == CLRMY_NONE)
-	{
-		LOG_INFO_1(L"Reqest not found");
-	}
-	else
-	{
+	if (request != CLRMY_NONE) {
+
 		if (!isRecent)
 		{
 			LOG_INFO_1(L"Skip no recent");
 			RETURN_SUCCESS;
 		}
-
 
 		//LOG_INFO_1(
 		//	L"dwTime=%u, request=%u, clear=%u, sec=%u",
@@ -660,7 +632,6 @@ TStatus Hooker::ClipboardChangedInt()
 			Sleep(25); // wait here, no need async
 
             m_clipWorker.PostMsg(ClipMode_GetClipString);
-
 
 			RETURN_SUCCESS;
 		}
@@ -684,6 +655,8 @@ TStatus Hooker::ClipboardChangedInt()
 		//	ctxRev.flags = SW_CLIENT_CTRLV;
 		//	IFS_LOG(ProcessRevert(ctxRev));
 		//}
+
+		RETURN_SUCCESS;
 	}
 
 
