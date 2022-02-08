@@ -62,9 +62,9 @@ public:
 		{
 			LOG_INFO_1(L"[WARN] Too many messages %u", count);
 		}
-		static DWORD dwLast = GetTick();
-		DWORD dwCur = GetTick();
-		DWORD elapsed = dwCur - dwLast;
+        static auto dwLast = GetTickCount64();
+        auto dwCur         = GetTickCount64();
+		auto elapsed = dwCur - dwLast;
 		if (elapsed >= 10000)
 		{
 			dwLast = dwCur;

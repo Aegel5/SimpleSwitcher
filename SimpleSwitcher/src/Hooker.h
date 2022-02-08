@@ -67,7 +67,7 @@ public:
 	{
 		m_clipRequest = clRequest;
 		//m_clipCounter = GetClipboardSequenceNumber();
-		m_dwLastCtrlCReqvest = GetTick();
+        m_dwLastCtrlCReqvest = GetTickCount64();
 	}
 	//void RequestChangeCase()
 	//{
@@ -81,7 +81,7 @@ public:
 	//}
 public:
 
-	DWORD m_dwLastCtrlCReqvest = 0;
+	ULONGLONG m_dwLastCtrlCReqvest = 0;
 
 
 

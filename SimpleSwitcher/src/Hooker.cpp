@@ -447,9 +447,6 @@ void Hooker::ClearCycleRevert()
 }
 
 
-
-
-
 void Hooker::AddToWordsByHotKey(CHotKey key)
 {
 	TKeyType type = GetCurKeyType(key);
@@ -591,6 +588,7 @@ TStatus Hooker::GetClipStringCallback()
 	}
 
 	if (!m_savedClipData.empty()) {
+		RequestWaitClip(CLRMY_hk_RESTORE);
         m_clipWorker.MoveToData(m_savedClipData);
         m_clipWorker.PostMsg(ClipMode_RestoreClipData);
         m_savedClipData.clear();
@@ -603,7 +601,7 @@ TStatus Hooker::ClipboardChangedInt()
 {
 	LOG_INFO_1(L"ClipboardChangedInt");
 
-	DWORD dwTime = GetTick() - m_dwLastCtrlCReqvest;
+	auto dwTime = GetTickCount64() - m_dwLastCtrlCReqvest;
 	bool isRecent = dwTime <= 500;
 
 	EClipRequest request = m_clipRequest;

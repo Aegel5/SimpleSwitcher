@@ -18,6 +18,7 @@ enum EClipRequest
 	CLRMY_GET_FROM_CLIP,
 	CLRMY_hk_COPY,
 	CLRMY_hk_INSERT,
+    CLRMY_hk_RESTORE,
 };
 
 struct TClipMessage
