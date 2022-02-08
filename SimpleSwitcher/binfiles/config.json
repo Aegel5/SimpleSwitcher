@@ -10,8 +10,6 @@
   "useAlternateModeByDefault": false, // use for all program
   "useAlternateModeInProgram": [ "pythonw.exe" ],
 
-  "msDelayAfterCtrlC": 25, // possible range [10-210]
-
   // Log level
   "ll": 3, // 0 - no log, 1 - errors and basic info, 4 - max
 }
