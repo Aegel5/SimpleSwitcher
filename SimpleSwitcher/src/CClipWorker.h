@@ -8,7 +8,7 @@ enum ClipMode
 	ClipMode_ClipClearFormat,
 	ClipMode_SavePrevData,
 	ClipMode_RestoreClipData,
-	ClipMode_InsertData,
+	//ClipMode_InsertData,
 };
 
 enum EClipRequest
@@ -221,11 +221,11 @@ private:
 			{
 				IFS_LOG(ClipboardClearFormat());
 			}
-			else if (mode == ClipMode_InsertData)
-			{
-                std::wstring data = TakeData();
-				IFS_LOG(OpenAndPutToClipBoardOur(data));
-			}
+			//else if (mode == ClipMode_InsertData)
+			//{
+   //             std::wstring data = TakeData();
+			//	IFS_LOG(OpenAndPutToClipBoardOur(data));
+			//}
 		}
 		LOG_INFO_1(L"Exit clip worker");
 	}
