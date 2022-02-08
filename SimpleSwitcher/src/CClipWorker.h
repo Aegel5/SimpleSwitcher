@@ -85,8 +85,6 @@ private:
 			RETURN_SUCCESS;
 		}
 
-		std::wstring data;
-
 		CAutoClipBoard clip;
 		IFS_RET(clip.Open(gdata().hWndMonitor));
 
@@ -120,6 +118,7 @@ private:
 			RETURN_SUCCESS;
 		}
 
+		std::wstring data;
 		IFS_RET(GetFromClipBoardOur(data));
 
 		if (data.length() == 0)
