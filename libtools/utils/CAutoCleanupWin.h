@@ -6,8 +6,10 @@ public:
 	CAutoClipBoard() {}
 	TStatus Open(HWND hwnd = NULL, DWORD dwTimeout=50)
 	{
+		if (m_stat)
+			RETURN_SUCCESS;
+
 		auto start = GetTickCount64();
-		m_stat = FALSE;
 		int countTry = 0;
 		while (true)
 		{
