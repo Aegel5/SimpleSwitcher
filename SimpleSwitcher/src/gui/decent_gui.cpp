@@ -62,6 +62,8 @@ public:
             myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
         }
 
+        Bind(wxEVT_CLOSE_WINDOW, &MainWnd::onExitCapt, this);
+
         SetTitle(fmt::format(L"{} {}{}", GetTitle(), SW_VERSION_L, Utils::IsSelfElevated() ? L" Administrator" : L""));
         SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION);
 
@@ -108,7 +110,8 @@ private:
         elem->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
     }
 
-    void BindBoolVal(wxCheckBox* elem, std::function<bool&()>) {
+    void onExitCapt(wxCloseEvent& event) {
+        Hide();
     }
 
    virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override {
@@ -399,6 +402,7 @@ public:
     }
 
     void onExit(wxCommandEvent& event) override {
+        LOG_INFO_1(L"exit request");
         Close(true);
     }
 

@@ -25,6 +25,7 @@ public:
 			}
 			Sleep(2);
 		}
+
 		if (countTry > 1)
 		{
 			LOG_INFO_1(L"Clip open try %d count. result=%u", countTry, m_stat);
