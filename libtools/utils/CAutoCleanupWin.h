@@ -4,9 +4,9 @@ class CAutoClipBoard
 {
 public:
 	CAutoClipBoard() {}
-	TStatus Open(HWND hwnd = NULL, DWORD dwTimeout=25)
+	TStatus Open(HWND hwnd = NULL, DWORD dwTimeout=50)
 	{
-		DWORD start = GetTick();
+		auto start = GetTickCount64();
 		m_stat = FALSE;
 		int countTry = 0;
 		while (true)
@@ -17,11 +17,11 @@ public:
 			{
 				break;
 			}
-			if (GetTick() - start > dwTimeout)
+			if (GetTickCount64() - start > dwTimeout)
 			{
 				break;
 			}
-			Sleep(1);
+			Sleep(2);
 		}
 		if (countTry > 1)
 		{

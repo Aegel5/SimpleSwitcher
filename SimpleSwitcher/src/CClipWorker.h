@@ -200,7 +200,7 @@ private:
 				}
 				else
 				{
-                    SetData(data);
+                    MoveToData(data);
 					Worker()->PostMsg(HWORKER_GetClipStringCallback);
 				}
 			}
@@ -208,7 +208,7 @@ private:
 			{
 				std::wstring data;
 				IFS_LOG(OpenAndGetFromClipBoardOur(data));
-				SetData(data);
+                MoveToData(data);
 				Worker()->PostMsgW(HWORKER_SavePrevDataCallback, (WPARAM)msg.request);
 			}
 			else if (mode == ClipMode_RestoreClipData)
@@ -238,10 +238,10 @@ public:
 		}
         return loc;
 	}
-	void SetData(const tstring& data)
+	void MoveToData(const tstring& data)
 	{
 		std::unique_lock<std::mutex> lock(mtxClipboardData);
-		m_sClipData = data;
+		m_sClipData = std::move(data);
 	}
 	TStatus Init()
 	{

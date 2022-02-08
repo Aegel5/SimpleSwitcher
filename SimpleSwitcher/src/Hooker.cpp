@@ -591,7 +591,7 @@ TStatus Hooker::GetClipStringCallback()
 	}
 
 	if (!m_savedClipData.empty()) {
-        m_clipWorker.SetData(m_savedClipData);
+        m_clipWorker.MoveToData(m_savedClipData);
         m_clipWorker.PostMsg(ClipMode_RestoreClipData);
         m_savedClipData.clear();
     }
