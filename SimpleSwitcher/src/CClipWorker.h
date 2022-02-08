@@ -239,7 +239,7 @@ public:
 		}
         return loc;
 	}
-	void MoveToData(const tstring& data)
+	void MoveToData(tstring& data)
 	{
 		std::unique_lock<std::mutex> lock(mtxClipboardData);
 		m_sClipData = std::move(data);

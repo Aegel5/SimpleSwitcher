@@ -611,7 +611,6 @@ TStatus Hooker::ClipboardChangedInt()
         if (!isRecent) {
             LOG_WARN(L"Request not recent");
         }
-
         else {
             // LOG_INFO_1(
             //	L"dwTime=%u, request=%u, clear=%u, sec=%u",
