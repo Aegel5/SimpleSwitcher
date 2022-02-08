@@ -62,7 +62,7 @@ public:
             myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
         }
 
-        Bind(wxEVT_CLOSE_WINDOW, &MainWnd::onExitCapt, this);
+        Bind(wxEVT_CLOSE_WINDOW, &MainWnd::onExitReqest, this);
 
         SetTitle(fmt::format(L"{} {}{}", GetTitle(), SW_VERSION_L, Utils::IsSelfElevated() ? L" Administrator" : L""));
         SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION);
@@ -102,6 +102,7 @@ private:
     //DecentTray tray;
     MyTray myTray;
     wxIcon icon;
+    bool exitRequest = false;
 
     void BindHotCtrl(wxTextCtrl* elem, HotKeyType type) {
         elem->SetClientData((void*)type);
@@ -110,8 +111,16 @@ private:
         elem->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
     }
 
-    void onExitCapt(wxCloseEvent& event) {
-        Hide();
+    void onExitReqest(wxCloseEvent& event) {
+
+        if (event.CanVeto() && !exitRequest) {
+            Hide();
+            event.Veto();
+            return;
+        }
+
+        Destroy(); // you may also do:  event.Skip();
+                   // since the default event handler does call Destroy(), too
     }
 
    virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override {
@@ -402,6 +411,7 @@ public:
     }
 
     void onExit(wxCommandEvent& event) override {
+        exitRequest = true;
         LOG_INFO_1(L"exit request");
         Close(true);
     }
