@@ -608,54 +608,51 @@ TStatus Hooker::ClipboardChangedInt()
 	m_clipRequest = CLRMY_NONE;
 
 	if (request != CLRMY_NONE) {
+        if (!isRecent) {
+            LOG_WARN(L"Request not recent");
+        }
 
-		if (!isRecent)
-		{
-			LOG_INFO_1(L"Skip no recent");
-			RETURN_SUCCESS;
-		}
+        else {
+            // LOG_INFO_1(
+            //	L"dwTime=%u, request=%u, clear=%u, sec=%u",
+            //	dwTime,
+            //	request,
+            //	settings_thread.fClipboardClearFormat,
+            //	GetClipboardSequenceNumber());
 
-		//LOG_INFO_1(
-		//	L"dwTime=%u, request=%u, clear=%u, sec=%u",
-		//	dwTime,
-		//	request,
-		//	settings_thread.fClipboardClearFormat,
-		//	GetClipboardSequenceNumber());
+            if (request == CLRMY_GET_FROM_CLIP) {
+                // DWORD deltSec = GetClipboardSequenceNumber() - m_clipCounter;
+                // LOG_INFO_1(L"delt=%u", deltSec);
 
-		if (request == CLRMY_GET_FROM_CLIP)
-		{
-			//DWORD deltSec = GetClipboardSequenceNumber() - m_clipCounter;
-			//LOG_INFO_1(L"delt=%u", deltSec);
+                Sleep(25); // wait here, no need async
 
-			Sleep(25); // wait here, no need async
+                m_clipWorker.PostMsg(ClipMode_GetClipString);
 
-            m_clipWorker.PostMsg(ClipMode_GetClipString);
+                RETURN_SUCCESS;
+            }
 
-			RETURN_SUCCESS;
-		}
+            if (request == CLRMY_hk_COPY) {
+                // if (m_lastRevertRequest == hk_EmulCopyNoFormat)
+                //{
+                //	IFS_LOG(RequestClearFormat());
+                //}
+                RETURN_SUCCESS;
+            }
 
-		if (request == CLRMY_hk_COPY)
-		{
-			//if (m_lastRevertRequest == hk_EmulCopyNoFormat)
-			//{
-			//	IFS_LOG(RequestClearFormat());
-			//}
-			RETURN_SUCCESS;
-		}
+            // if (request == CLR_hk_INSERT)
+            //{
+            //	if (isRecent)
+            //	{
 
-		//if (request == CLR_hk_INSERT)
-		//{
-		//	if (isRecent)
-		//	{
+            //	}
+            //	ContextRevert ctxRev;
+            //	ctxRev.flags = SW_CLIENT_CTRLV;
+            //	IFS_LOG(ProcessRevert(ctxRev));
+            //}
 
-		//	}
-		//	ContextRevert ctxRev;
-		//	ctxRev.flags = SW_CLIENT_CTRLV;
-		//	IFS_LOG(ProcessRevert(ctxRev));
-		//}
-
-		RETURN_SUCCESS;
-	}
+            RETURN_SUCCESS;
+        }
+    }
 
 
 	// --- This is user request ----
