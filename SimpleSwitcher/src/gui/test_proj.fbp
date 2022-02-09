@@ -122,7 +122,7 @@
                         <object class="notebookpage" expanded="1">
                             <property name="bitmap"></property>
                             <property name="label">Main</property>
-                            <property name="select">0</property>
+                            <property name="select">1</property>
                             <object class="wxPanel" expanded="1">
                                 <property name="BottomDockable">1</property>
                                 <property name="LeftDockable">1</property>
@@ -877,7 +877,7 @@
                                         <property name="proportion">1</property>
                                         <object class="wxStaticBoxSizer" expanded="0">
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Layout filter and switch order</property>
+                                            <property name="label">Work only with this layouts (leave empty for all):</property>
                                             <property name="minimum_size"></property>
                                             <property name="name">sbSizer3</property>
                                             <property name="orient">wxHORIZONTAL</property>
@@ -2564,7 +2564,7 @@
                         <object class="notebookpage" expanded="0">
                             <property name="bitmap"></property>
                             <property name="label">About</property>
-                            <property name="select">1</property>
+                            <property name="select">0</property>
                             <object class="wxPanel" expanded="0">
                                 <property name="BottomDockable">1</property>
                                 <property name="LeftDockable">1</property>
