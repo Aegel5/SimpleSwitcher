@@ -806,8 +806,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		CHotKey ctrlc(VK_CONTROL, 67);
 		InputSender inputSender;
 		inputSender.AddPress(ctrlc);
-
-		IFS_RET(SendOurInput(inputSender));
+        IFS_RET(inputSender.Send(true));
 	}
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_CTRLV))

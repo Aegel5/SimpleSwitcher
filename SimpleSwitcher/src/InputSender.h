@@ -18,15 +18,21 @@ public:
 	INPUT* begin() { return &list[0]; }
 	INPUT* end() { return &list[0] + list.size(); }
 
-	TStatus Send()
+	TStatus Send(bool sleep = false)
 	{
 		if(list.empty())
 			RETURN_SUCCESS;
 		for (auto i : list)
 		{
 			LOG_INFO_2(L"SEND %s %s", i.ki.dwFlags == KEYEVENTF_KEYUP ? L"UP" : L"DW", CHotKey::ToString((TKeyCode)i.ki.wVk).c_str());
+            if (sleep) {
+                Sleep(1);
+                IFW_RET(SendInput(1, &i, sizeof(INPUT)) == 1);
+            }
 		}
-		IFW_RET(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size());
+        if (!sleep) {
+            IFW_RET(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size());
+        }
 		RETURN_SUCCESS;
 	}
 	void Clear()
