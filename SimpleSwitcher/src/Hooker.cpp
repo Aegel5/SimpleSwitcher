@@ -805,8 +805,12 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 
 		CHotKey ctrlc(VK_CONTROL, 67);
 		InputSender inputSender;
-		inputSender.AddPress(ctrlc);
-        IFS_RET(inputSender.Send(true));
+		inputSender.AddDown(ctrlc);
+        IFS_RET(inputSender.Send());
+        Sleep(1);
+        inputSender.Clear();
+        inputSender.AddUp(ctrlc);
+        IFS_RET(inputSender.Send());
 	}
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_CTRLV))
@@ -815,7 +819,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 
 		CHotKey ctrlv(VK_CONTROL, 56);
 		InputSender inputSender;
-		inputSender.AddPress(ctrlv);
+		inputSender.AddPress(ctrlv); // todo add sleep 
 
 		IFS_RET(SendOurInput(inputSender));
 	}
