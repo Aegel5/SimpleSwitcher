@@ -1,5 +1,5 @@
 mkdir package_build
-cmake -G "Visual Studio 17 2022" -A Win32 -DCMAKE_BUILD_TYPE=Release ../SimpleSwitcher -B package_build
+cmake -G "Visual Studio 17 2022" -A Win32 -DCMAKE_BUILD_TYPE=Release ./SimpleSwitcher -B package_build
 cmake --build package_build --parallel --config Release
 
 rem $(SolutionDir)$(Configuration)\verinc.exe "$(ProjectDir)\ver.h"

@@ -27,4 +27,4 @@ Path(ver_path).write_text(contents)
 
 os.system("build.cmd")
 
-print("***DONE***")
+print("\n***DONE***")
