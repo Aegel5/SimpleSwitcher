@@ -22,7 +22,7 @@ public:
 	{
 		if(list.empty())
 			RETURN_SUCCESS;
-		for (auto i : list)
+		for (auto& i : list)
 		{
 			LOG_INFO_2(L"SEND %s %s", i.ki.dwFlags == KEYEVENTF_KEYUP ? L"UP" : L"DW", CHotKey::ToString((TKeyCode)i.ki.wVk).c_str());
             if (sleep) {
