@@ -623,7 +623,7 @@ TStatus Hooker::ClipboardChangedInt()
                 // DWORD deltSec = GetClipboardSequenceNumber() - m_clipCounter;
                 // LOG_INFO_1(L"delt=%u", deltSec);
 
-                Sleep(25); // wait here, no need async
+                Sleep(20); // wait here, no need async
 
                 m_clipWorker.PostMsg(ClipMode_GetClipString);
 
