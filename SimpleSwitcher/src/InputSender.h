@@ -22,11 +22,13 @@ public:
 	{
 		if(list.empty())
 			RETURN_SUCCESS;
+        int cur = 0;
 		for (auto& i : list)
 		{
 			LOG_INFO_2(L"SEND %s %s", i.ki.dwFlags == KEYEVENTF_KEYUP ? L"UP" : L"DW", CHotKey::ToString((TKeyCode)i.ki.wVk).c_str());
             if (sleep) {
-                Sleep(1);
+				if(cur++ != list.size()-1)
+					Sleep(1);
                 IFW_RET(SendInput(1, &i, sizeof(INPUT)) == 1);
             }
 		}
