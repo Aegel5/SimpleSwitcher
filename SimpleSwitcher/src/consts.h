@@ -68,10 +68,10 @@ enum
 static const int c_nCommonWaitProcess = 5000;
 static const int c_nCommonWaitMtx = 30000;
 
-static const TChar c_sSiteLink[] = L"https://github.com/alexzh2/SimpleSwitcher";
+//static const TChar c_sSiteLink[] = L"https://github.com/alexzh2/SimpleSwitcher";
 
 static const TChar c_sProgramName[] = SW_PROGRAM_NAME_L;
 
-static const TChar c_sVersion[] = SW_VERSION_L;
+//static const TChar c_sVersion[] = SW_VERSION_L;
 
 static const LPCWSTR c_wszTaskName = SW_PROGRAM_NAME_L L"Task";
