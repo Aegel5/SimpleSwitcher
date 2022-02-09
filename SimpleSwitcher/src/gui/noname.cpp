@@ -90,7 +90,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer3->Add( sbSizer2, 0, wxALL|wxEXPAND, 5 );
 
 	wxStaticBoxSizer* sbSizer3;
-	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_panelMain, wxID_ANY, wxT("Layout filter and switch order") ), wxHORIZONTAL );
+	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_panelMain, wxID_ANY, wxT("Work only with this layouts (leave empty for all):") ), wxHORIZONTAL );
 
 	wxString m_choiceLayFilterChoices[] = { wxT("us-US"), wxT("ru") };
 	int m_choiceLayFilterNChoices = sizeof( m_choiceLayFilterChoices ) / sizeof( wxString );
@@ -111,7 +111,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panelMain->SetSizer( bSizer3 );
 	m_panelMain->Layout();
 	bSizer3->Fit( m_panelMain );
-	m_notebook2->AddPage( m_panelMain, wxT("Main"), false );
+	m_notebook2->AddPage( m_panelMain, wxT("Main"), true );
 	m_panel14 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
@@ -276,7 +276,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel6->SetSizer( bSizer191 );
 	m_panel6->Layout();
 	bSizer191->Fit( m_panel6 );
-	m_notebook2->AddPage( m_panel6, wxT("About"), true );
+	m_notebook2->AddPage( m_panel6, wxT("About"), false );
 
 	bSizer1->Add( m_notebook2, 1, wxEXPAND | wxALL, 0 );
 
