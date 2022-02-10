@@ -30,11 +30,20 @@ contents = contents.replace(curv,curv2)
 print(curv2)
 Path(ver_path).write_text(contents)
 
+package_build_folder = pathlib.Path("package_build")
+result_dir_root = package_build_folder / "OUT"
+result_dir = result_dir_root / "SimpleSwitcher"
+try: 
+    shutil.rmtree(result_dir_root) 
+except FileNotFoundError: 
+    pass
+result_dir.mkdir(parents=True, exist_ok=True)    
+
 def build(subfold, is64):
 
     print(f'*** BUILD {subfold} {("64" if is64 else "32")} ***');
     
-    package_build_folder = pathlib.Path("package_build")
+
     build_folder = subfold
     if is64:
         build_folder += "_64"
@@ -43,10 +52,7 @@ def build(subfold, is64):
     pathlib.Path(path).mkdir(parents=True, exist_ok=True)
     
     os.system(f'cmake -G "Visual Studio 17 2022"  {" " if is64 else "-A Win32"} -DCMAKE_BUILD_TYPE=Release ./{subfold} -B {path}')
-    os.system(f'cmake --build {path} --parallel --config Release')
-    
-    result_dir = package_build_folder / "OUT"
-    result_dir.mkdir(parents=True, exist_ok=True)
+    os.system(f'cmake --build {path} --parallel --config Release')    
     
     release_folder = path / "Release"
     tocopy = ['.exe', '.dll']
@@ -61,9 +67,16 @@ def build(subfold, is64):
                     shutil.copy(os.path.join(root, file), os.path.join(result_dir, file2))
             
 
-build("loader_dll", is64=False)
+#build("loader_dll", is64=False)
 build("loader_dll", is64=True)    
-build("SimpleSwitcher", is64=False)
+#build("SimpleSwitcher", is64=False)
+
+add_to_bin = "SimpleSwitcher/binfiles"
+for file in os.listdir(add_to_bin):
+    shutil.copy(os.path.join(add_to_bin, file), os.path.join(result_dir, file))
+    
+shutil.make_archive(result_dir_root / f"SimpleSwitcher_v{curv2}", 'zip', result_dir)    
+
 
 #rem $(SolutionDir)$(Configuration)\verinc.exe "$(ProjectDir)\ver.h"
 #rem signtool.exe sign /fd SHA256 /v /f "$(SolutionDir)\cert\SimpleSwitcher.pfx" /p m27SPnDeDZgz9Fvw483N /ph /t http://timestamp.comodoca.com/authenticode "$(SolutionDir)$(Configuration)\$(TargetName)$(TargetExt)" & $(SolutionDir)$(Configuration)\checksum.exe sha256 "$(SolutionDir)$(Configuration)\$(TargetName)$(TargetExt)" toFile

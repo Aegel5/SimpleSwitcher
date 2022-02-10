@@ -108,7 +108,7 @@ public:
 		Set(VK_F21, L"F21");
 		Set(VK_F22, L"F22");
 		Set(VK_F23, L"F23");
-		Set(VK_F24, L"F24");
+		Set(VK_F24, L"F24 (CapsLock)");
 
 		Set(VK_INSERT, L"Insert");
 		Set(VK_DELETE, L"Delete");

@@ -1,1 +1,1 @@
-static const wchar_t* SW_VERSION = L"4.0.6.6";
+static const wchar_t* SW_VERSION = L"4.0.7.5";
