@@ -7,8 +7,6 @@
 
 #include <SDKDDKVer.h>
 
-#include "ver.h"
-
 #define _SW_QT(X) #X
 #define SW_QT(X) _SW_QT(X)
 

@@ -8,6 +8,8 @@
 
 #include "tools/accessibil.h"
 
+#include "ver.h"
+
 #include <wx/taskbar.h>
 
 extern bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key);

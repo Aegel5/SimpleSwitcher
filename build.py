@@ -3,6 +3,13 @@ from pathlib import Path
 import re
 import os
 import shutil 
+import sys
+
+is_publ = False
+for arg in sys.argv:
+    if arg == "/publish":
+        is_publ = True
+
 
 curpath = pathlib.Path(__file__).parent.resolve()
 print(f"curpath is {curpath}");
@@ -14,18 +21,20 @@ ver_path = curpath / "SimpleSwitcher/src/ver.h"
 
 contents = Path(ver_path).read_text()
 
-curv = re.search("\"(.*)\"", contents).group(1)
-a = curv.replace(".","")
-aa = int(a)
-aa+=1
-aaa = str(aa)
+curv = re.search('"(.*)"', contents).group(1)
 
-curv2 = ""
-for b in aaa:
-    curv2 += b
-    curv2 += '.'
+#a = curv.replace(".","")
+#aa = int(a)
+#aa+=1
+#aaa = str(aa)
+#curv2 = ""
+#for b in aaa:
+#    curv2 += b
+#    curv2 += '.'
+#curv2 = curv2[:-1]
 
-curv2 = curv2[:-1]
+curvsp = curv.split('.')
+curv2 = curvsp[0] + "." + str(int(curvsp[1])+1)
 contents = contents.replace(curv,curv2)
 print(curv2)
 Path(ver_path).write_text(contents)
@@ -67,18 +76,41 @@ def build(subfold, is64):
                     shutil.copy(os.path.join(root, file), os.path.join(result_dir, file2))
             
 
-#build("loader_dll", is64=False)
+build("loader_dll", is64=False)
 build("loader_dll", is64=True)    
-#build("SimpleSwitcher", is64=False)
+build("SimpleSwitcher", is64=False)
 
 add_to_bin = "SimpleSwitcher/binfiles"
 for file in os.listdir(add_to_bin):
     shutil.copy(os.path.join(add_to_bin, file), os.path.join(result_dir, file))
     
-shutil.make_archive(result_dir_root / f"SimpleSwitcher_v{curv2}", 'zip', result_dir)    
+zippath = result_dir_root / f"SimpleSwitcher_v{curv2}"
+    
+shutil.make_archive(zippath, 'zip', result_dir) 
 
-
-#rem $(SolutionDir)$(Configuration)\verinc.exe "$(ProjectDir)\ver.h"
-#rem signtool.exe sign /fd SHA256 /v /f "$(SolutionDir)\cert\SimpleSwitcher.pfx" /p m27SPnDeDZgz9Fvw483N /ph /t http://timestamp.comodoca.com/authenticode "$(SolutionDir)$(Configuration)\$(TargetName)$(TargetExt)" & $(SolutionDir)$(Configuration)\checksum.exe sha256 "$(SolutionDir)$(Configuration)\$(TargetName)$(TargetExt)" toFile
+def publish():
+    print('*** publish release ***')
+    
+    # pip install PyGithub requests
+    from github import Github
+    
+    tok = Path("D:/yy/token.txt").read_text() 
+    g = Github(tok)
+    
+    repo = g.get_repo("aegel5/SimpleSwitcher")
+    rel_message = "## Changes\n- minor fixes"
+    
+    #last_r = repo.get_latest_release()
+    #if last_r.body == rel_message:
+    #    print("DEL PREV RELEASE")
+    #    last_r.delete_release()
+    
+    last_com = repo.get_branch("master").commit
+    print(last_com)
+    newrel = repo.create_git_tag_and_release(curv2, curv2, release_name=f"SimpleSwitcher {curv2}", release_message=rel_message, object=last_com.sha, type="commit")
+    newrel.upload_asset(str(zippath) + ".zip")
+    
+if is_publ:  
+    publish()    
 
 print("\n***DONE***")
