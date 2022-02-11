@@ -101,7 +101,7 @@ def publish():
     for ii in last_r.get_assets():
         all_download += ii.download_count
     print(f"last release was downloaded {all_download} times")
-    if all_download == 0 && last_r.body == rel_message:
+    if all_download == 0 and last_r.body == rel_message:
         print("DEL PREV RELEASE")
         last_r.delete_release()
         
