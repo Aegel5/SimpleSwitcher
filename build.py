@@ -23,15 +23,6 @@ contents = Path(ver_path).read_text()
 
 curv = re.search('"(.*)"', contents).group(1)
 
-#a = curv.replace(".","")
-#aa = int(a)
-#aa+=1
-#aaa = str(aa)
-#curv2 = ""
-#for b in aaa:
-#    curv2 += b
-#    curv2 += '.'
-#curv2 = curv2[:-1]
 
 curvsp = curv.split('.')
 curv2 = curvsp[0] + "." + str(int(curvsp[1])+1)
@@ -105,10 +96,17 @@ def publish():
     repo = g.get_repo("aegel5/SimpleSwitcher")
     rel_message = "## Changes\n- minor fixes"
     
-    #last_r = repo.get_latest_release()
-    #if last_r.body == rel_message:
-    #    print("DEL PREV RELEASE")
-    #    last_r.delete_release()
+    last_r = repo.get_latest_release()
+    all_download = 0
+    for ii in last_r.get_assets():
+        all_download += ii.download_count
+    print(f"last release was downloaded {all_download} times")
+    if all_download == 0 && last_r.body == rel_message:
+        print("DEL PREV RELEASE")
+        last_r.delete_release()
+        
+        
+
     
     last_com = repo.get_branch("master").commit
     print(last_com)
