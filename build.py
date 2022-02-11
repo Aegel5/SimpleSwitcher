@@ -35,6 +35,7 @@ curv = re.search('"(.*)"', contents).group(1)
 
 curvsp = curv.split('.')
 curv2 = curvsp[0] + "." + str(int(curvsp[1])+1)
+curv2_v = "v" + curv2
 contents = contents.replace(curv,curv2)
 print(curv2)
 Path(ver_path).write_text(contents)
@@ -84,7 +85,7 @@ add_to_bin = "SimpleSwitcher/binfiles"
 for file in os.listdir(add_to_bin):
     shutil.copy(os.path.join(add_to_bin, file), os.path.join(result_dir, file))
     
-zippath = result_dir_root / f"SimpleSwitcher_v{curv2}"
+zippath = result_dir_root / f"SimpleSwitcher_{curv2_v}"
     
 shutil.make_archive(zippath, 'zip', result_dir) 
 
@@ -107,7 +108,7 @@ def publish():
     
     last_com = repo.get_branch("master").commit
     print(last_com)
-    newrel = repo.create_git_tag_and_release(curv2, curv2, release_name=f"SimpleSwitcher {curv2}", release_message=rel_message, object=last_com.sha, type="commit")
+    newrel = repo.create_git_tag_and_release(curv2, curv2, release_name=f"SimpleSwitcher {curv2_v}", release_message=rel_message, object=last_com.sha, type="commit")
     newrel.upload_asset(str(zippath) + ".zip")
     
 if is_publ:  
