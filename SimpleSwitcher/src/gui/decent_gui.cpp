@@ -111,6 +111,7 @@ private:
         elem->SetEditable(false);
         elem->SetValue(setsgui.GetHk(type).key.ToString());
         elem->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
+        elem->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
     }
 
     void onExitReqest(wxCloseEvent& event) {
@@ -231,6 +232,7 @@ private:
             auto res = setsgui.GetHk(type).key.ToString();
             obj->SetValue(res);
         }
+        //ev.Skip();
 
     }
 
