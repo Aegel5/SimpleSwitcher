@@ -4,8 +4,8 @@
 cmake_minimum_required (VERSION 3.18)
 project(SimpleSwitcherDll VERSION 1.0 LANGUAGES CXX)
 
-file(GLOB src_exe src/main_exe.cpp )
-file(GLOB src_dll src/main_dll.cpp )
+file(GLOB src_exe main_exe.cpp )
+file(GLOB src_dll main_dll.cpp )
 
 set(CMAKE_CXX_STANDARD 17)
 
