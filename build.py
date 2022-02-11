@@ -43,10 +43,12 @@ Path(ver_path).write_text(contents)
 package_build_folder = pathlib.Path("package_build")
 result_dir_root = package_build_folder / "OUT"
 result_dir = result_dir_root / "SimpleSwitcher"
-try: 
-    shutil.rmtree(result_dir_root) 
-except FileNotFoundError: 
-    pass
+
+def delfold(fold):
+    if os.path.exists(fold): 
+        shutil.rmtree(fold) 
+        
+delfold(result_dir_root)      
 result_dir.mkdir(parents=True, exist_ok=True)    
 
 def build(subfold, is64):
@@ -61,10 +63,12 @@ def build(subfold, is64):
 
     pathlib.Path(path).mkdir(parents=True, exist_ok=True)
     
-    os.system(f'cmake -G "Visual Studio 17 2022"  {" " if is64 else "-A Win32"} -DCMAKE_BUILD_TYPE=Release ./{subfold} -B {path}')
-    os.system(f'cmake --build {path} --parallel --config Release')    
-    
     release_folder = path / "Release"
+    delfold(release_folder) # ensure we get only builded now binares
+    
+    os.system(f'cmake -G "Visual Studio 17 2022"  {" " if is64 else "-A Win32"} -DCMAKE_BUILD_TYPE=Release ./{subfold} -B {path}')
+    os.system(f'cmake --build {path} --parallel --config Release')        
+
     tocopy = ['.exe', '.dll']
     for root, dirs, files in os.walk(release_folder):
         for file in files:
