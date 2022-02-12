@@ -785,6 +785,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		{
 			auto curL = g_laynotif.inited ? CurLay() : GetKeyboardLayout(m_dwIdThreadTopWnd);
             if (curL != prevLay) {
+                LOG_INFO_2(L"new lay arrived after %u", GetTickCount64() - start);
 				break;
 			}
 
@@ -1136,6 +1137,9 @@ TStatus Hooker::AnalizeTopWnd()
 
 	m_dwIdThreadTopWnd = GetWindowThreadProcessId(hwndFocused, &m_dwTopPid);
 	m_layoutTopWnd = GetKeyboardLayout(m_dwIdThreadTopWnd);
+    if (g_laynotif.inited && m_layoutTopWnd != g_laynotif.g_curLay) {
+        LOG_WARN(L"laynotif not equals");
+    }
 	m_hwndTop = hwndFocused;
 
 	IFS_LOG(Utils::GetProcLowerNameByPid(m_dwTopPid, m_sTopProcPath, m_sTopProcName));

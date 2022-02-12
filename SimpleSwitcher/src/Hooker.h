@@ -76,9 +76,6 @@ public:
         if (g_laynotif.g_curLay == 0)
             return m_layoutTopWnd;
         if (g_laynotif.inited) {
-            if (g_laynotif.g_curLay != m_layoutTopWnd) {
-                LOG_WARN(L"laynotif not equals");
-            }
             return g_laynotif.g_curLay;
         }
 		return m_layoutTopWnd;

@@ -153,7 +153,7 @@ public:
     bool fEnableKeyLoggerDefence = false;
     bool disableAccessebility    = false;
 
-    bool injectDll = true;
+    bool injectDll = false;
 
     // bool fHookDll;
 

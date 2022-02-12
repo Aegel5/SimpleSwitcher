@@ -29,6 +29,7 @@ EXTERN_C{
 }
 }
 
+HMODULE inst;
 
 BOOL APIENTRY DllMain(HMODULE hModule,
 	DWORD  ul_reason_for_call,
@@ -38,6 +39,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
+		inst = hModule;
 		if (Utils::IsDebug())
 			SetLogLevel(LOG_LEVEL_2);
 		//SW_LOG_INFO_DEBUG(L"Attach To process %d", GetCurrentProcessId());
