@@ -74,7 +74,7 @@ inline bool IsWindows64()
 
 	LPFN_ISWOW64PROCESS fnIsWow64Process;
 
-	HMODULE module = GetModuleHandle(_T("kernel32"));
+	HMODULE module = GetModuleHandleA("kernel32");
 	if (!module)
 	{
 		return bIsWow64 != FALSE;

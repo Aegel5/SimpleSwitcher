@@ -72,6 +72,13 @@ namespace Utils
 		}
 	}
 
+	inline bool IsDebug() {
+#ifndef DEBUG
+		return true;
+#endif
+		return false;
+	}
+
 	inline bool IsSelfElevated()
 	{
 		return IsElevated(GetCurrentProcess());

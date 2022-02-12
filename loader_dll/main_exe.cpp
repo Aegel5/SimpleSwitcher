@@ -1,38 +1,26 @@
-﻿
+﻿#include <tchar.h>
 #include <windows.h>
 
 #include <string>
 
+#include "../libtools/inc_basic.h"
+
 #include "../SimpleSwitcher/src/loader_api.h"
-#include "../libtools/core/winAutoCleanBase.h"
 
-inline bool IsSelf64()
-{
-#ifdef _WIN64
-	return true;
-#elif _WIN32
-	return false;
-#else
-	!!ERROR!!
-#endif
-}
+TStatus Main(HINSTANCE hInstance) {
+	std::wstring cmd = GetCommandLine();
+	//if (cmd.find(L"/load") == cmd.npos) {
+	//	LOG_WARN("/load not found");
+	//	RETURN_SUCCESS;
+	//}
 
-int APIENTRY WinMain(_In_ HINSTANCE hInstance,
-	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPTSTR    lpCmdLine,
-	_In_ int       nCmdShow)
-{
-	UNREFERENCED_PARAMETER(hPrevInstance);
-	
-	std::string cmd = GetCommandLine();
-	if (cmd.find("/load") == cmd.npos)
-		return 0;
+	auto clname = IsSelf64() ? c_sClassName64_2 : c_sClassName32_2;
+	auto dllname = IsSelf64() ? L"SimpleSwitcher64.dll" : L"SimpleSwitcher.dll";
 
-	auto* clname = IsSelf64() ? c_sClassName64 : c_sClassName32;
-	auto dllname = !IsSelf64() ? "SimpleSwitcher.dll" : "SimpleSwitcher64.dll";
-
-	if (FindWindow(clname, NULL))
-		return 0; // Already exist
+	if (FindWindow(clname, NULL)) {
+		LOG_WARN("already lang4et");
+		RETURN_SUCCESS;
+	}
 	WNDCLASSEX wcex = { 0 };
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
@@ -44,45 +32,36 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance,
 
 	HWND hWnd = CreateWindow(
 		clname,
-		"Title",
+		L"Title",
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
-	if (hWnd == 0)
-		return 0;
+	IFW_RET(hWnd != NULL);
 
-	ChangeWindowMessageFilterEx(hWnd, WM_QUIT, MSGFLT_ALLOW, 0);
+	IFW_LOG(ChangeWindowMessageFilterEx(hWnd, WM_QUIT, MSGFLT_ALLOW, 0));
 
 	CAutoHMODULE hHookDll = LoadLibrary(dllname);
-	if (hHookDll.IsInvalid()) {
-		hHookDll = LoadLibrary("SimpleSwitcher.dll");
-	}
-	if (hHookDll.IsInvalid()) {
-		return 0;
-	}
+	//if (hHookDll.IsInvalid()) {
+	//	hHookDll = LoadLibrary("SimpleSwitcher.dll");
+	//}
+	IFW_RET(hHookDll.IsValid());
 
 	HOOKPROC pfCallWndProc = (HOOKPROC)GetProcAddress(hHookDll, "hook_proc");
-	if (pfCallWndProc == NULL) {
-		auto err = GetLastError();
-		return 0;
-	}
+	IFW_RET(pfCallWndProc != NULL);
 
 	CAutoHHOOK hHookCallWndProc = SetWindowsHookEx(WH_CALLWNDPROC, pfCallWndProc, hHookDll, 0);
-	if (hHookCallWndProc.IsInvalid())
-		return 0;
+	IFW_RET(hHookCallWndProc.IsValid());
+
+	//RETURN_SUCCESS;
 
 	MSG msg;
 	while (true)
 	{
 		BOOL bRet = GetMessage(&msg, NULL, 0, 0);
 
-		if (bRet == 0)
+		if (bRet <= 0)
 			break;
-
-		if (bRet == -1)		{
-			break;
-		}
 
 		auto mesg = msg.message;
 
@@ -90,11 +69,27 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance,
 		//	break;
 		//}
 		//else{
+		if (!IsDialogMessage(hWnd, &msg)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+		}
 		//}
 	}
 
+	RETURN_SUCCESS;
+}
+
+int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPTSTR    lpCmdLine,
+	_In_ int       nCmdShow)
+{
+	UNREFERENCED_PARAMETER(hPrevInstance);
+
+	if (Utils::IsDebug())
+		SetLogLevel(LOG_LEVEL_2);
+
+	IFS_LOG(Main(hInstance));
 	return 0;
 	
 }

@@ -1,5 +1,6 @@
 ﻿#include <windows.h>
 #include "../SimpleSwitcher/src/loader_api.h"
+#include "../libtools/inc_basic.h"
 
 EXTERN_C{
 	__declspec(dllexport)
@@ -9,10 +10,12 @@ EXTERN_C{
 		_In_  LPARAM lParam
 	)
 {
+
 	if (nCode == HC_ACTION) {
 		CWPSTRUCT* data = (CWPSTRUCT*)lParam;
 		if (data->message == WM_INPUTLANGCHANGE) {
-			HWND my = FindWindow(c_sClassNameServer, NULL);
+			LOG_INFO_1(L"WM_INPUTLANGCHANGE");
+			HWND my = FindWindow(c_sClassNameServer2, NULL);
 			if (my != NULL) {
 				PostMessage(my, WM_LayNotif, data->wParam, data->lParam);
 			}
@@ -32,6 +35,8 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
+		if (Utils::IsDebug())
+			SetLogLevel(LOG_LEVEL_2);
 		//SW_LOG_INFO_DEBUG(L"Attach To process %d", GetCurrentProcessId());
 		break;
 	case DLL_THREAD_ATTACH:

@@ -141,7 +141,9 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 		{
 			PostQuitMessage(0);
         } else if (mesg == WM_LayNotif) {
+
             g_laynotif.g_curLay = (HKL)msg.lParam;
+            LOG_INFO_1(L"notify layout now: 0x%x", g_laynotif.g_curLay.load());
         }
 		else if (mesg == WM_CLIPBOARDUPDATE)
 		{

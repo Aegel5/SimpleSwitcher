@@ -1,4 +1,6 @@
-﻿#include "CAutoCleanup.h"
+﻿#pragma once
+
+#include "CAutoCleanup.h"
 
 struct __Handle2Wrapper
 {

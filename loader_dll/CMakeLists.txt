@@ -10,6 +10,7 @@ file(GLOB src_dll main_dll.cpp d.def)
 set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /UMBCS /D_UNICODE /DUNICODE")
 
 add_executable(loader WIN32 ${src_exe})
 add_library(SimpleSwitcher SHARED ${src_dll})
