@@ -52,6 +52,8 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance,
 	if (hWnd == 0)
 		return 0;
 
+	ChangeWindowMessageFilterEx(hWnd, WM_QUIT, MSGFLT_ALLOW, 0);
+
 	CAutoHMODULE hHookDll = LoadLibrary(dllname);
 	if (hHookDll.IsInvalid()) {
 		hHookDll = LoadLibrary("SimpleSwitcher.dll");
@@ -84,13 +86,13 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance,
 
 		auto mesg = msg.message;
 
-		if (mesg == c_MSG_Quit_2)		{
-			break;
-		}
-		else{
+		//if (mesg == c_MSG_Quit_2)		{
+		//	break;
+		//}
+		//else{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-		}
+		//}
 	}
 
 	return 0;

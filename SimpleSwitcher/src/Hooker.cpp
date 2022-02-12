@@ -510,12 +510,13 @@ TStatus Hooker::ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist)
 		TCHAR c = clipdata[i];
 		if (c == L'\r')
 			continue;
-		SHORT res = VkKeyScanEx(c, m_layoutTopWnd);
+        auto lay  = CurLay();
+		SHORT res = VkKeyScanEx(c, lay);
 		if (res == -1)
 		{
 			for (int i = 0; i < count; ++i)
 			{
-				if (layouts[i] != m_layoutTopWnd)
+                if (layouts[i] != lay)
 					res = VkKeyScanEx(c, layouts[i]);
 				if (res != -1)
 					break;
@@ -731,6 +732,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 	};
 
 	bool needWaitLang = false;
+    auto prevLay      = CurLay();
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_SetLang) && ctxRevert.lay)
 	{
 		LOG_INFO_1(L"Try set 0x%x lay", ctxRevert.lay);
@@ -749,8 +751,9 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 			PostMessage(m_hwndTop, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
 		}
 
-		// на остальное забиваем
-		needWaitLang = m_sTopProcName == L"searchapp.exe";
+
+		needWaitLang = g_laynotif.inited 
+			|| m_sTopProcName == L"searchapp.exe"; // без инжекта ждем только это
 	}
 
 
@@ -769,9 +772,9 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 	}
 
 
-	if (m_layoutTopWnd == 0 || m_sTopProcName == L"far.exe") {
-        needWaitLang = false;
-    }
+	//if (m_layoutTopWnd == 0 || m_sTopProcName == L"far.exe") {
+ //       needWaitLang = false;
+ //   }
 
 	//needWaitLang = false;
 	if (needWaitLang) {
@@ -780,12 +783,12 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		auto start = GetTickCount64();
 		while (true)
 		{
-			auto curL = GetKeyboardLayout(m_dwIdThreadTopWnd);
-			if (m_layoutTopWnd != curL) {
+			auto curL = g_laynotif.inited ? CurLay() : GetKeyboardLayout(m_dwIdThreadTopWnd);
+            if (curL != prevLay) {
 				break;
 			}
 
-			if ((GetTickCount64() - start) >= 200) {
+			if ((GetTickCount64() - start) >= 150) {
 				LOG_WARN(L"wait timeout language change for proc %s", m_sTopProcName.c_str());
 				break;
 			}
@@ -905,7 +908,8 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
             return (HKL)HKL_NEXT;
         }
 
-		if (m_layoutTopWnd == 0) {
+		auto lay = CurLay();
+        if (lay == 0) {
 			// к сожалению наш список работать не будет (
 			// TODO возможно будет работать если послать несколь NEXT чтобы пропустить ненужную раскладку (нужен монитор тек языка)
             return (HKL)HKL_NEXT;
@@ -914,7 +918,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		HKL toSet = 0;
 		for (size_t i = 0; i < lst.size(); ++i)
 		{
-			if (m_layoutTopWnd == lst[i])
+            if (lay == lst[i])
 			{
 				if (i == lst.size() - 1)
 				{
@@ -966,18 +970,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		RETURN_SUCCESS;
 	}
 
-	//if (typeRevert == hk_ChangeTextCase)
-	//{
-	//	if (m_caseAnalizer.IsInited())
-	//	{
-	//		RequestChangeCase();
-	//	}
-	//	else
-	//	{
-	//		IFS_RET(SendCtrlC(CLR_GET_FROM_CLIP));
-	//	}
-	//	RETURN_SUCCESS;
-	//}
+
 	if (typeRevert == hk_RevertSel)
 	{
 		IFS_RET(SendCtrlC(CLRMY_GET_FROM_CLIP));
@@ -986,14 +979,6 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
 	auto nextLng = getNextLang(settings_thread.customLangList);
 
-	//if (typeRevert == hk_RevertLastWord_CustomLang || typeRevert == hk_RevertCycle_CustomLang)
-	//{
-	//	auto [res, toSet] = getNextLang(settings_thread.revert_customLangList);
-	//	if (!res)
-	//		RETURN_SUCCESS;
-	//	nextLng = toSet;
-	//	typeRevert = typeRevert == hk_RevertLastWord_CustomLang ? hk_RevertLastWord : hk_RevertCycle;
-	//} 
 
 	// ---------------classic revert---------------
 
@@ -1043,30 +1028,6 @@ TStatus Hooker::NeedRevert(HotKeyType typeRevert)
 	RETURN_SUCCESS;
 }
 
-
-
-//void Hooker::SetLayAndWait(HKL lay)
-//{
-//	HKL old = GetKeyboardLayout(m_dwIdThreadTopWnd);
-//	PostMessage(m_hwndTop, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
-//
-//	int i = 0;
-//	for (; i < 100; ++i)
-//	{
-//		HKL lnew = GetKeyboardLayout(m_dwIdThreadTopWnd);
-//		if (old != lnew)
-//		{
-//			break;
-//		}
-//		Sleep(10);
-//	}
-//
-//	if (i == 100)
-//	{
-//		LOG_INFO_1(L"i == 100");
-//		int k = 0;
-//	}
-//}
 VOID CALLBACK SendAsyncProc(
 	_In_  HWND hwnd,
 	_In_  UINT uMsg,
@@ -1135,58 +1096,7 @@ TStatus FoundEmulateHotKey(CHotKey& key)
 
 	RETURN_SUCCESS;
 }
-TStatus FoundCountEmulate(HKL_W layFrom, HKL_W layTo, int& countRes)
-{
-	countRes = 1;
 
-	if (layTo == (HKL)HKL_NEXT)
-	{
-		RETURN_SUCCESS;
-	}
-
-	if (layFrom == layTo)
-	{
-		countRes = 0;
-		RETURN_SUCCESS;
-		//IFS_RET(SW_ERR_UNKNOWN, L"layfrom == layto");
-	}
-
-	RETURN_SUCCESS;
-
-	HKL buf[0x100];
-	int count = GetKeyboardLayoutList(SW_ARRAY_SIZE(buf), buf);
-	IFW_RET(count != 0);
-
-	int iLayTo = -1;
-	int iLayFrom = -1;
-	for (int i = 0; i < count; ++i)
-	{
-		if (buf[i] == (HKL)layFrom)
-		{
-			iLayFrom = i;
-		}
-		if (buf[i] == (HKL)layTo)
-		{
-			iLayTo = i;
-		}
-	}
-
-	if (iLayTo == -1 || iLayFrom == -1 || iLayTo == iLayFrom)
-	{
-		IFS_RET(SW_ERR_UNKNOWN, L"not found lays");
-	}
-	if (iLayTo > iLayFrom)
-	{
-		countRes = iLayTo - iLayFrom;
-	}
-	else
-	{
-		countRes = count - iLayFrom + iLayTo;
-	}
-
-	RETURN_SUCCESS;
-
-}
 TStatus Hooker::SwitchLangByEmulate(HKL_W lay)
 {
 	InputSender inputSender;
@@ -1194,70 +1104,18 @@ TStatus Hooker::SwitchLangByEmulate(HKL_W lay)
 	CHotKey altshift;
 	IFS_LOG(FoundEmulateHotKey(altshift));
 
-	int countRes = 0;
-	IFS_LOG(FoundCountEmulate((HKL_W)m_layoutTopWnd, lay, countRes));
-
-	for (int i = 0; i < countRes; ++i)
-	{
-		std::wstring s1 = altshift.ToString();
-		LOG_INFO_2(L"Add press %s", s1.c_str());
-		IFS_RET(inputSender.AddPress(altshift));
-	}
+	std::wstring s1 = altshift.ToString();
+	LOG_INFO_2(L"Add press %s", s1.c_str());
+	IFS_RET(inputSender.AddPress(altshift));
 
 	IFS_RET(SendOurInput(inputSender));
 
+	// ------
+	// TODO switch until we get needed layout.
+
+
 	RETURN_SUCCESS;
 }
-//TStatus GetNextLay(DWORD threadId, HKL lay, HKL& requereLay)
-//{
-//	requereLay = lay;
-//	if (lay != (HKL)HKL_NEXT && lay != (HKL)HKL_PREV)
-//	{
-//		RETURN_SUCCESS;
-//	}
-//
-//	HKL old = GetKeyboardLayout(threadId);
-//
-//	HKL buf[0x100];
-//	int count = GetKeyboardLayoutList(SW_ARRAY_SIZE(buf), buf);
-//	IFW_RET(count != 0);
-//
-//	for (int i = 0; i < count; ++i)
-//	{
-//		if (buf[i] == old)
-//		{
-//			if (lay == (HKL)HKL_NEXT)
-//			{
-//				if (i == count - 1)
-//				{
-//					requereLay = buf[0];
-//				}
-//				else
-//				{
-//					requereLay = buf[i + 1];
-//				}
-//			}
-//			else
-//			{
-//				if (i == 0)
-//				{
-//					requereLay = buf[count - 1];
-//				}
-//				else
-//				{
-//					requereLay = buf[i - 1];
-//				}
-//			}
-//		}
-//	}
-//
-//	RETURN_SUCCESS;
-//
-//}
-
-
-
-
 
 TStatus Hooker::AnalizeTopWnd()
 {
@@ -1279,10 +1137,6 @@ TStatus Hooker::AnalizeTopWnd()
 	m_dwIdThreadTopWnd = GetWindowThreadProcessId(hwndFocused, &m_dwTopPid);
 	m_layoutTopWnd = GetKeyboardLayout(m_dwIdThreadTopWnd);
 	m_hwndTop = hwndFocused;
-
-
-
-	
 
 	IFS_LOG(Utils::GetProcLowerNameByPid(m_dwTopPid, m_sTopProcPath, m_sTopProcName));
 

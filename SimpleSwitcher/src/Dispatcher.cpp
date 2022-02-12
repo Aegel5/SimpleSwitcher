@@ -62,29 +62,34 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 	//	IFW_LOG(WinApiInt::ChangeWindowMessageFilterEx(hWnd, c_MSG_Quit, MSGFLT_ALLOW, 0));
 	//	IFW_LOG(WinApiInt::ChangeWindowMessageFilterEx(hWnd, c_MSG_SettingsChanges, MSGFLT_ALLOW, 0));
 	//}
+    CAutoProcMonitor loader;
+    CAutoProcMonitor loader64;
+    g_laynotif.inited = false;
 
 	if (setsgui.injectDll) {
         tstring sFolder;
         IFS_RET(GetPath(sFolder, PATH_TYPE_SELF_FOLDER, SW_BIT_32));
 
-        g_laynotif.wasErr = false;
-        CAutoProcMonitor loader;
+        bool locInited    = true;
+
         loader.m_sWndName = c_sClassName32_2;
         loader.m_sCmd     = L"/load";
         loader.m_sExe     = sFolder + L"loader.exe";
         IFS_LOG(loader.EnsureStarted(SW_ADMIN_SELF));
         if (!loader.CheckRunning().found)
-            g_laynotif.wasErr = true;
+            locInited = false;
 
-        CAutoProcMonitor loader2;
+
         if (IsWindows64()) {
-            loader2.m_sWndName = c_sClassName64_2;
-            loader2.m_sCmd     = L"/load";
-            loader2.m_sExe     = sFolder + L"loader64.exe";
-            IFS_LOG(loader2.EnsureStarted(SW_ADMIN_SELF));
-            if (!loader2.CheckRunning().found)
-                g_laynotif.wasErr = true;
+            loader64.m_sWndName = c_sClassName64_2;
+            loader64.m_sCmd     = L"/load";
+            loader64.m_sExe     = sFolder + L"loader64.exe";
+            IFS_LOG(loader64.EnsureStarted(SW_ADMIN_SELF));
+            if (!loader64.CheckRunning().found)
+                locInited = false;
         }
+
+		g_laynotif.inited = locInited;
     }
 
 	HookGlobalHandles hookHandles;

@@ -22,6 +22,7 @@ public:
 		}
 	}
 
+
 	TStatus Stop()
 	{
 		HWND hwnd = FindWindow(m_sWndName, NULL);
@@ -36,7 +37,7 @@ public:
 		DWORD desireAccess = SYNCHRONIZE;
 		CAutoHandle hProc = OpenProcess(SYNCHRONIZE, FALSE, pid);
 		IFW_RET(hProc.IsValid());
-		PostMessage(hwnd, c_MSG_Quit, 0, 0);
+		PostMessage(hwnd, WM_QUIT, 0, 0);
 		IF_WAITDWORD_RET(WaitForSingleObject(hProc, c_nCommonWaitProcess));
 
 		RETURN_SUCCESS;

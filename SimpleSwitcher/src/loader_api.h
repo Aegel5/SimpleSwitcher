@@ -10,4 +10,4 @@ static const char c_sClassNameServer[] = "SimpleSw_325737FD_Serv";
 static const wchar_t c_sClassNameServer2[] = L"SimpleSw_325737FD_Serv";
 
 static const unsigned int WM_LayNotif = 0xBFFF - 29;
-static const unsigned int c_MSG_Quit_2  = 0xBFFF - 35;
+//static const unsigned int c_MSG_Quit_2  = 0xBFFF - 35;

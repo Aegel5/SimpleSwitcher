@@ -12,10 +12,13 @@ EXTERN_C{
 	if (nCode == HC_ACTION) {
 		CWPSTRUCT* data = (CWPSTRUCT*)lParam;
 		if (data->message == WM_INPUTLANGCHANGE) {
-			HWND Server = FindWindow(c_sClassNameServer, NULL);
-			PostMessage(Server, WM_LayNotif, data->wParam, data->lParam);
+			HWND my = FindWindow(c_sClassNameServer, NULL);
+			if (my != NULL) {
+				PostMessage(my, WM_LayNotif, data->wParam, data->lParam);
+			}
 		}
 	}
+	//return 0;
 	return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
 }

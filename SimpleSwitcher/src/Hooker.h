@@ -11,6 +11,8 @@
 //#include "CaseAnalazer.h"
 #include "CClipWorker.h"
 
+#include "lay_notif_from_dll.h"
+
 static const int c_nMaxLettersSave = 100;
 
 
@@ -68,6 +70,18 @@ public:
 		m_clipRequest = clRequest;
 		//m_clipCounter = GetClipboardSequenceNumber();
         m_dwLastCtrlCReqvest = GetTickCount64();
+	}
+
+	HKL CurLay() {
+        if (g_laynotif.g_curLay == 0)
+            return m_layoutTopWnd;
+        if (g_laynotif.inited) {
+            if (g_laynotif.g_curLay != m_layoutTopWnd) {
+                LOG_WARN(L"laynotif not equals");
+            }
+            return g_laynotif.g_curLay;
+        }
+		return m_layoutTopWnd;
 	}
 	//void RequestChangeCase()
 	//{
