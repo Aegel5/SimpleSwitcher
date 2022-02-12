@@ -39,13 +39,6 @@ inline TStatus SwCreateProcessOurWaitFinished(const TCHAR* sExe, const TCHAR* sC
 }
 
 
-
-
-TStatus CreateService();
-TStatus RemoveService();
-
-TStatus CheckService(bool& isAdmin);
-
 inline TStatus AddRemapKey(TKeyCode s, TKeyCode v)
 {
 	BufScanMap buf;

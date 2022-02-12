@@ -26,7 +26,7 @@ public:
 	TStatus Stop()
 	{
         if (m_sWndName == 0)
-            return;
+            RETURN_SUCCESS;
 
 		HWND hwnd = FindWindow(m_sWndName, NULL);
 

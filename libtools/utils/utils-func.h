@@ -2,7 +2,7 @@
 
 namespace Utils
 {
-	inline std::wstring GetNameForHKL(HKL hkl)
+	inline std::wstring GetNameForHKL_simple(HKL hkl)
 	{
 		WORD langid = LOWORD(hkl);
 
@@ -19,9 +19,16 @@ namespace Utils
 	inline std::wstring GetNameForHKL_Unique(HKL hkl)
 	{
 		std::wstringstream stream;
-		stream << GetNameForHKL(hkl) << " " << std::hex << TUInt64(hkl);
+		stream << GetNameForHKL_simple(hkl) << " " << std::hex << TUInt64(hkl);
 		return stream.str();
 	}
+
+	inline std::wstring GetNameForHKL(HKL hkl)
+	{
+		return GetNameForHKL_Unique(hkl);
+	}
+
+
 
 	inline TStatus IsElevated(HANDLE hProc, bool& res)
 	{
