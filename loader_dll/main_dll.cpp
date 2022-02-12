@@ -1,17 +1,23 @@
 ﻿#include <windows.h>
+#include "../SimpleSwitcher/src/loader_api.h"
 
-__declspec(dllexport)
-LRESULT CALLBACK CallWndProc(
-	_In_  int nCode,
-	_In_  WPARAM wParam,
-	_In_  LPARAM lParam
+EXTERN_C{
+	__declspec(dllexport)
+	LRESULT CALLBACK hook_proc(
+		_In_  int nCode,
+		_In_  WPARAM wParam,
+		_In_  LPARAM lParam
 	)
 {
-	if (nCode == HC_ACTION)
-	{
-
+	if (nCode == HC_ACTION) {
+		CWPSTRUCT* data = (CWPSTRUCT*)lParam;
+		if (data->message == WM_INPUTLANGCHANGE) {
+			HWND Server = FindWindow(c_sClassNameServer, NULL);
+			PostMessage(Server, WM_LayNotif, data->wParam, data->lParam);
+		}
 	}
 	return CallNextHookEx(NULL, nCode, wParam, lParam);
+}
 }
 
 

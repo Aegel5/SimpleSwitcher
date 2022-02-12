@@ -2,9 +2,6 @@
 #include "utils/procstart.h"
 #include "utils/getpath.h"
 
-const static TChar c_sRegRunValue[] = SW_PROGRAM_NAME_L;
-const static TChar c_sServiceName[] = SW_PROGRAM_NAME_L L"Service";
-
 
 
 enum TStopRes
@@ -17,31 +14,25 @@ enum TStopRes
 
 
 
-inline TStatus SwCreateProcessOur(const TCHAR* sCmd, TSWBit bit, TSWAdmin admin, CAutoHandle& hProc)
-{
-	tstring sExe;
-	IFS_RET(GetPath(sExe, PATH_TYPE_EXE_PATH, bit));
-
+inline TStatus SwCreateProcessOur(const TCHAR* sExe, const TCHAR* sCmd, TSWAdmin admin, CAutoHandle& hProc) {
 	procstart::CreateProcessParm parm;
-	parm.sExe = sExe.c_str();
+	parm.sExe = sExe;
 	parm.sCmd = sCmd;
 	parm.admin = admin;
 	IFS_RET(procstart::SwCreateProcess(parm, hProc));
 
 	RETURN_SUCCESS;
 }
-inline TStatus SwCreateProcessOurWaitIdle(const TCHAR* sCmd, TSWBit bit, TSWAdmin admin)
-{
+inline TStatus SwCreateProcessOurWaitIdle(const TCHAR* sExe, const TCHAR* sCmd, TSWAdmin admin) {
 	CAutoHandle hProc;
-	IFS_RET(SwCreateProcessOur(sCmd, bit, admin, hProc));
+	IFS_RET(SwCreateProcessOur(sExe, sCmd, admin, hProc));
 	IF_WAITDWORD_RET(WaitForInputIdle(hProc, c_nCommonWaitProcess));
 
 	RETURN_SUCCESS;
 }
-inline TStatus SwCreateProcessOurWaitFinished(const TCHAR* sCmd, TSWBit bit, TSWAdmin admin)
-{
+inline TStatus SwCreateProcessOurWaitFinished(const TCHAR* sExe, const TCHAR* sCmd, TSWAdmin admin) {
 	CAutoHandle hProc;
-	IFS_RET(SwCreateProcessOur(sCmd, bit, admin, hProc));
+	IFS_RET(SwCreateProcessOur(sExe, sCmd, admin, hProc));
 	IF_WAITDWORD_RET(WaitForSingleObject(hProc, c_nCommonWaitProcess));
 
 	RETURN_SUCCESS;

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Dispatcher.h"
+#include "loader_api.h"
 
 
 enum HotKeyType : TUInt32
@@ -87,7 +88,7 @@ struct CHotKeySet
 
 inline TStatus PostMsgSettingChanges()
 {
-	HWND hwnd = FindWindow(c_sClassName32, 0);
+    HWND hwnd = FindWindow(c_sClassNameServer2, 0);
 	if (hwnd != NULL)
 	{
 		PostMessage(hwnd, c_MSG_SettingsChanges, 0, 0);
@@ -151,6 +152,8 @@ public:
     // bool fCloseByEsc;
     bool fEnableKeyLoggerDefence = false;
     bool disableAccessebility    = false;
+
+    bool injectDll = true;
 
     // bool fHookDll;
 

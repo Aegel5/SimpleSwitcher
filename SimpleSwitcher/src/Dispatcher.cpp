@@ -6,6 +6,9 @@
 #include "CMainWorker.h"
 #include "Settings.h"
 
+#include "loader_api.h"
+#include "lay_notif_from_dll.h"
+
 
 TStatus resethook();
 
@@ -31,12 +34,12 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.lpfnWndProc = DefWindowProc;
 	wcex.hInstance = hInstance;
-	wcex.lpszClassName = c_sClassName;
+    wcex.lpszClassName = c_sClassNameServer2;
 
 	IFW_LOG(RegisterClassEx(&wcex) != 0);
 
 	HWND hWnd = CreateWindow(
-		c_sClassName,
+		c_sClassNameServer2,
 		L"Title",
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
@@ -60,11 +63,37 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 	//	IFW_LOG(WinApiInt::ChangeWindowMessageFilterEx(hWnd, c_MSG_SettingsChanges, MSGFLT_ALLOW, 0));
 	//}
 
+	if (setsgui.injectDll) {
+        tstring sFolder;
+        IFS_RET(GetPath(sFolder, PATH_TYPE_SELF_FOLDER, SW_BIT_32));
+
+        g_laynotif.wasErr = false;
+        CAutoProcMonitor loader;
+        loader.m_sWndName = c_sClassName32_2;
+        loader.m_sCmd     = L"/load";
+        loader.m_sExe     = sFolder + L"loader.exe";
+        IFS_LOG(loader.EnsureStarted(SW_ADMIN_SELF));
+        if (!loader.CheckRunning().found)
+            g_laynotif.wasErr = true;
+
+        CAutoProcMonitor loader2;
+        if (IsWindows64()) {
+            loader2.m_sWndName = c_sClassName64_2;
+            loader2.m_sCmd     = L"/load";
+            loader2.m_sExe     = sFolder + L"loader64.exe";
+            IFS_LOG(loader2.EnsureStarted(SW_ADMIN_SELF));
+            if (!loader2.CheckRunning().found)
+                g_laynotif.wasErr = true;
+        }
+    }
+
 	HookGlobalHandles hookHandles;
 	if (gdata().curModeBit == SW_BIT_32)
 	{
 		IFS_RET(HookGlobal(hookHandles));
 	}
+
+
 
 
 	auto timeId = SetTimer(hWnd, c_timerKeyloggerDefence, 5000, NULL);
@@ -106,7 +135,9 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 		else if (mesg == c_MSG_Quit)
 		{
 			PostQuitMessage(0);
-		}
+        } else if (mesg == WM_LayNotif) {
+            g_laynotif.g_curLay = (HKL)msg.lParam;
+        }
 		else if (mesg == WM_CLIPBOARDUPDATE)
 		{
 			if (gdata().curModeBit == SW_BIT_32)

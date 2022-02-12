@@ -22,8 +22,7 @@ struct CommonData
 	HotKeyHolders* hotkeyHolders = NULL;
 	//CThreadQueue* hookerWorker = NULL;
 	//HookHandles* hookHandles = NULL;
-	CAutoProcMonitor procMonitor;
-	CommonData() : procMonitor(c_sClassName32, c_sArgHook32, SW_BIT_32, false) {}
+	//CAutoProcMonitor procMonitor;
 	static CommonData& Global()
 	{
 		static CommonData data;

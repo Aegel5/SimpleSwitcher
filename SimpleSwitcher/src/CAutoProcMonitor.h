@@ -8,6 +8,12 @@ struct TSWCheckRunRes
 class CAutoProcMonitor
 {
 public:
+
+    const TChar* m_sWndName = 0;
+    std::wstring m_sCmd     ;
+    std::wstring m_sExe     ;
+    bool m_autoClose        = true;
+
 	~CAutoProcMonitor()
 	{
 		if(m_autoClose)
@@ -16,13 +22,6 @@ public:
 		}
 	}
 
-	CAutoProcMonitor(const TChar* sWndName, const TChar* sCmd, TSWBit bit,  bool autoClose) :
-		m_sWndName(sWndName), 
-		m_sCmd(sCmd), 
-		m_autoClose(autoClose),
-		m_bit(bit)
-	{
-	}
 	TStatus Stop()
 	{
 		HWND hwnd = FindWindow(m_sWndName, NULL);
@@ -84,33 +83,14 @@ public:
 			}
 		}
 
-		// hack for WaitInputIdle
-		if (m_bit == SW_BIT_32 && admin != SW_ADMIN_SELF)
-		{
-			bool selfAdmin = Utils::IsSelfElevated();
-			if ((!selfAdmin && admin == SW_ADMIN_ON) /*|| selfAdmin && admin == SW_ADMIN_OFF*/)
-			{
-				LOG_INFO_1(L"Try enable via starter...");
-				IFS_RET(SwCreateProcessOurWaitFinished(
-					c_sArgStarter,
-					m_bit,
-					admin));
-				RETURN_SUCCESS;
-			}
-		}
-
 		LOG_INFO_1(L"Create hooker process...");
-		IFS_RET(SwCreateProcessOurWaitIdle(
-			m_sCmd,
-			m_bit,
+		IFS_RET(SwCreateProcessOurWaitIdle(m_sExe.c_str(),
+			m_sCmd.c_str(),
 			admin));
 
 		RETURN_SUCCESS;
 	}
-private:
-	const TChar* m_sWndName = 0;
-	const TChar* m_sCmd = 0;
-	TSWBit m_bit = SW_BIT_32;
-	bool m_autoClose = false;
+
+
 
 };
