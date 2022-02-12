@@ -25,6 +25,9 @@ public:
 
 	TStatus Stop()
 	{
+        if (m_sWndName == 0)
+            return;
+
 		HWND hwnd = FindWindow(m_sWndName, NULL);
 
 		LOG_INFO_1(L"Stop monitor for hwnd=%p", hwnd);

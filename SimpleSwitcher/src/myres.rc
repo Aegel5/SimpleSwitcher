@@ -1,2 +1,2 @@
-appicon ICON "yy.ico"
+appicon ICON "bb.ico"
 #include "../../wxWidgets/include/wx/msw/wx.rc"        
