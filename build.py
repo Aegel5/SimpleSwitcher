@@ -5,10 +5,13 @@ import os
 import shutil 
 import sys
 
+is_debug = False
 is_publ = False
 for arg in sys.argv:
     if arg == "/publish":
         is_publ = True
+    if arg == "/debug":
+        is_debug = True
 
 
 curpath = pathlib.Path(__file__).parent.resolve()
@@ -46,6 +49,8 @@ def build(subfold, is64):
 
     print(f'*** BUILD {subfold} {("64" if is64 else "32")} ***');
     
+    rel_name = "Debug" if is_debug else "Release"
+    
 
     build_folder = subfold
     if is64:
@@ -54,11 +59,11 @@ def build(subfold, is64):
 
     pathlib.Path(path).mkdir(parents=True, exist_ok=True)
     
-    release_folder = path / "Release"
+    release_folder = path / rel_name
     delfold(release_folder) # ensure we get only builded now binares
     
-    os.system(f'cmake -G "Visual Studio 17 2022"  {" " if is64 else "-A Win32"} -DCMAKE_BUILD_TYPE=Release ./{subfold} -B {path}')
-    os.system(f'cmake --build {path} --parallel --config Release')        
+    os.system(f'cmake -G "Visual Studio 17 2022"  {" " if is64 else "-A Win32"} -DCMAKE_BUILD_TYPE={rel_name} ./{subfold} -B {path}')
+    os.system(f'cmake --build {path} --parallel --config {rel_name}')        
 
     tocopy = ['.exe', '.dll']
     for root, dirs, files in os.walk(release_folder):

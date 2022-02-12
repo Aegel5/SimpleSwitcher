@@ -17,7 +17,10 @@ EXTERN_C{
 			LOG_INFO_1(L"WM_INPUTLANGCHANGE");
 			HWND my = FindWindow(c_sClassNameServer2, NULL);
 			if (my != NULL) {
-				PostMessage(my, WM_LayNotif, data->wParam, data->lParam);
+				PostMessage(my, data->message, data->wParam, data->lParam);
+			}
+			else {
+				LOG_WARN(L"main hwnd not found");
 			}
 		}
 	}
