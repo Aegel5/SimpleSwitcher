@@ -27,6 +27,8 @@ class HotKeyDlg : public MyDialog1
 public:
     HotKeyDlg(CHotKeySet& info, wxFrame* frame) : MyDialog1(frame), info(info)
     {
+        //SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxRESIZE_BORDER);
+
         key     = info.key;
 
         auto ss = [](CHotKey key) { return key.IsEmpty() ? L"[None]" : key.ToString(); };

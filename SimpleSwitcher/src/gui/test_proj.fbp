@@ -2930,7 +2930,7 @@
             <property name="name">MyDialog1</property>
             <property name="pos"></property>
             <property name="size">454,270</property>
-            <property name="style">wxDEFAULT_DIALOG_STYLE</property>
+            <property name="style">wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</property>
             <property name="subclass">; ; forward_declare</property>
             <property name="title">Set hotkey</property>
             <property name="tooltip"></property>
