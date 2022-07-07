@@ -67,7 +67,7 @@ public:
         Bind(wxEVT_CLOSE_WINDOW, &MainWnd::onExitReqest, this);
 
         SetTitle(fmt::format(L"{} {}{}", GetTitle(), SW_VERSION, Utils::IsSelfElevated() ? L" Administrator" : L""));
-        SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION);
+        SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxRESIZE_BORDER);
 
         m_staticTextBuildDate->SetLabelText(fmt::format(L"Built on '{}'", _SW_ADD_STR_UT(__DATE__)));
 
