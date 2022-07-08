@@ -195,10 +195,6 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer20;
 	bSizer20 = new wxBoxSizer( wxVERTICAL );
 
-	m_staticText8 = new wxStaticText( m_panel5, wxID_ANY, wxT("ANY CHANGE REQUIRES A WINDOWS REBOOT"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText8->Wrap( -1 );
-	bSizer20->Add( m_staticText8, 0, wxALL, 5 );
-
 	wxStaticBoxSizer* sbSizer6;
 	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( m_panel5, wxID_ANY, wxT("Capslock") ), wxVERTICAL );
 
