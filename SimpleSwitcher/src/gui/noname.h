@@ -68,6 +68,7 @@ class MyFrame4 : public wxFrame
 		wxChoice* m_choiceset3;
 		wxTextCtrl* m_textSetlay3;
 		wxPanel* m_panel5;
+		wxStaticText* m_staticText8;
 		wxCheckBox* m_checkcapsrem;
 		wxStaticText* m_staticText321;
 		wxTextCtrl* m_textcapsgen;
