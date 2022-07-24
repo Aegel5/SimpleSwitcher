@@ -106,12 +106,37 @@ private:
     wxIcon icon;
     bool exitRequest = false;
 
+    int getChildIndex(wxWindow* obj) {
+        auto par = obj->GetParent();
+        for (int i = 0; i < par->GetChildren().size(); i++) {
+            if (par->GetChildren()[i] == obj)
+                return i;
+        }
+        return -1;
+    }
+
     void BindHotCtrl(wxTextCtrl* elem, HotKeyType type) {
+
         elem->SetClientData((void*)type);
+
         elem->SetEditable(false);
         elem->SetValue(setsgui.GetHk(type).key.ToString());
-        elem->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
-        elem->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
+
+        //auto sizer = elem->GetSizer();
+        //auto size = sizer->GetSize();
+        //return;
+        auto par  = elem->GetParent();
+        //auto sizer = wxDynamicCast(par, wxBoxSizer);
+        auto* btn = wxDynamicCast(par->GetChildren()[getChildIndex(elem)+1], wxButton);
+        if (btn == nullptr) {
+            return;
+        }
+        btn->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainWnd::onHotKeyChange_btn), NULL, this);
+
+
+        //elem->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
+        //elem->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
+
     }
 
     void onExitReqest(wxCloseEvent& event) {
@@ -219,9 +244,13 @@ private:
             wxMessageBox("Will be applied after PC reboot");
     }
 
-    void onHotKeyChange(wxMouseEvent& ev) {
+    void onHotKeyChange_btn(wxCommandEvent& ev) {
+        auto btn      = wxDynamicCast(ev.GetEventObject(), wxButton);
+        auto* edit_bx = wxDynamicCast(btn->GetParent()->GetChildren()[getChildIndex(btn)-1], wxTextCtrl);
+        onHotKey_ForEditBox(edit_bx);
+    }
 
-        auto obj = wxDynamicCast(ev.GetEventObject(), wxTextCtrl);
+    void onHotKey_ForEditBox(wxTextCtrl* obj) {
         if (!obj)
             return;
         HotKeyType type = (HotKeyType)(TUInt32)obj->GetClientData();
@@ -232,6 +261,13 @@ private:
             auto res = setsgui.GetHk(type).key.ToString();
             obj->SetValue(res);
         }
+    }
+
+    void onHotKeyChange(wxMouseEvent& ev) {
+
+        auto obj = wxDynamicCast(ev.GetEventObject(), wxTextCtrl);
+        onHotKey_ForEditBox(obj);
+
         //ev.Skip();
 
     }

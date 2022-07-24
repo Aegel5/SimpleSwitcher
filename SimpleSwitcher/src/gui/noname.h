@@ -19,11 +19,11 @@
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/textctrl.h>
-#include <wx/choice.h>
 #include <wx/button.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
+#include <wx/choice.h>
 #include <wx/panel.h>
 #include <wx/listbox.h>
 #include <wx/hyperlink.h>
@@ -51,26 +51,34 @@ class MyFrame4 : public wxFrame
 		wxCheckBox* m_checkBoxWorkInAdmin;
 		wxStaticText* m_staticText3;
 		wxTextCtrl* m_textLastword;
+		wxButton* m_button9;
 		wxStaticText* m_staticText7;
 		wxTextCtrl* m_textSeveralWords;
+		wxButton* m_button91;
 		wxStaticText* m_staticText31;
 		wxTextCtrl* m_textSelected;
+		wxButton* m_button92;
 		wxChoice* m_choiceLayFilter;
 		wxTextCtrl* m_textFilterLay;
 		wxButton* m_button3;
 		wxPanel* m_panel14;
 		wxStaticText* m_staticText32;
 		wxTextCtrl* m_textCycleLay;
+		wxButton* m_button93;
 		wxChoice* m_choiceset1;
 		wxTextCtrl* m_textSetlay1;
+		wxButton* m_button94;
 		wxChoice* m_choiceset2;
 		wxTextCtrl* m_textSetlay2;
+		wxButton* m_button95;
 		wxChoice* m_choiceset3;
 		wxTextCtrl* m_textSetlay3;
+		wxButton* m_button96;
 		wxPanel* m_panel5;
 		wxCheckBox* m_checkcapsrem;
 		wxStaticText* m_staticText321;
 		wxTextCtrl* m_textcapsgen;
+		wxButton* m_button97;
 		wxButton* m_button7;
 		wxButton* m_button8;
 		wxListBox* m_listBoxRemap;

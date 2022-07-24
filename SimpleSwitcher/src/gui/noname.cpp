@@ -57,6 +57,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_textLastword = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer5->Add( m_textLastword, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
+	m_button9 = new wxButton( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Set"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer5->Add( m_button9, 0, wxALL, 5 );
+
 
 	sbSizer2->Add( bSizer5, 0, wxEXPAND, 5 );
 
@@ -70,6 +73,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_textSeveralWords = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Ctrl + F24"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer51->Add( m_textSeveralWords, 1, wxALL|wxEXPAND, 5 );
 
+	m_button91 = new wxButton( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Set"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer51->Add( m_button91, 0, wxALL, 5 );
+
 
 	sbSizer2->Add( bSizer51, 0, wxEXPAND, 5 );
 
@@ -82,6 +88,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	m_textSelected = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer52->Add( m_textSelected, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_button92 = new wxButton( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Set"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer52->Add( m_button92, 0, wxALL, 5 );
 
 
 	sbSizer2->Add( bSizer52, 1, wxEXPAND, 5 );
@@ -129,6 +138,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_textCycleLay = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer53->Add( m_textCycleLay, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
+	m_button93 = new wxButton( sbSizer4->GetStaticBox(), wxID_ANY, wxT("Set"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer53->Add( m_button93, 0, wxALL, 5 );
+
 
 	sbSizer4->Add( bSizer53, 0, wxEXPAND, 5 );
 
@@ -150,6 +162,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_textSetlay1 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer531->Add( m_textSetlay1, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
+	m_button94 = new wxButton( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Set"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer531->Add( m_button94, 0, wxALL, 5 );
+
 
 	sbSizer5->Add( bSizer531, 0, wxEXPAND, 5 );
 
@@ -165,6 +180,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_textSetlay2 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer5311->Add( m_textSetlay2, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
+	m_button95 = new wxButton( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Set"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer5311->Add( m_button95, 0, wxALL, 5 );
+
 
 	sbSizer5->Add( bSizer5311, 0, wxEXPAND, 5 );
 
@@ -179,6 +197,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	m_textSetlay3 = new wxTextCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer5312->Add( m_textSetlay3, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_button96 = new wxButton( sbSizer5->GetStaticBox(), wxID_ANY, wxT("Set"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer5312->Add( m_button96, 0, wxALL, 5 );
 
 
 	sbSizer5->Add( bSizer5312, 0, wxEXPAND, 5 );
@@ -210,6 +231,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	m_textcapsgen = new wxTextCtrl( sbSizer6->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer532->Add( m_textcapsgen, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_button97 = new wxButton( sbSizer6->GetStaticBox(), wxID_ANY, wxT("Set"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer532->Add( m_button97, 0, wxALL, 5 );
 
 
 	sbSizer6->Add( bSizer532, 0, wxEXPAND, 5 );
