@@ -211,6 +211,8 @@ inline UserConf u_conf;
 inline SettingsGui settings_thread;
 inline SettingsGui setsgui;
 
+inline int g_hotkeyWndOpened = 0;
+
 //inline SettingsGui& setsgui { return SettingsGui::Global(); }
 //inline LuaConfig& LuaGlobal() { return setsgui.luaCfg; }
 

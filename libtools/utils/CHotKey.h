@@ -332,7 +332,7 @@ public:
 			}
 		}while (k);
 	}
-	bool HasKey(TKeyCode key, bool leftrightCheck = false)
+	bool HasKey(TKeyCode key, bool leftrightCheck)
 	{
 		for(TKeyCode k : *this)
 		{
@@ -340,6 +340,10 @@ public:
 				return true;
 		}
 		return false;
+	}
+	bool HasKey2(TKeyCode key)
+	{
+		return HasKey(key, m_leftRightDifferene);
 	}
 	bool HasAnyMod()
 	{

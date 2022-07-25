@@ -162,7 +162,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 				int k = 0;
 			}
 			if (timerId == c_timerKeyloggerDefence) {
-				if (setsgui.fEnableKeyLoggerDefence) {
+                if (setsgui.fEnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
 					resethook(); // ???
 				}
 			}else{

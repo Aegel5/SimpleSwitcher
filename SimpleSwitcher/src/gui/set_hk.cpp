@@ -13,11 +13,13 @@ LRESULT CALLBACK LowLevelKeyboardProc(_In_ int nCode, _In_ WPARAM wParam, _In_ L
         DWORD vkKey              = kStruct->vkCode;
         // if (GetLogLevel() >= LOG_LEVEL_1)
         //{
-        //	KeyState keyState = GetKeyState(wParam);
+        KeyState keyState = GetKeyState(wParam);
         //	SW_LOG_INFO_2(L"%S 0x%x", GetKeyStateName(keyState), vkKey);
         //}
 
-        PostMessage(curwnd, c_MSG_TypeHotKey, wParam, (WPARAM)vkKey);
+        if (keyState == KEY_STATE_DOWN) {
+            PostMessage(curwnd, c_MSG_TypeHotKey, wParam, (WPARAM)vkKey);
+        }
     }
     return CallNextHookEx(0, nCode, wParam, lParam);
 }
@@ -25,8 +27,12 @@ LRESULT CALLBACK LowLevelKeyboardProc(_In_ int nCode, _In_ WPARAM wParam, _In_ L
 class HotKeyDlg : public MyDialog1
 {
 public:
+    ~HotKeyDlg() {
+        g_hotkeyWndOpened--;
+    }
     HotKeyDlg(CHotKeySet& info, wxFrame* frame) : MyDialog1(frame), info(info)
     {
+        g_hotkeyWndOpened++;
         //SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxRESIZE_BORDER);
 
         key     = info.key;
@@ -82,7 +88,12 @@ private:
     virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override
     {
         if (nMsg == c_MSG_TypeHotKey) {
-            key.Add((TKeyCode)lParam, CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
+            auto cur = (TKeyCode)lParam;
+            if (key.HasKey2(cur)) {
+                key.Remove(cur);
+            } else {
+                key.Add(cur, CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
+            }
             updateField();
             return true;
         }
