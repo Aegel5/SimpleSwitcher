@@ -399,8 +399,10 @@ private:
             if (isAdminHasTask) {
                 if (Utils::IsSelfElevated()) {
                     IFS_LOG(DelSchedule());
-                } else
+                } else {
+                    ShowNeedAdmin("delete old task");
                     return; // exit because can't delete old
+                }
             }
 
             if (enable) {
@@ -426,8 +428,14 @@ private:
         UpdateAutostartExplain();
 
     }
-    void ShowNeedAdmin() {
-        wxMessageBox("Need admin rights");
+    void ShowNeedAdmin(const char* expl = nullptr) {
+        std::string ms("Need admin rights");
+        if (expl != nullptr) {
+            ms += " for \"";
+            ms += expl;
+            ms += "\"";
+        }
+        wxMessageBox(ms);
     }
     bool startOk() {
         return Utils::IsSelfElevated() || !setsgui.isMonitorAdmin;

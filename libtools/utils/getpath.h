@@ -8,14 +8,15 @@ enum TPathType
 	PATH_TYPE_EXE_FILENAME,
 };
 
-inline TStatus GetPath(std::wstring& sPath, TPathType type, TSWBit bit)
+inline TStatus __GetPath(std::wstring& sPath, TPathType type, TSWBit bit, bool tolower)
 {
 	TCHAR buf[0x1000];
 	DWORD nSize = GetModuleFileName(NULL, buf, SW_ARRAY_SIZE(buf));
 	IFW_RET(nSize > 0);
 
 	sPath = buf;
-	Str_Utils::ToLower(sPath);
+	if(tolower)
+		Str_Utils::ToLower(sPath);
 
 	if (type == PATH_TYPE_SELF_FOLDER)
 	{
@@ -63,4 +64,12 @@ inline TStatus GetPath(std::wstring& sPath, TPathType type, TSWBit bit)
 
 
 	RETURN_SUCCESS;
+}
+
+inline TStatus GetPath(std::wstring& sPath, TPathType type, TSWBit bit) {
+	return __GetPath(sPath, type, bit, true);
+}
+
+inline TStatus GetPath_exe_noLower(std::wstring& sPath) {
+	return __GetPath(sPath, PATH_TYPE_EXE_PATH, SW_BIT_32, false);
 }

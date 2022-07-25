@@ -24,24 +24,29 @@ TStatus UserConf::Load2() {
     GenericDocument<UTF16<>> doc;
     using TVal = GenericValue<UTF16<>>;
     ParseResult ok = doc.Parse<kParseCommentsFlag | kParseTrailingCommasFlag>(content.c_str());
+
     if (ok.IsError()) {
         LOG_INFO_1(L"json parse error");
         RETURN_SUCCESS;
     }
-    TVal& s  = doc[L"ll"];
-    if (s.IsInt()) {
-        ll = (TLogLevel)s.GetInt();
-    }
-    s        = doc[L"disableInPrograms"];
-    if (s.IsArray()) {
-        for (auto& elem : s.GetArray()) {
-            std::wstring cur = elem.GetString();
-            Str_Utils::ToLower(cur);
-            disableInProcess.insert(cur);
+
+    if(doc.HasMember(L"ll")){
+        TVal& s = doc[L"ll"];
+        if (s.IsInt()) {
+            ll = (TLogLevel)s.GetInt();
         }
     }
 
-
+    if (doc.HasMember(L"disableInPrograms")) {
+        TVal& s = doc[L"disableInPrograms"];
+        if (s.IsArray()) {
+            for (auto& elem : s.GetArray()) {
+                std::wstring cur = elem.GetString();
+                Str_Utils::ToLower(cur);
+                disableInProcess.insert(cur);
+            }
+        }
+    }
 
     RETURN_SUCCESS;
 }
