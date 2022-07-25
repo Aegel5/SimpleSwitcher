@@ -378,7 +378,7 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_radioBox1->SetSelection( 0 );
 	bSizer16->Add( m_radioBox1, 0, wxALL|wxEXPAND, 5 );
 
-	m_checkBox12 = new wxCheckBox( this, wxID_ANY, wxT("Distinguish between right and left modifiers"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBox12 = new wxCheckBox( this, wxID_ANY, wxT("Distinguish between left and right modifiers"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer16->Add( m_checkBox12, 0, wxALL, 5 );
 
 	m_checkBox13 = new wxCheckBox( this, wxID_ANY, wxT("Triggers on KEYUP"), wxDefaultPosition, wxDefaultSize, 0 );
