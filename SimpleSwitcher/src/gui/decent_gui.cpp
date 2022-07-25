@@ -6,6 +6,8 @@
 #include "SwAutostart.h"
 //#include "decent_tray.h"
 
+#include "decent_gui.h"
+
 #include "tools/accessibil.h"
 
 #include "ver.h"
@@ -55,10 +57,13 @@ class MainWnd : public MyFrame4
 public:
     MainWnd() : MyFrame4(nullptr)
     {
+        g_guiHandle = GetHandle();
+
         icon = wxIcon("appicon");
+        trayIcon = icon;
         SetIcon(icon);
         if (myTray.IsAvailable()) {
-            myTray.SetIcon(icon);
+            myTray.SetIcon(trayIcon);
             myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
             myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
             myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
@@ -104,6 +109,7 @@ private:
     //DecentTray tray;
     MyTray myTray;
     wxIcon icon;
+    wxIcon trayIcon;
     bool exitRequest = false;
 
     int getChildIndex(wxWindow* obj) {
@@ -153,10 +159,22 @@ private:
 
    virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override {
 
-        //if (nMsg == WM_INPUTLANGCHANGE) {
-        //    HKL newLayout = (HKL)lParam;
-        //    LOG_INFO_1(L"mainguid new layout: 0x%x", newLayout);
-        //}
+        if (nMsg == WM_LayNotif) {
+            HKL newLayout = (HKL)lParam;
+            LOG_INFO_1(L"mainguid new layout: 0x%x", newLayout);
+
+
+            std::string name = "appicon";
+
+            if ((int)newLayout == 0x4090409) { // todo get country
+                name = "flag_us";
+            } else if ((int)newLayout == 0x4190419) {
+                name = "flag_ru";
+            } 
+
+            trayIcon = wxIcon(name); // todo use cache
+            myTray.SetIcon(trayIcon);
+        }
 
         return MyFrame4::MSWWindowProc(nMsg, wParam, lParam);
    }
@@ -506,9 +524,13 @@ public:
 void StartMainGui(bool show) {
     MainWnd* frame = new MainWnd();
 
+
+
     // and show it (the frames, unlike simple controls, are not shown when
     // created initially)
     frame->Show(show);
+
+
 }
 
 //TStatus Init() {

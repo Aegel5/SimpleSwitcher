@@ -6,6 +6,8 @@
 #include "CMainWorker.h"
 #include "Settings.h"
 
+#include "gui/decent_gui.h"
+
 #include "loader_api.h"
 #include "lay_notif_from_dll.h"
 
@@ -144,8 +146,16 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 			PostQuitMessage(0);
         } else if (mesg == WM_LayNotif) {
 
-            g_laynotif.g_curLay = (HKL)msg.lParam;
-            LOG_INFO_1(L"notify layout now: 0x%x", g_laynotif.g_curLay.load());
+			HKL newLay = (HKL)msg.lParam;
+
+			if (newLay != g_laynotif.g_curLay) {
+                g_laynotif.g_curLay = (HKL)msg.lParam;
+                LOG_INFO_1(L"notify layout now: 0x%x", g_laynotif.g_curLay.load());
+
+                if (g_guiHandle != nullptr) {
+                    PostMessage(g_guiHandle, msg.message, msg.wParam, msg.lParam);
+                }
+            }
         }
 		else if (mesg == WM_CLIPBOARDUPDATE)
 		{
