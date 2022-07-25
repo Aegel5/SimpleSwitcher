@@ -57,7 +57,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 		}
 	}
 
-	IFW_LOG(ChangeWindowMessageFilterEx(hWnd, WM_INPUTLANGCHANGE, MSGFLT_ALLOW, 0));
+	IFW_LOG(ChangeWindowMessageFilterEx(hWnd, WM_LayNotif, MSGFLT_ALLOW, 0));
 
 	//if (WinApiInt::ChangeWindowMessageFilterEx)
 	//{
@@ -142,7 +142,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 		else if (mesg == c_MSG_Quit)
 		{
 			PostQuitMessage(0);
-        } else if (mesg == WM_INPUTLANGCHANGE) {
+        } else if (mesg == WM_LayNotif) {
 
             g_laynotif.g_curLay = (HKL)msg.lParam;
             LOG_INFO_1(L"notify layout now: 0x%x", g_laynotif.g_curLay.load());

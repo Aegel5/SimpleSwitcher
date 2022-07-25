@@ -77,8 +77,8 @@ def build(subfold, is64):
                     shutil.copy(os.path.join(root, file), os.path.join(result_dir, file2))
             
 
-#build("loader_dll", is64=False)
-#build("loader_dll", is64=True)    
+build("loader_dll", is64=False)
+build("loader_dll", is64=True)    
 build("SimpleSwitcher", is64=False)
 
 add_to_bin = "SimpleSwitcher/binfiles"

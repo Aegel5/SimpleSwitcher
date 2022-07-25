@@ -18,7 +18,7 @@ TStatus Main(HINSTANCE hInstance) {
 	auto dllname = IsSelf64() ? L"SimpleSwitcher64.dll" : L"SimpleSwitcher.dll";
 
 	if (FindWindow(clname, NULL)) {
-		LOG_WARN("already lang4et");
+		LOG_WARN("already running");
 		RETURN_SUCCESS;
 	}
 	WNDCLASSEX wcex = { 0 };
