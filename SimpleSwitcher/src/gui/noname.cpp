@@ -299,7 +299,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_hyperlink1 = new wxHyperlinkCtrl( m_panel6, wxID_ANY, wxEmptyString, wxT("https://github.com/Aegel5/SimpleSwitcher"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
 	bSizer191->Add( m_hyperlink1, 0, wxALL, 5 );
 
-	m_hyperlink11 = new wxHyperlinkCtrl( m_panel6, wxID_ANY, wxEmptyString, wxT("https://vk.com/simpleswitcher"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	m_hyperlink11 = new wxHyperlinkCtrl( m_panel6, wxID_ANY, wxEmptyString, wxT("https://vk.com/SimpleSwitcher"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
 	bSizer191->Add( m_hyperlink11, 0, wxALL, 5 );
 
 
