@@ -3,7 +3,7 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/alexzh2/SimpleSwitcher/total?style=plastic)
 ![GitHub last commit](https://img.shields.io/github/last-commit/alexzh2/SimpleSwitcher?style=plastic)
 
-SimpleSwitcher - программа для быстрого переключения раскладки набранного текста в Windows.
+SimpleSwitcher - программа для быстрого исправления раскладки набранного текста в Windows.
 
 ## Features
 
@@ -13,6 +13,7 @@ SimpleSwitcher - программа для быстрого переключен
 - Не хранит набираемый текст в открытом виде (используется шифрование Windows)
 - Запрещает другим программам перехватывать клавиатуру
 - Позволяет произвольно переназначать любые клавиши (scancode remap)
+- Показывает флаги стран в трее.
 
 ## Getting started
 
