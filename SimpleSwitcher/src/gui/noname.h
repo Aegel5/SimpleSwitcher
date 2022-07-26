@@ -91,6 +91,7 @@ class MyFrame4 : public wxFrame
 		wxPanel* m_panel6;
 		wxStaticText* m_staticTextBuildDate;
 		wxHyperlinkCtrl* m_hyperlink1;
+		wxHyperlinkCtrl* m_hyperlink11;
 		wxButton* m_button1;
 		wxButton* m_button2;
 
