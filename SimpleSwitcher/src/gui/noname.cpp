@@ -380,7 +380,7 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* bSizer16;
 	bSizer16 = new wxBoxSizer( wxVERTICAL );
 
-	wxString m_radioBox1Choices[] = { wxT("Input"), wxT("123"), wxT("333") };
+	wxString m_radioBox1Choices[] = { wxT("Custom"), wxT("123"), wxT("333") };
 	int m_radioBox1NChoices = sizeof( m_radioBox1Choices ) / sizeof( wxString );
 	m_radioBox1 = new wxRadioBox( this, wxID_ANY, wxT("Hotkey"), wxDefaultPosition, wxDefaultSize, m_radioBox1NChoices, m_radioBox1Choices, 1, wxRA_SPECIFY_COLS );
 	m_radioBox1->SetSelection( 0 );
