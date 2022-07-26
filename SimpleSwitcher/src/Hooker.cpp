@@ -5,6 +5,10 @@
 #include "Dispatcher.h"
 #include "Encrypter.h"
 
+#include "proc_enum.h"
+
+#include "gui/decent_gui.h"
+
 TKeyType Hooker::GetCurKeyType(CHotKey hotkey)
 {
 	CHotKey key = hotkey;
@@ -752,8 +756,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		}
 
 
-		needWaitLang = g_laynotif.inited 
-			|| m_sTopProcName == L"searchapp.exe"; // без инжекта ждем только это
+		needWaitLang =	 m_sTopProcName == L"searchapp.exe"; // возможно теперь всегда нужно ждать?
 	}
 
 
@@ -783,7 +786,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		auto start = GetTickCount64();
 		while (true)
 		{
-			auto curL = g_laynotif.inited ? CurLay() : GetKeyboardLayout(m_dwIdThreadTopWnd);
+			auto curL = GetKeyboardLayout(topWndInfo2.threadid);
             if (curL != prevLay) {
                 LOG_INFO_2(L"new lay arrived after %u", GetTickCount64() - start);
 				break;
@@ -1118,8 +1121,26 @@ TStatus Hooker::SwitchLangByEmulate(HKL_W lay)
 	RETURN_SUCCESS;
 }
 
+void Hooker::CheckCurLay() {
+
+    auto newtopWndInfo2 = g_procEnum.GetTopWnd2();
+
+	if (newtopWndInfo2.lay == 0) {
+        return;
+    }
+
+	auto old = topWndInfo2.lay;
+    topWndInfo2 = newtopWndInfo2;
+
+	if (old != topWndInfo2.lay && g_guiHandle != nullptr) {
+        PostMessage(g_guiHandle, WM_LayNotif, (WPARAM)topWndInfo2.lay, 0);
+    }
+}
+
 TStatus Hooker::AnalizeTopWnd()
 {
+    CheckCurLay();
+
 	HWND hwndFocused;
 	IFS_RET(Utils::GetFocusWindow(hwndFocused));
 	PrintHwnd(hwndFocused, L"hwndFocused");
@@ -1135,21 +1156,27 @@ TStatus Hooker::AnalizeTopWnd()
 	//	trFor,
 	//	layFor);
 
-	m_dwIdThreadTopWnd = GetWindowThreadProcessId(hwndFocused, &m_dwTopPid);
-	m_layoutTopWnd = GetKeyboardLayout(m_dwIdThreadTopWnd);
-    if (g_laynotif.inited && m_layoutTopWnd != g_laynotif.g_curLay) {
-        LOG_WARN(L"laynotif not equals");
-    }
+	//Test();
+
+	auto m_dwIdThreadTopWnd = GetWindowThreadProcessId(hwndFocused, &m_dwTopPid);
+	auto m_layoutTopWnd = GetKeyboardLayout(m_dwIdThreadTopWnd);
+
+	//auto lay2 = g_procEnum.GetTopWnd2();
+
+
+    //if (g_laynotif.inited && m_layoutTopWnd != g_laynotif.g_curLay) {
+    //    LOG_WARN(L"laynotif not equals");
+    //}
 	m_hwndTop = hwndFocused;
 
 	IFS_LOG(Utils::GetProcLowerNameByPid(m_dwTopPid, m_sTopProcPath, m_sTopProcName));
 
 	LOG_INFO_1(
-		L"hwnd=0x%p, pid=%u, threadid=%u, lay=0x%x, prg=%s",
+		L"hwnd=0x%p, pid=%u, threadid=%u, lay=0x%x(0x%x), prg=%s",
 		m_hwndTop,
 		m_dwTopPid,
 		m_dwIdThreadTopWnd,
-		m_layoutTopWnd,
+		m_layoutTopWnd,           topWndInfo2.lay,
 		m_sTopProcName.c_str());
 
 	RETURN_SUCCESS;

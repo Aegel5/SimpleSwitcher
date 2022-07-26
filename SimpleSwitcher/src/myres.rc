@@ -1,5 +1,5 @@
 appicon ICON "yy.ico"
 flag_ru ICON "flags/ru.ico"
-flag_us ICON "flags/us.ico"
+flag_us ICON "flags/en.ico"
 
 #include "../../wxWidgets/include/wx/msw/wx.rc"        

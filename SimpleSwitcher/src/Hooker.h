@@ -13,6 +13,8 @@
 
 #include "lay_notif_from_dll.h"
 
+#include "proc_enum.h"
+
 static const int c_nMaxLettersSave = 100;
 
 
@@ -72,13 +74,16 @@ public:
         m_dwLastCtrlCReqvest = GetTickCount64();
 	}
 
+	void CheckCurLay();
+
 	HKL CurLay() {
-        if (g_laynotif.g_curLay == 0)
-            return m_layoutTopWnd;
-        if (g_laynotif.inited) {
-            return g_laynotif.g_curLay;
-        }
-		return m_layoutTopWnd;
+        return        topWndInfo2.lay;
+  //      if (g_laynotif.g_curLay == 0)
+  //          return m_layoutTopWnd;
+  //      if (g_laynotif.inited) {
+  //          return g_laynotif.g_curLay;
+  //      }
+		//return m_layoutTopWnd;
 	}
 	//void RequestChangeCase()
 	//{
@@ -102,10 +107,12 @@ public:
 	DWORD m_dwIdThreadForeground = -1;
 	DWORD m_dwIdProcoreground = -1;
 
-	DWORD m_dwIdThreadTopWnd = 0;
+	//DWORD m_dwIdThreadTopWnd = 0;
 	DWORD m_dwTopPid = 0;
-	HKL m_layoutTopWnd = 0;
+	//HKL m_layoutTopWnd = 0;
 	HWND m_hwndTop = 0;
+
+	TopWndInfo topWndInfo2;
 
 	std::wstring m_sTopProcName;
 	std::wstring m_sTopProcPath;

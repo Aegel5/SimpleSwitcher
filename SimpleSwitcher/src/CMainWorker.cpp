@@ -52,6 +52,10 @@ TStatus CMainWorker::WorkerInt()
 			{
 				IFS_LOG(hooker.ClipboardClearFormat2());
 			}
+            else if (timerId == c_timerGetcurlay)
+            {
+                hooker.CheckCurLay();
+            }
 			//else if (timerId == c_timerWaitClip)
 			//{
 			//	IFS_LOG(hooker.TimerProcWaitClip2());

@@ -69,7 +69,6 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
     CAutoProcMonitor loader;
     CAutoProcMonitor loader64;
     g_laynotif.inited = false;
-
 	if (setsgui.injectDll) {
         tstring sFolder;
         IFS_RET(GetPath(sFolder, PATH_TYPE_SELF_FOLDER, SW_BIT_32));
@@ -107,6 +106,9 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 
 	auto timeId = SetTimer(hWnd, c_timerKeyloggerDefence, 5000, NULL);
 	IFW_LOG(timeId != 0);
+
+	timeId = SetTimer(hWnd, c_timerGetcurlay, 100, NULL);
+    IFW_LOG(timeId != 0);
 
 
 	MSG msg;
@@ -171,14 +173,18 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 			{
 				int k = 0;
 			}
-			if (timerId == c_timerKeyloggerDefence) {
+
+            if (timerId == c_timerKeyloggerDefence) {
                 if (setsgui.fEnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
-					resethook(); // ???
-				}
-			}else{
-				IFW_LOG(KillTimer(gdata().hWndMonitor, timerId));
-				Worker()->PostMsgW(HWORKER_WM_TIMER, timerId);
-			}
+                    resethook(); // ???
+                }
+            } else if (timerId == c_timerGetcurlay) {
+                Worker()->PostMsgW(HWORKER_WM_TIMER, timerId);
+                
+			} else {
+                IFW_LOG(KillTimer(gdata().hWndMonitor, timerId));
+                Worker()->PostMsgW(HWORKER_WM_TIMER, timerId);
+            }
 
 		}
 		else
