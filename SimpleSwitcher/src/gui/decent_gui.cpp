@@ -162,6 +162,10 @@ private:
    virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override {
 
         if (nMsg == WM_LayNotif) {
+
+            if (!setsgui.showFlags)
+                return TRUE;
+
             HKL newLayout = (HKL)wParam;
             LOG_INFO_1(L"mainguid new layout: 0x%x", newLayout);
 
@@ -194,7 +198,7 @@ private:
 
             myTray.SetIcon(it->second);
 
-            return 1;
+            return TRUE;
         }
 
         return MyFrame4::MSWWindowProc(nMsg, wParam, lParam);
@@ -206,6 +210,7 @@ private:
         m_checkBoxKeyDef->SetValue(setsgui.fEnableKeyLoggerDefence);
         m_checkBoxDisablAcc->SetValue(setsgui.disableAccessebility);
         m_checkDebuglog->SetValue(setsgui.fDbgMode);
+        m_checkBoxShowFlags->SetValue(setsgui.showFlags);
     }
 
     virtual void onEnableLog(wxCommandEvent& event)
@@ -227,6 +232,17 @@ private:
         if (setsgui.disableAccessebility) {
             AllowAccessibilityShortcutKeys(false);
         }
+    }
+    virtual void onShowFlags(wxCommandEvent& event) {
+        setsgui.showFlags = event.IsChecked();
+        setsgui.SaveAndPostMsg();
+
+        if (!setsgui.showFlags) {
+            myTray.SetIcon(icon);
+        } else {
+            GetCurLayRequest();
+        }
+
     }
     virtual void onDisableAccessebl(wxCommandEvent& event) {
         setsgui.disableAccessebility = event.IsChecked();

@@ -219,6 +219,7 @@ TStatus SettingsGui::LoadAutoSettings()
 	ParseCfg::GetBool(tsmap, L"fEnableKeyLoggerDefence", fEnableKeyLoggerDefence);
 	//ParseCfg::GetBool(tsmap, L"isDashSeparate", isDashSeparate);
 	ParseCfg::GetBool(tsmap, L"fDbgMode", fDbgMode);
+    ParseCfg::GetBool(tsmap, L"showFlags", showFlags);
 	ParseCfg::GetBool(tsmap, L"fClipboardClearFormat", fClipboardClearFormat);
     ParseCfg::GetBool(tsmap, L"disableAccessebility", disableAccessebility);
 
@@ -327,6 +328,7 @@ void SettingsGui::Save()
 	//AddBool(cont, L"closeByEsc", fCloseByEsc);
 	AddBool(cont, L"fEnableKeyLoggerDefence", fEnableKeyLoggerDefence);
 	AddBool(cont, L"fDbgMode", fDbgMode); 
+    AddBool(cont, L"showFlags", showFlags); 
 	AddBool(cont, L"fClipboardClearFormat", fClipboardClearFormat); 
 	AddBool(cont, L"disableAccessebility", disableAccessebility); 
 	//AddBool(cont, L"isDashSeparate", isDashSeparate); 

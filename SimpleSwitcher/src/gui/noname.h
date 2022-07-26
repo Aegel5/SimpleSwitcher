@@ -49,6 +49,7 @@ class MyFrame4 : public wxFrame
 		wxCheckBox* m_checkAddToAutoStart;
 		wxStaticText* m_staticTextExplain;
 		wxCheckBox* m_checkBoxWorkInAdmin;
+		wxCheckBox* m_checkBoxShowFlags;
 		wxStaticText* m_staticText3;
 		wxTextCtrl* m_textLastword;
 		wxButton* m_button9;
@@ -97,6 +98,7 @@ class MyFrame4 : public wxFrame
 		virtual void onEnable( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onAutocheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onWorkInAdminCheck( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onShowFlags( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onLayChoice( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onClearFilter( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onRemapCaps( wxCommandEvent& event ) { event.Skip(); }
@@ -112,7 +114,7 @@ class MyFrame4 : public wxFrame
 
 	public:
 
-		MyFrame4( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("SimpleSwitcher"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 733,450 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MyFrame4( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("SimpleSwitcher"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 760,470 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~MyFrame4();
 

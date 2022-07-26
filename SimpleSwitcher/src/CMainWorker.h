@@ -14,6 +14,7 @@ enum EHWorker
 	HWORKER_SavePrevDataCallback,
 	HWORKER_WM_TIMER,
 	HWORKER_LoadSettings,
+    HWORKER_Getcurlay,
 };
 
 struct KeyMsgData

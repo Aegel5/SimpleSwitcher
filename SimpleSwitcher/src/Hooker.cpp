@@ -1121,7 +1121,7 @@ TStatus Hooker::SwitchLangByEmulate(HKL_W lay)
 	RETURN_SUCCESS;
 }
 
-void Hooker::CheckCurLay() {
+void Hooker::CheckCurLay(bool forceSend) {
 
     auto newtopWndInfo2 = g_procEnum.GetTopWnd2();
 
@@ -1132,7 +1132,7 @@ void Hooker::CheckCurLay() {
 	auto old = topWndInfo2.lay;
     topWndInfo2 = newtopWndInfo2;
 
-	if (old != topWndInfo2.lay && g_guiHandle != nullptr) {
+	if ((forceSend || old != topWndInfo2.lay) && g_guiHandle != nullptr) {
         PostMessage(g_guiHandle, WM_LayNotif, (WPARAM)topWndInfo2.lay, 0);
     }
 }

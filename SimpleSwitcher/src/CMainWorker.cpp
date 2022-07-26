@@ -54,7 +54,9 @@ TStatus CMainWorker::WorkerInt()
 			}
             else if (timerId == c_timerGetcurlay)
             {
-                hooker.CheckCurLay();
+                if (settings_thread.showFlags) {
+                    hooker.CheckCurLay();
+                }
             }
 			//else if (timerId == c_timerWaitClip)
 			//{
@@ -70,7 +72,9 @@ TStatus CMainWorker::WorkerInt()
 			// todo load not from file but from safe copy.
 			IFS_LOG(settings_thread.Load());
 			//IFS_LOG(ResetAllHotKey(*gdata().hotkeyHolders));
-		}
+        } else if (mode == HWORKER_Getcurlay) {
+            hooker.CheckCurLay(true);
+        }
 		else
 		{
 			LOG_INFO_1(L"[WARN] Unknown m2=%u", mode);

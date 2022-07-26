@@ -74,7 +74,7 @@ public:
         m_dwLastCtrlCReqvest = GetTickCount64();
 	}
 
-	void CheckCurLay();
+	void CheckCurLay(bool forceSend = false);
 
 	HKL CurLay() {
         return        topWndInfo2.lay;

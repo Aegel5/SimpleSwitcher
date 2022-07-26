@@ -41,6 +41,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBoxWorkInAdmin = new wxCheckBox( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Work in programs running by admin"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_checkBoxWorkInAdmin, 0, wxALL, 5 );
 
+	m_checkBoxShowFlags = new wxCheckBox( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Show flags in tray"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer1->Add( m_checkBoxShowFlags, 0, wxALL, 5 );
+
 
 	bSizer3->Add( sbSizer1, 0, wxALL|wxEXPAND, 5 );
 
@@ -326,6 +329,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBoxEnable->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnable ), NULL, this );
 	m_checkAddToAutoStart->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAutocheck ), NULL, this );
 	m_checkBoxWorkInAdmin->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onWorkInAdminCheck ), NULL, this );
+	m_checkBoxShowFlags->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onShowFlags ), NULL, this );
 	m_choiceLayFilter->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_button3->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onClearFilter ), NULL, this );
 	m_choiceset1->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
@@ -348,6 +352,7 @@ MyFrame4::~MyFrame4()
 	m_checkBoxEnable->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnable ), NULL, this );
 	m_checkAddToAutoStart->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAutocheck ), NULL, this );
 	m_checkBoxWorkInAdmin->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onWorkInAdminCheck ), NULL, this );
+	m_checkBoxShowFlags->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onShowFlags ), NULL, this );
 	m_choiceLayFilter->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_button3->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onClearFilter ), NULL, this );
 	m_choiceset1->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );

@@ -95,6 +95,13 @@ inline TStatus PostMsgSettingChanges()
 	}
 	RETURN_SUCCESS;
 }
+inline TStatus GetCurLayRequest() {
+    HWND hwnd = FindWindow(c_sClassNameServer2, 0);
+    if (hwnd != NULL) {
+        PostMessage(hwnd, WM_GetCurLay, 0, 0);
+    }
+    RETURN_SUCCESS;
+}
 using TStrList = std::vector<std::wstring>;
 
 
@@ -154,6 +161,8 @@ public:
     bool disableAccessebility    = false;
 
     bool injectDll = false;
+
+    bool showFlags = true;
 
     // bool fHookDll;
 

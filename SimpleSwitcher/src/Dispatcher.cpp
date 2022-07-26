@@ -139,6 +139,9 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 				Worker()->PostMsg(HWORKER_LoadSettings);
 			}
         } 
+		else if (mesg == WM_GetCurLay) {
+            Worker()->PostMsg(HWORKER_Getcurlay);
+        } 
 		//else if (mesg == WM_INPUTLANGCHANGE) {
   //          HKL newLayout = (HKL)msg.lParam;
   //          LOG_INFO_1(L"loop new layout: 0x%x", newLayout);
