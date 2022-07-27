@@ -756,7 +756,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		}
 
 
-		needWaitLang =	 m_sTopProcName == L"searchapp.exe"; // возможно теперь всегда нужно ждать?
+		needWaitLang = true;//        m_sTopProcName == L"searchapp.exe"; // возможно теперь всегда нужно ждать?
 	}
 
 
