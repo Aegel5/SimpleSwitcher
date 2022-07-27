@@ -47,31 +47,29 @@ public:
             return res;
 
         DWORD pid;
-        auto threadid = GetWindowThreadProcessId(hwndFocused, &pid);
+        res.threadid = GetWindowThreadProcessId(hwndFocused, &pid);
         res.hwnd      = hwndFocused;
 
-        auto it = mp.find(pid);
-        if (it == mp.end() || GetTickCount64() - lastscan >= 5000*60) {
-            IFS_LOG(Scan());
-            lastscan   = GetTickCount64();
-            it = mp.find(pid);
+        if (IsWindows10OrGreater()) {
+
+            auto it = mp.find(pid);
+            if (it == mp.end() || GetTickCount64() - lastscan >= 5000 * 60) {
+                IFS_LOG(Scan());
+                lastscan = GetTickCount64();
+                it       = mp.find(pid);
+            }
+
+            if (it != mp.end()) {
+                if (it->second.conhost != nullptr) {
+                    res.threadid = it->second.thId;
+                    res.hwnd     = it->second.conhost;
+                }
+            }
         }
 
-
-        if (it == mp.end()) {
-            return res;
-        }
-
-        if (it->second.conhost != nullptr) {
-            threadid = it->second.thId;
-            res.hwnd = it->second.conhost;
-        }
-
-        res.lay = GetKeyboardLayout(threadid);
-        res.threadid = threadid;
+        res.lay      = GetKeyboardLayout(res.threadid);
 
         return res;
-
     }
 
     TStatus Scan() {
