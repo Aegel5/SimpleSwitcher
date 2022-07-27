@@ -31,6 +31,8 @@ src/myres.rc)
 
 #file(GLOB_RECURSE TARGET_PRIVATE_HEADERS     src/*.hpp     src/*.h)
 
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 add_subdirectory(../wxWidgets wxWidgets)
 #set(CMAKE_CXX20_STANDARD_COMPILE_OPTION "-std:c++latest")
 
