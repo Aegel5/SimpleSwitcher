@@ -36,6 +36,8 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	m_staticTextExplain = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, wxT("          Registry: djkfjdkfjdkjf\n          Scheduler: fasfdasdf"), wxPoint( -1,-1 ), wxDefaultSize, 0 );
 	m_staticTextExplain->Wrap( -1 );
+	m_staticTextExplain->SetMaxSize( wxSize( 700,-1 ) );
+
 	sbSizer1->Add( m_staticTextExplain, 0, wxALL, 2 );
 
 	m_checkBoxWorkInAdmin = new wxCheckBox( sbSizer1->GetStaticBox(), wxID_ANY, wxT("Work in programs running by admin"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -58,6 +60,8 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer5->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_textLastword = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textLastword->SetMinSize( wxSize( 400,-1 ) );
+
 	bSizer5->Add( m_textLastword, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_button9 = new wxButton( sbSizer2->GetStaticBox(), wxID_ANY, wxT("Set"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -123,7 +127,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panelMain->SetSizer( bSizer3 );
 	m_panelMain->Layout();
 	bSizer3->Fit( m_panelMain );
-	m_notebook2->AddPage( m_panelMain, wxT("Main"), false );
+	m_notebook2->AddPage( m_panelMain, wxT("Main"), true );
 	m_panel14 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
@@ -306,7 +310,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel6->SetSizer( bSizer191 );
 	m_panel6->Layout();
 	bSizer191->Fit( m_panel6 );
-	m_notebook2->AddPage( m_panel6, wxT("About"), true );
+	m_notebook2->AddPage( m_panel6, wxT("About"), false );
 
 	bSizer1->Add( m_notebook2, 1, wxEXPAND | wxALL, 0 );
 
@@ -325,6 +329,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	bSizer1->Fit( this );
 
 	this->Centre( wxBOTH );
 
@@ -387,6 +392,8 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	int m_radioBox1NChoices = sizeof( m_radioBox1Choices ) / sizeof( wxString );
 	m_radioBox1 = new wxRadioBox( this, wxID_ANY, wxT("Hotkey"), wxDefaultPosition, wxDefaultSize, m_radioBox1NChoices, m_radioBox1Choices, 1, wxRA_SPECIFY_COLS );
 	m_radioBox1->SetSelection( 0 );
+	m_radioBox1->SetMinSize( wxSize( 400,-1 ) );
+
 	bSizer16->Add( m_radioBox1, 0, wxALL|wxEXPAND, 5 );
 
 	m_checkBox12 = new wxCheckBox( this, wxID_ANY, wxT("Distinguish between left and right modifiers"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -407,9 +414,6 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 
 	bSizer16->Add( bSizer20, 1, wxEXPAND, 5 );
 
-
-	bSizer16->Add( 0, 0, 1, wxEXPAND, 5 );
-
 	wxBoxSizer* bSizer18;
 	bSizer18 = new wxBoxSizer( wxHORIZONTAL );
 
@@ -428,6 +432,7 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 
 	this->SetSizer( bSizer21 );
 	this->Layout();
+	bSizer21->Fit( this );
 
 	this->Centre( wxBOTH );
 
