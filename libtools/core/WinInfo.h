@@ -39,6 +39,13 @@ IsWindowsVistaOrGreater()
 inline bool
 IsWindows10OrGreater()
 {
+
+	//OSVERSIONINFO osvi;
+	//ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
+	//osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	//GetVersionEx(&osvi);
+	//return osvi.dwMajorVersion >= 10;
+
 	return IsWindowsVersionOrGreater(HIBYTE(____WIN32_WINNT_WIN10), LOBYTE(____WIN32_WINNT_WIN10), 0);
 }
 

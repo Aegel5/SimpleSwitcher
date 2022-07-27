@@ -27,7 +27,9 @@ set(wxUSE_MEDIA OFF)
 file(GLOB_RECURSE TARGET_SOURCES  
 src/*.cpp 
 src/*.cc
-src/myres.rc)
+src/myres.rc
+src/simpleswitcher.manifest
+)
 
 #file(GLOB_RECURSE TARGET_PRIVATE_HEADERS     src/*.hpp     src/*.h)
 
