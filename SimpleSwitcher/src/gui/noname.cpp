@@ -377,6 +377,9 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
+	wxBoxSizer* bSizer21;
+	bSizer21 = new wxBoxSizer( wxVERTICAL );
+
 	wxBoxSizer* bSizer16;
 	bSizer16 = new wxBoxSizer( wxVERTICAL );
 
@@ -420,7 +423,10 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	bSizer16->Add( bSizer18, 0, wxALIGN_RIGHT, 5 );
 
 
-	this->SetSizer( bSizer16 );
+	bSizer21->Add( bSizer16, 1, wxALL|wxEXPAND, 5 );
+
+
+	this->SetSizer( bSizer21 );
 	this->Layout();
 
 	this->Centre( wxBOTH );
