@@ -51,16 +51,16 @@ inline const char* HotKeyTypeName(HotKeyType hk_type)
 	switch (hk_type)
 	{
 	case hk_RevertLastWord:	return "hk_RevertLastWord";
-	case hk_RevertCycle: return "hk_RevertCycle";
-	case hk_RevertSel: return "hk_RevertSel";
-	case hk_ChangeSetLayout_1:return "hk_ChangeSetLayout_1";
-	case hk_ChangeSetLayout_2:return "hk_ChangeSetLayout_2";
-	case hk_ChangeSetLayout_3:return "hk_ChangeSetLayout_3";
-	case hk_CapsGenerate:return "hk_CapsGenerate";
-	case hk_CycleCustomLang:return "hk_CycleCustomLang";
-	case hk_ScrollGenerate:return "hk_ScrollGenerate";
+	case hk_RevertCycle: return "hk_RevertSeveralWords";
+	case hk_RevertSel: return "hk_RevertSelelected";
+	case hk_ChangeSetLayout_1:return "hk_SetLayout_1";
+	case hk_ChangeSetLayout_2:return "hk_SetLayout_2";
+	case hk_ChangeSetLayout_3:return "hk_SetLayout_3";
+	case hk_CapsGenerate:return "hk_EmulateCapsLock";
+	case hk_CycleCustomLang:return "hk_CycleSwitchLayout";
+	case hk_ScrollGenerate:return "hk_EmulateScrollLock";
 	case hk_MAX:return "hk_MAX";
-	default: return "Unknown";
+	default: return "hk_Unknown";
 	}
 }
 

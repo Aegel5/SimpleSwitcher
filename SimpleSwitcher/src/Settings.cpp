@@ -113,6 +113,8 @@ void from_json(const json& j, HKL& p) {
     if (j.is_string()) {
         auto s = j.get<std::string>();
         Str_Utils::StrToUInt64_2(s, p);
+    } else {
+        p = 0;
     }
 }
 

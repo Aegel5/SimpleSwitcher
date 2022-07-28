@@ -588,7 +588,8 @@ public:
 			}
 
 
-			if (sCur == L"lshift" || sCur == L"rshift" || sCur == L"lctrl" || sCur == L"rctrl" || sCur == L"lalt" || sCur == L"ralt" || sCur == L"lwin" || sCur == L"rwin" ) {
+
+			if (Utils::is_in(sCur,  L"lshift" , L"rshift", L"lctrl", L"rctrl", L"lalt", L"ralt", L"lwin", L"rwin" )) {
 				m_leftRightDifferene = true;
 			}
 
