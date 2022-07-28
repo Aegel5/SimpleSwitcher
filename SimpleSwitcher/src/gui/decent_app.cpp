@@ -32,7 +32,11 @@ bool MyApp::OnInit()
     //    return false;
 
     SetLogLevel(setsgui.fDbgMode ? LOG_LEVEL_1 : LOG_LEVEL_0);
-    IFS_LOG(Load(setsgui));
+    auto err = Load(setsgui);
+    IFS_LOG(err);
+    if (err != SW_ERR_SUCCESS) {
+        wxMessageBox("Error reading conf.json");
+    }
     SetLogLevel2(setsgui.fDbgMode ? setsgui.ll : LOG_LEVEL_0);
 
     IFS_LOG(autoCom.Init());
