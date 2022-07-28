@@ -406,7 +406,7 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	bSizer20 = new wxBoxSizer( wxHORIZONTAL );
 
 	m_textKey = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-	bSizer20->Add( m_textKey, 1, wxALL|wxEXPAND, 5 );
+	bSizer20->Add( m_textKey, 1, wxALL, 5 );
 
 	m_button6 = new wxButton( this, wxID_ANY, wxT("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer20->Add( m_button6, 0, wxALL, 5 );
