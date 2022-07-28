@@ -94,12 +94,13 @@ bool Hooker::GetTypeForKey(CHotKey curkey, HotKeyType& type, bool& isUp)
 			auto& info = it.second;
 			auto hkId = it.first;
 
-			CHotKey key = info.key;
-			if (curkey.Compare(key, CHotKey::COMPARE_IGNORE_KEYUP))
+			CHotKey key = info.key();
+
+			if (info.HasKey(curkey, CHotKey::COMPARE_IGNORE_KEYUP))
 			{
 				if (info.fNeedSavedWord && !HasAnyWord())
 				{
-					LOG_INFO_2(L"skip key %u because not has any word", info.key);
+					LOG_INFO_2(L"skip key %u because not has any word", info.key());
 					// skip current, add chance for other hotkey
 					continue;
 				}
@@ -109,7 +110,6 @@ bool Hooker::GetTypeForKey(CHotKey curkey, HotKeyType& type, bool& isUp)
 					continue;
 				}
 
-				//isUp = key.GetWorkOnKeyUp();
 				type = hkId;
 				isUp = key.GetKeyup();
 
@@ -240,7 +240,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 		auto& info = it.second;
 		auto hkId = it.first;
 
-		CHotKey key = info.key;
+		CHotKey key = info.key();
 		if (m_curKeyState.Compare(key, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP)))
 		{
 			auto s1 = m_curKeyState.ToString();
@@ -744,7 +744,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		HKL lay = ctxRevert.lay;
 
 
-		if (fUseAltMode || u_conf.fUseAltMode)
+		if (fUseAltMode /*|| u_conf.fUseAltMode*/)
 		{
 			ClearState();
 			IFS_RET(SwitchLangByEmulate(lay));
@@ -902,7 +902,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		RETURN_SUCCESS;
 	}
 
-	if (u_conf.IsSkipProgram(m_sTopProcName))
+	if (settings_thread.IsSkipProgram(m_sTopProcName))
 	{
 		LOG_INFO_1(L"Skip process %s because of disableInProcess", m_sTopProcName.c_str());
 		RETURN_SUCCESS;

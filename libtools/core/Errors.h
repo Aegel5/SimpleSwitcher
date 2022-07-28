@@ -25,6 +25,7 @@ enum TStatus
 	SW_ERR_ERRNO,
 	SW_ERR_BAD_INTERNAL_STATE,
 	SW_ERR_NO_MEMORY,
+	SW_ERR_JSON,
 };
 
 
@@ -54,6 +55,7 @@ const static TChar* c_StatusNames[] =
 	L"SW_ERR_ERRNO",
 	L"SW_ERR_BAD_INTERNAL_STATE",
 	L"SW_ERR_NO_MEMORY",
+	L"SW_ERR_JSON",
 };
 
 //#define SAFEENTER try{

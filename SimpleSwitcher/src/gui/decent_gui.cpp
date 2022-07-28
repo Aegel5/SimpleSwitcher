@@ -126,7 +126,7 @@ private:
         elem->SetClientData((void*)type);
 
         elem->SetEditable(false);
-        elem->SetValue(setsgui.GetHk(type).key.ToString());
+        elem->SetValue(setsgui.GetHk(type).key().ToString());
 
         //auto sizer = elem->GetSizer();
         //auto size = sizer->GetSize();
@@ -216,16 +216,16 @@ private:
     virtual void onEnableLog(wxCommandEvent& event)
     {
         setsgui.fDbgMode = event.IsChecked();
-        SetLogLevel2(setsgui.fDbgMode ? u_conf.ll : LOG_LEVEL_0);
-        setsgui.SaveAndPostMsg();
+        SetLogLevel2(setsgui.fDbgMode ? setsgui.ll : LOG_LEVEL_0);
+        SaveAndPostMsg();
     }
     virtual void onPrevent(wxCommandEvent& event){
         setsgui.fEnableKeyLoggerDefence = event.IsChecked();
-        setsgui.SaveAndPostMsg();
+        SaveAndPostMsg();
     }
     virtual void onClearFormat(wxCommandEvent& event) {
         setsgui.fClipboardClearFormat = event.IsChecked();
-        setsgui.SaveAndPostMsg();
+        SaveAndPostMsg();
     }
 
     void handleDisableAccess() {
@@ -235,7 +235,7 @@ private:
     }
     virtual void onShowFlags(wxCommandEvent& event) {
         setsgui.showFlags = event.IsChecked();
-        setsgui.SaveAndPostMsg();
+        SaveAndPostMsg();
 
         if (!setsgui.showFlags) {
             myTray.SetIcon(icon);
@@ -246,7 +246,7 @@ private:
     }
     virtual void onDisableAccessebl(wxCommandEvent& event) {
         setsgui.disableAccessebility = event.IsChecked();
-        setsgui.SaveAndPostMsg();
+        SaveAndPostMsg();
 
         handleDisableAccess();
     }
@@ -311,9 +311,9 @@ private:
         HotKeyType type = (HotKeyType)(TUInt32)obj->GetClientData();
         CHotKey newkey;
         if (ChangeHotKey(this, type, newkey)) {
-            setsgui.hotkeysList[type].key = newkey;
-            setsgui.SaveAndPostMsg();
-            auto res = setsgui.GetHk(type).key.ToString();
+            setsgui.hotkeysList[type].key() = newkey;
+            SaveAndPostMsg();
+            auto res = setsgui.GetHk(type).key().ToString();
             obj->SetValue(res);
         }
     }
@@ -404,7 +404,7 @@ private:
             }
             setsgui.customLangList.push_back(lay);
             updateLayFilter();
-            setsgui.SaveAndPostMsg();
+            SaveAndPostMsg();
         } else {
             if (obj == m_choiceset1) {
                 setsgui.hkl_lay[0] = lay;
@@ -413,13 +413,13 @@ private:
             } else {
                 setsgui.hkl_lay[2] = lay;
             }
-            setsgui.SaveAndPostMsg();
+            SaveAndPostMsg();
         }
     }
     void onClearFilter(wxCommandEvent& event) override {
         setsgui.customLangList.clear();
         updateLayFilter();
-        setsgui.SaveAndPostMsg();
+        SaveAndPostMsg();
     }
     void updateLayFilter() {
         std::wstring res;
@@ -521,7 +521,7 @@ public:
 
     void onWorkInAdminCheck(wxCommandEvent& event) override {
         setsgui.isMonitorAdmin = m_checkBoxWorkInAdmin->GetValue();
-        setsgui.Save();
+        Save();
         updateAutoStart();
         updateEnable();
     }

@@ -161,6 +161,8 @@ public:
 		Set(VK_LAUNCH_MEDIA_SELECT, L"LAUNCH_MEDIA_SELECT");
 		Set(VK_LAUNCH_APP1, L"LAUNCH_APP1");
 		Set(VK_LAUNCH_APP2, L"LAUNCH_APP2");
+
+		GenerateMap();
 	}
 
 	static HotKeyNames& Global()
@@ -187,26 +189,20 @@ public:
 			Str_Utils::ToLower(sNameLower);
 			mapCode[sNameLower] = i;
 		}
+
+		mapCode[L"f24"] = VK_F24;
 	}
 
-	TKeyCode GetCode(TStr s)
+	TKeyCode GetCode(TStr s) // need lower
 	{
 		if (!s)
 			return 0;
 
-		for (int i = 0; i < SW_ARRAY_SIZE(vkMap); ++i)
-		{
-			TStr cur = vkMap[i];
-			if(!cur)
-				continue;
-			if (Str_Utils::IsEqualCI(s, cur))
-			{
-				return i;
-			}
-		}
-		return 0;
+		auto it = mapCode.find(s);
+		if (it == mapCode.end())
+			return 0;
+		return it->second;
 	}
-
 
 };
 
@@ -381,6 +377,8 @@ public:
 		COMPARE_IGNORE_ORDER_VALUEKEY = 0x1,
 		COMPARE_IGNORE_HOLD = 0x2,
 		COMPARE_IGNORE_KEYUP = 0x4,
+
+		COMPARE_CHECK_LEFT_RIGHT_FLAG = 0x8,
 	};
 	bool CompareRaw(CHotKey& other) {
 		return this->AsUInt64() == other.AsUInt64();
@@ -390,6 +388,8 @@ public:
 		if(size != other.size)
 			return false;
 		if(size == 0 || other.size == 0)
+			return false;
+		if (TestFlag(flags, COMPARE_CHECK_LEFT_RIGHT_FLAG) && m_leftRightDifferene != other.m_leftRightDifferene)
 			return false;
 		if (!TestFlag(flags, COMPARE_IGNORE_HOLD) && m_hold != other.m_hold)
 			return false;
@@ -420,14 +420,22 @@ public:
 	{
 		ToString(s, m_leftRightDifferene);
 	}
-	std::wstring ToString()
+	std::wstring ToString() const
 	{
 		std::wstring s;
 		ToString(s, m_leftRightDifferene);
 		return s;
 	}
 
-	void ToString(std::wstring& s, bool leftrightDiff)
+	std::string ToString2() const
+	{
+		auto res = ToString();
+		std::string res2;
+		IFS_LOG(Str_Utils::WideToUtf8(res.c_str(), res2));
+		return res2;
+	}
+
+	void ToString(std::wstring& s, bool leftrightDiff) const
 	{
 		if(size == 0)
 		{
@@ -450,6 +458,9 @@ public:
 			{
 				s += L" #up";
 			}
+			//if (m_leftRightDifferene) {
+			//	s += L" #lr";
+			//}
 		}
 	}
 	static std::wstring ToString(TKeyCode key)
@@ -536,29 +547,38 @@ public:
 	{
 		return m_keyup;
 	}
+	TStatus FromString(const std::string& s)
+	{
+		std::wstring s2;
+		IFS_RET(Str_Utils::Utf8ToWide(s.c_str(), s2));
+		IFS_RET(FromString(s2));
+		RETURN_SUCCESS;
+	}
 	TStatus FromString(const std::wstring& s)
 	{
 		Clear();
+
+		std::wstring ss = s;
+
+		if (Str_Utils::replaceAll(ss, L"#up", L"")) {
+			SetKeyup(true);
+		}
+
+		if (Str_Utils::replaceAll(ss, L"#hold", L"")) {
+			SetHold(true);
+		}
+
+		//if (Str_Utils::replaceAll(ss, L"#lr", L"")) {
+		//	m_leftRightDifferene = true;
+		//}
+
 		Str_Utils::TVectStr sElems;
-		Str_Utils::Split2(s, sElems, L"+\t ", true);
-		if (sElems.empty())
-			RETURN_SUCCESS;
+		Str_Utils::Split2(ss, sElems, L"+", true);
 		for (auto& it : sElems)
 		{
 			std::wstring sCur = it;
 			Str_Utils::trim(sCur);
 			Str_Utils::ToLower(sCur);
-
-			if (sCur == L"#up")
-			{
-				SetKeyup(true);
-				continue;
-			}
-			else if (sCur == L"#hold")
-			{
-				SetHold(true);
-				continue;
-			}
 
 			TKeyCode kCur = HotKeyNames::Global().GetCode(sCur.c_str());
 			if (kCur == 0)
@@ -566,6 +586,12 @@ public:
 				Clear();
 				IFS_RET(SW_ERR_INVALID_PARAMETR, L"Not found keycode for %s", sCur.c_str());
 			}
+
+
+			if (sCur == L"lshift" || sCur == L"rshift" || sCur == L"lctrl" || sCur == L"rctrl" || sCur == L"lalt" || sCur == L"ralt" || sCur == L"lwin" || sCur == L"rwin" ) {
+				m_leftRightDifferene = true;
+			}
+
 
 			Add(kCur);
 		}

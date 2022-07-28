@@ -54,6 +54,11 @@ namespace Str_Utils
 		return wcsncmp(str, pref, wcslen(pref)) == 0;
 	}
 
+	inline bool IsStartWith(const char* str, const char* pref)
+	{
+		return strncmp(str, pref, strlen(pref)) == 0;
+	}
+
 	inline bool StrToBool(std::wstring& str, bool& res)
 	{
 		if (str == L"true")
@@ -113,7 +118,33 @@ namespace Str_Utils
 		}
 	}
 
+	template<class T>
+	inline bool StrToUInt64_2(std::string& str, T& res)
+	{
+		const char* val = str.c_str();
+		int base = 10;
+		if (Str_Utils::IsStartWith(val, "0x"))
+		{
+			val += 2;
+			base = 16;
+		}
+
+		try
+		{
+			res = (T)std::stoull(val, 0, base);
+			return true;
+		}
+		catch (std::exception)
+		{
+			return false;
+		}
+	}
+
 	inline void ToLower(std::wstring& str)
+	{
+		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+	}
+	inline void ToLower(std::string& str)
 	{
 		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
 	}
@@ -139,6 +170,17 @@ namespace Str_Utils
 	inline TStatus Split(const std::wstring& str, TVectStr& res, wchar_t delim, bool skipEmpty = true)
 	{
 		return Split(str.c_str(), res, delim, skipEmpty);
+	}
+
+	inline bool replaceAll(std::wstring & s, const std::wstring & search, const std::wstring & replace) {
+		bool found = false;
+		size_t pos = 0;
+		while ((pos = s.find(search, pos)) != std::string::npos) {
+			found = true;
+			s.replace(pos, search.length(), replace);
+			pos += replace.length();
+		}
+		return found;
 	}
 
 	template < class ContainerT >
@@ -172,6 +214,7 @@ namespace Str_Utils
 	//{
 
 	//}
+
 	inline TStatus Utf8ToWide(const char* utf8, std::wstring& wide)
 	{
 		if (*utf8 == 0)
@@ -193,6 +236,10 @@ namespace Str_Utils
 		wide = buf;
 
 		RETURN_SUCCESS;
+	}
+	inline TStatus Utf8ToWide(const std::string& utf8, std::wstring& wide)
+	{
+		return Utf8ToWide(utf8.c_str(), wide);
 	}
 	inline TStatus WideToUtf8(const TChar* wide, std::string& utf)
 	{

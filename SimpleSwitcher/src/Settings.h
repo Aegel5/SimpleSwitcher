@@ -46,36 +46,28 @@ enum HotKeyType : TUInt32
 	//hk_RevertFromClip,
 };
 
-inline const wchar_t* HotKeyTypeName(HotKeyType hk_type)
+inline const char* HotKeyTypeName(HotKeyType hk_type)
 {
 	switch (hk_type)
 	{
-	case hk_RevertLastWord:	return L"hk_RevertLastWord";
-	case hk_RevertCycle: return L"hk_RevertCycle";
-	case hk_RevertSel: return L"hk_RevertSel";
-	//case hk_RevertAdv: return "hk_RevertAdv";
-	//case hk_RevertCycleAdv:return "hk_RevertCycleAdv";
-	//case hk_ChangeLayoutCycle:return L"hk_ChangeLayoutCycle";
-	case hk_ChangeSetLayout_1:return L"hk_ChangeSetLayout_1";
-	case hk_ChangeSetLayout_2:return L"hk_ChangeSetLayout_2";
-	case hk_ChangeSetLayout_3:return L"hk_ChangeSetLayout_3";
-	case hk_CapsGenerate:return L"hk_CapsGenerate";
-	case hk_CycleCustomLang:return L"hk_CycleCustomLang";
-	//case hk_ChangeCase:return L"hk_ChangeCase";
-	case hk_ScrollGenerate:return L"hk_ScrollGenerate";
-	//case hk_EmulCopyNoFormat:return L"hk_EmulCopyNoFormat";
-	//case hk_EmulCopyWithFormat:return L"hk_EmulCopyWithFormat";
-	//case hk_RevertRecentTyped:return L"hk_RevertRecentTyped";
-	//case hk_ChangeTextCase:return L"hk_ChangeTextCase";
-	case hk_MAX:return L"hk_MAX";
-	default: return L"Unknown";
+	case hk_RevertLastWord:	return "hk_RevertLastWord";
+	case hk_RevertCycle: return "hk_RevertCycle";
+	case hk_RevertSel: return "hk_RevertSel";
+	case hk_ChangeSetLayout_1:return "hk_ChangeSetLayout_1";
+	case hk_ChangeSetLayout_2:return "hk_ChangeSetLayout_2";
+	case hk_ChangeSetLayout_3:return "hk_ChangeSetLayout_3";
+	case hk_CapsGenerate:return "hk_CapsGenerate";
+	case hk_CycleCustomLang:return "hk_CycleCustomLang";
+	case hk_ScrollGenerate:return "hk_ScrollGenerate";
+	case hk_MAX:return "hk_MAX";
+	default: return "Unknown";
 	}
 }
 
 struct CHotKeySet
 {
-	tstring name = L"unknown";
-	CHotKey key;
+	//tstring name = L"unknown";
+	//CHotKey key;
 	CHotKey def;
 	CHotKey def2;
 	//bool fReserveHotKey = true;
@@ -84,6 +76,24 @@ struct CHotKeySet
 	//bool fGui = true;
 	//bool fDisabled = false;
     HotKeyType hkId = hk_NULL;
+
+    std::vector<CHotKey> keys;
+
+    bool HasKey(CHotKey ktest, CHotKey::TCompareFlags flags) {
+        for (auto& k : keys) {
+            if (ktest.Compare(k, flags))
+                return true;
+        }
+        return false;
+    }
+
+    CHotKeySet() {
+        keys.resize(1);
+    }
+
+    CHotKey& key() {
+        return keys[0];
+    }
 };
 
 inline TStatus PostMsgSettingChanges()
@@ -105,31 +115,18 @@ inline TStatus GetCurLayRequest() {
 using TStrList = std::vector<std::wstring>;
 
 
-struct UserConf
-{
-	std::set<std::wstring> disableInProcess;
-    TLogLevel ll = LOG_LEVEL_3;
-	//std::wstring s_hk_ChangeTextCase;
-	bool fUseAltMode = false;
-	TStrList altModePrg;
-	//int msDelayAfterCtrlC = 25;
-
-	bool IsSkipProgram(std::wstring sExeName) {
-        auto has = disableInProcess.find(sExeName) != disableInProcess.end();
-        if (has) {
-            LOG_INFO_1(L"Skip process %s because of disableInProcess", sExeName.c_str());
-            return true;
-        }
-        return false;
-    }
-
-    TStatus Load2();
-};
+//struct UserConf
+//{
+//
+//
+//    TStatus Load2();
+//};
 
 
 class SettingsGui {
 public:
     SettingsGui() {
+
         GenerateListHK();
 
         fDbgMode =
@@ -138,51 +135,44 @@ public:
 #else
             false;
 #endif
+        hkl_lay.resize(3);
     }
 
-    // Runtime data
-    // -----------------------------
+    std::set<std::string> disableInPrograms;
+    std::set<std::wstring> __disableInPrograms;
 
-    // bool isEnabled = false;
-    // bool isAddToAutoStart = false;
+    TLogLevel ll = LOG_LEVEL_3;
 
-    // Saved data
-    // -------------------------
+    bool IsSkipProgram(std::wstring sExeName) {
+        auto has = __disableInPrograms.find(sExeName) != __disableInPrograms.end();
+        if (has) {
+            LOG_INFO_1(L"Skip process %s because of disableInProcess", sExeName.c_str());
+            return true;
+        }
+        return false;
+    }
 
-    // bool isEnabledSaved;
+
+
     bool isMonitorAdmin = false;
-    // bool isAddToTray;
     bool isTryOEM2 = true;
-    // bool isDashSeparate;
     bool fDbgMode              = false;
     bool fClipboardClearFormat = false;
-    // bool fCloseByEsc;
     bool fEnableKeyLoggerDefence = false;
     bool disableAccessebility    = false;
-
     bool injectDll = false;
-
     bool showFlags = true;
 
-    // bool fHookDll;
-
     std::vector<HKL> customLangList;
-    // std::vector<HKL> revert_customLangList;
-    HKL hkl_lay[3] = {0};
+    std::vector<HKL> hkl_lay;
 
-    // SwLang idLang = SLANG_UNKNOWN;
 
     typedef std::map<HotKeyType, CHotKeySet> THotKeyMap;
     THotKeyMap hotkeysList;
 
-    // --------------------------------
-    // Functions
-
     CHotKeySet& GetHk(HotKeyType type) {
         return hotkeysList[type];
     }
-
-
 
     enum {
         SW_HKL_1 = 0,
@@ -190,40 +180,25 @@ public:
         SW_HKL_3,
     };
 
-    // void ResetToDef();
-    // bool IsAddToTray() { return isAddToTray; }
-
     void GenerateListHK();
 
-    TStatus Load();
-    TStatus LoadAutoSettings();
-
-    void Save();
-    void SaveAndPostMsg() {
-        Save();
-        PostMsgSettingChanges();
-    }
-
-private:
-    std::wstring GetPathIni() {
-        std::wstring sCurFolder;
-        GetPath(sCurFolder, PATH_TYPE_SELF_FOLDER, GetSelfBit());
-
-        std::wstring res = sCurFolder + L"settings.ini";
-
-        return res;
-    }
 };
 
-inline UserConf u_conf;
+//inline UserConf u_conf;
 
 inline SettingsGui settings_thread;
 inline SettingsGui setsgui;
 
 inline int g_hotkeyWndOpened = 0;
 
-//inline SettingsGui& setsgui { return SettingsGui::Global(); }
-//inline LuaConfig& LuaGlobal() { return setsgui.luaCfg; }
+TStatus Load(SettingsGui& sets);
+
+TStatus Save();
+
+inline void SaveAndPostMsg() {
+    IFS_LOG(Save());
+    PostMsgSettingChanges();
+}
 
 
 

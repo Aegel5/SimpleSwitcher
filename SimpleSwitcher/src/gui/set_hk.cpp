@@ -35,7 +35,7 @@ public:
         g_hotkeyWndOpened++;
         //SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxRESIZE_BORDER);
 
-        key     = info.key;
+        key     = info.key();
 
         auto ss = [](CHotKey key) { return key.IsEmpty() ? L"[None]" : key.ToString(); };
 
@@ -56,13 +56,16 @@ private:
     {
         m_textKey->SetValue(key.ToString());
 
-        if (key.Compare(info.def)) {
+        if (key.Compare(info.def, CHotKey::COMPARE_CHECK_LEFT_RIGHT_FLAG)) {
             m_radioBox1->SetSelection(1);
-        } else if (key.Compare(info.def2)) {
+        } else if (key.Compare(info.def2, CHotKey::COMPARE_CHECK_LEFT_RIGHT_FLAG)) {
             m_radioBox1->SetSelection(2);
         } else {
             m_radioBox1->SetSelection(0);
         }
+
+        m_checkBox12->SetValue(key.GetLeftRightMode());
+        m_checkBox13->SetValue(key.GetKeyup());
     }
     CHotKeySet info;
 

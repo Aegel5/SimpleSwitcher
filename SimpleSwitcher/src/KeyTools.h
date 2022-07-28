@@ -96,13 +96,13 @@ inline void AnalizeProblemByName(std::wstring& sPath, std::wstring& sProc, bool&
 	}
 	else
 	{
-		for (auto& name : u_conf.altModePrg)
-		{
-			if (sProc == name)
-			{
-				fPostNotWork = true;
-			}
-		}
+		//for (auto& name : u_conf.altModePrg)
+		//{
+		//	if (sProc == name)
+		//	{
+		//		fPostNotWork = true;
+		//	}
+		//}
 
 		//bool fMicrosoft = false;
 		//IFS_LOG(IsProductHas(sPath.c_str(), L"Microsoft", fMicrosoft));
