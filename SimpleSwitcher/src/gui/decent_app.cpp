@@ -4,7 +4,9 @@
 
 #include "tools/lay_notif.h"
 
-extern void StartMainGui(bool show);
+#include "gui/decent_gui.h"
+
+extern void StartMainGui(bool show, bool err_msg);
 
 class MyApp : public wxApp
 {
@@ -34,9 +36,9 @@ bool MyApp::OnInit()
     SetLogLevel(setsgui.fDbgMode ? LOG_LEVEL_1 : LOG_LEVEL_0);
     auto err = Load(setsgui);
     IFS_LOG(err);
-    if (err != SW_ERR_SUCCESS) {
-        wxMessageBox("Error reading config");
-    }
+    //if (err != SW_ERR_SUCCESS) {
+    //    wxMessageBox("Error reading config");
+    //}
     SetLogLevel2(setsgui.fDbgMode ? setsgui.ll : LOG_LEVEL_0);
 
     IFS_LOG(autoCom.Init());
@@ -51,7 +53,7 @@ bool MyApp::OnInit()
         }
     }
 
-    StartMainGui(show);
+    StartMainGui(show, err != SW_ERR_SUCCESS);
 
     // success: wxApp::OnRun() will be called which will enter the main message
     // loop and the application will run. If we returned false here, the

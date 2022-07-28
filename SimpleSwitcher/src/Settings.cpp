@@ -202,7 +202,7 @@ TStatus Save() {
     try {
         std::wstring sCurFolder;
         IFS_RET(GetPath(sCurFolder, PATH_TYPE_SELF_FOLDER, GetSelfBit()));
-        std::wstring res = sCurFolder + L"conf.json";
+        std::wstring file = sCurFolder + L"conf.json";
 
         SettingsGui& gui = setsgui;
 
@@ -216,9 +216,28 @@ TStatus Save() {
 
         data["hotkeys"] = hk;
 
-
-        std::ofstream o(res);
+        std::stringstream o;
+        //std::ofstream o(res);
         o << std::setw(4) << data << std::endl;
+
+        auto json = o.str();
+
+        auto insert_after = [&](const char* s, const char* comm) {
+            auto it = json.find(s);
+            if (it != std::string::npos) {
+                it = json.find("\n", it);
+                if(it != -1)
+                    json.insert(it, comm);
+            }
+        };
+
+        insert_after("\"disableInPrograms",
+                      " // example [\"game1.exe\"]");
+
+        std::ofstream outp(file);
+        outp << json;
+
+
 
     } catch (std::exception& e) {
         return SW_ERR_JSON;

@@ -558,7 +558,7 @@ public:
 
 
 
-void StartMainGui(bool show) {
+void StartMainGui(bool show, bool conf_err_msg) {
 
     MainWnd* frame = new MainWnd();
 
@@ -567,6 +567,10 @@ void StartMainGui(bool show) {
     // and show it (the frames, unlike simple controls, are not shown when
     // created initially)
     frame->Show(show);
+
+    if (conf_err_msg) {
+        wxMessageBox("Error reading config");
+    }
 
 
 }
