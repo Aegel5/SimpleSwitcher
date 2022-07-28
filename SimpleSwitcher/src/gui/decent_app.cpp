@@ -35,7 +35,7 @@ bool MyApp::OnInit()
     auto err = Load(setsgui);
     IFS_LOG(err);
     if (err != SW_ERR_SUCCESS) {
-        wxMessageBox("Error reading conf.json");
+        wxMessageBox("Error reading config");
     }
     SetLogLevel2(setsgui.fDbgMode ? setsgui.ll : LOG_LEVEL_0);
 
