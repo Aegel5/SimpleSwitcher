@@ -61,11 +61,11 @@ void SettingsGui::GenerateListHK()
         AddHotKey(hk_CapsGenerate, set);
     }
 
-    {
-        CHotKeySet set;
-        set.def = CHotKey(VK_F23, VK_CONTROL);
-        AddHotKey(hk_ScrollGenerate, set);
-    }
+    //{
+    //    CHotKeySet set;
+    //    set.def = CHotKey(VK_F23, VK_CONTROL);
+    //    AddHotKey(hk_ScrollGenerate, set);
+    //}
 
     {
         CHotKeySet set;
