@@ -120,6 +120,8 @@ public:
 
 	CClipWorker m_clipWorker;
 
+	CClipWorker m_clipWorker_2; // todo полностьюе перейти на этот объект.
+
 	tstring m_savedClipData;
 
 

@@ -266,7 +266,7 @@ TStatus Hooker::Init()
 {
 	ClearAllWords();
 	IFS_LOG(GetPath(m_sSelfExeName, PATH_TYPE_EXE_FILENAME, SW_BIT_32));
-	//IFS_RET(m_clipWorker.Init());
+	IFS_RET(m_clipWorker.Init());
 
 	RETURN_SUCCESS;
 
@@ -555,8 +555,7 @@ TStatus Hooker::ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist)
 TStatus Hooker::ClipboardClearFormat2()
 {
 	//m_clipWorker.PostMsg(ClipMode_ClipClearFormat);
-
-	IFS_LOG(m_clipWorker.ClipboardClearFormat());
+	IFS_LOG(m_clipWorker_2.ClipboardClearFormat());
 	RETURN_SUCCESS;
 }
 
@@ -600,6 +599,7 @@ TStatus Hooker::GetClipStringCallback()
         } else if(m_lastRevertRequest == hk_toUpperSelected) {
 
 			toUpper(data);
+			IFS_LOG(m_clipWorker_2.OpenAndPutToClipBoardOur(data));
 
             ctxRev.flags      = SW_CLIENT_CTRLV;
             IFS_LOG(ProcessRevert(ctxRev));
