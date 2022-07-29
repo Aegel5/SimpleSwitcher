@@ -44,6 +44,8 @@ bool MyApp::OnInit()
     IFS_LOG(autoCom.Init());
     //Initlll();
 
+    setlocale(LC_ALL, "en_US.utf8");
+
     bool show = true;
     for (int i = 0; i < wxApp::argc; i++) {
         auto cur = wxApp::argv[i];

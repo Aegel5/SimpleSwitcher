@@ -152,7 +152,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	sbSizer4->Add( bSizer53, 0, wxEXPAND, 5 );
 
 
-	bSizer4->Add( sbSizer4, 0, wxEXPAND, 5 );
+	bSizer4->Add( sbSizer4, 0, wxALL|wxEXPAND, 5 );
 
 	wxStaticBoxSizer* sbSizer5;
 	sbSizer5 = new wxStaticBoxSizer( new wxStaticBox( m_panel14, wxID_ANY, wxT("Set layout") ), wxVERTICAL );
@@ -212,7 +212,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	sbSizer5->Add( bSizer5312, 0, wxEXPAND, 5 );
 
 
-	bSizer4->Add( sbSizer5, 0, wxEXPAND, 5 );
+	bSizer4->Add( sbSizer5, 0, wxALL|wxEXPAND, 5 );
 
 
 	m_panel14->SetSizer( bSizer4 );
@@ -249,7 +249,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	sbSizer6->Add( bSizer532, 0, wxEXPAND, 5 );
 
 
-	bSizer20->Add( sbSizer6, 0, wxEXPAND, 5 );
+	bSizer20->Add( sbSizer6, 0, wxALL|wxEXPAND, 5 );
 
 	wxBoxSizer* bSizer19;
 	bSizer19 = new wxBoxSizer( wxHORIZONTAL );
@@ -261,7 +261,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer19->Add( m_button8, 0, wxALL, 5 );
 
 
-	bSizer20->Add( bSizer19, 0, wxEXPAND, 5 );
+	bSizer20->Add( bSizer19, 0, wxALL|wxEXPAND, 5 );
 
 	m_listBoxRemap = new wxListBox( m_panel5, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	m_listBoxRemap->Append( wxT("123") );
@@ -272,7 +272,38 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel5->SetSizer( bSizer20 );
 	m_panel5->Layout();
 	bSizer20->Fit( m_panel5 );
-	m_notebook2->AddPage( m_panel5, wxT("Key Remap"), true );
+	m_notebook2->AddPage( m_panel5, wxT("Key Remap"), false );
+	m_panel61 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer21;
+	bSizer21 = new wxBoxSizer( wxVERTICAL );
+
+	wxStaticBoxSizer* sbSizer41;
+	sbSizer41 = new wxStaticBoxSizer( new wxStaticBox( m_panel61, wxID_ANY, wxT("Change selected text") ), wxVERTICAL );
+
+	wxBoxSizer* bSizer533;
+	bSizer533 = new wxBoxSizer( wxHORIZONTAL );
+
+	m_staticText322 = new wxStaticText( sbSizer41->GetStaticBox(), wxID_ANY, wxT("To upper/lower"), wxDefaultPosition, wxSize( 150,-1 ), 0 );
+	m_staticText322->Wrap( -1 );
+	bSizer533->Add( m_staticText322, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_text_sel_toupper = new wxTextCtrl( sbSizer41->GetStaticBox(), wxID_ANY, wxT("F24"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer533->Add( m_text_sel_toupper, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_button931 = new wxButton( sbSizer41->GetStaticBox(), wxID_ANY, wxT("Set"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer533->Add( m_button931, 0, wxALL, 5 );
+
+
+	sbSizer41->Add( bSizer533, 0, wxEXPAND, 5 );
+
+
+	bSizer21->Add( sbSizer41, 0, wxALL|wxEXPAND, 5 );
+
+
+	m_panel61->SetSizer( bSizer21 );
+	m_panel61->Layout();
+	bSizer21->Fit( m_panel61 );
+	m_notebook2->AddPage( m_panel61, wxT("Others"), true );
 	m_panel16 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer24;
 	bSizer24 = new wxBoxSizer( wxVERTICAL );
@@ -347,7 +378,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_choiceset2->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_choiceset3->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_checkcapsrem->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
-	m_check_scrollremap->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapScroll ), NULL, this );
+	m_check_scrollremap->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
 	m_button7->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onUpdateRemap ), NULL, this );
 	m_button8->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onDeleteRemap ), NULL, this );
 	m_checkDebuglog->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
@@ -371,7 +402,7 @@ MyFrame4::~MyFrame4()
 	m_choiceset2->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_choiceset3->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onLayChoice ), NULL, this );
 	m_checkcapsrem->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
-	m_check_scrollremap->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapScroll ), NULL, this );
+	m_check_scrollremap->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
 	m_button7->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onUpdateRemap ), NULL, this );
 	m_button8->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onDeleteRemap ), NULL, this );
 	m_checkDebuglog->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );

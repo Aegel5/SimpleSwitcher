@@ -90,6 +90,12 @@ void SettingsGui::GenerateListHK()
         set.fUseDef = true;
         AddHotKey(hk_RevertSel, set);
     }
+
+    {
+        CHotKeySet set;
+        set.def = CHotKey(VK_F23);
+        AddHotKey(hk_toUpperSelected, set);
+    }
   
 
     for (auto& it : hotkeysList) {

@@ -84,6 +84,10 @@ class MyFrame4 : public wxFrame
 		wxButton* m_button7;
 		wxButton* m_button8;
 		wxListBox* m_listBoxRemap;
+		wxPanel* m_panel61;
+		wxStaticText* m_staticText322;
+		wxTextCtrl* m_text_sel_toupper;
+		wxButton* m_button931;
 		wxPanel* m_panel16;
 		wxCheckBox* m_checkDebuglog;
 		wxCheckBox* m_checkBoxKeyDef;
@@ -104,7 +108,6 @@ class MyFrame4 : public wxFrame
 		virtual void onLayChoice( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onClearFilter( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onRemapCaps( wxCommandEvent& event ) { event.Skip(); }
-		virtual void onRemapScroll( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onUpdateRemap( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onDeleteRemap( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onEnableLog( wxCommandEvent& event ) { event.Skip(); }

@@ -61,6 +61,7 @@ inline const char* HotKeyTypeName(HotKeyType hk_type)
 	case hk_CapsGenerate:return "hk_EmulateCapsLock";
 	case hk_CycleCustomLang:return "hk_CycleSwitchLayout";
 	case hk_ScrollGenerate:return "hk_EmulateScrollLock";
+    case hk_toUpperSelected:    return "hk_toUpperSelected";
 	case hk_MAX:return "hk_MAX";
 	default: return "hk_Unknown";
 	}

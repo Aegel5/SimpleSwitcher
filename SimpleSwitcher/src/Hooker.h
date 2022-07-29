@@ -53,7 +53,7 @@ public:
 		LOG_INFO_1(L"ClipboardChangedInt complete");
 	}
 	TStatus ClipboardChangedInt();
-	TStatus GetClipStringCallback();
+    TStatus GetClipStringCallback();
 	TStatus ClipboardClearFormat2();
 	TStatus ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist);
 
@@ -65,7 +65,7 @@ public:
 	void AddKeyToList(TKeyType type, CHotKey hotkey);
 	TStatus Init();
 	TStatus SendCtrlC(EClipRequest clRequest);
-	TStatus SavePrevDataCallback(EClipRequest clRequest);
+	//TStatus SavePrevDataCallback(EClipRequest clRequest);
 	bool GetTypeForKey(CHotKey curkey, HotKeyType& type, bool& isUp);
 	void RequestWaitClip(EClipRequest clRequest)
 	{
@@ -118,9 +118,9 @@ public:
 	std::wstring m_sTopProcName;
 	std::wstring m_sTopProcPath;
 
-	CClipWorker m_clipWorker;
+	//CClipWorker m_clipWorker;
 
-	CClipWorker m_clipWorker_2; // todo полностьюе перейти на этот объект.
+	CClipWorker m_clipWorker; 
 
 	tstring m_savedClipData;
 

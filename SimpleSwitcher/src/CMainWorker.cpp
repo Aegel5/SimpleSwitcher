@@ -28,14 +28,14 @@ TStatus CMainWorker::WorkerInt()
 		{
 			hooker.CliboardChanged();
 		}
-		else if (mode == HWORKER_SavePrevDataCallback)
-		{
-			hooker.SavePrevDataCallback((EClipRequest)msg.data.wparm);
-		}
-		else if (mode == HWORKER_GetClipStringCallback)
-		{
-			hooker.GetClipStringCallback();
-		}
+		//else if (mode == HWORKER_SavePrevDataCallback)
+		//{
+		//	hooker.SavePrevDataCallback((EClipRequest)msg.data.wparm);
+		//}
+		//else if (mode == HWORKER_GetClipStringCallback)
+		//{
+		//	hooker.GetClipStringCallback();
+		//}
 		else if (mode == HWORKER_ChangeForeground)
 		{
 			hooker.ChangeForeground((HWND)msg.data.wparm);

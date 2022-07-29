@@ -266,7 +266,7 @@ TStatus Hooker::Init()
 {
 	ClearAllWords();
 	IFS_LOG(GetPath(m_sSelfExeName, PATH_TYPE_EXE_FILENAME, SW_BIT_32));
-	IFS_RET(m_clipWorker.Init());
+	//IFS_RET(m_clipWorker.Init());
 
 	RETURN_SUCCESS;
 
@@ -555,7 +555,7 @@ TStatus Hooker::ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist)
 TStatus Hooker::ClipboardClearFormat2()
 {
 	//m_clipWorker.PostMsg(ClipMode_ClipClearFormat);
-	IFS_LOG(m_clipWorker_2.ClipboardClearFormat());
+	IFS_LOG(m_clipWorker.ClipboardClearFormat());
 	RETURN_SUCCESS;
 }
 
@@ -568,13 +568,26 @@ TStatus RequestClearFormat()
 
 void toUpper(std::wstring& buf) {
 
+	wxString str1 = buf;
+
+	str1.UpperCase();
+    auto r1 = str1.ToStdWstring();
+    if (r1 != buf)
+        buf = r1;
+    else {
+        wxString str2 = buf;
+        str2.MakeLower();
+        buf = str2.ToStdWstring();
+    }
+
 }
 
-TStatus Hooker::GetClipStringCallback()
-{
+TStatus Hooker::GetClipStringCallback() {
 	LOG_INFO_1(L"GetClipStringCallback");
 
-	std::wstring data = m_clipWorker.TakeData();
+	auto data = m_clipWorker.getCurString();
+
+	bool needResotore = !m_savedClipData.empty();
 
 	if (data.empty()) {
         LOG_INFO_1(L"data empty");
@@ -599,20 +612,22 @@ TStatus Hooker::GetClipStringCallback()
         } else if(m_lastRevertRequest == hk_toUpperSelected) {
 
 			toUpper(data);
-			IFS_LOG(m_clipWorker_2.OpenAndPutToClipBoardOur(data));
+            m_clipWorker.setString(data);
 
             ctxRev.flags      = SW_CLIENT_CTRLV;
             IFS_LOG(ProcessRevert(ctxRev));
-            if(!m_savedClipData.empty())
-				Sleep(20); // подождем немного, чтобы не перезатереть наши данные восстановление буфера.
+            if (needResotore) {
+                needResotore = data != m_savedClipData;
+				if(needResotore)
+					Sleep(20); // подождем немного, чтобы не перезатереть наши данные восстановлением буфера.
+            }
 			
         }
 	}
 
-	if (!m_savedClipData.empty()) {
+	if (needResotore) {
 		RequestWaitClip(CLRMY_hk_RESTORE); // делаем это только чтобы не вызывалась очистка формата
-        m_clipWorker.MoveToData(m_savedClipData);
-        m_clipWorker.PostMsg(ClipMode_RestoreClipData);
+        m_clipWorker.setString(m_savedClipData);
         m_savedClipData.clear();
     }
 
@@ -646,8 +661,10 @@ TStatus Hooker::ClipboardChangedInt()
                 // LOG_INFO_1(L"delt=%u", deltSec);
 
                 Sleep(20); // wait here, no need async
+                
+				//m_clipWorker.PostMsg(ClipMode_GetClipString);
 
-                m_clipWorker.PostMsg(ClipMode_GetClipString);
+                GetClipStringCallback();
 
                 RETURN_SUCCESS;
             }
@@ -825,29 +842,31 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		IFS_RET(SendKeys(ctxRevert.keylist));
 
 	}
-	if (TestFlag(ctxRevert.flags, SW_CLIENT_CTRLC))
-	{
-		ClearState();
+    auto send = [&](CHotKey k) {
 
-		CHotKey ctrlc(VK_CONTROL, 67);
-		InputSender inputSender;
-		inputSender.AddDown(ctrlc);
+        ClearState();
+
+        InputSender inputSender;
+        inputSender.AddDown(k);
         IFS_RET(inputSender.Send());
         Sleep(1);
         inputSender.Clear();
-        inputSender.AddUp(ctrlc);
+        inputSender.AddUp(k);
         IFS_RET(inputSender.Send());
+
+        RETURN_SUCCESS;
+	};
+
+	if (TestFlag(ctxRevert.flags, SW_CLIENT_CTRLC))
+	{
+        CHotKey ctrlc(VK_CONTROL, 67);
+        IFS_LOG(send(ctrlc));
 	}
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_CTRLV))
 	{
-		ClearState();
-
-		CHotKey ctrlv(VK_CONTROL, 56);
-		InputSender inputSender;
-		inputSender.AddPress(ctrlv); // todo add sleep 
-
-		IFS_RET(SendOurInput(inputSender));
+        CHotKey ctrlc(VK_CONTROL, 0x56);
+        IFS_LOG(send(ctrlc));
 	}
 
 	LOG_INFO_1(L"Revert complete");
@@ -855,24 +874,20 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 	RETURN_SUCCESS;
 }
 
-TStatus Hooker::SavePrevDataCallback(EClipRequest clRequest)
+
+TStatus Hooker::SendCtrlC(EClipRequest clRequest)
 {
-    m_savedClipData = m_clipWorker.TakeData();
+    m_savedClipData = m_clipWorker.getCurString();
 
 	RequestWaitClip(clRequest);
 
-	LOG_INFO_1(L"Send ctrlc...");
+    LOG_INFO_1(L"Send ctrlc...");
 
-	ContextRevert ctxRev;
-	ctxRev.flags = SW_CLIENT_CTRLC;
+    ContextRevert ctxRev;
+    ctxRev.flags = SW_CLIENT_CTRLC;
 
-	IFS_RET(ProcessRevert(ctxRev));
+    IFS_RET(ProcessRevert(ctxRev));
 
-	RETURN_SUCCESS;
-}
-TStatus Hooker::SendCtrlC(EClipRequest clRequest)
-{
-	m_clipWorker.PostMsg(ClipMode_SavePrevData, clRequest);
 	RETURN_SUCCESS;
 }
 TStatus SendUpForKey(CHotKey key)
@@ -996,7 +1011,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	}
 
 
-	if (Utils::is_in(typeRevert == hk_RevertSel, hk_toUpperSelected))
+	if (Utils::is_in(typeRevert, hk_RevertSel, hk_toUpperSelected))
 	{
 		IFS_RET(SendCtrlC(CLRMY_GET_FROM_CLIP));
 		RETURN_SUCCESS;

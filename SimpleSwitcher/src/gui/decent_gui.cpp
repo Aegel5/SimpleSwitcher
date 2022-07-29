@@ -86,6 +86,7 @@ public:
         BindHotCtrl(m_textSetlay2, hk_ChangeSetLayout_2);
         BindHotCtrl(m_textSetlay3, hk_ChangeSetLayout_3);
         BindHotCtrl(m_textcapsgen, hk_CapsGenerate);
+        BindHotCtrl(m_text_sel_toupper, hk_toUpperSelected);
 
         updateBools();
 
