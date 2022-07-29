@@ -142,7 +142,7 @@ public:
     }
 
     std::set<std::string> disableInPrograms;
-    std::set<std::wstring> __disableInPrograms;
+    std::set<std::wstring> __disableInPrograms; // TODO use wxString instead!!!
 
     TLogLevel ll = LOG_LEVEL_3;
 
