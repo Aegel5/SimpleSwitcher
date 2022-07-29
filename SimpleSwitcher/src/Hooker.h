@@ -73,6 +73,7 @@ public:
 		//m_clipCounter = GetClipboardSequenceNumber();
         m_dwLastCtrlCReqvest = GetTickCount64();
 	}
+    HKL getNextLang();
 
 	void CheckCurLay(bool forceSend = false);
 

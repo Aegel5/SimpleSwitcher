@@ -39,6 +39,8 @@ enum HotKeyType : TUInt32
 	//hk_RevertLastWord_CustomLang = 17,
 	//hk_RevertCycle_CustomLang = 18,
 
+    hk_toUpperSelected = 19,
+
 	hk_MAX,
 
 	

@@ -266,7 +266,7 @@ TStatus Hooker::Init()
 {
 	ClearAllWords();
 	IFS_LOG(GetPath(m_sSelfExeName, PATH_TYPE_EXE_FILENAME, SW_BIT_32));
-	IFS_RET(m_clipWorker.Init());
+	//IFS_RET(m_clipWorker.Init());
 
 	RETURN_SUCCESS;
 
@@ -554,7 +554,9 @@ TStatus Hooker::ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist)
 //}
 TStatus Hooker::ClipboardClearFormat2()
 {
-	m_clipWorker.PostMsg(ClipMode_ClipClearFormat);
+	//m_clipWorker.PostMsg(ClipMode_ClipClearFormat);
+
+	IFS_LOG(m_clipWorker.ClipboardClearFormat());
 	RETURN_SUCCESS;
 }
 
@@ -564,6 +566,11 @@ TStatus RequestClearFormat()
 	IFW_RET(timeId != 0);
 	RETURN_SUCCESS;
 }
+
+void toUpper(std::wstring& buf) {
+
+}
+
 TStatus Hooker::GetClipStringCallback()
 {
 	LOG_INFO_1(L"GetClipStringCallback");
@@ -577,23 +584,33 @@ TStatus Hooker::GetClipStringCallback()
 		LOG_INFO_1(L"TOO MANY TO REVERT. SKIP");
 	}
 	else {
-		ContextRevert ctxRev;
-		IFS_LOG(ClipboardToSendData(data, ctxRev.keylist));
+        ContextRevert ctxRev;
+        ctxRev.typeRevert = m_lastRevertRequest;
+		if (m_lastRevertRequest == hk_RevertSel) {
 
-		for (auto k : ctxRev.keylist)
-		{
-			AddToWordsByHotKey(k);
-		}
+            IFS_LOG(ClipboardToSendData(data, ctxRev.keylist));
 
-		ctxRev.typeRevert = hk_RevertSel;
-		ctxRev.lay = (HKL)HKL_NEXT;
-		ctxRev.flags = SW_CLIENT_PUTTEXT | SW_CLIENT_SetLang;
+            for (auto k : ctxRev.keylist) {
+                AddToWordsByHotKey(k);
+            }
+            ctxRev.lay        = getNextLang();
+            ctxRev.flags      = SW_CLIENT_PUTTEXT | SW_CLIENT_SetLang;
+            IFS_LOG(ProcessRevert(ctxRev));
 
-		IFS_LOG(ProcessRevert(ctxRev));
+        } else if(m_lastRevertRequest == hk_toUpperSelected) {
+
+			toUpper(data);
+
+            ctxRev.flags      = SW_CLIENT_CTRLV;
+            IFS_LOG(ProcessRevert(ctxRev));
+            if(!m_savedClipData.empty())
+				Sleep(20); // подождем немного, чтобы не перезатереть наши данные восстановление буфера.
+			
+        }
 	}
 
 	if (!m_savedClipData.empty()) {
-		RequestWaitClip(CLRMY_hk_RESTORE);
+		RequestWaitClip(CLRMY_hk_RESTORE); // делаем это только чтобы не вызывалась очистка формата
         m_clipWorker.MoveToData(m_savedClipData);
         m_clipWorker.PostMsg(ClipMode_RestoreClipData);
         m_savedClipData.clear();
@@ -872,12 +889,48 @@ TStatus SendUpForKey(CHotKey key)
 	RETURN_SUCCESS;
 }
 
+HKL Hooker::getNextLang () {
+
+    auto& lst = settings_thread.customLangList;
+
+    if (lst.size() <= 1) {
+        return (HKL)HKL_NEXT;
+    }
+
+    auto lay = CurLay();
+    if (lay == 0) {
+        // к сожалению наш список работать не будет (
+        // TODO возможно будет работать если послать несколь NEXT чтобы пропустить ненужную раскладку (нужен монитор тек
+        // языка)
+        return (HKL)HKL_NEXT;
+    }
+
+    HKL toSet = 0;
+    for (size_t i = 0; i < lst.size(); ++i) {
+        if (lay == lst[i]) {
+            if (i == lst.size() - 1) {
+                toSet = lst[0];
+            } else {
+                toSet = lst[i + 1];
+            }
+            break;
+        }
+    }
+    if (toSet == 0) // not found
+    {
+        LOG_WARN(L"not found hwnd lay in our list");
+        toSet = lst[0];
+    }
+
+    return toSet;
+};
+
 
 TStatus Hooker::NeedRevert2(ContextRevert& data)
 {
 	HotKeyType typeRevert = data.typeRevert;
 
-	if (typeRevert == hk_CapsGenerate || typeRevert == hk_ScrollGenerate)
+	if (Utils::is_in(typeRevert, hk_CapsGenerate, hk_ScrollGenerate))
 	{
 		TKeyCode k = (typeRevert == hk_CapsGenerate) ? VK_CAPITAL : VK_SCROLL;
 		InputSender inputSender;
@@ -908,45 +961,11 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		RETURN_SUCCESS;
 	}
 
-	auto getNextLang = [this](const std::vector<HKL>& lst) {
 
-        if (lst.size() <= 1) {
-            return (HKL)HKL_NEXT;
-        }
-
-		auto lay = CurLay();
-        if (lay == 0) {
-			// к сожалению наш список работать не будет (
-			// TODO возможно будет работать если послать несколь NEXT чтобы пропустить ненужную раскладку (нужен монитор тек языка)
-            return (HKL)HKL_NEXT;
-        }
-
-		HKL toSet = 0;
-		for (size_t i = 0; i < lst.size(); ++i)
-		{
-            if (lay == lst[i])
-			{
-				if (i == lst.size() - 1)
-				{
-					toSet = lst[0];
-				} else
-				{
-					toSet = lst[i + 1];
-				}
-				break;
-			}
-		}
-		if (toSet == 0) // not found
-		{
-            LOG_WARN(L"not found hwnd lay in our list");
-			toSet = lst[0];
-		}
-		return toSet;
-	};
 
 	if (typeRevert == hk_CycleCustomLang) {
         data.flags = SW_CLIENT_SetLang;
-        data.lay   = getNextLang(settings_thread.customLangList);
+        data.lay   = getNextLang();
         IFS_RET(ProcessRevert(data));
         RETURN_SUCCESS;
     }
@@ -959,7 +978,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	//	RETURN_SUCCESS;
 	//}
 
-	if (typeRevert == hk_ChangeSetLayout_1 || typeRevert == hk_ChangeSetLayout_2 || typeRevert == hk_ChangeSetLayout_3)
+	if (Utils::is_in(typeRevert, hk_ChangeSetLayout_1, hk_ChangeSetLayout_2, hk_ChangeSetLayout_3))
 	{
 		HKL hkl = 0;
 		if (typeRevert == hk_ChangeSetLayout_1)
@@ -977,13 +996,13 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	}
 
 
-	if (typeRevert == hk_RevertSel)
+	if (Utils::is_in(typeRevert == hk_RevertSel, hk_toUpperSelected))
 	{
 		IFS_RET(SendCtrlC(CLRMY_GET_FROM_CLIP));
 		RETURN_SUCCESS;
 	}
 
-	auto nextLng = getNextLang(settings_thread.customLangList);
+	auto nextLng = getNextLang();
 
 
 	// ---------------classic revert---------------

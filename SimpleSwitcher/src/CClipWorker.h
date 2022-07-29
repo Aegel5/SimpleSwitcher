@@ -2,14 +2,14 @@
 
 #include "CMainWorker.h"
 
-enum ClipMode
-{
-	ClipMode_GetClipString,
-	ClipMode_ClipClearFormat,
-	ClipMode_SavePrevData,
-	ClipMode_RestoreClipData,
-	//ClipMode_InsertData,
-};
+//enum ClipMode
+//{
+//	ClipMode_GetClipString,
+//	ClipMode_ClipClearFormat,
+//	ClipMode_SavePrevData,
+//	ClipMode_RestoreClipData,
+//	//ClipMode_InsertData,
+//};
 
 enum EClipRequest
 {
@@ -21,23 +21,26 @@ enum EClipRequest
     CLRMY_hk_RESTORE,
 };
 
-struct TClipMessage
-{
-	ClipMode mode;
+//struct TClipMessage
+//{
+//	ClipMode mode;
+//
+//	union
+//	{
+//		EClipRequest request;
+//	};
+//};
 
-	union
-	{
-		EClipRequest request;
-	};
-};
+// TODO Этот поток нужен только в случае зависания работы с буфером, возможно это уже не актуально. 
+// Поэтому этот поток лучше убрать, все делать в главном.
 
 class CClipWorker
 {
 private:
-	std::mutex  mtxClipboardData;
+	//std::mutex  mtxClipboardData;
 	std::wstring m_sClipData;
 	//std::wstring m_clipboardSave;
-	ThreadQueue::CThreadQueue<TClipMessage> m_queueClip;
+	//ThreadQueue::CThreadQueue<TClipMessage> m_queueClip;
 
 	TStatus GetFromClipBoardOur(std::wstring& data)
 	{
@@ -77,62 +80,7 @@ private:
 	}
 
 
-	TStatus ClipboardClearFormat()
-	{
-		LOG_INFO_1(L"ClipboardClearFormat");
 
-		if (!IsClipboardFormatAvailable(CF_UNICODETEXT))
-		{
-			RETURN_SUCCESS;
-		}
-
-		CAutoClipBoard clip;
-		IFS_RET(clip.Open(gdata().hWndMonitor));
-
-		UINT format = 0;
-		bool fFound = false;
-
-		while (1)
-		{
-			format = EnumClipboardFormats(format);
-			LOG_INFO_1(L"Found format %u", format);
-			if (format == 0)
-			{
-				if (GetLastError() != ERROR_SUCCESS)
-				{
-					IFW_LOG(FALSE);
-				}
-				break;
-			}
-			if (format >= 40000)
-			{
-				fFound = true;
-                break;
-			}
-		}
-
-		LOG_INFO_1(L"fFound=%u", fFound);
-
-		if (!fFound)
-		{
-			LOG_INFO_1(L"Skip clear format because format not found");
-			RETURN_SUCCESS;
-		}
-
-		std::wstring data;
-		IFS_RET(GetFromClipBoardOur(data));
-
-		if (data.length() == 0)
-		{
-			LOG_INFO_1(L"skip empty data");
-			RETURN_SUCCESS;
-		}
-
-		IFS_RET(PutToClipBoardOur(data));
-
-
-		RETURN_SUCCESS;
-	}
 
 	TStatus PutToClipBoardOur(std::wstring& data)
 	{
@@ -172,96 +120,143 @@ private:
 		RETURN_SUCCESS;
 	}
 
-	void ClipboardWorker()
-	{
-		IFW_LOG(SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL));
+	//void ClipboardWorker()
+	//{
+	//	IFW_LOG(SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL));
 
-		TClipMessage msg;
-		while (true)
-		{
-			if (!m_queueClip.GetMessage(msg))
-			{
-				break;
-			}
-			auto mode = msg.mode;
-			if (mode == ClipMode_GetClipString)
-			{
-				std::wstring data;
-				IFS_LOG(OpenAndGetFromClipBoardOur(data));
+	//	TClipMessage msg;
+	//	while (true)
+	//	{
+	//		if (!m_queueClip.GetMessage(msg))
+	//		{
+	//			break;
+	//		}
+	//		auto mode = msg.mode;
+	//		if (mode == ClipMode_GetClipString)
+	//		{
+	//			std::wstring data;
+	//			IFS_LOG(OpenAndGetFromClipBoardOur(data));
 
-				LOG_INFO_2(L"buf: %s\n, len: %u", data.c_str(), data.length());
+	//			LOG_INFO_2(L"buf: %s\n, len: %u", data.c_str(), data.length());
 
-				if (data.length() == 0)
-				{
-					LOG_INFO_1(L"Skip empty buffer");
-				}
-				else if (data.length() > 1000)
-				{
-					LOG_INFO_1(L"Skip length > 1000");
-				}
-				else
-				{
-                    MoveToData(data);
-					Worker()->PostMsg(HWORKER_GetClipStringCallback);
-				}
-			}
-			else if (mode == ClipMode_SavePrevData)
-			{
-				std::wstring data;
-				IFS_LOG(OpenAndGetFromClipBoardOur(data));
-                MoveToData(data);
-				Worker()->PostMsgW(HWORKER_SavePrevDataCallback, (WPARAM)msg.request);
-			}
-			else if (mode == ClipMode_RestoreClipData)
-			{
-                std::wstring data = TakeData();
-                IFS_LOG(OpenAndPutToClipBoardOur(data));
-			}
-			else if (mode == ClipMode_ClipClearFormat)
-			{
-				IFS_LOG(ClipboardClearFormat());
-			}
-			//else if (mode == ClipMode_InsertData)
-			//{
-   //             std::wstring data = TakeData();
-			//	IFS_LOG(OpenAndPutToClipBoardOur(data));
-			//}
-		}
-		LOG_INFO_1(L"Exit clip worker");
-	}
+	//			if (data.length() == 0)
+	//			{
+	//				LOG_INFO_1(L"Skip empty buffer");
+	//			}
+	//			else if (data.length() > 1000)
+	//			{
+	//				LOG_INFO_1(L"Skip length > 1000");
+	//			}
+	//			else
+	//			{
+ //                   MoveToData(data);
+	//				Worker()->PostMsg(HWORKER_GetClipStringCallback);
+	//			}
+	//		}
+	//		else if (mode == ClipMode_SavePrevData)
+	//		{
+	//			std::wstring data;
+	//			IFS_LOG(OpenAndGetFromClipBoardOur(data));
+ //               MoveToData(data);
+	//			Worker()->PostMsgW(HWORKER_SavePrevDataCallback, (WPARAM)msg.request);
+	//		}
+	//		else if (mode == ClipMode_RestoreClipData)
+	//		{
+ //               std::wstring data = TakeData();
+ //               IFS_LOG(OpenAndPutToClipBoardOur(data));
+	//		}
+	//		else if (mode == ClipMode_ClipClearFormat)
+	//		{
+	//			IFS_LOG(ClipboardClearFormat());
+	//		}
+	//		//else if (mode == ClipMode_InsertData)
+	//		//{
+ //  //             std::wstring data = TakeData();
+	//		//	IFS_LOG(OpenAndPutToClipBoardOur(data));
+	//		//}
+	//	}
+	//	LOG_INFO_1(L"Exit clip worker");
+	//}
 public:
+    TStatus ClipboardClearFormat() {
+        LOG_INFO_1(L"ClipboardClearFormat");
+
+        if (!IsClipboardFormatAvailable(CF_UNICODETEXT)) {
+            RETURN_SUCCESS;
+        }
+
+        CAutoClipBoard clip;
+        IFS_RET(clip.Open(gdata().hWndMonitor));
+
+        UINT format = 0;
+        bool fFound = false;
+
+        while (1) {
+            format = EnumClipboardFormats(format);
+            LOG_INFO_1(L"Found format %u", format);
+            if (format == 0) {
+                if (GetLastError() != ERROR_SUCCESS) {
+                    IFW_LOG(FALSE);
+                }
+                break;
+            }
+            if (format >= 40000) {
+                fFound = true;
+                break;
+            }
+        }
+
+        LOG_INFO_1(L"fFound=%u", fFound);
+
+        if (!fFound) {
+            LOG_INFO_1(L"Skip clear format because format not found");
+            RETURN_SUCCESS;
+        }
+
+        std::wstring data;
+        IFS_RET(GetFromClipBoardOur(data));
+
+        if (data.length() == 0) {
+            LOG_INFO_1(L"skip empty data");
+            RETURN_SUCCESS;
+        }
+
+        IFS_RET(PutToClipBoardOur(data));
+
+        RETURN_SUCCESS;
+    }
     tstring TakeData()
 	{
         tstring loc;
         { 
-			std::unique_lock<std::mutex> lock(mtxClipboardData);
+			//std::unique_lock<std::mutex> lock(mtxClipboardData);
             loc = std::move(m_sClipData);
 		}
         return loc;
 	}
 	void MoveToData(tstring& data)
 	{
-		std::unique_lock<std::mutex> lock(mtxClipboardData);
+		//std::unique_lock<std::mutex> lock(mtxClipboardData);
 		m_sClipData = std::move(data);
 	}
-	TStatus Init()
-	{
-		m_queueClip.StartWorker(std::bind(&CClipWorker::ClipboardWorker, this));
-		RETURN_SUCCESS;
-	}
-	void PostMsg(ClipMode mode)
-	{
-		TClipMessage msg;
-		msg.mode = mode;
-		m_queueClip.PostMsg(msg);
-	}
-	void PostMsg(ClipMode mode, EClipRequest request)
-	{
-		TClipMessage msg;
-		msg.mode = mode;
-		msg.request = request;
-		m_queueClip.PostMsg(msg);
-	}
+	//TStatus Init()
+	//{
+	//	m_queueClip.StartWorker(std::bind(&CClipWorker::ClipboardWorker, this));
+	//	RETURN_SUCCESS;
+	//}
+	//void PostMsg(ClipMode mode)
+	//{
+	//	TClipMessage msg;
+	//	msg.mode = mode;
+	//	m_queueClip.PostMsg(msg);
+	//}
+	//void PostMsg(ClipMode mode, EClipRequest request)
+	//{
+	//	TClipMessage msg;
+	//	msg.mode = mode;
+	//	msg.request = request;
+	//	m_queueClip.PostMsg(msg);
+	//}
 };
 
 

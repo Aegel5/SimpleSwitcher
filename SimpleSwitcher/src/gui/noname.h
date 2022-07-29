@@ -77,6 +77,7 @@ class MyFrame4 : public wxFrame
 		wxButton* m_button96;
 		wxPanel* m_panel5;
 		wxCheckBox* m_checkcapsrem;
+		wxCheckBox* m_check_scrollremap;
 		wxStaticText* m_staticText321;
 		wxTextCtrl* m_textcapsgen;
 		wxButton* m_button97;
@@ -103,6 +104,7 @@ class MyFrame4 : public wxFrame
 		virtual void onLayChoice( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onClearFilter( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onRemapCaps( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onRemapScroll( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onUpdateRemap( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onDeleteRemap( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onEnableLog( wxCommandEvent& event ) { event.Skip(); }

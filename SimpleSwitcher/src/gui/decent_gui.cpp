@@ -257,9 +257,12 @@ private:
         IFS_LOG(remap.FromRegistry());
 
         TKeyCode caps;
-        remap.GetRemapedKey(VK_CAPITAL, caps);
 
+        remap.GetRemapedKey(VK_CAPITAL, caps);
         m_checkcapsrem->SetValue(caps == VK_F24);
+
+        remap.GetRemapedKey(VK_SCROLL, caps);
+        m_check_scrollremap->SetValue(caps == VK_F23);
 
         auto caption = [](DWORD sc, DWORD vc) {
             return fmt::format(L"sc: {}, vk: {}, '{}'", sc, vc, HotKeyNames::Global().GetName(vc));
@@ -274,8 +277,13 @@ private:
     }
     virtual void onRemapCaps(wxCommandEvent& event)
     {
+        auto obj = event.GetEventObject();
+        auto check = wxDynamicCast(obj, wxCheckBox);
+        if (check == nullptr)
+            return;
+
         if (!Utils::IsSelfElevated()) {
-            m_checkcapsrem->SetValue(!m_checkcapsrem->GetValue());
+            check->SetValue(!check->GetValue());
             ShowNeedAdmin();
             return;
         }
@@ -284,12 +292,16 @@ private:
         IFS_LOG(remap.FromRegistry());
 
         bool showmsg = false;
-        if (m_checkcapsrem->GetValue()) {
-            remap.PutRemapKey(VK_CAPITAL, VK_F24);
+        if (check->GetValue()) {
+            if(check == m_checkcapsrem){
+                remap.PutRemapKey(VK_CAPITAL, VK_F24);
+            } else {
+                remap.PutRemapKey(VK_SCROLL, VK_F23);
+            }
             showmsg = true;
 
         } else {
-            remap.DelRemapKey(VK_CAPITAL);
+            remap.DelRemapKey(check == m_checkcapsrem ? VK_CAPITAL : VK_SCROLL);
         }
         IFS_LOG(remap.ToRegistry());
 
