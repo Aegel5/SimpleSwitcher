@@ -239,39 +239,39 @@ namespace Utils
 
 
 
-	inline TUInt64 GetBootTime()
-	{
-		typedef struct _SYSTEM_TIME_OF_DAY_INFORMATION
-		{
-			LARGE_INTEGER BootTime;
-			LARGE_INTEGER CurrentTime;
-			LARGE_INTEGER TimeZoneBias;
-			ULONG CurrentTimeZoneId;
-		} SYSTEM_TIME_OF_DAY_INFORMATION, *PSYSTEM_TIME_OF_DAY_INFORMATION;
+	//inline TUInt64 GetBootTime()
+	//{
+	//	typedef struct _SYSTEM_TIME_OF_DAY_INFORMATION
+	//	{
+	//		LARGE_INTEGER BootTime;
+	//		LARGE_INTEGER CurrentTime;
+	//		LARGE_INTEGER TimeZoneBias;
+	//		ULONG CurrentTimeZoneId;
+	//	} SYSTEM_TIME_OF_DAY_INFORMATION, *PSYSTEM_TIME_OF_DAY_INFORMATION;
 
-		SYSTEM_TIME_OF_DAY_INFORMATION SysTimeInfo;
+	//	SYSTEM_TIME_OF_DAY_INFORMATION SysTimeInfo;
 
-		TUInt64 res = 0;
+	//	TUInt64 res = 0;
 
-		__try
-		{
+	//	__try
+	//	{
 
-			NTSTATUS stat = WinApiInt::NtQuerySystemInformation(
-				SystemTimeOfDayInformation,
-				&SysTimeInfo,
-				sizeof(SysTimeInfo),
-				0);
-			if (NT_SUCCESS(stat))
-			{
-				res = SysTimeInfo.BootTime.QuadPart;
-			}
-		}
-		__except (EXCEPTION_EXECUTE_HANDLER)
-		{
+	//		NTSTATUS stat = WinApiInt::NtQuerySystemInformation(
+	//			SystemTimeOfDayInformation,
+	//			&SysTimeInfo,
+	//			sizeof(SysTimeInfo),
+	//			0);
+	//		if (NT_SUCCESS(stat))
+	//		{
+	//			res = SysTimeInfo.BootTime.QuadPart;
+	//		}
+	//	}
+	//	__except (EXCEPTION_EXECUTE_HANDLER)
+	//	{
 
-		}
-		return res;
-	}
+	//	}
+	//	return res;
+	//}
 
     template <typename First, typename... T> bool is_in(First&& first, T&&... t) { return ((first == t) || ...); }
 }

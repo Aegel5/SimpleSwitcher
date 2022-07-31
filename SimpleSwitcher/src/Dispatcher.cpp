@@ -51,13 +51,9 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 
 	gdata().hWndMonitor = hWnd;
 
-	if (gdata().curModeBit == SW_BIT_32)
-	{
-		if (WinApiInt::AddClipboardFormatListener)
-		{
-			IFW_LOG(WinApiInt::AddClipboardFormatListener(hWnd));
-		}
-	}
+	if (gdata().curModeBit == SW_BIT_32) {
+        IFW_LOG(AddClipboardFormatListener(hWnd));
+    }
 
 	IFW_LOG(ChangeWindowMessageFilterEx(hWnd, WM_LayNotif, MSGFLT_ALLOW, 0));
 
@@ -295,7 +291,7 @@ namespace {
 	HookGlobalHandles* hh = nullptr;
 }
 TStatus resethook() {
-	hh->hHookKeyGlobal = WinApiInt::SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, 0, 0);
+	hh->hHookKeyGlobal = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, 0, 0);
 
 	//hh->hHookKeyGlobal_2.Cleanup();
 	//if (setsgui.fEnableKeyLoggerDefence) {
@@ -317,11 +313,11 @@ TStatus HookGlobal(HookGlobalHandles& handles)
 	IFS_RET(resethook());
 
 #ifndef _DEBUG
-	handles.hHookMouseGlobal = WinApiInt::SetWindowsHookEx(WH_MOUSE_LL, LowLevelMouseProc, 0, 0);
+	handles.hHookMouseGlobal = SetWindowsHookEx(WH_MOUSE_LL, LowLevelMouseProc, 0, 0);
 	IFW_RET(handles.hHookMouseGlobal.IsValid());
 #endif
 
-	handles.hHookEventGlobal = WinApiInt::SetWinEventHook(
+	handles.hHookEventGlobal = SetWinEventHook(
 		EVENT_SYSTEM_FOREGROUND,
 		EVENT_SYSTEM_FOREGROUND,
 		NULL,

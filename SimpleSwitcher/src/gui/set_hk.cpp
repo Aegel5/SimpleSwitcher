@@ -45,7 +45,7 @@ public:
         updateField();
 
         curwnd = GetHWND();
-        hook   = WinApiInt::SetWindowsHookEx(WH_KEYBOARD_LL, &LowLevelKeyboardProc, 0, 0);
+        hook   = SetWindowsHookEx(WH_KEYBOARD_LL, &LowLevelKeyboardProc, 0, 0);
         IFW_LOG(hook.IsValid());
     }
     CHotKey key;

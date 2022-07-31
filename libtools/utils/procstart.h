@@ -9,7 +9,7 @@ namespace procstart
 
 		SW_CREATEPROC_NORMAL,
 		SW_CREATEPROC_AS_USER,
-		SW_CREATEPROC_TOKEN,
+		//SW_CREATEPROC_TOKEN,
 		SW_CREATEPROC_SHELLEXE,
 	};
 
@@ -125,7 +125,7 @@ namespace procstart
 
 			hProc = shExInfo.hProcess;
 		}
-		else if (parm.mode == SW_CREATEPROC_NORMAL || parm.mode == SW_CREATEPROC_AS_USER || parm.mode == SW_CREATEPROC_TOKEN)
+		else if (parm.mode == SW_CREATEPROC_NORMAL || parm.mode == SW_CREATEPROC_AS_USER )
 		{
 			STARTUPINFO         siStartupInfo;
 			PROCESS_INFORMATION piProcessInfo;
@@ -164,19 +164,19 @@ namespace procstart
 					&siStartupInfo,
 					&piProcessInfo);
 			}
-			else if (parm.mode == SW_CREATEPROC_TOKEN)
-			{
-				Res = WinApiInt::CreateProcessWithTokenW(
-					parm.hToken,
-					0,
-					sExe,
-					args,
-					0,
-					NULL,
-					NULL,
-					&siStartupInfo,
-					&piProcessInfo);
-			}
+			//else if (parm.mode == SW_CREATEPROC_TOKEN)
+			//{
+			//	Res = WinApiInt::CreateProcessWithTokenW(
+			//		parm.hToken,
+			//		0,
+			//		sExe,
+			//		args,
+			//		0,
+			//		NULL,
+			//		NULL,
+			//		&siStartupInfo,
+			//		&piProcessInfo);
+			//}
 			IFW_RET(Res, L"Cant create proc %s %s", sExe, args);
 
 			CloseHandle(piProcessInfo.hThread);
