@@ -151,7 +151,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SettingsGui,
     
 
 
-TStatus Load(SettingsGui& gui, bool* notExists) {
+TStatus LoadConfig(SettingsGui& gui, bool* notExists) {
     try {
 
         if (notExists != nullptr)

@@ -70,7 +70,7 @@ TStatus CMainWorker::WorkerInt()
 		else if (mode == HWORKER_LoadSettings)
 		{
 			// todo load not from file but from safe copy.
-            IFS_LOG(Load(settings_thread));
+            IFS_LOG(LoadConfig(settings_thread));
 			//IFS_LOG(ResetAllHotKey(*gdata().hotkeyHolders));
         } else if (mode == HWORKER_Getcurlay) {
             hooker.CheckCurLay(true);

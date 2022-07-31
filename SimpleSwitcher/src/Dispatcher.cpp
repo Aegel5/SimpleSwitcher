@@ -339,7 +339,7 @@ TStatus StartMonitor(
 	TSWBit bit)
 {
 
-	IFS_RET(Load(settings_thread));
+	IFS_RET(LoadConfig(settings_thread));
 
 	LOG_INFO_1(L"StartMonitor...");
 
