@@ -195,12 +195,12 @@ inline void SetLogLevel2(TLogLevel logLevel)
 
 class WinErrBOOL
 {
-	bool m_res;
+	bool m_res = false;
 	DWORD m_dwErr;
 public:
-	WinErrBOOL(BOOL r) { m_res = r ? true : false; }
+	WinErrBOOL(BOOL r) : m_res(r) {}
 	WinErrBOOL(bool r) : m_res(r) {}
-    WinErrBOOL(): m_res(false) {}
+    WinErrBOOL() {}
 	void SetError(DWORD err) {m_dwErr = err;}
 	void Log()	
 	{
