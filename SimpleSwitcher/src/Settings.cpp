@@ -183,7 +183,7 @@ TStatus LoadConfig(SettingsGui& gui, bool* notExists) {
                 auto key = HotKeyTypeName(elem.second.hkId);
                 auto it  = arr.find(key);
                 if (it != arr.end()) {
-                    auto obj = it.value();
+                    auto& obj = it.value();
                     if (obj.is_array()) {
                         elem.second.keys = obj;
                         if (elem.second.keys.empty()) {
