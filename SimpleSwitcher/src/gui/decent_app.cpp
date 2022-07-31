@@ -34,12 +34,18 @@ bool MyApp::OnInit()
     //    return false;
 
     SetLogLevel(setsgui.fDbgMode ? LOG_LEVEL_1 : LOG_LEVEL_0);
-    auto err = Load(setsgui);
+    bool notExists = false;
+    auto err = Load(setsgui, &notExists);
     IFS_LOG(err);
+
+    if (notExists) {
+        IFS_LOG(Save());
+    }
+
     //if (err != SW_ERR_SUCCESS) {
     //    wxMessageBox("Error reading config");
     //}
-    SetLogLevel2(setsgui.fDbgMode ? setsgui.ll : LOG_LEVEL_0);
+    SetLogLevel2(setsgui.fDbgMode ? setsgui.logLevel : LOG_LEVEL_0);
 
     IFS_LOG(autoCom.Init());
     //Initlll();

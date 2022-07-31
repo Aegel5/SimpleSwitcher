@@ -144,7 +144,7 @@ public:
     std::set<std::string> disableInPrograms;
     std::set<std::wstring> __disableInPrograms; // TODO use wxString instead!!!
 
-    TLogLevel ll = LOG_LEVEL_3;
+    TLogLevel logLevel = LOG_LEVEL_3;
 
     bool IsSkipProgram(std::wstring sExeName) {
         auto has = __disableInPrograms.find(sExeName) != __disableInPrograms.end();
@@ -194,9 +194,11 @@ inline SettingsGui setsgui;
 
 inline int g_hotkeyWndOpened = 0;
 
-TStatus Load(SettingsGui& sets);
-
-TStatus Save();
+TStatus Load(SettingsGui& sets, bool* notExists = nullptr);
+TStatus Save2(SettingsGui& gui);
+inline TStatus Save() {
+    return Save2(setsgui);
+}
 
 inline void SaveAndPostMsg() {
     IFS_LOG(Save());

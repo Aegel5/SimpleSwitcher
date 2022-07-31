@@ -217,7 +217,7 @@ private:
     virtual void onEnableLog(wxCommandEvent& event)
     {
         setsgui.fDbgMode = event.IsChecked();
-        SetLogLevel2(setsgui.fDbgMode ? setsgui.ll : LOG_LEVEL_0);
+        SetLogLevel2(setsgui.fDbgMode ? setsgui.logLevel : LOG_LEVEL_0);
         SaveAndPostMsg();
     }
     virtual void onPrevent(wxCommandEvent& event){

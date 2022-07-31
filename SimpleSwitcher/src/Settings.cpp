@@ -79,7 +79,7 @@ void SettingsGui::GenerateListHK()
     {
         CHotKeySet set;
         set.def = CHotKey(VK_LSHIFT, VK_RSHIFT);
-        set.def.SetLeftRightMode(true);
+        //set.def.SetLeftRightMode(true);
         AddHotKey(hk_CycleCustomLang, set);
     }
 
@@ -144,27 +144,31 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SettingsGui,
                                                 showFlags,
                                                 disableInPrograms,
                                                 customLangList,
-                                                hkl_lay
+                                                hkl_lay,
+                                                logLevel
 
     )
+    
 
 
-TStatus Load(SettingsGui& gui) {
-
+TStatus Load(SettingsGui& gui, bool* notExists) {
     try {
 
-    std::wstring sCurFolder;
-    IFS_RET(GetPath(sCurFolder, PATH_TYPE_SELF_FOLDER, GetSelfBit()));
-    std::wstring res = sCurFolder + L"conf.json";
+        if (notExists != nullptr)
+            *notExists = false;
 
-    if (!FileUtils::IsFileExists(res.c_str())) {
-        RETURN_SUCCESS;
-    }
+        std::wstring path;
+        IFS_RET(GetPath_Conf(path));
 
-    std::ifstream ifs(res);
+        if (!FileUtils::IsFileExists(path.c_str())) {
+            if (notExists != nullptr)
+                *notExists = true;
+            RETURN_SUCCESS;
+        }
 
+        std::ifstream ifs(path);
 
-        json data = json::parse(ifs, nullptr,true, true);
+        json data = json::parse(ifs, nullptr, true, true);
 
         gui = data.get<SettingsGui>();
 
@@ -196,23 +200,19 @@ TStatus Load(SettingsGui& gui) {
             gui.__disableInPrograms.insert(s);
         }
 
-
     } catch (std::exception& e) {
         return SW_ERR_JSON;
     }
 
-	RETURN_SUCCESS;
+    RETURN_SUCCESS;
 }
 
 
 
-TStatus Save() {
+TStatus Save2(SettingsGui& gui) {
     try {
-        std::wstring sCurFolder;
-        IFS_RET(GetPath(sCurFolder, PATH_TYPE_SELF_FOLDER, GetSelfBit()));
-        std::wstring file = sCurFolder + L"conf.json";
-
-        SettingsGui& gui = setsgui;
+        std::wstring path;
+        IFS_RET(GetPath_Conf(path));
 
         json data = gui;
         json hk;
@@ -225,7 +225,7 @@ TStatus Save() {
         data["hotkeys"] = hk;
 
         std::stringstream o;
-        //std::ofstream o(res);
+        // std::ofstream o(res);
         o << std::setw(4) << data << std::endl;
 
         auto json = o.str();
@@ -234,23 +234,19 @@ TStatus Save() {
             auto it = json.find(s);
             if (it != std::string::npos) {
                 it = json.find("\n", it);
-                if(it != -1)
+                if (it != -1)
                     json.insert(it, comm);
             }
         };
 
-        insert_after("\"disableInPrograms",
-                      " // example [\"game1.exe\"]");
+        insert_after("\"disableInPrograms", " // example [\"game1.exe\"]");
 
-        std::ofstream outp(file);
+        std::ofstream outp(path);
         outp << json;
-
-
 
     } catch (std::exception& e) {
         return SW_ERR_JSON;
     }
 
     RETURN_SUCCESS;
-
 }

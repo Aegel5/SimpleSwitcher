@@ -265,7 +265,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 TStatus Hooker::Init()
 {
 	ClearAllWords();
-	IFS_LOG(GetPath(m_sSelfExeName, PATH_TYPE_EXE_FILENAME, SW_BIT_32));
+    IFS_LOG(GetPath_fileExe_lower(m_sSelfExeName));
 	//IFS_RET(m_clipWorker.Init());
 
 	RETURN_SUCCESS;
@@ -955,28 +955,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		RETURN_SUCCESS;
 	}
 
-	//if (typeRevert == hk_EmulCopyNoFormat || typeRevert == hk_EmulCopyWithFormat)
-	//{
-	//	//IFS_RET(SendUpForKey(m_curKey));
-	//	IFS_RET(SendCtrlC(CLRMY_hk_COPY));
-	//	RETURN_SUCCESS;
-	//}
-
 	IFS_RET(AnalizeTopWnd());
-
-	if (m_sTopProcName == m_sSelfExeName)
-	{
-		LOG_INFO_1(L"Skip hotkey in self program");
-		RETURN_SUCCESS;
-	}
-
-	if (settings_thread.IsSkipProgram(m_sTopProcName))
-	{
-		LOG_INFO_1(L"Skip process %s because of disableInProcess", m_sTopProcName.c_str());
-		RETURN_SUCCESS;
-	}
-
-
 
 	if (typeRevert == hk_CycleCustomLang) {
         data.flags = SW_CLIENT_SetLang;
@@ -984,14 +963,6 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
         IFS_RET(ProcessRevert(data));
         RETURN_SUCCESS;
     }
-
-	//if (typeRevert == hk_ChangeLayoutCycle)
-	//{
-	//	data.flags = SW_CLIENT_SetLang;
-	//	data.lay = (HKL)HKL_NEXT;
-	//	IFS_RET(ProcessRevert(data));
-	//	RETURN_SUCCESS;
-	//}
 
 	if (Utils::is_in(typeRevert, hk_ChangeSetLayout_1, hk_ChangeSetLayout_2, hk_ChangeSetLayout_3))
 	{
@@ -1011,14 +982,25 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	}
 
 
-	if (Utils::is_in(typeRevert, hk_RevertSel, hk_toUpperSelected))
-	{
-		IFS_RET(SendCtrlC(CLRMY_GET_FROM_CLIP));
-		RETURN_SUCCESS;
-	}
+	bool is_skip = false;
+    if (m_sTopProcName == m_sSelfExeName) {
+        LOG_INFO_1(L"Skip hotkey in self program");
+        is_skip = true;
+    }
+    if (settings_thread.IsSkipProgram(m_sTopProcName)) {
+        LOG_INFO_1(L"Skip process %s because of disableInProcess", m_sTopProcName.c_str());
+        is_skip = true;
+    }
+	if (is_skip)
+        RETURN_SUCCESS;
+
+
+	if (Utils::is_in(typeRevert, hk_RevertSel, hk_toUpperSelected)) {
+        IFS_RET(SendCtrlC(CLRMY_GET_FROM_CLIP));
+        RETURN_SUCCESS;
+    }
 
 	auto nextLng = getNextLang();
-
 
 	// ---------------classic revert---------------
 

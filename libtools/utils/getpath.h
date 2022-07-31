@@ -4,11 +4,11 @@ enum TPathType
 {
 	PATH_TYPE_SELF_FOLDER,
 	PATH_TYPE_EXE_PATH,
-	PATH_TYPE_DLL_NAME,
+	//PATH_TYPE_DLL_NAME,
 	PATH_TYPE_EXE_FILENAME,
 };
 
-inline TStatus __GetPath(std::wstring& sPath, TPathType type, TSWBit bit, bool tolower)
+inline TStatus __GetPath(std::wstring& sPath, TPathType type, bool tolower)
 {
 	TCHAR buf[0x1000];
 	DWORD nSize = GetModuleFileName(NULL, buf, SW_ARRAY_SIZE(buf));
@@ -36,40 +36,54 @@ inline TStatus __GetPath(std::wstring& sPath, TPathType type, TSWBit bit, bool t
 
 
 
-	size_t index = sPath.rfind(L"64.exe");
-	if (index != std::string::npos)
-		sPath.erase(index);
-	index = sPath.rfind(L".exe");
-	if (index != std::string::npos)
-		sPath.erase(index);
+	//size_t index = sPath.rfind(L"64.exe");
+	//if (index != std::string::npos)
+	//	sPath.erase(index);
+	//index = sPath.rfind(L".exe");
+	//if (index != std::string::npos)
+	//	sPath.erase(index);
 
-	if (type == PATH_TYPE_DLL_NAME)
-	{
-		sPath += L"hook";
-	}
+	//if (type == PATH_TYPE_DLL_NAME)
+	//{
+	//	sPath += L"hook";
+	//}
 
-	if (bit == SW_BIT_64)
-	{
-		sPath += L"64";
-	}
+	//if (bit == SW_BIT_64)
+	//{
+	//	sPath += L"64";
+	//}
 
-	if (type == PATH_TYPE_DLL_NAME)
-	{
-		sPath += L".dll";
-	}
-	else
-	{
-		sPath += L".exe";
-	}
+	//if (type == PATH_TYPE_DLL_NAME)
+	//{
+	//	sPath += L".dll";
+	//}
+	//else
+	//{
+	//	sPath += L".exe";
+	//}
 
 
 	RETURN_SUCCESS;
 }
 
-inline TStatus GetPath(std::wstring& sPath, TPathType type, TSWBit bit) {
-	return __GetPath(sPath, type, bit, true);
+//inline TStatus GetPath(std::wstring& sPath, TPathType type) {
+//	return __GetPath(sPath, type, true);
+//}
+
+inline TStatus GetPath_folder_noLower(std::wstring& sPath) {
+	return __GetPath(sPath, PATH_TYPE_SELF_FOLDER, false);
 }
 
 inline TStatus GetPath_exe_noLower(std::wstring& sPath) {
-	return __GetPath(sPath, PATH_TYPE_EXE_PATH, SW_BIT_32, false);
+	return __GetPath(sPath, PATH_TYPE_EXE_PATH, false);
+}
+
+inline TStatus GetPath_fileExe_lower(std::wstring& sPath) {
+	return __GetPath(sPath, PATH_TYPE_EXE_FILENAME, true);
+}
+
+inline TStatus GetPath_Conf(std::wstring& path) {
+	IFS_RET(GetPath_folder_noLower(path));
+	path += L"conf.json";
+	RETURN_SUCCESS;
 }

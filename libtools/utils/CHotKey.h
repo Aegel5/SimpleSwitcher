@@ -229,6 +229,16 @@ public:
 		ADDKEY_ORDERED = 0x1,
 		ADDKEY_ENSURE_ONE_VALUEKEY = 0x2,
 	};
+	CHotKey& Simple_Append(TKeyCode key) {
+		if (size < c_MAX)
+			++size;
+		for (int i = size - 1; i > 0; i--)
+		{
+			keys[i] = keys[i - 1];
+		}
+		keys[0] = key;
+		return *this;
+	}
 	CHotKey& Add(TKeyCode key, int flags = ADDKEY_NORMAL)
 	{
 		for (TKeyCode k : *this)
@@ -256,13 +266,7 @@ public:
 
 		if (TestFlag(flags, ADDKEY_ORDERED))
 		{
-			if (size < c_MAX)
-				++size;
-			for (int i = size - 1; i > 0; i--)
-			{
-				keys[i] = keys[i - 1];
-			}
-			keys[0] = key;
+			Simple_Append(key);
 		}
 		else
 		{
@@ -549,6 +553,7 @@ public:
 	}
 	TStatus FromString(const std::string& s)
 	{
+
 		std::wstring s2;
 		IFS_RET(Str_Utils::Utf8ToWide(s.c_str(), s2));
 		IFS_RET(FromString(s2));
@@ -557,6 +562,9 @@ public:
 	TStatus FromString(const std::wstring& s)
 	{
 		Clear();
+
+		if (s.empty())
+			RETURN_SUCCESS;
 
 		std::wstring ss = s;
 
@@ -594,7 +602,7 @@ public:
 			}
 
 
-			Add(kCur);
+			Simple_Append(kCur);
 		}
 
 		RETURN_SUCCESS;

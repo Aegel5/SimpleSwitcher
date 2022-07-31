@@ -71,7 +71,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
     g_laynotif.inited = false;
 	if (setsgui.injectDll) {
         tstring sFolder;
-        IFS_RET(GetPath(sFolder, PATH_TYPE_SELF_FOLDER, SW_BIT_32));
+        IFS_RET(GetPath_folder_noLower(sFolder));
 
         bool locInited    = true;
 
