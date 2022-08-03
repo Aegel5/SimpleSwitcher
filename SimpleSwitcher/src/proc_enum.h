@@ -79,7 +79,7 @@ public:
 
         {
             PROCESSENTRY32 pe32;
-            CAutoHandle2 snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+            CAutoHandle snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
             IFW_RET(snap.IsValid());
             pe32.dwSize = sizeof(PROCESSENTRY32);
             IFW_RET(Process32First(snap, &pe32));

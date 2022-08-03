@@ -6,11 +6,11 @@ struct __Handle2Wrapper
 {
 	HANDLE obj = INVALID_HANDLE_VALUE;
 	HANDLE& ref() { return obj; }
-	bool IsValid() { return obj != INVALID_HANDLE_VALUE; }
+	bool IsValid() { return obj != INVALID_HANDLE_VALUE && obj != NULL; }
 	void ToNull() { obj = INVALID_HANDLE_VALUE; }
 	void CleanupFunction() { ::CloseHandle(obj); }
 };
-using CAutoHandle2 = TemplateAutoClose2<HANDLE, __Handle2Wrapper>;
+using CAutoHandle = TemplateAutoClose2<HANDLE, __Handle2Wrapper>;
 
 struct __HandleFindWrapper
 {
@@ -23,7 +23,7 @@ struct __HandleFindWrapper
 using CAutoHandleFind = TemplateAutoClose2<HANDLE, __HandleFindWrapper>;
 
 
-MAKE_AUTO_CLEANUP(HANDLE, ::CloseHandle, NULL, CAutoHandle)
+//MAKE_AUTO_CLEANUP(HANDLE, ::CloseHandle, NULL, CAutoHandle__)
 MAKE_AUTO_CLEANUP(HHOOK, ::UnhookWindowsHookEx, NULL, CAutoHHOOK)
 MAKE_AUTO_CLEANUP(HKEY, ::RegCloseKey, NULL, CAutoCloseHKey)
 MAKE_AUTO_CLEANUP(HWINEVENTHOOK, ::UnhookWinEvent, NULL, CAutoHWINEVENTHOOK)

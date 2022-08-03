@@ -151,18 +151,16 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SettingsGui,
     
 
 
-TStatus LoadConfig(SettingsGui& gui, bool* notExists) {
+TStatus LoadConfig(SettingsGui& gui, bool createIfNotExists) {
     try {
-
-        if (notExists != nullptr)
-            *notExists = false;
 
         std::wstring path;
         IFS_RET(GetPath_Conf(path));
 
         if (!FileUtils::IsFileExists(path.c_str())) {
-            if (notExists != nullptr)
-                *notExists = true;
+            if (createIfNotExists) {
+                IFS_RET(Save2(gui));
+            }
             RETURN_SUCCESS;
         }
 

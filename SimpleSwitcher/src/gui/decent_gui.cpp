@@ -575,8 +575,6 @@ void StartMainGui(bool show, bool conf_err_msg) {
 
     MainWnd* frame = new MainWnd();
 
-
-
     // and show it (the frames, unlike simple controls, are not shown when
     // created initially)
     frame->Show(show);

@@ -35,20 +35,9 @@ bool MyApp::OnInit()
 
     SetLogLevel(setsgui.fDbgMode ? LOG_LEVEL_1 : LOG_LEVEL_0);
 
-    bool notExists = false;
+    auto errLoadConf = LoadConfig(setsgui, true);
+    IFS_LOG(errLoadConf);
 
-    auto err = LoadConfig(setsgui, &notExists);
-
-    IFS_LOG(err);
-
-    if (notExists) {
-        IFS_LOG(Save());
-    }
-
-
-    //if (err != SW_ERR_SUCCESS) {
-    //    wxMessageBox("Error reading config");
-    //}
     SetLogLevel2(setsgui.fDbgMode ? setsgui.logLevel : LOG_LEVEL_0);
 
     IFS_LOG(autoCom.Init());
@@ -65,7 +54,7 @@ bool MyApp::OnInit()
         }
     }
 
-    StartMainGui(show, err != SW_ERR_SUCCESS);
+    StartMainGui(show, errLoadConf != SW_ERR_SUCCESS);
 
     // success: wxApp::OnRun() will be called which will enter the main message
     // loop and the application will run. If we returned false here, the

@@ -194,7 +194,7 @@ inline SettingsGui setsgui;
 
 inline int g_hotkeyWndOpened = 0;
 
-TStatus LoadConfig(SettingsGui& sets, bool* notExists = nullptr);
+TStatus LoadConfig(SettingsGui& sets, bool createIfNotExists = false);
 TStatus Save2(SettingsGui& gui);
 inline TStatus Save() {
     return Save2(setsgui);
