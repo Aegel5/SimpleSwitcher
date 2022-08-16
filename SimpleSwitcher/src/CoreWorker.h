@@ -52,11 +52,13 @@ public:
         core_work = std::thread(std::bind(StartMonitor, hInstance, SW_BIT_32));
     }
     void Stop() {
-        mtx.clear();
-        if (!IsStarted())
+        if (!IsStarted()) {
+            mtx.clear();
             return;
+        }
         PostMessage(gdata().hWndMonitor, c_MSG_Quit, 0, 0);
         core_work.join();
+        mtx.clear();
     }
     bool IsStarted() {
         return core_work.joinable();

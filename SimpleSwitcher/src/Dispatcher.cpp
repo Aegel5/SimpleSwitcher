@@ -175,7 +175,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 
             if (timerId == c_timerKeyloggerDefence) {
                 if (setsgui.fEnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
-                    resethook(); // ???
+                    IFS_LOG(resethook()); // ???
                 }
             } else if (timerId == c_timerGetcurlay) {
                 Worker()->PostMsgW(HWORKER_WM_TIMER, timerId);
