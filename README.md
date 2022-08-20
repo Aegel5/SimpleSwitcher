@@ -18,9 +18,11 @@ SimpleSwitcher - программа для быстрого исправлени
 ## Getting started
 
 **Рекомендуемый способ получения программы - это СБОРКА из исходного кода**
-- Установить git for windows, Visual Studio, CMake, python
-- `git clone --recurse-submodules https://github.com/Aegel5/SimpleSwitcher.git`
-- `build.py`
+### Инструкция:
+- Установить `git for windows`, `Visual Studio 2022 (C++)`, `CMake`, `python`
+- Скачать исходники `git clone --recurse-submodules https://github.com/Aegel5/SimpleSwitcher.git`
+- Запустить скрипт `build.py`
+- Собранная версия будет в папке `package_build/OUT`
 
 ## License
 
