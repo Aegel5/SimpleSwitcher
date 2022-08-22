@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-23 01:21+0300\n"
+"POT-Creation-Date: 2022-08-23 01:52+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -182,7 +182,7 @@ msgstr ""
 msgid "Set"
 msgstr ""
 
-#: ../src\gui\noname.h:156
+#: ../src\gui\noname.h:157
 msgid "Set hotkey"
 msgstr ""
 
@@ -202,7 +202,7 @@ msgstr ""
 msgid "Show flags in tray"
 msgstr ""
 
-#: ../src\gui\noname.h:123
+#: ../src\gui\noname.h:124
 msgid "SimpleSwitcher"
 msgstr ""
 
@@ -224,14 +224,6 @@ msgstr ""
 
 #: ../src\gui\noname.cpp:109
 msgid "Work only with this layouts (leave empty for all):"
-msgstr ""
-
-#: ../src\gui\noname.cpp:337
-msgid "https://github.com/Aegel5/SimpleSwitcher"
-msgstr ""
-
-#: ../src\gui\noname.cpp:340
-msgid "https://vk.com/SimpleSwitcher"
 msgstr ""
 
 #: ../src\gui\noname.cpp:111 ../src\gui\noname.cpp:163
