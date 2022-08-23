@@ -2380,7 +2380,7 @@
                                         <property name="proportion">0</property>
                                         <object class="wxStaticBoxSizer" expanded="0">
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Capslock</property>
+                                            <property name="label">CapsLock / ScrollLock</property>
                                             <property name="minimum_size"></property>
                                             <property name="name">sbSizer6</property>
                                             <property name="orient">wxVERTICAL</property>
@@ -2419,7 +2419,7 @@
                                                     <property name="gripper">0</property>
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
-                                                    <property name="label">Remap Capslock as F24</property>
+                                                    <property name="label">Remap CapsLock as F24</property>
                                                     <property name="max_size"></property>
                                                     <property name="maximize_button">0</property>
                                                     <property name="maximum_size"></property>
@@ -2904,7 +2904,7 @@
                                             <property name="caption"></property>
                                             <property name="caption_visible">1</property>
                                             <property name="center_pane">0</property>
-                                            <property name="choices">&quot;123&quot; &quot;1222&quot;</property>
+                                            <property name="choices"></property>
                                             <property name="close_button">1</property>
                                             <property name="context_help"></property>
                                             <property name="context_menu">1</property>
