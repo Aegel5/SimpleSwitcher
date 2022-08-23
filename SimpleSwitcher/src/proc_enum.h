@@ -23,6 +23,8 @@ class ProgEnum {
 
     ULONGLONG lastscan = 0;
 
+    ULONGLONG disableScanUntil = 0;
+
 public:
 
     void __Push(DWORD pid, HWND wnd, DWORD threadId) {
@@ -53,10 +55,14 @@ public:
         if (IsWindows10OrGreater()) {
 
             auto it = mp.find(pid);
-            if (it == mp.end() || GetTickCount64() - lastscan >= 5000 * 60) {
-                IFS_LOG(Scan());
+            if (GetTickCount64() > disableScanUntil && (it == mp.end() || GetTickCount64() - lastscan >= 5000 * 60)) {
                 lastscan = GetTickCount64();
+                IFS_LOG(Scan());
                 it       = mp.find(pid);
+                if (it == mp.end()) {
+                    LOG_WARN(L"not found proc after scan!!");
+                    disableScanUntil = GetTickCount64() + 1000 * 30;
+                }
             }
 
             if (it != mp.end()) {
