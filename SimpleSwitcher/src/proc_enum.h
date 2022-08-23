@@ -60,8 +60,11 @@ public:
                 IFS_LOG(Scan());
                 it       = mp.find(pid);
                 if (it == mp.end()) {
+
                     LOG_WARN(L"not found proc after scan!!");
-                    disableScanUntil = GetTickCount64() + 1000 * 30;
+                    
+                    // todo: disable only after 2 unsucces try.
+                    //disableScanUntil = GetTickCount64() + 1000 * 30;
                 }
             }
 

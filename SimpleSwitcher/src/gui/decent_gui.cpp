@@ -468,7 +468,7 @@ private:
                 if (Utils::IsSelfElevated()) {
                     IFS_LOG(DelSchedule());
                 } else {
-                    ShowNeedAdmin("delete old task");
+                    ShowNeedAdmin(_("delete old task"));
                     return; // exit because can't delete old
                 }
             }
@@ -499,7 +499,8 @@ private:
     void ShowNeedAdmin(const char* expl = nullptr) {
         wxString ms(_("Need admin rights"));
         if (expl != nullptr) {
-            ms += " for \"";
+            ms += _(" for: ");
+            ms += "\"";
             ms += expl;
             ms += "\"";
         }
