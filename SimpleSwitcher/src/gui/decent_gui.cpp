@@ -309,7 +309,7 @@ private:
         updateCapsTab();
 
         if(showmsg)
-            wxMessageBox("Will be applied after PC reboot");
+            wxMessageBox(_("Will be applied after PC reboot"));
     }
 
     void onHotKeyChange_btn(wxCommandEvent& ev) {
@@ -497,7 +497,7 @@ private:
 
     }
     void ShowNeedAdmin(const char* expl = nullptr) {
-        std::string ms("Need admin rights");
+        wxString ms(_("Need admin rights"));
         if (expl != nullptr) {
             ms += " for \"";
             ms += expl;
@@ -580,7 +580,7 @@ void StartMainGui(bool show, bool conf_err_msg) {
     frame->Show(show);
 
     if (conf_err_msg) {
-        wxMessageBox("Error reading config");
+        wxMessageBox(_("Error reading config"));
     }
 
 
