@@ -8,7 +8,7 @@ SimpleSwitcher - программа для быстрого исправлени
 ## Features
 
 - Умеет работать в программах, запущенных от администратора. 
-- Удерживая клавишу Shift можно исправлять несколько слов подряд.
+- Удерживая клавишу Shift, можно исправлять несколько слов подряд.
 - Есть возможность использовать Capslock для любой функции программы.
 - Не хранит набираемый текст в открытом виде (используется шифрование Windows)
 - Запрещает другим программам перехватывать клавиатуру
@@ -18,9 +18,11 @@ SimpleSwitcher - программа для быстрого исправлени
 ## Getting started
 
 **Рекомендуемый способ получения программы - это СБОРКА из исходного кода**
-- Установить git for windows, Visual Studio, CMake, python
-- `git clone --recurse-submodules https://github.com/Aegel5/SimpleSwitcher.git`
-- `build.py`
+### Инструкция:
+- Установить `Git for Windows`, `Visual Studio 2022 (C++)`, `CMake`, `Python`
+- Скачать исходники `git clone --recurse-submodules https://github.com/Aegel5/SimpleSwitcher.git`
+- Запустить скрипт `build.py`
+- Собранная версия будет в папке `package_build/OUT`
 
 ## License
 
