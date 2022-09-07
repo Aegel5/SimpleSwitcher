@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-07 15:53+0300\n"
+"POT-Creation-Date: 2022-09-07 16:03+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -141,6 +141,10 @@ msgstr ""
 msgid "Hotkey"
 msgstr ""
 
+#: ../src\gui\noname.cpp:273
+msgid "Keys Remap"
+msgstr ""
+
 #: ../src\gui\noname.cpp:312
 msgid "Language"
 msgstr ""
@@ -262,8 +266,4 @@ msgstr ""
 #: ../src\gui\noname.cpp:111 ../src\gui\noname.cpp:163
 #: ../src\gui\noname.cpp:181 ../src\gui\noname.cpp:199
 msgid "us-US"
-msgstr ""
-
-#: ../src\gui\noname.cpp:273
-msgid "Keys Remap"
 msgstr ""

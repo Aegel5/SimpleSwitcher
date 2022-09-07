@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-07 15:53+0300\n"
-"PO-Revision-Date: 2022-09-07 16:01+0300\n"
+"POT-Creation-Date: 2022-09-07 16:03+0300\n"
+"PO-Revision-Date: 2022-09-07 16:04+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -31,7 +31,7 @@ msgstr " для: "
 
 #: ../src\gui\noname.cpp:442
 msgid "123"
-msgstr "lllll"
+msgstr ""
 
 #: ../src\gui\noname.cpp:442
 msgid "333"
@@ -145,6 +145,10 @@ msgstr "Генерировать CapsLock"
 #: ../src\gui\noname.cpp:444
 msgid "Hotkey"
 msgstr ""
+
+#: ../src\gui\noname.cpp:273
+msgid "Keys Remap"
+msgstr "Переназначение клавиш"
 
 #: ../src\gui\noname.cpp:312
 msgid "Language"
@@ -270,7 +274,3 @@ msgstr ""
 #: ../src\gui\noname.cpp:181 ../src\gui\noname.cpp:199
 msgid "us-US"
 msgstr ""
-
-#: ../src\gui\noname.cpp:273
-msgid "Keys Remap"
-msgstr "Переназначение клавиш"
