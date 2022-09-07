@@ -138,8 +138,10 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer53;
 	bSizer53 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_staticText32 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, _("Next layout"), wxDefaultPosition, wxSize( 150,-1 ), 0 );
+	m_staticText32 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, _("Next layout"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
 	m_staticText32->Wrap( -1 );
+	m_staticText32->SetMinSize( wxSize( 150,-1 ) );
+
 	bSizer53->Add( m_staticText32, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_textCycleLay = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, _("F24"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -235,8 +237,10 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer532;
 	bSizer532 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_staticText321 = new wxStaticText( sbSizer6->GetStaticBox(), wxID_ANY, _("Generate CapsLock"), wxDefaultPosition, wxSize( 150,-1 ), 0 );
+	m_staticText321 = new wxStaticText( sbSizer6->GetStaticBox(), wxID_ANY, _("Generate CapsLock"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
 	m_staticText321->Wrap( -1 );
+	m_staticText321->SetMinSize( wxSize( 150,-1 ) );
+
 	bSizer532->Add( m_staticText321, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_textcapsgen = new wxTextCtrl( sbSizer6->GetStaticBox(), wxID_ANY, _("F24"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -309,7 +313,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer23;
 	bSizer23 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_staticText9 = new wxStaticText( m_panel16, wxID_ANY, _("Language:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText9 = new wxStaticText( m_panel16, wxID_ANY, _("Language"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText9->Wrap( -1 );
 	bSizer23->Add( m_staticText9, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
 

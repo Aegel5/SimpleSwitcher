@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-07 13:31+0300\n"
-"PO-Revision-Date: 2022-09-07 14:58+0300\n"
+"POT-Creation-Date: 2022-09-07 15:02+0300\n"
+"PO-Revision-Date: 2022-09-07 15:06+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -25,19 +25,19 @@ msgid ""
 "          Scheduler: fasfdasdf"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:512
+#: ../src\gui\decent_gui.cpp:518
 msgid " for: "
 msgstr " для: "
 
-#: ../src\gui\noname.cpp:443
+#: ../src\gui\noname.cpp:442
 msgid "123"
 msgstr ""
 
-#: ../src\gui\noname.cpp:443
+#: ../src\gui\noname.cpp:442
 msgid "333"
 msgstr ""
 
-#: ../src\gui\noname.cpp:361
+#: ../src\gui\noname.cpp:360
 msgid "About"
 msgstr "О программе"
 
@@ -49,11 +49,11 @@ msgstr "Добавить в автозапуск"
 msgid "Base"
 msgstr "Основная информация"
 
-#: ../src\gui\noname.cpp:347
+#: ../src\gui\noname.cpp:346
 msgid "Build date:"
 msgstr "Дата билда:"
 
-#: ../src\gui\noname.cpp:475
+#: ../src\gui\noname.cpp:474
 msgid "Cancel"
 msgstr "Отменить"
 
@@ -69,15 +69,15 @@ msgstr "Сменить раскладку"
 msgid "Change selected text"
 msgstr "Изменить выделенный текст"
 
-#: ../src\gui\noname.cpp:120 ../src\gui\noname.cpp:463
+#: ../src\gui\noname.cpp:120 ../src\gui\noname.cpp:462
 msgid "Clear"
 msgstr "Очистить"
 
-#: ../src\gui\noname.cpp:335
+#: ../src\gui\noname.cpp:334
 msgid "Clear text format on Ctrl-C"
 msgstr "Очищать форматирование текста при Ctrl-C"
 
-#: ../src\gui\noname.cpp:371
+#: ../src\gui\noname.cpp:370
 msgid "Close to tray"
 msgstr "Свернуть в трей"
 
@@ -85,7 +85,7 @@ msgstr "Свернуть в трей"
 msgid "Ctrl + F24"
 msgstr ""
 
-#: ../src\gui\noname.cpp:443
+#: ../src\gui\noname.cpp:442
 msgid "Custom"
 msgstr "Ввести"
 
@@ -97,13 +97,13 @@ msgstr "Циклическая смена"
 msgid "Delete"
 msgstr "Удалить"
 
-#: ../src\gui\noname.cpp:332
+#: ../src\gui\noname.cpp:331
 msgid "Disable the accessibility shortcut keys (5 SHIFT and others)"
 msgstr ""
 "Отключить функции accessibility (залипание после нажатия 5 Shift подряд и "
 "другие)"
 
-#: ../src\gui\noname.cpp:451
+#: ../src\gui\noname.cpp:450
 msgid "Distinguish between left and right modifiers"
 msgstr "Различать левые и правые модификаторы"
 
@@ -111,19 +111,19 @@ msgstr "Различать левые и правые модификаторы"
 msgid "Enable"
 msgstr "Включить"
 
-#: ../src\gui\noname.cpp:325
+#: ../src\gui\noname.cpp:324
 msgid "Enable debug log"
 msgstr "Включить debug log"
 
-#: ../src\gui\noname.cpp:316
+#: ../src\gui\decent_gui.cpp:393
 msgid "English"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:594
+#: ../src\gui\decent_gui.cpp:600
 msgid "Error reading config"
 msgstr ""
 
-#: ../src\gui\noname.cpp:368
+#: ../src\gui\noname.cpp:367
 msgid "Exit"
 msgstr "Закрыть"
 
@@ -142,7 +142,7 @@ msgstr "Исправить раскладку"
 msgid "Generate CapsLock"
 msgstr "Генерировать CapsLock"
 
-#: ../src\gui\noname.cpp:445
+#: ../src\gui\noname.cpp:444
 msgid "Hotkey"
 msgstr ""
 
@@ -162,7 +162,7 @@ msgstr "Последнее слово"
 msgid "Main"
 msgstr "Основное"
 
-#: ../src\gui\decent_gui.cpp:510
+#: ../src\gui\decent_gui.cpp:516
 msgid "Need admin rights"
 msgstr "Программа должна быть запущена от администратора"
 
@@ -174,7 +174,7 @@ msgstr "Необходимо перезапустить программу"
 msgid "Next layout"
 msgstr "Следующая раскладка"
 
-#: ../src\gui\noname.cpp:472
+#: ../src\gui\noname.cpp:471
 msgid "OK"
 msgstr ""
 
@@ -182,7 +182,7 @@ msgstr ""
 msgid "Others"
 msgstr "Другое"
 
-#: ../src\gui\noname.cpp:328
+#: ../src\gui\noname.cpp:327
 msgid ""
 "Prevent other programs to hook keyboard (may cause problems in games and "
 "other apps)"
@@ -197,6 +197,10 @@ msgstr "Переназначить CapsLock как F24"
 #: ../src\gui\noname.cpp:232
 msgid "Remap ScrollLock as F23"
 msgstr "Переназначить ScrollLock как F23"
+
+#: ../src\gui\decent_gui.cpp:392
+msgid "Russian"
+msgstr ""
 
 #: ../src\gui\noname.cpp:92
 msgid "Selected text"
@@ -217,7 +221,7 @@ msgstr "Изменить горячую клавишу"
 msgid "Set layout"
 msgstr "Изменить раскладку"
 
-#: ../src\gui\noname.cpp:342
+#: ../src\gui\noname.cpp:341
 msgid "Settings"
 msgstr "Настройки"
 
@@ -237,7 +241,7 @@ msgstr ""
 msgid "To upper/lower"
 msgstr "В верхний/нижний регистр"
 
-#: ../src\gui\noname.cpp:454
+#: ../src\gui\noname.cpp:453
 msgid "Triggers on KEYUP"
 msgstr "Срабатывать на KEYUP"
 
@@ -245,7 +249,7 @@ msgstr "Срабатывать на KEYUP"
 msgid "Update"
 msgstr "Обновить"
 
-#: ../src\gui\decent_gui.cpp:314
+#: ../src\gui\decent_gui.cpp:317
 msgid "Will be applied after PC reboot"
 msgstr "Будет применено после перезагрузки ОС"
 
@@ -257,7 +261,7 @@ msgstr "Работать в программах, запущенных от ад
 msgid "Work only with this layouts (leave empty for all):"
 msgstr "Использовать только эти раскладки (пустая строка - все)"
 
-#: ../src\gui\decent_gui.cpp:481
+#: ../src\gui\decent_gui.cpp:487
 msgid "delete old task"
 msgstr ""
 
@@ -271,6 +275,5 @@ msgstr ""
 msgid "us-US"
 msgstr ""
 
-#: ../src\gui\noname.cpp:316
-msgid "Русский"
-msgstr "Русский"
+#~ msgid "Русский"
+#~ msgstr "Русский"
