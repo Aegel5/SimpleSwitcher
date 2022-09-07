@@ -26,12 +26,10 @@ wxIMPLEMENT_APP(MyApp);
 
 COM::CAutoCOMInitialize autoCom;
 
-bool MyApp::OnInit()
-{
+bool MyApp::OnInit() {
     // call the base class initialization method, currently it only parses a
     // few common command-line options but it could be do more in the future
-    //if (!wxApp::OnInit())
-    //    return false;
+
 
     SetLogLevel(setsgui.fDbgMode ? LOG_LEVEL_1 : LOG_LEVEL_0);
 

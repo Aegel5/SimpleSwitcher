@@ -140,9 +140,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	m_staticText32 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, _("Next layout"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
 	m_staticText32->Wrap( -1 );
-	m_staticText32->SetMinSize( wxSize( 150,-1 ) );
-
-	bSizer53->Add( m_staticText32, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer53->Add( m_staticText32, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	m_textCycleLay = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, _("F24"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer53->Add( m_textCycleLay, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -164,7 +162,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	wxString m_choiceset1Choices[] = { _("us-US"), _("ru") };
 	int m_choiceset1NChoices = sizeof( m_choiceset1Choices ) / sizeof( wxString );
-	m_choiceset1 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxSize( 150,-1 ), m_choiceset1NChoices, m_choiceset1Choices, 0 );
+	m_choiceset1 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxSize( 160,-1 ), m_choiceset1NChoices, m_choiceset1Choices, 0 );
 	m_choiceset1->SetSelection( 0 );
 	bSizer531->Add( m_choiceset1, 0, wxALL, 5 );
 
@@ -182,7 +180,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	wxString m_choiceset2Choices[] = { _("us-US"), _("ru") };
 	int m_choiceset2NChoices = sizeof( m_choiceset2Choices ) / sizeof( wxString );
-	m_choiceset2 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxSize( 150,-1 ), m_choiceset2NChoices, m_choiceset2Choices, 0 );
+	m_choiceset2 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxSize( 160,-1 ), m_choiceset2NChoices, m_choiceset2Choices, 0 );
 	m_choiceset2->SetSelection( 0 );
 	bSizer5311->Add( m_choiceset2, 0, wxALL, 5 );
 
@@ -200,7 +198,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	wxString m_choiceset3Choices[] = { _("us-US"), _("ru") };
 	int m_choiceset3NChoices = sizeof( m_choiceset3Choices ) / sizeof( wxString );
-	m_choiceset3 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxSize( 150,-1 ), m_choiceset3NChoices, m_choiceset3Choices, 0 );
+	m_choiceset3 = new wxChoice( sbSizer5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxSize( 160,-1 ), m_choiceset3NChoices, m_choiceset3Choices, 0 );
 	m_choiceset3->SetSelection( 0 );
 	bSizer5312->Add( m_choiceset3, 0, wxALL, 5 );
 
@@ -239,8 +237,6 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	m_staticText321 = new wxStaticText( sbSizer6->GetStaticBox(), wxID_ANY, _("Generate CapsLock"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
 	m_staticText321->Wrap( -1 );
-	m_staticText321->SetMinSize( wxSize( 150,-1 ) );
-
 	bSizer532->Add( m_staticText321, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_textcapsgen = new wxTextCtrl( sbSizer6->GetStaticBox(), wxID_ANY, _("F24"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -274,7 +270,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel5->SetSizer( bSizer20 );
 	m_panel5->Layout();
 	bSizer20->Fit( m_panel5 );
-	m_notebook2->AddPage( m_panel5, _("Key Remap"), true );
+	m_notebook2->AddPage( m_panel5, _("Keys Remap"), true );
 	m_panel61 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer21;
 	bSizer21 = new wxBoxSizer( wxVERTICAL );
@@ -285,9 +281,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer533;
 	bSizer533 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_staticText322 = new wxStaticText( sbSizer41->GetStaticBox(), wxID_ANY, _("To upper/lower"), wxDefaultPosition, wxSize( 150,-1 ), 0 );
+	m_staticText322 = new wxStaticText( sbSizer41->GetStaticBox(), wxID_ANY, _("To upper/lower"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
 	m_staticText322->Wrap( -1 );
-	bSizer533->Add( m_staticText322, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer533->Add( m_staticText322, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	m_text_sel_toupper = new wxTextCtrl( sbSizer41->GetStaticBox(), wxID_ANY, _("F24"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer533->Add( m_text_sel_toupper, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -320,7 +316,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxArrayString m_comboUiLangChoices;
 	m_comboUiLang = new wxChoice( m_panel16, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_comboUiLangChoices, 0 );
 	m_comboUiLang->SetSelection( 0 );
-	bSizer23->Add( m_comboUiLang, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	bSizer23->Add( m_comboUiLang, 1, wxALIGN_CENTER_VERTICAL|wxLEFT, 5 );
 
 
 	bSizer24->Add( bSizer23, 0, wxALL|wxEXPAND, 5 );
