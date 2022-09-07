@@ -75,6 +75,7 @@ public:
         SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxRESIZE_BORDER);
 
         m_staticTextBuildDate->SetLabelText(fmt::format(L"Built on '{}'", _SW_ADD_STR_UT(__DATE__)));
+        
 
         m_notebook2->SetSelection(0);
 
@@ -100,6 +101,8 @@ public:
 
         updateCapsTab();
         handleDisableAccess();
+        UpdateUiLang();
+
 
 
     }
@@ -121,6 +124,8 @@ private:
         }
         return -1;
     }
+
+
 
     void BindHotCtrl(wxTextCtrl* elem, HotKeyType type) {
 
@@ -376,6 +381,17 @@ private:
         if (i == 2)
             return m_choiceset3;
         return nullptr;
+    }
+    void onUiSelect(wxCommandEvent& event) override {
+        setsgui.uiLang = (SettingsGui::UiLang)m_comboUiLang->GetSelection();
+        SaveAndPostMsg();
+        wxMessageBox(_("Need restart program"));
+    }
+    void UpdateUiLang() {
+        m_comboUiLang->Clear();
+        m_comboUiLang->AppendString(_("Russian"));
+        m_comboUiLang->AppendString(_("English"));
+        m_comboUiLang->SetSelection((int)setsgui.uiLang);
     }
     void FillCombo() {
         m_choiceLayFilter->Clear();

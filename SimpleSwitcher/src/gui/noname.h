@@ -90,6 +90,8 @@ class MyFrame4 : public wxFrame
 		wxTextCtrl* m_text_sel_toupper;
 		wxButton* m_button931;
 		wxPanel* m_panel16;
+		wxStaticText* m_staticText9;
+		wxChoice* m_comboUiLang;
 		wxCheckBox* m_checkDebuglog;
 		wxCheckBox* m_checkBoxKeyDef;
 		wxCheckBox* m_checkBoxDisablAcc;
@@ -111,6 +113,7 @@ class MyFrame4 : public wxFrame
 		virtual void onRemapCaps( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onUpdateRemap( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onDeleteRemap( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onUiSelect( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onEnableLog( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onPrevent( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onDisableAccessebl( wxCommandEvent& event ) { event.Skip(); }

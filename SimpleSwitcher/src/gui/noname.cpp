@@ -224,9 +224,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer20 = new wxBoxSizer( wxVERTICAL );
 
 	wxStaticBoxSizer* sbSizer6;
-	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( m_panel5, wxID_ANY, _("Capslock") ), wxVERTICAL );
+	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( m_panel5, wxID_ANY, _("CapsLock / ScrollLock") ), wxVERTICAL );
 
-	m_checkcapsrem = new wxCheckBox( sbSizer6->GetStaticBox(), wxID_ANY, _("Remap Capslock as F24"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkcapsrem = new wxCheckBox( sbSizer6->GetStaticBox(), wxID_ANY, _("Remap CapsLock as F24"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer6->Add( m_checkcapsrem, 0, wxALL, 5 );
 
 	m_check_scrollremap = new wxCheckBox( sbSizer6->GetStaticBox(), wxID_ANY, _("Remap ScrollLock as F23"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -264,15 +264,13 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer20->Add( bSizer19, 0, wxALL|wxEXPAND, 5 );
 
 	m_listBoxRemap = new wxListBox( m_panel5, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
-	m_listBoxRemap->Append( _("123") );
-	m_listBoxRemap->Append( _("1222") );
 	bSizer20->Add( m_listBoxRemap, 1, wxALL|wxEXPAND, 5 );
 
 
 	m_panel5->SetSizer( bSizer20 );
 	m_panel5->Layout();
 	bSizer20->Fit( m_panel5 );
-	m_notebook2->AddPage( m_panel5, _("Key Remap"), false );
+	m_notebook2->AddPage( m_panel5, _("Key Remap"), true );
 	m_panel61 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer21;
 	bSizer21 = new wxBoxSizer( wxVERTICAL );
@@ -303,10 +301,25 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel61->SetSizer( bSizer21 );
 	m_panel61->Layout();
 	bSizer21->Fit( m_panel61 );
-	m_notebook2->AddPage( m_panel61, _("Others"), true );
+	m_notebook2->AddPage( m_panel61, _("Others"), false );
 	m_panel16 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer24;
 	bSizer24 = new wxBoxSizer( wxVERTICAL );
+
+	wxBoxSizer* bSizer23;
+	bSizer23 = new wxBoxSizer( wxHORIZONTAL );
+
+	m_staticText9 = new wxStaticText( m_panel16, wxID_ANY, _("Language:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText9->Wrap( -1 );
+	bSizer23->Add( m_staticText9, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
+
+	wxArrayString m_comboUiLangChoices;
+	m_comboUiLang = new wxChoice( m_panel16, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_comboUiLangChoices, 0 );
+	m_comboUiLang->SetSelection( 0 );
+	bSizer23->Add( m_comboUiLang, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+
+	bSizer24->Add( bSizer23, 0, wxALL|wxEXPAND, 5 );
 
 	m_checkDebuglog = new wxCheckBox( m_panel16, wxID_ANY, _("Enable debug log"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer24->Add( m_checkDebuglog, 0, wxALL, 5 );
@@ -381,6 +394,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_check_scrollremap->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
 	m_button7->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onUpdateRemap ), NULL, this );
 	m_button8->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onDeleteRemap ), NULL, this );
+	m_comboUiLang->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onUiSelect ), NULL, this );
 	m_checkDebuglog->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
 	m_checkBoxKeyDef->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onPrevent ), NULL, this );
 	m_checkBoxDisablAcc->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onDisableAccessebl ), NULL, this );
@@ -405,6 +419,7 @@ MyFrame4::~MyFrame4()
 	m_check_scrollremap->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
 	m_button7->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onUpdateRemap ), NULL, this );
 	m_button8->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onDeleteRemap ), NULL, this );
+	m_comboUiLang->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onUiSelect ), NULL, this );
 	m_checkDebuglog->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
 	m_checkBoxKeyDef->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onPrevent ), NULL, this );
 	m_checkBoxDisablAcc->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onDisableAccessebl ), NULL, this );

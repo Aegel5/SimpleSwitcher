@@ -45,6 +45,18 @@ bool MyApp::OnInit()
 
     setlocale(LC_ALL, "en_US.utf8");
 
+    if (errLoadConf == SW_ERR_SUCCESS) {
+        // init ui
+        if (setsgui.uiLang == SettingsGui::UiLang::rus) {
+
+            wxTranslations* const trans = new wxTranslations();
+            wxTranslations::Set(trans);
+            trans->SetLoader(new wxResourceTranslationsLoader());
+            trans->SetLanguage(wxLANGUAGE_RUSSIAN);
+            trans->AddCatalog("lang");
+        }
+    }
+
     bool show = true;
     for (int i = 0; i < wxApp::argc; i++) {
         auto cur = wxApp::argv[i];

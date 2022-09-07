@@ -155,7 +155,12 @@ public:
         return false;
     }
 
+    enum class UiLang {
+        rus,
+        eng,
+    };
 
+    UiLang uiLang = UiLang::rus;
 
     bool isMonitorAdmin = false;
     bool isTryOEM2 = true;
