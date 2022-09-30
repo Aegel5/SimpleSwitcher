@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-07 16:03+0300\n"
-"PO-Revision-Date: 2022-09-07 16:36+0300\n"
+"POT-Creation-Date: 2022-09-30 10:30+0300\n"
+"PO-Revision-Date: 2022-09-30 10:32+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -25,7 +25,7 @@ msgid ""
 "          Scheduler: fasfdasdf"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:518
+#: ../src\gui\decent_gui.cpp:544
 msgid " for: "
 msgstr " для: "
 
@@ -115,15 +115,15 @@ msgstr "Включить"
 msgid "Enable debug log"
 msgstr "Включить debug log"
 
-#: ../src\gui\decent_gui.cpp:393
+#: ../src\gui\decent_gui.cpp:419
 msgid "English"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:600
+#: ../src\gui\decent_gui.cpp:629
 msgid "Error reading config"
 msgstr ""
 
-#: ../src\gui\noname.cpp:367
+#: ../src\gui\decent_gui.cpp:65 ../src\gui\noname.cpp:367
 msgid "Exit"
 msgstr "Закрыть"
 
@@ -162,11 +162,11 @@ msgstr "Последнее слово"
 msgid "Main"
 msgstr "Основное"
 
-#: ../src\gui\decent_gui.cpp:516
+#: ../src\gui\decent_gui.cpp:542
 msgid "Need admin rights"
 msgstr "Программа должна быть запущена от администратора"
 
-#: ../src\gui\decent_gui.cpp:388
+#: ../src\gui\decent_gui.cpp:414
 msgid "Need restart program"
 msgstr "Необходимо перезапустить программу"
 
@@ -198,7 +198,7 @@ msgstr "Переназначить CapsLock как F24"
 msgid "Remap ScrollLock as F23"
 msgstr "Переназначить ScrollLock как F23"
 
-#: ../src\gui\decent_gui.cpp:392
+#: ../src\gui\decent_gui.cpp:418
 msgid "Russian"
 msgstr ""
 
@@ -229,6 +229,10 @@ msgstr "Настройки"
 msgid "Several words"
 msgstr "Несколько слов"
 
+#: ../src\gui\decent_gui.cpp:64
+msgid "Show"
+msgstr "Показать"
+
 #: ../src\gui\noname.cpp:46
 msgid "Show flags in tray"
 msgstr "Показывать флаги в трее"
@@ -249,7 +253,7 @@ msgstr "Срабатывать на KEYUP"
 msgid "Update"
 msgstr "Обновить"
 
-#: ../src\gui\decent_gui.cpp:317
+#: ../src\gui\decent_gui.cpp:343
 msgid "Will be applied after PC reboot"
 msgstr "Будет применено после перезагрузки ОС"
 
@@ -261,7 +265,7 @@ msgstr "Работать в программах, запущенных от ад
 msgid "Work only with this layouts (leave empty for all):"
 msgstr "Использовать только эти раскладки (пустая строка - все)"
 
-#: ../src\gui\decent_gui.cpp:487
+#: ../src\gui\decent_gui.cpp:513
 msgid "delete old task"
 msgstr ""
 

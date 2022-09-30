@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-07 16:03+0300\n"
+"POT-Creation-Date: 2022-09-30 10:30+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgid ""
 "          Scheduler: fasfdasdf"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:518
+#: ../src\gui\decent_gui.cpp:544
 msgid " for: "
 msgstr ""
 
@@ -110,15 +110,15 @@ msgstr ""
 msgid "Enable debug log"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:393
+#: ../src\gui\decent_gui.cpp:419
 msgid "English"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:600
+#: ../src\gui\decent_gui.cpp:629
 msgid "Error reading config"
 msgstr ""
 
-#: ../src\gui\noname.cpp:367
+#: ../src\gui\decent_gui.cpp:65 ../src\gui\noname.cpp:367
 msgid "Exit"
 msgstr ""
 
@@ -157,11 +157,11 @@ msgstr ""
 msgid "Main"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:516
+#: ../src\gui\decent_gui.cpp:542
 msgid "Need admin rights"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:388
+#: ../src\gui\decent_gui.cpp:414
 msgid "Need restart program"
 msgstr ""
 
@@ -191,7 +191,7 @@ msgstr ""
 msgid "Remap ScrollLock as F23"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:392
+#: ../src\gui\decent_gui.cpp:418
 msgid "Russian"
 msgstr ""
 
@@ -222,6 +222,10 @@ msgstr ""
 msgid "Several words"
 msgstr ""
 
+#: ../src\gui\decent_gui.cpp:64
+msgid "Show"
+msgstr ""
+
 #: ../src\gui\noname.cpp:46
 msgid "Show flags in tray"
 msgstr ""
@@ -242,7 +246,7 @@ msgstr ""
 msgid "Update"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:317
+#: ../src\gui\decent_gui.cpp:343
 msgid "Will be applied after PC reboot"
 msgstr ""
 
@@ -254,7 +258,7 @@ msgstr ""
 msgid "Work only with this layouts (leave empty for all):"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:487
+#: ../src\gui\decent_gui.cpp:513
 msgid "delete old task"
 msgstr ""
 

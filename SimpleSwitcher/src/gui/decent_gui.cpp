@@ -26,25 +26,49 @@ enum
     // (where it is special and put into the "Apple" menu)
     Minimal_About = wxID_ABOUT,
 
-    Minimal_Show = wxID_HIGHEST + 1
+    Minimal_Show = wxID_HIGHEST + 1,
+
+    Minimal_SetLay1,
 };
 //void onExit(wxCommandEvent& event) {
 //    return;
 //}
 class MyTray : public wxTaskBarIcon {
+    std::vector<HKL> lays;
+
 public:
+
     MyTray() {
         //Connect(Minimal_Quit, wxMouseEventHandler(MyTray::onExit), NULL, this);
-
     }
     ~MyTray() {
         return;
     }
 
+    void AddLay(HKL lay) {
+        lays.push_back(lay);
+    }
+
+    HKL LayById(int id) {
+        return lays[id - Minimal_SetLay1];
+    }
+
+
+
     virtual wxMenu* CreatePopupMenu() override {
+
         auto menu = new wxMenu();
-        menu->Append(Minimal_Show, "Show");
-        menu->Append(Minimal_Quit, "Exit");
+
+
+
+        menu->Append(Minimal_Show, _("Show"));
+        menu->Append(Minimal_Quit, _("Exit"));
+        menu->AppendSeparator();
+        for (int i = 0; i < lays.size(); i++) {
+            menu->Append(Minimal_SetLay1 + i, Utils::GetNameForHKL(lays[i]));
+        }
+
+
         return menu;
     }
 };
@@ -60,14 +84,7 @@ public:
         g_guiHandle = GetHandle();
 
         icon = wxIcon("appicon");
-        //trayIcon = icon;
         SetIcon(icon);
-        if (myTray.IsAvailable()) {
-            myTray.SetIcon(icon);
-            myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
-            myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
-            myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
-        }
 
         Bind(wxEVT_CLOSE_WINDOW, &MainWnd::onExitReqest, this);
 
@@ -103,7 +120,16 @@ public:
         handleDisableAccess();
         UpdateUiLang();
 
-
+        if (myTray.IsAvailable()) {
+            myTray.SetIcon(icon);
+            myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
+            myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
+            myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
+            for (int i = 0; i < all_lay_size; i++) {
+                myTray.AddLay(all_lays[i]);
+                myTray.Bind(wxEVT_MENU, &MainWnd::onSetLay, this, Minimal_SetLay1 + i);
+            }
+        }
 
     }
 
@@ -373,8 +399,8 @@ private:
         std::wstring sLabel = fmt::format(L"         Registry: {}\r\n         Scheduler: {}", registryRes, schedulRes);
         m_staticTextExplain->SetLabelText(sLabel);
     }
-    HKL lay_buf[50] = { 0 };
-    int lay_size = 0;
+    HKL all_lays[50] = { 0 };
+    int all_lay_size = 0;
     wxChoice* getByIndex(int i) {
         if (i == 0)            return m_choiceset1;
         if(i == 1)            return m_choiceset2;
@@ -398,9 +424,9 @@ private:
         for (int i = 0; i < 3; i++) {
             getByIndex(i)->Clear();
         }
-        lay_size = GetKeyboardLayoutList(SW_ARRAY_SIZE(lay_buf), lay_buf);
-        for (int i = 0; i < lay_size; i++) {
-            auto name = Utils::GetNameForHKL(lay_buf[i]);
+        all_lay_size = GetKeyboardLayoutList(SW_ARRAY_SIZE(all_lays), all_lays);
+        for (int i = 0; i < all_lay_size; i++) {
+            auto name = Utils::GetNameForHKL(all_lays[i]);
             m_choiceLayFilter->AppendString(name);
 
             for (int i = 0; i < 3; i++) {
@@ -410,8 +436,8 @@ private:
 
         for (int i = 0; i < 3; i++) {
             auto cur = setsgui.hkl_lay[i];
-            for (int j = 0; j < lay_size; j++) {
-                if (lay_buf[j] == cur) {
+            for (int j = 0; j < all_lay_size; j++) {
+                if (all_lays[j] == cur) {
                     getByIndex(i)->SetSelection(j);
                     break;
                 }
@@ -424,7 +450,7 @@ private:
         if (!obj)
             return;
         auto cur = event.GetSelection();
-        auto lay = lay_buf[cur];
+        auto lay = all_lays[cur];
 
         if (obj == m_choiceLayFilter) {
             for (auto& elem : setsgui.customLangList) {
@@ -538,6 +564,9 @@ public:
     }
     void onShow(wxCommandEvent& event) {
         Show(true);
+    }
+    void onSetLay(wxCommandEvent& event) {
+        ActivateKeyboardLayout((HKL)myTray.LayById(event.GetId()),0);
     }
     void onCloseToTray(wxCommandEvent& event)     { 
         Hide();
