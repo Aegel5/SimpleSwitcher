@@ -566,7 +566,11 @@ public:
         Show(true);
     }
     void onSetLay(wxCommandEvent& event) {
-        ActivateKeyboardLayout((HKL)myTray.LayById(event.GetId()),0);
+        auto lay = myTray.LayById(event.GetId());
+        //ActivateKeyboardLayout(lay,0);
+        HWND hwndFocused = NULL;
+        IFS_LOG(Utils::GetFocusWindow(hwndFocused));
+        PostMessage(hwndFocused, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
     }
     void onCloseToTray(wxCommandEvent& event)     { 
         Hide();
