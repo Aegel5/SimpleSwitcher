@@ -196,6 +196,7 @@ TStatus LoadConfig(SettingsGui& gui, bool createIfNotExists) {
         for (auto& elem : gui.disableInPrograms) {
             std::wstring s;
             Str_Utils::Utf8ToWide(elem, s);
+            Str_Utils::ToLower(s);
             gui.__disableInPrograms.insert(s);
         }
 

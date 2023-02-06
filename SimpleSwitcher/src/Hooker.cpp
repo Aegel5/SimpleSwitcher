@@ -947,53 +947,64 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 {
 	HotKeyType typeRevert = data.typeRevert;
 
-	if (Utils::is_in(typeRevert, hk_CapsGenerate, hk_ScrollGenerate))
-	{
-		TKeyCode k = (typeRevert == hk_CapsGenerate) ? VK_CAPITAL : VK_SCROLL;
-		InputSender inputSender;
-		inputSender.Add(k, KEY_STATE_DOWN);
-		inputSender.Add(k, KEY_STATE_UP);
-		IFS_LOG(SendOurInput(inputSender));
-		RETURN_SUCCESS;
-	}
+	// --------------- skip
 
-	IFS_RET(AnalizeTopWnd());
+    bool allow_do_layout = true;
+    bool allow_do_revert = true;
 
-	if (typeRevert == hk_CycleCustomLang) {
-        data.flags = SW_CLIENT_SetLang;
-        data.lay   = getNextLang();
-        IFS_RET(ProcessRevert(data));
-        RETURN_SUCCESS;
-    }
-
-	if (Utils::is_in(typeRevert, hk_ChangeSetLayout_1, hk_ChangeSetLayout_2, hk_ChangeSetLayout_3))
-	{
-		HKL hkl = 0;
-		if (typeRevert == hk_ChangeSetLayout_1)
-			hkl = settings_thread.hkl_lay[SettingsGui::SW_HKL_1];
-		else if (typeRevert == hk_ChangeSetLayout_2)
-			hkl = settings_thread.hkl_lay[SettingsGui::SW_HKL_2];
-		else if (typeRevert == hk_ChangeSetLayout_3)
-			hkl = settings_thread.hkl_lay[SettingsGui::SW_HKL_3];
-
-		data.flags = SW_CLIENT_SetLang;
-		data.lay = (HKL)hkl;
-		IFS_RET(ProcessRevert(data));
-
-		RETURN_SUCCESS;
-	}
-
-
-	bool is_skip = false;
     if (m_sTopProcName == m_sSelfExeName) {
         LOG_INFO_1(L"Skip hotkey in self program");
-        is_skip = true;
+        allow_do_revert = false;
     }
-    if (settings_thread.IsSkipProgram(m_sTopProcName)) {
+    else if (settings_thread.IsSkipProgram(m_sTopProcName)) {
         LOG_INFO_1(L"Skip process %s because of disableInProcess", m_sTopProcName.c_str());
-        is_skip = true;
+        allow_do_revert = false;
+        allow_do_layout = false;
     }
-	if (is_skip)
+
+	// CHANGE LAYOUT WITHOUT REVERT
+
+	if (allow_do_layout) {
+
+        if (Utils::is_in(typeRevert, hk_CapsGenerate, hk_ScrollGenerate)) {
+            TKeyCode k = (typeRevert == hk_CapsGenerate) ? VK_CAPITAL : VK_SCROLL;
+            InputSender inputSender;
+            inputSender.Add(k, KEY_STATE_DOWN);
+            inputSender.Add(k, KEY_STATE_UP);
+            IFS_LOG(SendOurInput(inputSender));
+            RETURN_SUCCESS;
+        }
+
+        IFS_RET(AnalizeTopWnd());
+
+        if (typeRevert == hk_CycleCustomLang) {
+            data.flags = SW_CLIENT_SetLang;
+            data.lay   = getNextLang();
+            IFS_RET(ProcessRevert(data));
+            RETURN_SUCCESS;
+        }
+
+        if (Utils::is_in(typeRevert, hk_ChangeSetLayout_1, hk_ChangeSetLayout_2, hk_ChangeSetLayout_3)) {
+            HKL hkl = 0;
+            if (typeRevert == hk_ChangeSetLayout_1)
+                hkl = settings_thread.hkl_lay[SettingsGui::SW_HKL_1];
+            else if (typeRevert == hk_ChangeSetLayout_2)
+                hkl = settings_thread.hkl_lay[SettingsGui::SW_HKL_2];
+            else if (typeRevert == hk_ChangeSetLayout_3)
+                hkl = settings_thread.hkl_lay[SettingsGui::SW_HKL_3];
+
+            data.flags = SW_CLIENT_SetLang;
+            data.lay   = (HKL)hkl;
+            IFS_RET(ProcessRevert(data));
+
+            RETURN_SUCCESS;
+        }
+    }
+
+
+	// REVERT AND CHANGE LAYOUT
+
+    if(!allow_do_revert)
         RETURN_SUCCESS;
 
 
