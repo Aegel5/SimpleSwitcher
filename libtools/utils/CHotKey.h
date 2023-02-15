@@ -190,7 +190,7 @@ public:
 	{
 		if (!mapCode.empty())
 			return;
-		for(int i = 0; i < SW_ARRAY_SIZE(vkMap); ++i)
+		for(int i = 0; i < vkMap.size(); ++i)
 		{
 			TStr sName = vkMap[i];
 			if(!sName)

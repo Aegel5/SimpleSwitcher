@@ -165,7 +165,8 @@ private:
         elem->SetClientData((void*)type);
 
         elem->SetEditable(false);
-        elem->SetValue(setsgui.GetHk(type).key().ToString());
+        auto key = setsgui.GetHk(type).key();
+        elem->SetValue(key.ToString());
 
         //auto sizer = elem->GetSizer();
         //auto size = sizer->GetSize();
