@@ -4,7 +4,7 @@
 #include <comdef.h>
 #define _WIN32_DCOM
 
-MAKE_AUTO_CLEANUP(BSTR, ::SysFreeString, NULL, CAuto_Bstr)
+MAKE_AUTO_CLEANUP(BSTR, ::SysFreeString, nullptr, CAuto_Bstr)
 
 namespace COM
 {

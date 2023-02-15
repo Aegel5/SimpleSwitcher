@@ -24,13 +24,13 @@ using CAutoHandleFind = TemplateAutoClose2<HANDLE, __HandleFindWrapper>;
 
 
 //MAKE_AUTO_CLEANUP(HANDLE, ::CloseHandle, NULL, CAutoHandle__)
-MAKE_AUTO_CLEANUP(HHOOK, ::UnhookWindowsHookEx, NULL, CAutoHHOOK)
-MAKE_AUTO_CLEANUP(HKEY, ::RegCloseKey, NULL, CAutoCloseHKey)
-MAKE_AUTO_CLEANUP(HWINEVENTHOOK, ::UnhookWinEvent, NULL, CAutoHWINEVENTHOOK)
-MAKE_AUTO_CLEANUP(HMODULE, ::FreeLibrary, NULL, CAutoHMODULE)
-MAKE_AUTO_CLEANUP(SC_HANDLE, ::CloseServiceHandle, NULL, CAutoSCHandle)
-MAKE_AUTO_CLEANUP(LPVOID, ::LocalFree, NULL, CAutoWinMem)
-MAKE_AUTO_CLEANUP(LPVOID, ::GlobalUnlock, NULL, CAutoGlobalLock)
+MAKE_AUTO_CLEANUP(HHOOK, ::UnhookWindowsHookEx, nullptr, CAutoHHOOK)
+MAKE_AUTO_CLEANUP(HKEY, ::RegCloseKey, nullptr, CAutoCloseHKey)
+MAKE_AUTO_CLEANUP(HWINEVENTHOOK, ::UnhookWinEvent, nullptr, CAutoHWINEVENTHOOK)
+MAKE_AUTO_CLEANUP(HMODULE, ::FreeLibrary, nullptr, CAutoHMODULE)
+MAKE_AUTO_CLEANUP(SC_HANDLE, ::CloseServiceHandle, nullptr, CAutoSCHandle)
+MAKE_AUTO_CLEANUP(LPVOID, ::LocalFree, nullptr, CAutoWinMem)
+MAKE_AUTO_CLEANUP(LPVOID, ::GlobalUnlock, nullptr, CAutoGlobalLock)
 
 class CAutoWinEvent
 {

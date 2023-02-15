@@ -14,6 +14,8 @@
 
 #include <wx/taskbar.h>
 
+
+
 extern bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key);
 
 enum
@@ -88,10 +90,10 @@ public:
 
         Bind(wxEVT_CLOSE_WINDOW, &MainWnd::onExitReqest, this);
 
-        SetTitle(fmt::format(L"{} {}{}", GetTitle(), SW_VERSION, Utils::IsSelfElevated() ? L" Administrator" : L""));
+        SetTitle(std::format(L"{} {}{}", GetTitle().c_str(), SW_VERSION, Utils::IsSelfElevated() ? L" Administrator" : L""));
         SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxRESIZE_BORDER);
 
-        m_staticTextBuildDate->SetLabelText(fmt::format(L"Built on '{}'", _SW_ADD_STR_UT(__DATE__)));
+        m_staticTextBuildDate->SetLabelText(std::format(L"Built on '{}'", _SW_ADD_STR_UT(__DATE__)));
         
 
         m_notebook2->SetSelection(0);
@@ -297,14 +299,14 @@ private:
         m_check_scrollremap->SetValue(caps == VK_F23);
 
         auto caption = [](DWORD sc, DWORD vc) {
-            return fmt::format(L"sc: {}, vk: {}, '{}'", sc, vc, HotKeyNames::Global().GetName(vc));
+            return std::format(L"sc: {}, vk: {}, '{}'", sc, vc, HotKeyNames::Global().GetName(vc));
         };
 
         m_listBoxRemap->Clear();
         for (auto iter = remap.GetIter(); !iter.IsEnd(); ++iter) {
             auto [sc, vc]   = iter.curElemSrc();
             auto [sc2, vc2] = iter.curElemDst();
-            m_listBoxRemap->Append(fmt::format(L"{} -> {}", caption(sc, vc), caption(sc2, vc2)));
+            m_listBoxRemap->Append(std::format(L"{} -> {}", caption(sc, vc), caption(sc2, vc2)));
         }
     }
     virtual void onRemapCaps(wxCommandEvent& event)
@@ -316,7 +318,7 @@ private:
 
         if (!Utils::IsSelfElevated()) {
             check->SetValue(!check->GetValue());
-            ShowNeedAdmin();
+            ShowNeedAdmin("");
             return;
         }
 
@@ -396,7 +398,7 @@ private:
         if (parm.isTaskExists)        {
             schedulRes = parm.pathValue;
         }
-        std::wstring sLabel = fmt::format(L"         Registry: {}\r\n         Scheduler: {}", registryRes, schedulRes);
+        std::wstring sLabel = std::format(L"         Registry: {}\r\n         Scheduler: {}", registryRes, schedulRes);
         m_staticTextExplain->SetLabelText(sLabel);
     }
     HKL all_lays[50] = { 0 };
@@ -538,9 +540,9 @@ private:
         UpdateAutostartExplain();
 
     }
-    void ShowNeedAdmin(const char* expl = nullptr) {
+    void ShowNeedAdmin(const wxString& expl) {
         wxString ms(_("Need admin rights"));
-        if (expl != nullptr) {
+        if (expl != "") {
             ms += _(" for: ");
             ms += "\"";
             ms += expl;
@@ -591,7 +593,7 @@ public:
     void onAutocheck(wxCommandEvent& event) override {
         if (setsgui.isMonitorAdmin && !Utils::IsSelfElevated()) {
             m_checkAddToAutoStart->SetValue(!m_checkAddToAutoStart->GetValue());
-            ShowNeedAdmin();
+            ShowNeedAdmin("");
             return;
         }
         ensureAuto(m_checkAddToAutoStart->GetValue());
@@ -605,7 +607,7 @@ public:
                 coreWork.Start();
             }
             else {
-                ShowNeedAdmin();
+                ShowNeedAdmin("");
             }
         }
         else {

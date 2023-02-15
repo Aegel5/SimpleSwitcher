@@ -8,10 +8,10 @@ set(wxBUILD_SHARED OFF)
 set(wxBUILD_USE_STATIC_RUNTIME ON)
 
 set(wxUSE_STC OFF)
-#set(wxUSE_XRC OFF)
-#set(wxUSE_XML OFF)
+set(wxUSE_XRC OFF)
+set(wxUSE_XML OFF)
 #set(wxUSE_WEBVIEW OFF)
-#set(wxUSE_RIGHTEXT OFF)
+set(wxUSE_RIGHTEXT OFF)
 #set(wxUSE_RIBBON OFF)
 ##set(wxUSE_QA OFF)
 ##set(wxUSE_PROPGRID OFF)
@@ -22,6 +22,8 @@ set(wxUSE_MEDIA OFF)
 #set(wxUSE_AUI OFF)
 
 #set(wxUSE_LIBJPEG OFF)
+
+ set(wxUSE_STL ON)
 
 
 file(GLOB_RECURSE TARGET_SOURCES  
@@ -38,7 +40,7 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 add_subdirectory(../wxWidgets wxWidgets)
 #set(CMAKE_CXX20_STANDARD_COMPILE_OPTION "-std:c++latest")
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 add_executable (SimpleSwitcher WIN32 ${TARGET_SOURCES})
 target_precompile_headers(SimpleSwitcher PRIVATE src/stdafx.h )
 target_link_libraries(SimpleSwitcher wx::core wx::base "Crypt32.lib")
