@@ -6,18 +6,20 @@ typedef unsigned char TKeyCode;
 
 class HotKeyNames
 {
-	TStr vkMap[256];
+	std::vector<TStr> vkMap{ 256, nullptr };
 	std::map <std::wstring , TKeyCode > mapCode;
 	void Set(TKeyCode k, TStr s)
 	{
+		if (k >= vkMap.size()) {
+			LOG_WARN(L"can't set code");
+			return;
+		}
 		vkMap[k] = s;
 	}
 public:
 	
 	HotKeyNames()
 	{
-		SwZeroMemory(vkMap);
-
 		Set(0x41, L"A");
 		Set(0x41, L"A");
 		Set(0x42, L"B");
@@ -173,7 +175,15 @@ public:
 
 	TStr GetName(TKeyCode k)
 	{
-		return vkMap[k];
+		if (k >= vkMap.size()) {
+			return L"Unknown";
+		}
+
+		auto res = vkMap[k];
+		if(res == nullptr) 
+			return L"Unknown";
+
+		return res;
 	}
 
 	void GenerateMap()
