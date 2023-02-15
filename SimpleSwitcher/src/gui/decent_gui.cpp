@@ -83,54 +83,59 @@ class MainWnd : public MyFrame4
 public:
     MainWnd() : MyFrame4(nullptr)
     {
-        g_guiHandle = GetHandle();
+        try {
+            g_guiHandle = GetHandle();
 
-        icon = wxIcon("appicon");
-        SetIcon(icon);
+            icon = wxIcon("appicon");
+            SetIcon(icon);
 
-        Bind(wxEVT_CLOSE_WINDOW, &MainWnd::onExitReqest, this);
+            Bind(wxEVT_CLOSE_WINDOW, &MainWnd::onExitReqest, this);
 
-        SetTitle(std::format(L"{} {}{}", GetTitle().c_str(), SW_VERSION, Utils::IsSelfElevated() ? L" Administrator" : L""));
-        SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxRESIZE_BORDER);
+            SetTitle(std::format(L"{} {}{}", GetTitle().c_str(), SW_VERSION, Utils::IsSelfElevated() ? L" Administrator" : L""));
+            SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxRESIZE_BORDER);
 
-        m_staticTextBuildDate->SetLabelText(std::format(L"Built on '{}'", _SW_ADD_STR_UT(__DATE__)));
-        
+            m_staticTextBuildDate->SetLabelText(std::format(L"Built on '{}'", _SW_ADD_STR_UT(__DATE__)));
 
-        m_notebook2->SetSelection(0);
 
-        BindHotCtrl(m_textLastword, hk_RevertLastWord);
-        BindHotCtrl(m_textSeveralWords, hk_RevertCycle);
-        BindHotCtrl(m_textSelected, hk_RevertSel);
-        BindHotCtrl(m_textCycleLay, hk_CycleCustomLang);
-        BindHotCtrl(m_textSetlay1, hk_ChangeSetLayout_1);
-        BindHotCtrl(m_textSetlay2, hk_ChangeSetLayout_2);
-        BindHotCtrl(m_textSetlay3, hk_ChangeSetLayout_3);
-        BindHotCtrl(m_textcapsgen, hk_CapsGenerate);
-        BindHotCtrl(m_text_sel_toupper, hk_toUpperSelected);
+            m_notebook2->SetSelection(0);
 
-        updateBools();
+            BindHotCtrl(m_textLastword, hk_RevertLastWord);
+            BindHotCtrl(m_textSeveralWords, hk_RevertCycle);
+            BindHotCtrl(m_textSelected, hk_RevertSel);
+            BindHotCtrl(m_textCycleLay, hk_CycleCustomLang);
+            BindHotCtrl(m_textSetlay1, hk_ChangeSetLayout_1);
+            BindHotCtrl(m_textSetlay2, hk_ChangeSetLayout_2);
+            BindHotCtrl(m_textSetlay3, hk_ChangeSetLayout_3);
+            BindHotCtrl(m_textcapsgen, hk_CapsGenerate);
+            BindHotCtrl(m_text_sel_toupper, hk_toUpperSelected);
 
-        if (startOk()) {
-            coreWork.Start();
-        }
-        updateEnable();
-        updateAutoStart();
-        FillCombo();
-        updateLayFilter();
+            updateBools();
 
-        updateCapsTab();
-        handleDisableAccess();
-        UpdateUiLang();
-
-        if (myTray.IsAvailable()) {
-            myTray.SetIcon(icon);
-            myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
-            myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
-            myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
-            for (int i = 0; i < all_lay_size; i++) {
-                myTray.AddLay(all_lays[i]);
-                myTray.Bind(wxEVT_MENU, &MainWnd::onSetLay, this, Minimal_SetLay1 + i);
+            if (startOk()) {
+                coreWork.Start();
             }
+            updateEnable();
+            updateAutoStart();
+            FillCombo();
+            updateLayFilter();
+
+            updateCapsTab();
+            handleDisableAccess();
+            UpdateUiLang();
+
+            if (myTray.IsAvailable()) {
+                myTray.SetIcon(icon);
+                myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
+                myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
+                myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
+                for (int i = 0; i < all_lay_size; i++) {
+                    myTray.AddLay(all_lays[i]);
+                    myTray.Bind(wxEVT_MENU, &MainWnd::onSetLay, this, Minimal_SetLay1 + i);
+                }
+            }
+        }
+        catch (std::exception& e) {
+            wxMessageBox(_("Error while initing main wnd: ") + e.what());
         }
 
     }
@@ -381,25 +386,30 @@ private:
     }
     void UpdateAutostartExplain()
     {
-        Startup::CheckTaskSheduleParm parm;
-        parm.taskName = c_wszTaskName;
-        IFS_LOG(Startup::CheckTaskShedule(parm));
+        try {
+            Startup::CheckTaskSheduleParm parm;
+            parm.taskName = c_wszTaskName;
+            IFS_LOG(Startup::CheckTaskShedule(parm));
 
-        bool isHasEntry = false;
-        std::wstring value;
-        IFS_LOG(Startup::GetString_AutoStartUser(c_sRegRunValue, isHasEntry, value));
+            bool isHasEntry = false;
+            std::wstring value;
+            IFS_LOG(Startup::GetString_AutoStartUser(c_sRegRunValue, isHasEntry, value));
 
-        std::wstring registryRes = L"none";
-        std::wstring schedulRes = L"none";
+            std::wstring registryRes = L"none";
+            std::wstring schedulRes = L"none";
 
-        if (isHasEntry)        {
-            registryRes = value;
+            if (isHasEntry) {
+                registryRes = value;
+            }
+            if (parm.isTaskExists) {
+                schedulRes = parm.pathValue;
+            }
+            std::wstring sLabel = std::format(L"         Registry: {}\r\n         Scheduler: {}", registryRes, schedulRes);
+            m_staticTextExplain->SetLabelText(sLabel);
         }
-        if (parm.isTaskExists)        {
-            schedulRes = parm.pathValue;
+        catch (std::exception& e) {
+            wxMessageBox(_("Error while UpdateAutostartExplain: ") + e.what());
         }
-        std::wstring sLabel = std::format(L"         Registry: {}\r\n         Scheduler: {}", registryRes, schedulRes);
-        m_staticTextExplain->SetLabelText(sLabel);
     }
     HKL all_lays[50] = { 0 };
     int all_lay_size = 0;

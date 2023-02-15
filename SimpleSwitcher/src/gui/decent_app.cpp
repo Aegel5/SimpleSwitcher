@@ -30,41 +30,47 @@ bool MyApp::OnInit() {
     // call the base class initialization method, currently it only parses a
     // few common command-line options but it could be do more in the future
 
+    try {
 
-    SetLogLevel(setsgui.fDbgMode ? LOG_LEVEL_1 : LOG_LEVEL_0);
 
-    auto errLoadConf = LoadConfig(setsgui, true);
-    IFS_LOG(errLoadConf);
+        SetLogLevel(setsgui.fDbgMode ? LOG_LEVEL_1 : LOG_LEVEL_0);
 
-    SetLogLevel2(setsgui.fDbgMode ? setsgui.logLevel : LOG_LEVEL_0);
+        auto errLoadConf = LoadConfig(setsgui, true);
+        IFS_LOG(errLoadConf);
 
-    IFS_LOG(autoCom.Init());
-    //Initlll();
+        SetLogLevel2(setsgui.fDbgMode ? setsgui.logLevel : LOG_LEVEL_0);
 
-    setlocale(LC_ALL, "en_US.utf8");
+        IFS_LOG(autoCom.Init());
+        //Initlll();
 
-    if (errLoadConf == SW_ERR_SUCCESS) {
-        // init ui
-        if (setsgui.uiLang == SettingsGui::UiLang::rus) {
+        setlocale(LC_ALL, "en_US.utf8");
 
-            wxTranslations* const trans = new wxTranslations();
-            wxTranslations::Set(trans);
-            trans->SetLoader(new wxResourceTranslationsLoader());
-            trans->SetLanguage(wxLANGUAGE_RUSSIAN);
-            trans->AddCatalog("lang");
+        if (errLoadConf == SW_ERR_SUCCESS) {
+            // init ui
+            if (setsgui.uiLang == SettingsGui::UiLang::rus) {
+
+                wxTranslations* const trans = new wxTranslations();
+                wxTranslations::Set(trans);
+                trans->SetLoader(new wxResourceTranslationsLoader());
+                trans->SetLanguage(wxLANGUAGE_RUSSIAN);
+                trans->AddCatalog("lang");
+            }
         }
-    }
 
-    bool show = true;
-    for (int i = 0; i < wxApp::argc; i++) {
-        auto cur = wxApp::argv[i];
-        if (cur == c_sArgAutostart) {
-            show = false;
-            break;
+        bool show = true;
+        for (int i = 0; i < wxApp::argc; i++) {
+            auto cur = wxApp::argv[i];
+            if (cur == c_sArgAutostart) {
+                show = false;
+                break;
+            }
         }
-    }
 
-    StartMainGui(show, errLoadConf != SW_ERR_SUCCESS);
+        StartMainGui(show, errLoadConf != SW_ERR_SUCCESS);
+    }
+    catch (std::exception& e) {
+        wxMessageBox(_("Error while initing app: ") + e.what());
+    }
 
     // success: wxApp::OnRun() will be called which will enter the main message
     // loop and the application will run. If we returned false here, the
