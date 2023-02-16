@@ -24,7 +24,10 @@ public:
 			RETURN_SUCCESS;
 		for (auto& i : list)
 		{
-			LOG_INFO_2(L"SEND %s %s", i.ki.dwFlags == KEYEVENTF_KEYUP ? L"UP" : L"DW", CHotKey::ToString((TKeyCode)i.ki.wVk).c_str());
+			LOG_INFO_2(L"SEND %s ?", i.ki.dwFlags == KEYEVENTF_KEYUP ? L"UP" : L"DW"
+				// не пишем персональную инфу
+				// ,CHotKey::ToString((TKeyCode)i.ki.wVk).c_str()
+			);
 		}
 	    IFW_RET(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size());
 		RETURN_SUCCESS;

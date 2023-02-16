@@ -183,7 +183,7 @@ public:
         std::wstring data;
         IFS_LOG(OpenAndGetFromClipBoardOur(data));
 
-        LOG_INFO_2(L"buf: %s\n, len: %u", data.c_str(), data.length());
+        LOG_INFO_2(L"buf: ????, len: %u", data.length());
 
         if (data.length() == 0) {
             LOG_INFO_1(L"Skip empty buffer");

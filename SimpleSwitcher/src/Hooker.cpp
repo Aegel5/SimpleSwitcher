@@ -59,7 +59,7 @@ TKeyType Hooker::GetCurKeyType(CHotKey hotkey)
 	if (res == 1)
 	{
 		auto c = sBufKey[0];
-		LOG_INFO_3(L"print char %c", c);
+		//LOG_INFO_3(L"print char %c", c);
 		if (wcschr(L" \t-=+*()%", c) != NULL)
 		{
 			return KEYTYPE_SPACE;
@@ -296,7 +296,9 @@ void Hooker::ClearAllWords()
 		}
 		else
 		{
-			LOG_INFO_2(L"Up key %s because GetAsyncKeyState", CHotKey::ToString(*k).c_str());
+			LOG_INFO_2(L"Up key ? because GetAsyncKeyState"
+				// , CHotKey::ToString(*k).c_str()
+			);
 			m_curKeyState.Remove(*k);
 		}
 	}
@@ -919,7 +921,10 @@ HKL Hooker::getNextLang () {
         // к сожалению наш список работать не будет (
         // TODO возможно будет работать если послать несколь NEXT чтобы пропустить ненужную раскладку (нужен монитор тек
         // языка)
+
+		LOG_WARN(L"___ NOT FOUND CUR LAY while customLangList.size > 1");
         return (HKL)HKL_NEXT;
+		//return lst[0]; // не выходим за границы языков, требуемых пользователем.
     }
 
     HKL toSet = 0;
@@ -1049,7 +1054,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 TStatus Hooker::NeedRevert(HotKeyType typeRevert)
 {
 	auto skey = m_curKeyState.ToString();
-	LOG_INFO_1(L"NeedRevert %s, curstate=\"%s\"", HotKeyTypeName(typeRevert), skey.c_str());
+	LOG_INFO_1(L"NeedRevert %S, curstate=\"%s\"", HotKeyTypeName(typeRevert), skey.c_str());
 
 	ContextRevert ctxRevert;
 	ctxRevert.typeRevert = typeRevert;
