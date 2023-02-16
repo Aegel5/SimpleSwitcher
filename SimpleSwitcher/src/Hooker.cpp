@@ -59,7 +59,7 @@ TKeyType Hooker::GetCurKeyType(CHotKey hotkey)
 	if (res == 1)
 	{
 		auto c = sBufKey[0];
-		//LOG_INFO_3(L"print char %c", c);
+		LOG_INFO_3(L"print char ?");
 		if (wcschr(L" \t-=+*()%", c) != NULL)
 		{
 			return KEYTYPE_SPACE;
