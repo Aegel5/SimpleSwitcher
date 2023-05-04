@@ -11,6 +11,11 @@ namespace {
             unreg();
             if(key.IsEmpty()) return;
 
+            if (key.IsKnownMods(key.ValueKey())) {
+                LOG_WARN(L"key %S NOT registered because it MOD", key.ToString2().c_str());
+                return;
+            }
+
             UINT mods = MOD_NOREPEAT;
             UINT vk = key.ValueKey();
             for (TKeyCode* k = key.ModsBegin(); k != key.ModsEnd(); ++k)
@@ -29,7 +34,7 @@ namespace {
                     mods |= MOD_WIN;
                 }
                 else {
-                    LOG_WARN(L"key %S NOT registered", key.ToString2().c_str());
+                    LOG_WARN(L"key %S NOT registered because unknown mod", key.ToString2().c_str());
                     return;
                 }
             }
