@@ -126,7 +126,7 @@ private:
 
 bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key)
 {
-    HotKeyDlg dlg(g_setsgui.hotkeysList[type], frame);
+    HotKeyDlg dlg(setsgui.hotkeysList[type], frame);
     auto res = dlg.ShowModal();
     key      = dlg.key;
     return (res == wxID_OK);

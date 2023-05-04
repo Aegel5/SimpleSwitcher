@@ -99,15 +99,15 @@ struct CHotKeySet
     }
 };
 
-//inline TStatus PostMsgSettingChanges()
-//{
-//    HWND hwnd = FindWindow(c_sClassNameServer2, 0);
-//	if (hwnd != NULL)
-//	{
-//		PostMessage(hwnd, c_MSG_SettingsChanges, 0, 0);
-//	}
-//	RETURN_SUCCESS;
-//}
+inline TStatus PostMsgSettingChanges()
+{
+    HWND hwnd = FindWindow(c_sClassNameServer2, 0);
+	if (hwnd != NULL)
+	{
+		PostMessage(hwnd, c_MSG_SettingsChanges, 0, 0);
+	}
+	RETURN_SUCCESS;
+}
 inline TStatus GetCurLayRequest() {
     HWND hwnd = FindWindow(c_sClassNameServer2, 0);
     if (hwnd != NULL) {
@@ -174,9 +174,7 @@ public:
     std::vector<HKL> customLangList;
     std::vector<HKL> hkl_lay;
 
-    //std::mutex mtx_sync;
 
-    // TODO: использовать smart-указатель вместо CHotKeySet для безопасного изменения объекта (концепция старого или нового объекта).
     typedef std::map<HotKeyType, CHotKeySet> THotKeyMap;
     THotKeyMap hotkeysList;
 
@@ -196,24 +194,20 @@ public:
 
 //inline UserConf u_conf;
 
-//inline SettingsGui settings_thread;
-
-// Используем один объект на 2 наших потока. При необходимости делаем синхронизацию.
-inline SettingsGui g_setsgui;
+inline SettingsGui settings_thread;
+inline SettingsGui setsgui;
 
 inline int g_hotkeyWndOpened = 0;
 
 TStatus LoadConfig(SettingsGui& sets, bool createIfNotExists = false);
 TStatus Save2(SettingsGui& gui);
 inline TStatus Save() {
-    return Save2(g_setsgui);
+    return Save2(setsgui);
 }
-
-
 
 inline void SaveAndPostMsg() {
     IFS_LOG(Save());
-    //PostMsgSettingChanges();
+    PostMsgSettingChanges();
 }
 
 

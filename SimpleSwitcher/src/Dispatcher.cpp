@@ -65,7 +65,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
     CAutoProcMonitor loader;
     CAutoProcMonitor loader64;
     g_laynotif.inited = false;
-	if (g_setsgui.injectDll) {
+	if (setsgui.injectDll) {
         tstring sFolder;
         IFS_RET(GetPath_folder_noLower(sFolder));
 
@@ -128,13 +128,13 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 		if (mesg == WM_HOTKEY)
 		{
 		}
-		//else if (mesg == c_MSG_SettingsChanges)
-		//{
-		//	if (gdata().curModeBit == SW_BIT_32)
-		//	{
-		//		Worker()->PostMsg(HWORKER_LoadSettings);
-		//	}
-  //      } 
+		else if (mesg == c_MSG_SettingsChanges)
+		{
+			if (gdata().curModeBit == SW_BIT_32)
+			{
+				Worker()->PostMsg(HWORKER_LoadSettings);
+			}
+        } 
 		else if (mesg == WM_GetCurLay) {
             Worker()->PostMsg(HWORKER_Getcurlay);
         } 
@@ -174,7 +174,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 			}
 
             if (timerId == c_timerKeyloggerDefence) {
-                if (g_setsgui.fEnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
+                if (setsgui.fEnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
                     IFS_LOG(resethook()); // ???
                 }
             } else if (timerId == c_timerGetcurlay) {
@@ -250,7 +250,7 @@ LRESULT CALLBACK KeyboardProc(
 	DWORD key = DWORD(wParam);
 	LOG_INFO_0(L"_PRINTED_ %d", key);
 
-	//if (g_setsgui.fEnableKeyLoggerDefence) {
+	//if (setsgui.fEnableKeyLoggerDefence) {
 		return 0;
 	//} else {
 	//	return CallNextHookEx(0, nCode, wParam, lParam);
@@ -280,7 +280,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 
 	}
 
-	if (g_setsgui.fEnableKeyLoggerDefence) {
+	if (setsgui.fEnableKeyLoggerDefence) {
 		return 0;
 	} else {
 		return CallNextHookEx(0, nCode, wParam, lParam);
@@ -294,7 +294,7 @@ TStatus resethook() {
 	hh->hHookKeyGlobal = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, 0, 0);
 
 	//hh->hHookKeyGlobal_2.Cleanup();
-	//if (g_setsgui.fEnableKeyLoggerDefence) {
+	//if (setsgui.fEnableKeyLoggerDefence) {
 	//	DWORD dwTheardId = ::GetWindowThreadProcessId(gdata().hWndMonitor, 0);
 	//	hh->hHookKeyGlobal_2 = WinApiInt::SetWindowsHookEx(WH_KEYBOARD, KeyboardProc, GetModuleHandle(NULL), dwTheardId);
 	//	IFW_LOG(hh->hHookKeyGlobal_2.IsValid());
@@ -335,7 +335,7 @@ TStatus StartMonitor(
 	TSWBit bit)
 {
 
-	//IFS_RET(LoadConfig(settings_thread));
+	IFS_RET(LoadConfig(settings_thread));
 
 	LOG_INFO_1(L"StartMonitor...");
 

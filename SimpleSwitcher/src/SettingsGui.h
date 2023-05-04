@@ -11,15 +11,15 @@ struct CHotKeySet
 	bool fFillFromDef = true;
 };
 
-//inline TStatus PostMsgSettingChanges()
-//{
-//	HWND hwnd = FindWindow(c_sClassName32, 0);
-//	if (hwnd != NULL)
-//	{
-//		PostMessage(hwnd, c_MSG_SettingsChanges, 0, 0);
-//	}
-//	SW_RETURN_SUCCESS;
-//}
+inline TStatus PostMsgSettingChanges()
+{
+	HWND hwnd = FindWindow(c_sClassName32, 0);
+	if (hwnd != NULL)
+	{
+		PostMessage(hwnd, c_MSG_SettingsChanges, 0, 0);
+	}
+	SW_RETURN_SUCCESS;
+}
 
 class SettingsGui
 {
@@ -71,5 +71,5 @@ private:
 	
 };
 
-inline SettingsGui& g_setsgui { return SettingsGui::Global(); }
+inline SettingsGui& setsgui { return SettingsGui::Global(); }
 
