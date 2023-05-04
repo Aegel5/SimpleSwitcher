@@ -367,6 +367,7 @@ private:
             SaveAndPostMsg();
             auto res = g_setsgui.GetHk(type).key().ToString();
             obj->SetValue(res);
+            Rereg_all();
         }
     }
 

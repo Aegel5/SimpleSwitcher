@@ -4,6 +4,7 @@
 #include "loader_api.h"
 
 
+
 enum HotKeyType : TUInt32
 {
     hk_NULL = 0xFFFFFF,
@@ -209,6 +210,8 @@ inline void SaveAndPostMsg() {
     IFS_LOG(Save());
     PostMsgSettingChanges();
 }
+
+extern void Rereg_all();
 
 
 

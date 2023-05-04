@@ -55,6 +55,8 @@ bool MyApp::OnInit() {
                 trans->SetLanguage(wxLANGUAGE_RUSSIAN);
                 trans->AddCatalog("lang");
             }
+
+            Rereg_all();
         }
 
         bool show = true;
