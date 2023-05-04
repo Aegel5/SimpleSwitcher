@@ -194,15 +194,15 @@ public:
 
 //inline UserConf u_conf;
 
-inline SettingsGui settings_thread;
-inline SettingsGui setsgui;
+inline SettingsGui g_settings_thread;
+inline SettingsGui g_setsgui;
 
 inline int g_hotkeyWndOpened = 0;
 
 TStatus LoadConfig(SettingsGui& sets, bool createIfNotExists = false);
 TStatus Save2(SettingsGui& gui);
 inline TStatus Save() {
-    return Save2(setsgui);
+    return Save2(g_setsgui);
 }
 
 inline void SaveAndPostMsg() {

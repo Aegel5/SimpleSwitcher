@@ -54,7 +54,7 @@ TStatus CMainWorker::WorkerInt()
 			}
             else if (timerId == c_timerGetcurlay)
             {
-                if (settings_thread.showFlags) {
+                if (g_settings_thread.showFlags) {
                     hooker.CheckCurLay();
                 }
             }
@@ -70,7 +70,7 @@ TStatus CMainWorker::WorkerInt()
 		else if (mode == HWORKER_LoadSettings)
 		{
 			// todo load not from file but from safe copy.
-            IFS_LOG(LoadConfig(settings_thread));
+            IFS_LOG(LoadConfig(g_settings_thread));
 			//IFS_LOG(ResetAllHotKey(*gdata().hotkeyHolders));
         } else if (mode == HWORKER_Getcurlay) {
             hooker.CheckCurLay(true);

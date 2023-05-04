@@ -43,7 +43,7 @@ TKeyType Hooker::GetCurKeyType(CHotKey hotkey)
 			return KEYTYPE_BACKSPACE;
 	}
 
-	//if(setsgui.isDashSeparate)
+	//if(g_setsgui.isDashSeparate)
 	//{
 	//	if(key.ValueKey() == 189 && key.Size() == 1)
 	//	{
@@ -89,7 +89,7 @@ bool Hooker::GetTypeForKey(CHotKey curkey, HotKeyType& type, bool& isUp)
 {
 	for (int iPrior = 0; iPrior < 2; ++iPrior)
 	{
-		for (auto it : settings_thread.hotkeysList)
+		for (auto it : g_settings_thread.hotkeysList)
 		{
 			auto& info = it.second;
 			auto hkId = it.first;
@@ -235,7 +235,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	}
 
 	// Чтобы не очищался буфер клавиш на нажатии наших хоткеев.
-	for (auto& it : settings_thread.hotkeysList)
+	for (auto& it : g_settings_thread.hotkeysList)
 	{
 		auto& info = it.second;
 		auto hkId = it.first;
@@ -318,7 +318,7 @@ void Hooker::AddKeyToList(TKeyType type, CHotKey hotkey)
 	SwZeroMemory(key2);
 	key2.key() = hotkey;
 	key2.type = type;
-	if (hotkey.ValueKey() == VK_OEM_2 && settings_thread.isTryOEM2) {
+	if (hotkey.ValueKey() == VK_OEM_2 && g_settings_thread.isTryOEM2) {
 		SetFlag(key2.keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT);
 	}
 
@@ -655,7 +655,7 @@ TStatus Hooker::ClipboardChangedInt()
             //	L"dwTime=%u, request=%u, clear=%u, sec=%u",
             //	dwTime,
             //	request,
-            //	settings_thread.fClipboardClearFormat,
+            //	g_settings_thread.fClipboardClearFormat,
             //	GetClipboardSequenceNumber());
 
             if (request == CLRMY_GET_FROM_CLIP) {
@@ -697,7 +697,7 @@ TStatus Hooker::ClipboardChangedInt()
 
 	// --- This is user request ----
 
-	if (settings_thread.fClipboardClearFormat)
+	if (g_settings_thread.fClipboardClearFormat)
 	{
 		IFS_LOG(RequestClearFormat());
 	}
@@ -910,7 +910,7 @@ TStatus SendUpForKey(CHotKey key)
 
 HKL Hooker::getNextLang () {
 
-    auto& lst = settings_thread.customLangList;
+    auto& lst = g_settings_thread.customLangList;
 
     if (lst.size() <= 1) {
         return (HKL)HKL_NEXT;
@@ -961,7 +961,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
         LOG_INFO_1(L"Skip hotkey in self program");
         allow_do_revert = false;
     }
-    else if (settings_thread.IsSkipProgram(m_sTopProcName)) {
+    else if (g_settings_thread.IsSkipProgram(m_sTopProcName)) {
         LOG_INFO_1(L"Skip process %s because of disableInProcess", m_sTopProcName.c_str());
         allow_do_revert = false;
         allow_do_layout = false;
@@ -992,11 +992,11 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
         if (Utils::is_in(typeRevert, hk_ChangeSetLayout_1, hk_ChangeSetLayout_2, hk_ChangeSetLayout_3)) {
             HKL hkl = 0;
             if (typeRevert == hk_ChangeSetLayout_1)
-                hkl = settings_thread.hkl_lay[SettingsGui::SW_HKL_1];
+                hkl = g_settings_thread.hkl_lay[SettingsGui::SW_HKL_1];
             else if (typeRevert == hk_ChangeSetLayout_2)
-                hkl = settings_thread.hkl_lay[SettingsGui::SW_HKL_2];
+                hkl = g_settings_thread.hkl_lay[SettingsGui::SW_HKL_2];
             else if (typeRevert == hk_ChangeSetLayout_3)
-                hkl = settings_thread.hkl_lay[SettingsGui::SW_HKL_3];
+                hkl = g_settings_thread.hkl_lay[SettingsGui::SW_HKL_3];
 
             data.flags = SW_CLIENT_SetLang;
             data.lay   = (HKL)hkl;
