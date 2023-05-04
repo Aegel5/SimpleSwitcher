@@ -4,7 +4,7 @@
 
 
 static const UINT c_MSG_TypeHotKey = 0xBFFF - 37;
-static const UINT c_MSG_SettingsChanges = 0xBFFF - 36;
+//static const UINT c_MSG_SettingsChanges = 0xBFFF - 36;
 static const UINT c_MSG_Quit = 0xBFFF - 35;
 static const UINT WM_SWRevert = 0xBFFF - 34;
 static const UINT c_MSG_SHOW = 0xBFFF - 33;
