@@ -251,6 +251,7 @@ private:
         m_checkBoxDisablAcc->SetValue(g_setsgui.disableAccessebility);
         m_checkDebuglog->SetValue(g_setsgui.fDbgMode);
         m_checkBoxShowFlags->SetValue(g_setsgui.showFlags);
+        m_checkBoxAllowInjected->SetValue(g_setsgui.AllowRemoteKeys);
     }
 
     virtual void onEnableLog(wxCommandEvent& event)
@@ -265,6 +266,10 @@ private:
     }
     virtual void onClearFormat(wxCommandEvent& event) {
         g_setsgui.fClipboardClearFormat = event.IsChecked();
+        SaveAndPostMsg();
+    }
+    virtual void onAllowInject(wxCommandEvent& event) { 
+        g_setsgui.AllowRemoteKeys = event.IsChecked();
         SaveAndPostMsg();
     }
 

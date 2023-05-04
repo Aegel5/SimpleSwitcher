@@ -154,7 +154,15 @@ public:
 
 	HotKeyType m_needRevertUnderUP = hk_MAX;
 
+	struct SkipInjectEntry {
+		ULONGLONG actualUNTIL;
+		int skipCnt;
+	};
+	std::deque<SkipInjectEntry> skipdata;
+
 };
+
+inline Hooker* g_hooker;
 
 
 

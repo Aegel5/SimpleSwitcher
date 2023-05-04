@@ -171,6 +171,7 @@ public:
     bool disableAccessebility    = false;
     bool injectDll = false;
     bool showFlags = IsWindows10OrGreater();
+    bool AllowRemoteKeys = false;
 
     std::vector<HKL> customLangList;
     std::vector<HKL> hkl_lay;

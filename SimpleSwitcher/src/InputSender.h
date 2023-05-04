@@ -4,7 +4,6 @@
 
 enum  InputSendPos
 {
-	//INPUTSEND_FRONT,
 	INPUTSEND_BACK
 };
 struct InputSender
@@ -18,20 +17,8 @@ public:
 	INPUT* begin() { return &list[0]; }
 	INPUT* end() { return &list[0] + list.size(); }
 
-	TStatus Send()
-	{
-		if(list.empty())
-			RETURN_SUCCESS;
-		for (auto& i : list)
-		{
-			LOG_INFO_2(L"SEND %s ?", i.ki.dwFlags == KEYEVENTF_KEYUP ? L"UP" : L"DW"
-				// не пишем персональную инфу
-				// ,CHotKey::ToString((TKeyCode)i.ki.wVk).c_str()
-			);
-		}
-	    IFW_RET(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size());
-		RETURN_SUCCESS;
-	}
+	TStatus Send();
+
 	void Clear()
 	{
 		list.clear();

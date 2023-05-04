@@ -146,7 +146,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SettingsGui,
                                                 customLangList,
                                                 hkl_lay,
                                                 logLevel,
-                                                uiLang
+                                                uiLang,
+    AllowRemoteKeys
 
     )
     

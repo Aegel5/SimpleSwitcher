@@ -11,6 +11,7 @@ TStatus CMainWorker::WorkerInt()
 
 	Hooker hooker;
 	IFS_RET(hooker.Init());
+	g_hooker = &hooker;
 
 	MainWorkerMsg msg;
 	while (true)

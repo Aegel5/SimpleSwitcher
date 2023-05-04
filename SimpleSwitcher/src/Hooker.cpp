@@ -140,8 +140,26 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 
 	if (TestFlag(k->flags, LLKHF_INJECTED))
 	{
-		LOG_INFO_3(L"skip enjected");
-		RETURN_SUCCESS;
+		if (g_settings_thread.AllowRemoteKeys) {
+			while (1) {
+				if (skipdata.empty()) {
+					LOG_INFO_3(L"allow injected because of setting");
+					break; // нечего пропускать.
+				}
+				if (GetTickCount64() > skipdata.front().actualUNTIL || skipdata.front().skipCnt <= 0) {
+					skipdata.pop_front(); // истек срок годности данный ноды...
+					continue;
+				}
+				// все хорошо, нода актуальна, пропускаем inject
+				skipdata.front().skipCnt--;
+				LOG_INFO_3(L"skip enjected by evristics");
+				RETURN_SUCCESS;
+			}
+		}
+		else {
+			LOG_INFO_3(L"skip enjected");
+			RETURN_SUCCESS;
+		}
 	}
 
 	bool isSkipRepeat = false;
