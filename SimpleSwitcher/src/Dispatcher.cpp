@@ -257,6 +257,11 @@ LRESULT CALLBACK KeyboardProc(
 	//}
 }
 
+namespace {
+	CurStateWrapper g_curKey;
+	TKeyCode g_disable_up = 0;
+}
+
 LRESULT CALLBACK LowLevelKeyboardProc(
 	_In_  int nCode,
 	_In_  WPARAM wParam,
@@ -276,8 +281,33 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		auto& kData = msg.data.keyData;
 		kData.ks = *kStruct;
 		kData.wParam = wParam;
+		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
+		KeyState curKeyState = GetKeyState(wParam);
+		g_curKey.Update(vkCode, curKeyState, kData.isSkipRepeat);
+		kData.key = g_curKey.state.AsUInt64();
 		Worker()->PostMsg(msg);
 
+		if (curKeyState == KeyState::KEY_STATE_DOWN) {
+			if (!g_curKey.state.IsEmpty() && !g_curKey.state.IsKnownMods(g_curKey.state.ValueKey())) {
+				for (auto it : g_setsgui.hotkeysList) {
+					if (it.second.HasKey(g_curKey.state, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP))) {
+						// у нас есть такой хот-кей, запрещаем это событие
+						g_disable_up = g_curKey.state.ValueKey();
+						return 1;
+					}
+				}
+			}
+		}
+		else if(curKeyState == KeyState::KEY_STATE_UP){
+			if (g_disable_up == vkCode) {
+				g_disable_up = 0;
+				return 1;
+			}
+		}
+
+		if (g_curKey.state.IsEmpty()) {
+			g_disable_up = 0;
+		}
 	}
 
 	if (g_setsgui.fEnableKeyLoggerDefence) {

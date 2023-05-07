@@ -124,6 +124,8 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 {
 	KBDLLHOOKSTRUCT* k = &keyData.ks;
 	WPARAM wParam = keyData.wParam;
+	m_curKeyState.AsUInt64() = keyData.key;
+	bool isSkipRepeat = keyData.isSkipRepeat;
 
 	if(k->vkCode > 255)
 	{
@@ -161,50 +163,6 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 			RETURN_SUCCESS;
 		}
 	}
-
-	bool isSkipRepeat = false;
-
-	if(curKeyState == KEY_STATE_UP)
-	{
-		m_curKeyState.SetHold(false);
-
-		if(!m_curKeyState.Remove(vkCode))
-		{
-			if (CHotKey::IsKnownMods(vkCode))
-			{
-				std::wstring s1;
-				CHotKey::ToString(vkCode, s1);
-				IFS_LOG(SW_ERR_UNKNOWN, L"Not found up for key %s", s1.c_str());
-			}
-		}
-	}
-	else if(curKeyState == KEY_STATE_DOWN)
-	{
-		CHotKey hk_save = m_curKeyState;
-		m_curKeyState.Add(vkCode,  CHotKey::ADDKEY_ORDERED | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
-		if (m_curKeyState.Compare(hk_save))
-		{
-			if (m_curKeyState.IsHold()) // already hold
-			{
-				isSkipRepeat = true;
-			}
-			else
-			{
-				m_curKeyState.SetHold(true);
-			}
-		}
-		else
-		{
-			// была нажата другая клавиша, сбрасываем флаг hold
-			m_curKeyState.SetHold(false);
-		}
-		//m_curHotKey = m_curKeyState;
-	}
-	else
-	{
-		return SW_ERR_UNKNOWN;
-	}
-
 
 	if (GetLogLevel() >= LOG_LEVEL_3)
 	{
@@ -306,20 +264,20 @@ void Hooker::ClearAllWords()
 		ClearCycleRevert();
 	}
 
-	CHotKey curCopy = m_curKeyState;
-	for (TKeyCode* k = curCopy.ModsBegin(); k != curCopy.ModsEnd(); ++k)
-	{
-		if (GetAsyncKeyState(*k) & 0x8000)
-		{
-		}
-		else
-		{
-			LOG_INFO_2(L"Up key ? because GetAsyncKeyState"
-				// , CHotKey::ToString(*k).c_str()
-			);
-			m_curKeyState.Remove(*k);
-		}
-	}
+	//CHotKey curCopy = m_curKeyState.state;
+	//for (TKeyCode* k = curCopy.ModsBegin(); k != curCopy.ModsEnd(); ++k)
+	//{
+	//	if (GetAsyncKeyState(*k) & 0x8000)
+	//	{
+	//	}
+	//	else
+	//	{
+	//		LOG_INFO_2(L"Up key ? because GetAsyncKeyState"
+	//			// , CHotKey::ToString(*k).c_str()
+	//		);
+	//		m_curKeyState.state.Remove(*k);
+	//	}
+	//}
 	
 }
 
