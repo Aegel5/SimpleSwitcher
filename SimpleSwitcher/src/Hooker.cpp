@@ -124,8 +124,6 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 {
 	KBDLLHOOKSTRUCT* k = &keyData.ks;
 	WPARAM wParam = keyData.wParam;
-	m_curKeyState.AsUInt64() = keyData.key;
-	bool isSkipRepeat = keyData.isSkipRepeat;
 
 	if(k->vkCode > 255)
 	{
@@ -163,6 +161,10 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 			RETURN_SUCCESS;
 		}
 	}
+
+	bool isSkipRepeat = false;
+	m_curKeyState_wrap.Update(vkCode, curKeyState, keyData.time, isSkipRepeat);
+	m_curKeyState = m_curKeyState_wrap.state;
 
 	if (GetLogLevel() >= LOG_LEVEL_3)
 	{

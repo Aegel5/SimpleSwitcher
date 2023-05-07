@@ -52,7 +52,7 @@ struct CurStateWrapper {
 	CHotKey state;
 	std::map<int, ULONGLONG> times;
 
-	void Update(TKeyCode vkCode, KeyState curKeyState, bool& isSkipRepeat) {
+	void Update(TKeyCode vkCode, KeyState curKeyState, ULONGLONG time, bool& isSkipRepeat) {
 		isSkipRepeat = false;
 
 		if (curKeyState == KEY_STATE_UP)
@@ -74,7 +74,7 @@ struct CurStateWrapper {
 		{
 			CHotKey hk_save = state;
 			state.Add(vkCode, CHotKey::ADDKEY_ORDERED | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
-			times[vkCode] = GetTickCount64()+500;
+			times[vkCode] = time+500;
 			if (state.Compare(hk_save))
 			{
 				if (state.IsHold()) // already hold

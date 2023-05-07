@@ -284,30 +284,38 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		kData.wParam = wParam;
 		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
 		KeyState curKeyState = GetKeyState(wParam);
-		g_curKey.Update(vkCode, curKeyState, kData.isSkipRepeat);
-		kData.key = g_curKey.state.AsUInt64();
+		bool isSkipRepeat = false;
+		kData.time = GetTickCount64();
+		g_curKey.Update(vkCode, curKeyState, kData.time, isSkipRepeat);
 		Worker()->PostMsg(msg);
 
-		if (curKeyState == KeyState::KEY_STATE_DOWN) {
-			if (!g_curKey.state.IsEmpty() && !g_curKey.state.IsKnownMods(g_curKey.state.ValueKey())) {
-				for (auto it : sets_get()->hotkeysList) {
-					if (it.second.HasKey(g_curKey.state, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP))) {
-						// у нас есть такой хот-кей, запрещаем это событие
-						g_disable_up = g_curKey.state.ValueKey();
-						return 1;
+		//LOG_INFO_4(L"------------------ %s %s", CHotKey::ToString(vkCode).c_str(), curKeyState == KeyState::KEY_STATE_DOWN ? L"DOWN" : L"UP");
+
+		if (sets_get()->DisableHotKeysInPrograms) {
+			if (curKeyState == KeyState::KEY_STATE_DOWN) {
+				if (!g_curKey.state.IsEmpty() && !g_curKey.state.IsKnownMods(g_curKey.state.ValueKey()) && vkCode == g_curKey.state.ValueKey()) {
+					for (auto it : sets_get()->hotkeysList) {
+						if (it.second.HasKey(g_curKey.state, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP))) {
+							// у нас есть такой хот-кей, запрещаем это событие
+							g_disable_up = vkCode;
+							LOG_INFO_2(L"consume key %s DOWN", CHotKey::ToString(vkCode).c_str());
+							return 1;
+						}
 					}
 				}
 			}
-		}
-		else if(curKeyState == KeyState::KEY_STATE_UP){
-			if (g_disable_up == vkCode) {
-				g_disable_up = 0;
-				return 1;
+			else if (curKeyState == KeyState::KEY_STATE_UP) {
+				if (g_disable_up == vkCode) {
+					// todo - вечно ждем?
+					g_disable_up = 0;
+					LOG_INFO_2(L"consume key %s UP", CHotKey::ToString(vkCode).c_str());
+					return 1;
+				}
 			}
-		}
-
-		if (g_curKey.state.IsEmpty()) {
-			g_disable_up = 0;
+			
+			//if (g_curKey.state.IsEmpty()) {
+			//	g_disable_up = 0;
+			//}
 		}
 	}
 

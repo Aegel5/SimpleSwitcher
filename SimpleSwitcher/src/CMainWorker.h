@@ -21,8 +21,7 @@ struct KeyMsgData
 {
 	KBDLLHOOKSTRUCT ks;
 	WPARAM wParam;
-	TUInt64 key;
-	bool isSkipRepeat;
+	ULONGLONG time;
 };
 
 struct MainWorkerMsg
