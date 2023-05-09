@@ -21,7 +21,6 @@ struct KeyMsgData
 {
 	KBDLLHOOKSTRUCT ks;
 	WPARAM wParam;
-	ULONGLONG time;
 };
 
 struct MainWorkerMsg

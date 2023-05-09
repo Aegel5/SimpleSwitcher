@@ -50,16 +50,16 @@ enum KeyState
 struct CurStateWrapper {
 
 	CHotKey state;
-	std::map<int, ULONGLONG> times;
+	//std::map<int, ULONGLONG> times;
 
-	void Update(TKeyCode vkCode, KeyState curKeyState, ULONGLONG time, bool& isSkipRepeat) {
+	void Update(TKeyCode vkCode, KeyState curKeyState, bool& isSkipRepeat) {
 		isSkipRepeat = false;
 
 		if (curKeyState == KEY_STATE_UP)
 		{
 			state.SetHold(false);
-			auto it = times.find(vkCode);
-			if (it != times.end()) { times.erase(it); }
+			//auto it = times.find(vkCode);
+			//if (it != times.end()) { times.erase(it); }
 			if (!state.Remove(vkCode))
 			{
 				if (CHotKey::IsKnownMods(vkCode))
@@ -74,7 +74,7 @@ struct CurStateWrapper {
 		{
 			CHotKey hk_save = state;
 			state.Add(vkCode, CHotKey::ADDKEY_ORDERED | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
-			times[vkCode] = time+500;
+			//times[vkCode] = time+500;
 			if (state.Compare(hk_save))
 			{
 				if (state.IsHold()) // already hold
@@ -96,25 +96,25 @@ struct CurStateWrapper {
 		{
 			// err?
 		}
-		while (1) {
-			bool found = false;
-			for (auto& el : times) {
-				if (GetTickCount64() > el.second) {
-					if (!(GetAsyncKeyState(el.first) & 0x8000)) {
-						std::wstring s1;
-						CHotKey::ToString(el.first, s1);
-						LOG_WARN(L"delete key because of 10 sec %s", s1.c_str());
-						times.erase(el.first);
-						state.Remove(el.first);
-						found = true;
-						break;
-					}
-				}
-			}
-			if (!found) {
-				break;
-			}
-		}
+		//while (1) {
+		//	bool found = false;
+		//	for (auto& el : times) {
+		//		if (GetTickCount64() > el.second) {
+		//			if (!(GetAsyncKeyState(el.first) & 0x8000)) {
+		//				std::wstring s1;
+		//				CHotKey::ToString(el.first, s1);
+		//				LOG_WARN(L"delete key because of 10 sec %s", s1.c_str());
+		//				times.erase(el.first);
+		//				state.Remove(el.first);
+		//				found = true;
+		//				break;
+		//			}
+		//		}
+		//	}
+		//	if (!found) {
+		//		break;
+		//	}
+		//}
 	}
 };
 

@@ -285,8 +285,8 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
 		KeyState curKeyState = GetKeyState(wParam);
 		bool isSkipRepeat = false;
-		kData.time = GetTickCount64();
-		g_curKey.Update(vkCode, curKeyState, kData.time, isSkipRepeat);
+		//kData.time = GetTickCount64();
+		g_curKey.Update(vkCode, curKeyState, isSkipRepeat);
 		Worker()->PostMsg(msg);
 
 		//LOG_INFO_4(L"------------------ %s %s", CHotKey::ToString(vkCode).c_str(), curKeyState == KeyState::KEY_STATE_DOWN ? L"DOWN" : L"UP");

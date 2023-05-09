@@ -163,7 +163,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	}
 
 	bool isSkipRepeat = false;
-	m_curKeyState_wrap.Update(vkCode, curKeyState, keyData.time, isSkipRepeat);
+	m_curKeyState_wrap.Update(vkCode, curKeyState, isSkipRepeat);
 	m_curKeyState = m_curKeyState_wrap.state;
 
 	if (GetLogLevel() >= LOG_LEVEL_3)
