@@ -71,3 +71,5 @@ private:
 	
 };
 
+inline SettingsGui& g_setsgui { return SettingsGui::Global(); }
+

@@ -89,7 +89,7 @@ bool Hooker::GetTypeForKey(CHotKey curkey, HotKeyType& type, bool& isUp)
 {
 	for (int iPrior = 0; iPrior < 2; ++iPrior)
 	{
-		for (auto it : sets_get()->hotkeysList)
+		for (auto it : g_settings_thread.hotkeysList)
 		{
 			auto& info = it.second;
 			auto hkId = it.first;
@@ -140,7 +140,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 
 	if (TestFlag(k->flags, LLKHF_INJECTED))
 	{
-		if (sets_get()->AllowRemoteKeys) {
+		if (g_settings_thread.AllowRemoteKeys) {
 			while (1) {
 				if (skipdata.empty()) {
 					LOG_INFO_3(L"allow injected because of setting");
@@ -163,8 +163,48 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	}
 
 	bool isSkipRepeat = false;
-	m_curKeyState_wrap.Update(vkCode, curKeyState, isSkipRepeat);
-	m_curKeyState = m_curKeyState_wrap.state;
+
+	if(curKeyState == KEY_STATE_UP)
+	{
+		m_curKeyState.SetHold(false);
+
+		if(!m_curKeyState.Remove(vkCode))
+		{
+			if (CHotKey::IsKnownMods(vkCode))
+			{
+				std::wstring s1;
+				CHotKey::ToString(vkCode, s1);
+				IFS_LOG(SW_ERR_UNKNOWN, L"Not found up for key %s", s1.c_str());
+			}
+		}
+	}
+	else if(curKeyState == KEY_STATE_DOWN)
+	{
+		CHotKey hk_save = m_curKeyState;
+		m_curKeyState.Add(vkCode,  CHotKey::ADDKEY_ORDERED | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
+		if (m_curKeyState.Compare(hk_save))
+		{
+			if (m_curKeyState.IsHold()) // already hold
+			{
+				isSkipRepeat = true;
+			}
+			else
+			{
+				m_curKeyState.SetHold(true);
+			}
+		}
+		else
+		{
+			// была нажата другая клавиша, сбрасываем флаг hold
+			m_curKeyState.SetHold(false);
+		}
+		//m_curHotKey = m_curKeyState;
+	}
+	else
+	{
+		return SW_ERR_UNKNOWN;
+	}
+
 
 	if (GetLogLevel() >= LOG_LEVEL_3)
 	{
@@ -213,7 +253,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	}
 
 	// Чтобы не очищался буфер клавиш на нажатии наших хоткеев.
-	for (auto& it : sets_get()->hotkeysList)
+	for (auto& it : g_settings_thread.hotkeysList)
 	{
 		auto& info = it.second;
 		auto hkId = it.first;
@@ -266,20 +306,20 @@ void Hooker::ClearAllWords()
 		ClearCycleRevert();
 	}
 
-	//CHotKey curCopy = m_curKeyState.state;
-	//for (TKeyCode* k = curCopy.ModsBegin(); k != curCopy.ModsEnd(); ++k)
-	//{
-	//	if (GetAsyncKeyState(*k) & 0x8000)
-	//	{
-	//	}
-	//	else
-	//	{
-	//		LOG_INFO_2(L"Up key ? because GetAsyncKeyState"
-	//			// , CHotKey::ToString(*k).c_str()
-	//		);
-	//		m_curKeyState.state.Remove(*k);
-	//	}
-	//}
+	CHotKey curCopy = m_curKeyState;
+	for (TKeyCode* k = curCopy.ModsBegin(); k != curCopy.ModsEnd(); ++k)
+	{
+		if (GetAsyncKeyState(*k) & 0x8000)
+		{
+		}
+		else
+		{
+			LOG_INFO_2(L"Up key ? because GetAsyncKeyState"
+				// , CHotKey::ToString(*k).c_str()
+			);
+			m_curKeyState.Remove(*k);
+		}
+	}
 	
 }
 
@@ -296,7 +336,7 @@ void Hooker::AddKeyToList(TKeyType type, CHotKey hotkey)
 	SwZeroMemory(key2);
 	key2.key() = hotkey;
 	key2.type = type;
-	if (hotkey.ValueKey() == VK_OEM_2 && sets_get()->isTryOEM2) {
+	if (hotkey.ValueKey() == VK_OEM_2 && g_settings_thread.isTryOEM2) {
 		SetFlag(key2.keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT);
 	}
 
@@ -633,7 +673,7 @@ TStatus Hooker::ClipboardChangedInt()
             //	L"dwTime=%u, request=%u, clear=%u, sec=%u",
             //	dwTime,
             //	request,
-            //	g_setsgui.fClipboardClearFormat,
+            //	g_settings_thread.fClipboardClearFormat,
             //	GetClipboardSequenceNumber());
 
             if (request == CLRMY_GET_FROM_CLIP) {
@@ -675,7 +715,7 @@ TStatus Hooker::ClipboardChangedInt()
 
 	// --- This is user request ----
 
-	if (sets_get()->fClipboardClearFormat)
+	if (g_settings_thread.fClipboardClearFormat)
 	{
 		IFS_LOG(RequestClearFormat());
 	}
@@ -888,8 +928,7 @@ TStatus SendUpForKey(CHotKey key)
 
 HKL Hooker::getNextLang () {
 
-	auto cfg = sets_get();
-    auto& lst = cfg->customLangList;
+    auto& lst = g_settings_thread.customLangList;
 
     if (lst.size() <= 1) {
         return (HKL)HKL_NEXT;
@@ -940,7 +979,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
         LOG_INFO_1(L"Skip hotkey in self program");
         allow_do_revert = false;
     }
-    else if (sets_get()->IsSkipProgram(m_sTopProcName)) {
+    else if (g_settings_thread.IsSkipProgram(m_sTopProcName)) {
         LOG_INFO_1(L"Skip process %s because of disableInProcess", m_sTopProcName.c_str());
         allow_do_revert = false;
         allow_do_layout = false;
@@ -968,15 +1007,14 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
             RETURN_SUCCESS;
         }
 
-		auto cfg = sets_get();
         if (Utils::is_in(typeRevert, hk_ChangeSetLayout_1, hk_ChangeSetLayout_2, hk_ChangeSetLayout_3)) {
             HKL hkl = 0;
             if (typeRevert == hk_ChangeSetLayout_1)
-                hkl = cfg->hkl_lay[SettingsGui::SW_HKL_1];
+                hkl = g_settings_thread.hkl_lay[SettingsGui::SW_HKL_1];
             else if (typeRevert == hk_ChangeSetLayout_2)
-                hkl = cfg->hkl_lay[SettingsGui::SW_HKL_2];
+                hkl = g_settings_thread.hkl_lay[SettingsGui::SW_HKL_2];
             else if (typeRevert == hk_ChangeSetLayout_3)
-                hkl = cfg->hkl_lay[SettingsGui::SW_HKL_3];
+                hkl = g_settings_thread.hkl_lay[SettingsGui::SW_HKL_3];
 
             data.flags = SW_CLIENT_SetLang;
             data.lay   = (HKL)hkl;

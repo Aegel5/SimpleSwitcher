@@ -16,7 +16,7 @@ TStatus InputSender::Send()
 	}
 	IFW_RET(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size());
 
-	if (sets_get()->AllowRemoteKeys) {
+	if (g_settings_thread.AllowRemoteKeys) {
 		g_hooker->skipdata.emplace_back(GetTickCount64() + 500, list.size());
 		if (g_hooker->skipdata.size() >= 10000) {
 			g_hooker->skipdata.clear();

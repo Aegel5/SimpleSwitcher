@@ -72,7 +72,7 @@ namespace {
 
 
 void Rereg_all() {
-    for (auto& hk : sets_get()->hotkeysList) {
+    for (auto& hk : g_setsgui.hotkeysList) {
         int cur = 1;
         for (auto& kk : hk.second.keys) {
             int id = hk.first*10 + cur++;

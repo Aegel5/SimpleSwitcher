@@ -100,15 +100,15 @@ struct CHotKeySet
     }
 };
 
-//inline TStatus PostMsgSettingChanges()
-//{
-//    HWND hwnd = FindWindow(c_sClassNameServer2, 0);
-//	if (hwnd != NULL)
-//	{
-//		PostMessage(hwnd, c_MSG_SettingsChanges, 0, 0);
-//	}
-//	RETURN_SUCCESS;
-//}
+inline TStatus PostMsgSettingChanges()
+{
+    HWND hwnd = FindWindow(c_sClassNameServer2, 0);
+	if (hwnd != NULL)
+	{
+		PostMessage(hwnd, c_MSG_SettingsChanges, 0, 0);
+	}
+	RETURN_SUCCESS;
+}
 inline TStatus GetCurLayRequest() {
     HWND hwnd = FindWindow(c_sClassNameServer2, 0);
     if (hwnd != NULL) {
@@ -172,7 +172,6 @@ public:
     bool injectDll = false;
     bool showFlags = IsWindows10OrGreater();
     bool AllowRemoteKeys = false;
-    bool DisableHotKeysInPrograms = false;
 
     std::vector<HKL> customLangList;
     std::vector<HKL> hkl_lay;
@@ -195,37 +194,22 @@ public:
 
 };
 
-//inline std::mutex g_mtx_cfg;
-//#define LOCK_CFG std::unique_lock<std::mutex> __lock_cfg(g_mtx_cfg);
+//inline UserConf u_conf;
 
-using PtrSets = std::shared_ptr<SettingsGui>;
-inline PtrSets _g_setsgui;
-inline PtrSets sets_get() {
-    return _g_setsgui;
-}
-
-inline PtrSets sets_copy() {
-    PtrSets cur;
-    cur.reset(new SettingsGui());
-    *cur.get() = *_g_setsgui.get();
-    return cur;
-}
-inline void sets_replace(PtrSets& cur) {
-    _g_setsgui.swap(cur);
-}
+inline SettingsGui g_settings_thread;
+inline SettingsGui g_setsgui;
 
 inline int g_hotkeyWndOpened = 0;
 
 TStatus LoadConfig(SettingsGui& sets, bool createIfNotExists = false);
 TStatus Save2(SettingsGui& gui);
-
 inline TStatus Save() {
-    return Save2(*sets_get());
+    return Save2(g_setsgui);
 }
 
-inline void ReplaceAndSave(PtrSets& cur) {
-    sets_replace(cur);
+inline void SaveAndPostMsg() {
     IFS_LOG(Save());
+    PostMsgSettingChanges();
 }
 
 extern void Rereg_all();

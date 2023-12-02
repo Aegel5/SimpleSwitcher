@@ -150,7 +150,6 @@ public:
 
 	//TSyncVal32 m_fOurSend = 0;
 	CHotKey m_curKeyState;
-	CurStateWrapper m_curKeyState_wrap;
 	DWORD m_curScanCode = 0;
 
 	HotKeyType m_needRevertUnderUP = hk_MAX;

@@ -55,7 +55,7 @@ TStatus CMainWorker::WorkerInt()
 			}
             else if (timerId == c_timerGetcurlay)
             {
-                if (sets_get()->showFlags) {
+                if (g_settings_thread.showFlags) {
                     hooker.CheckCurLay();
                 }
             }
@@ -68,13 +68,12 @@ TStatus CMainWorker::WorkerInt()
 				LOG_INFO_1(L"[WARN] Unknown timerId=%Iu", timerId);
 			}
 		}
-		//else if (mode == HWORKER_LoadSettings)
-		//{
-		//	// todo load not from file but from safe copy.
-  //          IFS_LOG(LoadConfig(g_setsgui));
-		//	//IFS_LOG(ResetAllHotKey(*gdata().hotkeyHolders));
-  //      } 
-		else if (mode == HWORKER_Getcurlay) {
+		else if (mode == HWORKER_LoadSettings)
+		{
+			// todo load not from file but from safe copy.
+            IFS_LOG(LoadConfig(g_settings_thread));
+			//IFS_LOG(ResetAllHotKey(*gdata().hotkeyHolders));
+        } else if (mode == HWORKER_Getcurlay) {
             hooker.CheckCurLay(true);
         }
 		else

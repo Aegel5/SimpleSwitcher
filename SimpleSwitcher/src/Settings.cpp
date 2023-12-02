@@ -147,8 +147,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SettingsGui,
                                                 hkl_lay,
                                                 logLevel,
                                                 uiLang,
-    AllowRemoteKeys,
-    DisableHotKeysInPrograms
+    AllowRemoteKeys
 
     )
     
