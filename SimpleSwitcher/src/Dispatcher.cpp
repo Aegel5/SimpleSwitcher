@@ -65,31 +65,32 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
     CAutoProcMonitor loader;
     CAutoProcMonitor loader64;
     g_laynotif.inited = false;
-	if (g_setsgui.injectDll) {
-        tstring sFolder;
-        IFS_RET(GetPath_folder_noLower(sFolder));
 
-        bool locInited    = true;
+	//if (g_setsgui.injectDll) {
+ //       tstring sFolder;
+ //       IFS_RET(GetPath_folder_noLower(sFolder));
 
-        loader.m_sWndName = c_sClassName32_2;
-        loader.m_sCmd     = L"/load";
-        loader.m_sExe     = sFolder + L"loader.exe";
-        IFS_LOG(loader.EnsureStarted(SW_ADMIN_SELF));
-        if (!loader.CheckRunning().found)
-            locInited = false;
+ //       bool locInited    = true;
+
+ //       loader.m_sWndName = c_sClassName32_2;
+ //       loader.m_sCmd     = L"/load";
+ //       loader.m_sExe     = sFolder + L"loader.exe";
+ //       IFS_LOG(loader.EnsureStarted(SW_ADMIN_SELF));
+ //       if (!loader.CheckRunning().found)
+ //           locInited = false;
 
 
-        if (IsWindows64()) {
-            loader64.m_sWndName = c_sClassName64_2;
-            loader64.m_sCmd     = L"/load";
-            loader64.m_sExe     = sFolder + L"loader64.exe";
-            IFS_LOG(loader64.EnsureStarted(SW_ADMIN_SELF));
-            if (!loader64.CheckRunning().found)
-                locInited = false;
-        }
+ //       if (IsWindows64()) {
+ //           loader64.m_sWndName = c_sClassName64_2;
+ //           loader64.m_sCmd     = L"/load";
+ //           loader64.m_sExe     = sFolder + L"loader64.exe";
+ //           IFS_LOG(loader64.EnsureStarted(SW_ADMIN_SELF));
+ //           if (!loader64.CheckRunning().found)
+ //               locInited = false;
+ //       }
 
-		g_laynotif.inited = locInited;
-    }
+	//	g_laynotif.inited = locInited;
+ //   }
 
 	HookGlobalHandles hookHandles;
 	if (gdata().curModeBit == SW_BIT_32)
@@ -128,13 +129,13 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 		if (mesg == WM_HOTKEY)
 		{
 		}
-		else if (mesg == c_MSG_SettingsChanges)
-		{
-			if (gdata().curModeBit == SW_BIT_32)
-			{
-				Worker()->PostMsg(HWORKER_LoadSettings);
-			}
-        } 
+		//else if (mesg == c_MSG_SettingsChanges)
+		//{
+		//	if (gdata().curModeBit == SW_BIT_32)
+		//	{
+		//		Worker()->PostMsg(HWORKER_LoadSettings);
+		//	}
+  //      } 
 		else if (mesg == WM_GetCurLay) {
             Worker()->PostMsg(HWORKER_Getcurlay);
         } 
@@ -174,7 +175,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 			}
 
             if (timerId == c_timerKeyloggerDefence) {
-                if (g_setsgui.fEnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
+                if (sets_get()->fEnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
                     IFS_LOG(resethook()); // ???
                 }
             } else if (timerId == c_timerGetcurlay) {
@@ -257,6 +258,11 @@ LRESULT CALLBACK KeyboardProc(
 	//}
 }
 
+namespace {
+	CurStateWrapper g_curKey;
+	TKeyCode g_disable_up = 0;
+}
+
 LRESULT CALLBACK LowLevelKeyboardProc(
 	_In_  int nCode,
 	_In_  WPARAM wParam,
@@ -276,11 +282,44 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		auto& kData = msg.data.keyData;
 		kData.ks = *kStruct;
 		kData.wParam = wParam;
+		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
+		KeyState curKeyState = GetKeyState(wParam);
+		bool isSkipRepeat = false;
+		//kData.time = GetTickCount64();
+		g_curKey.Update(vkCode, curKeyState, isSkipRepeat);
 		Worker()->PostMsg(msg);
 
+		//LOG_INFO_4(L"------------------ %s %s", CHotKey::ToString(vkCode).c_str(), curKeyState == KeyState::KEY_STATE_DOWN ? L"DOWN" : L"UP");
+
+		if (sets_get()->DisableHotKeysInPrograms) {
+			if (curKeyState == KeyState::KEY_STATE_DOWN) {
+				if (!g_curKey.state.IsEmpty() && !g_curKey.state.IsKnownMods(g_curKey.state.ValueKey()) && vkCode == g_curKey.state.ValueKey()) {
+					for (auto it : sets_get()->hotkeysList) {
+						if (it.second.HasKey(g_curKey.state, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP))) {
+							// у нас есть такой хот-кей, запрещаем это событие
+							g_disable_up = vkCode;
+							LOG_INFO_2(L"consume key %s DOWN", CHotKey::ToString(vkCode).c_str());
+							return 1;
+						}
+					}
+				}
+			}
+			else if (curKeyState == KeyState::KEY_STATE_UP) {
+				if (g_disable_up == vkCode) {
+					// todo - вечно ждем?
+					g_disable_up = 0;
+					LOG_INFO_2(L"consume key %s UP", CHotKey::ToString(vkCode).c_str());
+					return 1;
+				}
+			}
+			
+			//if (g_curKey.state.IsEmpty()) {
+			//	g_disable_up = 0;
+			//}
+		}
 	}
 
-	if (g_setsgui.fEnableKeyLoggerDefence) {
+	if (sets_get()->fEnableKeyLoggerDefence) {
 		return 0;
 	} else {
 		return CallNextHookEx(0, nCode, wParam, lParam);
@@ -335,7 +374,7 @@ TStatus StartMonitor(
 	TSWBit bit)
 {
 
-	IFS_RET(LoadConfig(g_settings_thread));
+	//IFS_RET(LoadConfig(g_setsgui));
 
 	LOG_INFO_1(L"StartMonitor...");
 
