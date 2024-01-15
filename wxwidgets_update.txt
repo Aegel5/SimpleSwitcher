@@ -1,2 +1,5 @@
-﻿удалить папку
-сделать checkout заново
+﻿удалить папку wxWidgets
+
+выполнить
+git clone --recurse-submodules https://github.com/wxWidgets/wxWidgets.git
+в корне проекта

@@ -96,7 +96,7 @@ def publish():
     # pip install PyGithub requests
     from github import Github
     
-    tok = Path("D:/yy/token.txt").read_text() 
+    tok = Path("D:/yy/data.txt").read_text() 
     g = Github(tok)
     
     repo = g.get_repo("aegel5/SimpleSwitcher")
