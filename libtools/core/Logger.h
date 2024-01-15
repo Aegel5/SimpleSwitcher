@@ -186,11 +186,7 @@ inline void SetLogLevel(TLogLevel logLevel)
 {
 	SwLoggerGlobal().SetLogLevel(logLevel);
 }
-inline void SetLogLevel2(TLogLevel logLevel)
-{
-	SwLoggerGlobal().SetLogLevel(logLevel);
-	LOG_INFO_1(L"Log level now %d", logLevel);
-}
+
 
 
 class WinErrBOOL

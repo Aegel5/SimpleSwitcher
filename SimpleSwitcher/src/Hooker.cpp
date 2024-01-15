@@ -59,7 +59,7 @@ TKeyType Hooker::GetCurKeyType(CHotKey hotkey)
 	if (res == 1)
 	{
 		auto c = sBufKey[0];
-		LOG_INFO_3(L"print char ?");
+		LOG_INFO_3(L"print char %c", c);
 		if (wcschr(L" \t-=+*()%", c) != NULL)
 		{
 			return KEYTYPE_SPACE;
@@ -120,6 +120,13 @@ bool Hooker::GetTypeForKey(CHotKey curkey, HotKeyType& type, bool& isUp)
 
 	return false;
 }
+auto get_state_name(KeyState state) {
+    if (state == KEY_STATE_UP)
+        return L"UP";
+    if (state == KEY_STATE_DOWN)
+        return L"DW";
+    return L"ERROR";
+}
 TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 {
 	KBDLLHOOKSTRUCT* k = &keyData.ks;
@@ -135,10 +142,16 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 
 	TKeyCode vkCode = (TKeyCode)k->vkCode;
 	KeyState curKeyState = GetKeyState(wParam);
+    bool isInjected      = TestFlag(k->flags, LLKHF_INJECTED);
 
-	//SW_LOG_INFO(L"hooker: %s", HotKeyNames::Global().GetName(vkCode));
 
-	if (TestFlag(k->flags, LLKHF_INJECTED))
+	LOG_INFO_3(L"KEY_MSG: %s(%s),inject=%d",
+        HotKeyNames::Global().GetName(vkCode),  
+		get_state_name(curKeyState), 
+		isInjected ? 1:0
+	);
+
+	if (isInjected)
 	{
 		if (g_settings_thread.AllowRemoteKeys) {
 			while (1) {

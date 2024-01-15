@@ -29,6 +29,8 @@
 #include "SwUtils.h"
 #include "KeysStruct.h"
 
+#include "ver.h"
+
 typedef HKL HKL_W;
 
 #define ___SW_ADD_STR_UT(X) L##X

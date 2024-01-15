@@ -10,7 +10,7 @@
 
 #include "tools/accessibil.h"
 
-#include "ver.h"
+
 
 #include <wx/taskbar.h>
 
@@ -259,7 +259,7 @@ private:
     virtual void onEnableLog(wxCommandEvent& event)
     {
         g_setsgui.fDbgMode = event.IsChecked();
-        SetLogLevel2(g_setsgui.fDbgMode ? g_setsgui.logLevel : LOG_LEVEL_0);
+        SetLogLevel_v3(g_setsgui.fDbgMode ? g_setsgui.logLevel : LOG_LEVEL_0);
         SaveAndPostMsg();
     }
     virtual void onPrevent(wxCommandEvent& event){

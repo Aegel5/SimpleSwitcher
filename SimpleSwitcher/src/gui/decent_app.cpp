@@ -38,7 +38,7 @@ bool MyApp::OnInit() {
         auto errLoadConf = LoadConfig(g_setsgui, true);
         IFS_LOG(errLoadConf);
 
-        SetLogLevel2(g_setsgui.fDbgMode ? g_setsgui.logLevel : LOG_LEVEL_0);
+        SetLogLevel_v3(g_setsgui.fDbgMode ? g_setsgui.logLevel : LOG_LEVEL_0);
 
         IFS_LOG(autoCom.Init());
         //Initlll();
