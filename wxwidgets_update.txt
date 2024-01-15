@@ -3,3 +3,11 @@
 выполнить
 git clone --recurse-submodules https://github.com/wxWidgets/wxWidgets.git
 в корне проекта
+
+
+ЛИБО (тестить)
+
+git submodule update --remote --merge
+
+
+комитить !!ТОЛЬКО!! через tortoise git.
