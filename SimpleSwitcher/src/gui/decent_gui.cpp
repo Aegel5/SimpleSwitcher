@@ -197,7 +197,7 @@ private:
                    // since the default event handler does call Destroy(), too
     }
 
-    std::map<std::string, wxIcon> icons;
+    std::map<std::wstring, wxIcon> icons;
 
    virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override {
 
@@ -207,10 +207,9 @@ private:
                 return TRUE;
 
             HKL newLayout = (HKL)wParam;
-            LOG_INFO_1(L"mainguid new layout: 0x%x", newLayout);
 
 
-            std::string name = "appicon";
+            std::wstring name = L"appicon";
 
             WORD langid = LOWORD(newLayout);
 
@@ -223,14 +222,16 @@ private:
 
 
             if (Str_Utils::IsEqual(buf, L"1")) { // todo get country
-                name = "flag_us";
+                name = L"flag_us";
             } else if (Str_Utils::IsEqual(buf, L"7")) {
-                name = "flag_ru";
+                name = L"flag_ru";
             } else if (Str_Utils::IsEqual(buf, L"380")) {
                 // name = "flag_uk";
             } else {
                 int k = 0;
             }
+
+            LOG_INFO_1(L"mainguid new layout: 0x%x, name=%s", newLayout, name.c_str());
 
             auto it = icons.find(name);
             if (it == icons.end()) {
