@@ -40,12 +40,12 @@ class MyTray : public wxTaskBarIcon {
 
 public:
 
-    MyTray() {
-        //Connect(Minimal_Quit, wxMouseEventHandler(MyTray::onExit), NULL, this);
-    }
-    ~MyTray() {
-        return;
-    }
+    //MyTray() {
+    //    //Connect(Minimal_Quit, wxMouseEventHandler(MyTray::onExit), NULL, this);
+    //}
+    //~MyTray() {
+    //    return;
+    //}
 
     void AddLay(HKL lay) {
         lays.push_back(lay);
@@ -111,10 +111,6 @@ public:
 
             updateBools();
 
-            if (startOk()) {
-                coreWork.Start();
-            }
-            updateEnable();
             updateAutoStart();
             FillCombo();
             updateLayFilter();
@@ -133,11 +129,15 @@ public:
                     myTray.Bind(wxEVT_MENU, &MainWnd::onSetLay, this, Minimal_SetLay1 + i);
                 }
             }
+
+            if (startOk()) {
+                coreWork.Start();
+            }
+            updateEnable();
         }
         catch (std::exception& e) {
             wxMessageBox(_("Error while initing main wnd: ") + e.what());
         }
-
     }
 
 private:
