@@ -31,6 +31,8 @@ SimpleSwitcher - программа для быстрого исправлени
 - Скачать исходники.
   - Открыть командную строку (cmd.exe) и перейти в каталог, где будет храниться код программы.
   - Выполнить команду `git clone --recurse-submodules https://github.com/Aegel5/SimpleSwitcher.git`
+- Внести патчи в библиотеку wxWidget
+  - src\msw\taskbar.cpp: `m_iconAdded ? Operation_Modify : Operation_Add` заменить на `Operation_TryBoth`
 - В созданной папке запустить скрипт `build.py`
 - Собранная версия будет в папке `package_build/OUT`
 
