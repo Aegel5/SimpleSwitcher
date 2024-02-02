@@ -32,6 +32,19 @@ bool MyApp::OnInit() {
 
     try {
 
+        bool is_autostart = false;
+        for (int i = 0; i < wxApp::argc; i++) {
+            auto cur = wxApp::argv[i];
+            if (cur == c_sArgAutostart) {
+                is_autostart = true;
+                break;
+            }
+        }
+
+        if (is_autostart) {
+            Sleep(1000); // дать системе прогрузиться
+        }
+
 
         SetLogLevel(g_setsgui.fDbgMode ? LOG_LEVEL_1 : LOG_LEVEL_0);
 
@@ -59,16 +72,9 @@ bool MyApp::OnInit() {
             Rereg_all();
         }
 
-        bool show = true;
-        for (int i = 0; i < wxApp::argc; i++) {
-            auto cur = wxApp::argv[i];
-            if (cur == c_sArgAutostart) {
-                show = false;
-                break;
-            }
-        }
 
-        StartMainGui(show, errLoadConf != SW_ERR_SUCCESS);
+
+        StartMainGui(!is_autostart, errLoadConf != SW_ERR_SUCCESS);
     }
     catch (std::exception& e) {
         wxMessageBox(_("Error while initing app: ") + e.what());

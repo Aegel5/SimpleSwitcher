@@ -55,13 +55,9 @@ public:
         return lays[id - Minimal_SetLay1];
     }
 
-
-
     virtual wxMenu* CreatePopupMenu() override {
 
         auto menu = new wxMenu();
-
-
 
         menu->Append(Minimal_Show, _("Show"));
         menu->Append(Minimal_Quit, _("Exit"));
@@ -69,7 +65,6 @@ public:
         for (int i = 0; i < lays.size(); i++) {
             menu->Append(Minimal_SetLay1 + i, Utils::GetNameForHKL(lays[i]));
         }
-
 
         return menu;
     }
@@ -120,7 +115,10 @@ public:
             UpdateUiLang();
 
             if (myTray.IsAvailable()) {
-                myTray.SetIcon(icon);
+                trayTooltip = L"SimpleSwitcher";
+                trayTooltip += L" ";
+                trayTooltip += SW_VERSION;
+                myTray.SetIcon(icon, trayTooltip);
                 myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
                 myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
                 myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
@@ -138,6 +136,7 @@ public:
         catch (std::exception& e) {
             wxMessageBox(_("Error while initing main wnd: ") + e.what());
         }
+        inited = true;
     }
 
 private:
@@ -145,9 +144,11 @@ private:
     CoreWorker coreWork;
     //DecentTray tray;
     MyTray myTray;
+    wxString trayTooltip;
     wxIcon icon;
     //wxIcon trayIcon;
     bool exitRequest = false;
+    bool inited = false;
 
     int getChildIndex(wxWindow* obj) {
         auto par = obj->GetParent();
@@ -203,6 +204,9 @@ private:
 
         if (nMsg == WM_LayNotif) {
 
+            if (!inited) 
+                return TRUE;
+
             if (!g_setsgui.showFlags)
                 return TRUE;
 
@@ -235,11 +239,22 @@ private:
 
             auto it = icons.find(name);
             if (it == icons.end()) {
-                icons.emplace(name, wxIcon(name));
-                it     = icons.find(name);
+
+                wxIcon icon(name);
+
+                if (!icon.IsOk()) { //
+                    LOG_INFO_1(L"icon not ok. SKIP");
+                    return TRUE;
+                }
+
+                icons.emplace(name, icon);
+                it = icons.find(name);
             } 
 
-            myTray.SetIcon(it->second);
+            
+            if (!myTray.SetIcon(it->second, trayTooltip)) {
+                LOG_INFO_1(L"ERR. can't set icon");
+            }
 
             return TRUE;
         }
@@ -286,7 +301,7 @@ private:
         SaveAndPostMsg();
 
         if (!g_setsgui.showFlags) {
-            myTray.SetIcon(icon);
+            myTray.SetIcon(icon, trayTooltip);
         } else {
             GetCurLayRequest();
         }
