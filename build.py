@@ -20,19 +20,21 @@ print(f"curpath is {curpath}");
 os.chdir(curpath)
 
 # пропатчим версию
-ver_path = curpath / "SimpleSwitcher/src/ver.h"
+ver_path_1 = curpath / "SimpleSwitcher/src/ver.txt"
+ver_path_2 = curpath / "SimpleSwitcher/src/ver.h"
 
-contents = Path(ver_path).read_text()
+ver_num = int(Path(ver_path_1).read_text())
+ver_num+=1
+Path(ver_path_1).write_text(str(ver_num))
 
-curv = re.search('"(.*)"', contents).group(1)
+ver_custom = ''
+if not is_publ: ver_custom = ' CUSTOM'
+curv2 = '5.{}{}'.format(ver_num, ver_custom)
+ver_cont = 'static const wchar_t* SW_VERSION = L"{}";'.format(curv2)
+Path(ver_path_2).write_text(ver_cont)
 
-
-curvsp = curv.split('.')
-curv2 = curvsp[0] + "." + str(int(curvsp[1])+1)
 curv2_v = "v" + curv2
-contents = contents.replace(curv,curv2)
-print(curv2)
-Path(ver_path).write_text(contents)
+print(curv2_v)
 
 package_build_folder = pathlib.Path("package_build")
 result_dir_root = package_build_folder / "OUT"
