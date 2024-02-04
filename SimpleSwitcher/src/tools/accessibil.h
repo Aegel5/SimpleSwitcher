@@ -1,4 +1,4 @@
-
+﻿
 inline void AllowAccessibilityShortcutKeys(bool bAllowKeys) {
 
      STICKYKEYS g_StartupStickyKeys = {sizeof(STICKYKEYS), 0};

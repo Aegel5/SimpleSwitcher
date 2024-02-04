@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 
 #include "Settings.h"
 
@@ -42,7 +42,7 @@ bool MyApp::OnInit() {
         }
 
         if (is_autostart) {
-            Sleep(1000); // дать системе прогрузиться
+            Sleep(1000); // РґР°С‚СЊ СЃРёСЃС‚РµРјРµ РїСЂРѕРіСЂСѓР·РёС‚СЊСЃСЏ
         }
 
 

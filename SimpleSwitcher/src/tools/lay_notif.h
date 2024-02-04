@@ -1,4 +1,4 @@
-//#include <msctf.h>
+﻿//#include <msctf.h>
 //
 //class LayNotif: protected ITfLanguageProfileNotifySink 
 //{

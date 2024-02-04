@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 //static const char c_sClassName32[]  = "SimpleSw_325737FD_X32";
 static const wchar_t c_sClassName32_2[] = L"SimpleSw_325737FD_X32";

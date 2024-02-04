@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "tlhelp32.h"
 
 extern BOOL CALLBACK EnumWindowsProcMy(HWND hwnd, LPARAM lParam);
