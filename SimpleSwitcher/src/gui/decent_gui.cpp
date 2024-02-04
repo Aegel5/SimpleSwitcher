@@ -166,7 +166,7 @@ private:
         elem->SetClientData((void*)type);
 
         elem->SetEditable(false);
-        auto key = g_setsgui.GetHk(type).key();
+        auto key = conf_get()->GetHk(type).key();
         elem->SetValue(key.ToString());
 
         //auto sizer = elem->GetSizer();
@@ -207,7 +207,7 @@ private:
             if (!inited) 
                 return TRUE;
 
-            if (!g_setsgui.showFlags)
+            if (!conf_get()->showFlags)
                 return TRUE;
 
             HKL newLayout = (HKL)wParam;
@@ -263,44 +263,50 @@ private:
    }
 
     void updateBools() {
-        m_checkBoxWorkInAdmin->SetValue(g_setsgui.isMonitorAdmin);
-        m_checkBoxClearForm->SetValue(g_setsgui.fClipboardClearFormat);
-        m_checkBoxKeyDef->SetValue(g_setsgui.fEnableKeyLoggerDefence);
-        m_checkBoxDisablAcc->SetValue(g_setsgui.disableAccessebility);
-        m_checkDebuglog->SetValue(g_setsgui.fDbgMode);
-        m_checkBoxShowFlags->SetValue(g_setsgui.showFlags);
-        m_checkBoxAllowInjected->SetValue(g_setsgui.AllowRemoteKeys);
+        auto conf = conf_get();
+        m_checkBoxWorkInAdmin->SetValue(conf->isMonitorAdmin);
+        m_checkBoxClearForm->SetValue(conf->fClipboardClearFormat);
+        m_checkBoxKeyDef->SetValue(conf->fEnableKeyLoggerDefence);
+        m_checkBoxDisablAcc->SetValue(conf->disableAccessebility);
+        m_checkDebuglog->SetValue(conf->fDbgMode);
+        m_checkBoxShowFlags->SetValue(conf->showFlags);
+        m_checkBoxAllowInjected->SetValue(conf->AllowRemoteKeys);
     }
 
     virtual void onEnableLog(wxCommandEvent& event)
     {
-        g_setsgui.fDbgMode = event.IsChecked();
-        SetLogLevel_v3(g_setsgui.fDbgMode ? g_setsgui.logLevel : LOG_LEVEL_0);
-        SaveAndPostMsg();
+        auto conf = conf_copy();
+        conf->fDbgMode = event.IsChecked();
+        SetLogLevel_v3(conf->fDbgMode ? conf->logLevel : LOG_LEVEL_0);
+        conf_set(conf);
     }
     virtual void onPrevent(wxCommandEvent& event){
-        g_setsgui.fEnableKeyLoggerDefence = event.IsChecked();
-        SaveAndPostMsg();
+        auto conf = conf_copy();
+        conf->fEnableKeyLoggerDefence = event.IsChecked();
+        conf_set(conf);
     }
     virtual void onClearFormat(wxCommandEvent& event) {
-        g_setsgui.fClipboardClearFormat = event.IsChecked();
-        SaveAndPostMsg();
+        auto conf = conf_copy();
+        conf->fClipboardClearFormat = event.IsChecked();
+        conf_set(conf);
     }
     virtual void onAllowInject(wxCommandEvent& event) { 
-        g_setsgui.AllowRemoteKeys = event.IsChecked();
-        SaveAndPostMsg();
+        auto conf = conf_copy();
+        conf->AllowRemoteKeys = event.IsChecked();
+        conf_set(conf);
     }
 
     void handleDisableAccess() {
-        if (g_setsgui.disableAccessebility) {
+        if (conf_get()->disableAccessebility) {
             AllowAccessibilityShortcutKeys(false);
         }
     }
     virtual void onShowFlags(wxCommandEvent& event) {
-        g_setsgui.showFlags = event.IsChecked();
-        SaveAndPostMsg();
+        auto conf = conf_copy();
+        conf->showFlags = event.IsChecked();
+        conf_set(conf);
 
-        if (!g_setsgui.showFlags) {
+        if (!conf->showFlags) {
             myTray.SetIcon(icon, trayTooltip);
         } else {
             GetCurLayRequest();
@@ -308,8 +314,9 @@ private:
 
     }
     virtual void onDisableAccessebl(wxCommandEvent& event) {
-        g_setsgui.disableAccessebility = event.IsChecked();
-        SaveAndPostMsg();
+        auto conf = conf_copy();
+        conf->disableAccessebility = event.IsChecked();
+        conf_set(conf);
 
         handleDisableAccess();
     }
@@ -386,10 +393,12 @@ private:
         HotKeyType type = (HotKeyType)(TUInt32)obj->GetClientData();
         CHotKey newkey;
         if (ChangeHotKey(this, type, newkey)) {
-            g_setsgui.hotkeysList[type].key() = newkey;
-            SaveAndPostMsg();
-            auto res = g_setsgui.GetHk(type).key().ToString();
+            auto conf = conf_copy();
+            conf->hotkeysList[type].key() = newkey;
+            conf_set(conf);
+            auto res = conf->GetHk(type).key().ToString();
             obj->SetValue(res);
+
             Rereg_all();
         }
     }
@@ -446,15 +455,16 @@ private:
         return nullptr;
     }
     void onUiSelect(wxCommandEvent& event) override {
-        g_setsgui.uiLang = (SettingsGui::UiLang)m_comboUiLang->GetSelection();
-        SaveAndPostMsg();
+        auto conf = conf_copy();
+        conf->uiLang = (SettingsGui::UiLang)m_comboUiLang->GetSelection();
+        conf_set(conf);
         wxMessageBox(_("Need restart program"));
     }
     void UpdateUiLang() {
         m_comboUiLang->Clear();
         m_comboUiLang->AppendString(_("Russian"));
         m_comboUiLang->AppendString(_("English"));
-        m_comboUiLang->SetSelection((int)g_setsgui.uiLang);
+        m_comboUiLang->SetSelection((int)conf_get()->uiLang);
     }
     void FillCombo() {
         m_choiceLayFilter->Clear();
@@ -471,8 +481,9 @@ private:
             }
         }
 
+        auto conf = conf_get();
         for (int i = 0; i < 3; i++) {
-            auto cur = g_setsgui.hkl_lay[i];
+            auto cur = conf->hkl_lay[i];
             for (int j = 0; j < all_lay_size; j++) {
                 if (all_lays[j] == cur) {
                     getByIndex(i)->SetSelection(j);
@@ -489,33 +500,37 @@ private:
         auto cur = event.GetSelection();
         auto lay = all_lays[cur];
 
+        auto conf = conf_copy();
+
         if (obj == m_choiceLayFilter) {
-            for (auto& elem : g_setsgui.customLangList) {
+            for (auto& elem : conf->customLangList) {
                 if (elem == lay)
                     return;
             }
-            g_setsgui.customLangList.push_back(lay);
+            conf->customLangList.push_back(lay);
+            conf_set(conf);
             updateLayFilter();
-            SaveAndPostMsg();
         } else {
             if (obj == m_choiceset1) {
-                g_setsgui.hkl_lay[0] = lay;
+                conf->hkl_lay[0] = lay;
             } else if (obj == m_choiceset2) {
-                g_setsgui.hkl_lay[1] = lay;
+                conf->hkl_lay[1] = lay;
             } else {
-                g_setsgui.hkl_lay[2] = lay;
+                conf->hkl_lay[2] = lay;
             }
-            SaveAndPostMsg();
+            conf_set(conf);
         }
     }
     void onClearFilter(wxCommandEvent& event) override {
-        g_setsgui.customLangList.clear();
+        auto conf = conf_copy();
+        conf->customLangList.clear();
+        conf_set(conf);
         updateLayFilter();
-        SaveAndPostMsg();
     }
     void updateLayFilter() {
         std::wstring res;
-        auto& lst = g_setsgui.customLangList;
+        auto conf = conf_get();
+        auto& lst = conf->customLangList;
         for (size_t i = 0; i <lst.size(); ++i)
         {
             res += Utils::GetNameForHKL(lst[i]);
@@ -528,7 +543,7 @@ private:
     }
 
     void ensureAuto(bool enable) {
-        if (g_setsgui.isMonitorAdmin) {
+        if (conf_get()->isMonitorAdmin) {
 
             IFS_LOG(DelRegRun());
 
@@ -570,7 +585,7 @@ private:
         bool isAdminHasTask = false;
         IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
 
-        m_checkAddToAutoStart->SetValue(g_setsgui.isMonitorAdmin ? isAdminAllOk && !isUserHasTask
+        m_checkAddToAutoStart->SetValue(conf_get()->isMonitorAdmin ? isAdminAllOk && !isUserHasTask
                                                                : isUserAllOk && !isAdminHasTask);
         UpdateAutostartExplain();
 
@@ -586,7 +601,7 @@ private:
         wxMessageBox(ms);
     }
     bool startOk() {
-        return Utils::IsSelfElevated() || !g_setsgui.isMonitorAdmin;
+        return Utils::IsSelfElevated() || !conf_get()->isMonitorAdmin;
     }
     //virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override
     //{
@@ -620,13 +635,14 @@ public:
     }
 
     void onWorkInAdminCheck(wxCommandEvent& event) override {
-        g_setsgui.isMonitorAdmin = m_checkBoxWorkInAdmin->GetValue();
-        Save();
+        auto conf = conf_copy();
+        conf->isMonitorAdmin = m_checkBoxWorkInAdmin->GetValue();
+        conf_set(conf);
         updateAutoStart();
         updateEnable();
     }
     void onAutocheck(wxCommandEvent& event) override {
-        if (g_setsgui.isMonitorAdmin && !Utils::IsSelfElevated()) {
+        if (conf_get()->isMonitorAdmin && !Utils::IsSelfElevated()) {
             m_checkAddToAutoStart->SetValue(!m_checkAddToAutoStart->GetValue());
             ShowNeedAdmin("");
             return;

@@ -30,7 +30,7 @@ public:
     ~HotKeyDlg() {
         g_hotkeyWndOpened--;
     }
-    HotKeyDlg(CHotKeySet& info, wxFrame* frame) : MyDialog1(frame), info(info)
+    HotKeyDlg(CHotKeySet info, wxFrame* frame) : MyDialog1(frame), info(info)
     {
         g_hotkeyWndOpened++;
         //SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxRESIZE_BORDER);
@@ -126,7 +126,7 @@ private:
 
 bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key)
 {
-    HotKeyDlg dlg(g_setsgui.hotkeysList[type], frame);
+    HotKeyDlg dlg(conf_get()->GetHk(type), frame);
     auto res = dlg.ShowModal();
     key      = dlg.key;
     return (res == wxID_OK);

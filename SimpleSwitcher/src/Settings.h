@@ -81,7 +81,7 @@ struct CHotKeySet
 	//bool fDisabled = false;
     HotKeyType hkId = hk_NULL;
 
-    std::vector<CHotKey> keys;
+    std::vector<CHotKey> keys { 1 };
 
     bool HasKey(CHotKey ktest, CHotKey::TCompareFlags flags) {
         for (auto& k : keys) {
@@ -91,11 +91,11 @@ struct CHotKeySet
         return false;
     }
 
-    CHotKeySet() {
-        keys.resize(1);
+    CHotKey& key() {
+        return keys[0];
     }
 
-    CHotKey& key() {
+    const CHotKey& key() const {
         return keys[0];
     }
 };
@@ -139,7 +139,6 @@ public:
 #else
             false;
 #endif
-        hkl_lay.resize(3);
     }
 
     std::set<std::string> disableInPrograms;
@@ -147,7 +146,7 @@ public:
 
     TLogLevel logLevel = LOG_LEVEL_3;
 
-    bool IsSkipProgram(std::wstring sExeName) {
+    bool IsSkipProgram(std::wstring sExeName) const {
         auto has = __disableInPrograms.find(sExeName) != __disableInPrograms.end();
         if (has) {
             LOG_INFO_1(L"Skip process %s because of disableInProcess", sExeName.c_str());
@@ -174,14 +173,21 @@ public:
     bool AllowRemoteKeys = false;
 
     std::vector<HKL> customLangList;
-    std::vector<HKL> hkl_lay;
+    std::vector<HKL> hkl_lay{ 3 };
 
 
     typedef std::map<HotKeyType, CHotKeySet> THotKeyMap;
     THotKeyMap hotkeysList;
 
-    CHotKeySet& GetHk(HotKeyType type) {
+    auto& GetHk(HotKeyType type) {
         return hotkeysList[type];
+    }
+    const auto& GetHk(HotKeyType type) const {
+        auto it = hotkeysList.find(type);
+        if (it == hotkeysList.end()) {
+            LOG_INFO_1(L"CRITICAL ERR");
+        }
+        return it->second;
     }
 
     enum {
@@ -194,22 +200,36 @@ public:
 
 };
 
-//inline UserConf u_conf;
+/*
+Многопоточный конфиг
 
-inline SettingsGui g_settings_thread;
-inline SettingsGui g_setsgui;
+Чтение: 
+    функция conf_get - держит текущий конфиг. Если нужно обращаться к нескольким переменным, объявляем переменную-держателя для атомарности чтения.
+Запись: 1) делаем копию conf_copy 
+    2) меняем новый на старый через conf_set 
+    3) после set не имеем права больше писать в конфиг.
+
+*/
+
+
+using ConfPtr = std::shared_ptr<SettingsGui>;
+inline ConfPtr __g_config(new SettingsGui()); // создаем как можно раньше.
+inline auto conf_get() { 
+    auto res = std::const_pointer_cast<const SettingsGui>(__g_config);
+    return res; 
+}
+inline ConfPtr conf_copy() { return ConfPtr(new SettingsGui(*conf_get())); }
+
 
 inline int g_hotkeyWndOpened = 0;
 
 TStatus LoadConfig(SettingsGui& sets, bool createIfNotExists = false);
-TStatus Save2(SettingsGui& gui);
-inline TStatus Save() {
-    return Save2(g_setsgui);
-}
+TStatus Save2(const SettingsGui& gui);
+inline TStatus Save() { return Save2(*conf_get());}
 
-inline void SaveAndPostMsg() {
-    IFS_LOG(Save());
-    PostMsgSettingChanges();
+inline void conf_set(ConfPtr conf) {
+    __g_config.swap(conf);
+    IFS_LOG(Save()); // сразу сохраняем в файл.
 }
 
 extern void Rereg_all();

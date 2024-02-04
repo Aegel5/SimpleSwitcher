@@ -45,13 +45,16 @@ bool MyApp::OnInit() {
             Sleep(1000); // дать системе прогрузиться
         }
 
+        auto conf = conf_copy();
 
-        SetLogLevel(g_setsgui.fDbgMode ? LOG_LEVEL_1 : LOG_LEVEL_0);
+        SetLogLevel(conf->fDbgMode ? LOG_LEVEL_1 : LOG_LEVEL_0);
 
-        auto errLoadConf = LoadConfig(g_setsgui, true);
+        auto errLoadConf = LoadConfig(*conf, true);
         IFS_LOG(errLoadConf);
+		if(errLoadConf == SW_ERR_SUCCESS) 
+			conf_set(conf);
 
-        SetLogLevel_v3(g_setsgui.fDbgMode ? g_setsgui.logLevel : LOG_LEVEL_0);
+        SetLogLevel_v3(conf->fDbgMode ? conf->logLevel : LOG_LEVEL_0);
 
         IFS_LOG(autoCom.Init());
         //Initlll();
@@ -60,7 +63,7 @@ bool MyApp::OnInit() {
 
         if (errLoadConf == SW_ERR_SUCCESS) {
             // init ui
-            if (g_setsgui.uiLang == SettingsGui::UiLang::rus) {
+            if (conf->uiLang == SettingsGui::UiLang::rus) {
 
                 wxTranslations* const trans = new wxTranslations();
                 wxTranslations::Set(trans);
@@ -71,6 +74,7 @@ bool MyApp::OnInit() {
 
             Rereg_all();
         }
+
 
 
 

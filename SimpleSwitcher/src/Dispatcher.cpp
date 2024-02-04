@@ -65,31 +65,33 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
     CAutoProcMonitor loader;
     CAutoProcMonitor loader64;
     g_laynotif.inited = false;
-	if (g_setsgui.injectDll) {
-        tstring sFolder;
-        IFS_RET(GetPath_folder_noLower(sFolder));
 
-        bool locInited    = true;
+	//if (g_setsgui.injectDll) {
+ //       tstring sFolder;
+ //       IFS_RET(GetPath_folder_noLower(sFolder));
 
-        loader.m_sWndName = c_sClassName32_2;
-        loader.m_sCmd     = L"/load";
-        loader.m_sExe     = sFolder + L"loader.exe";
-        IFS_LOG(loader.EnsureStarted(SW_ADMIN_SELF));
-        if (!loader.CheckRunning().found)
-            locInited = false;
+ //       bool locInited    = true;
+
+ //       loader.m_sWndName = c_sClassName32_2;
+ //       loader.m_sCmd     = L"/load";
+ //       loader.m_sExe     = sFolder + L"loader.exe";
+ //       IFS_LOG(loader.EnsureStarted(SW_ADMIN_SELF));
+ //       if (!loader.CheckRunning().found)
+ //           locInited = false;
 
 
-        if (IsWindows64()) {
-            loader64.m_sWndName = c_sClassName64_2;
-            loader64.m_sCmd     = L"/load";
-            loader64.m_sExe     = sFolder + L"loader64.exe";
-            IFS_LOG(loader64.EnsureStarted(SW_ADMIN_SELF));
-            if (!loader64.CheckRunning().found)
-                locInited = false;
-        }
+ //       if (IsWindows64()) {
+ //           loader64.m_sWndName = c_sClassName64_2;
+ //           loader64.m_sCmd     = L"/load";
+ //           loader64.m_sExe     = sFolder + L"loader64.exe";
+ //           IFS_LOG(loader64.EnsureStarted(SW_ADMIN_SELF));
+ //           if (!loader64.CheckRunning().found)
+ //               locInited = false;
+ //       }
 
-		g_laynotif.inited = locInited;
-    }
+	//	g_laynotif.inited = locInited;
+ //   }
+
 
 	HookGlobalHandles hookHandles;
 	if (gdata().curModeBit == SW_BIT_32)
@@ -174,7 +176,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 			}
 
             if (timerId == c_timerKeyloggerDefence) {
-                if (g_setsgui.fEnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
+                if (conf_get()->fEnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
                     IFS_LOG(resethook()); // ???
                 }
             } else if (timerId == c_timerGetcurlay) {
@@ -280,7 +282,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 
 	}
 
-	if (g_setsgui.fEnableKeyLoggerDefence) {
+	if (conf_get()->fEnableKeyLoggerDefence) {
 		return 0;
 	} else {
 		return CallNextHookEx(0, nCode, wParam, lParam);
@@ -334,8 +336,6 @@ TStatus StartMonitor(
 	_In_ HINSTANCE hInstance,
 	TSWBit bit)
 {
-
-	IFS_RET(LoadConfig(g_settings_thread));
 
 	LOG_INFO_1(L"StartMonitor...");
 
