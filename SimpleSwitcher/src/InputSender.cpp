@@ -9,12 +9,27 @@ TStatus InputSender::Send()
 		RETURN_SUCCESS;
 	for (auto& i : list)
 	{
-		LOG_INFO_2(L"SEND %s ?", i.ki.dwFlags == KEYEVENTF_KEYUP ? L"UP" : L"DW"
-			// не пишем персональную инфу
-			// ,CHotKey::ToString((TKeyCode)i.ki.wVk).c_str()
-		);
+		LOG_INFO_2(L"SEND %s %s", i.ki.dwFlags == KEYEVENTF_KEYUP ? L"UP" : L"DW", CHotKey::GetName(i.ki.wVk));
 	}
-	IFW_RET(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size());
+
+	bool doPause = false;
+
+	if (g_hooker->m_sTopProcName == L"notepad.exe") { 
+		// костыль для нового notepad...
+		// не используем по дефолту, так как работаем медленнее...
+		doPause = true; 
+	}
+
+	if (doPause) {
+		for (auto& elem : list) {
+			auto res = SendInput(1, &elem, sizeof(INPUT));
+			IFW_LOG(res == 1);
+			Sleep(1);
+		}
+	}
+	else {
+		IFW_LOG(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size());
+	}
 
 	if (conf_get()->AllowRemoteKeys) {
 		g_hooker->skipdata.emplace_back(GetTickCount64() + 500, list.size());

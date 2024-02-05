@@ -783,6 +783,14 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		}
 		else
 		{
+			if (m_sTopProcName == L"notepad.exe") {
+				// отпустим клавиши перед отправкой языка...
+				InputSender inputSender;
+				for (auto key : m_curKeyState) {
+					inputSender.Add(key, KEY_STATE_UP);
+				}
+				IFS_LOG(SendOurInput(inputSender));
+			}
 			LOG_INFO_1(L"post change");
 			PostMessage(m_hwndTop, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
 		}
