@@ -114,9 +114,7 @@ struct CurStateWrapper {
 			{
 				if (CHotKey::IsKnownMods(vkCode))
 				{
-					std::wstring s1;
-					CHotKey::ToString(vkCode, s1);
-					IFS_LOG(SW_ERR_UNKNOWN, L"Not found up for key %s", s1.c_str());
+					IFS_LOG(SW_ERR_UNKNOWN, L"Key was already upped %s", CHotKey::GetName(vkCode));
 				}
 			}
 		}
@@ -124,7 +122,7 @@ struct CurStateWrapper {
 		{
 			CHotKey hk_save = state;
 			state.Add(vkCode, CHotKey::ADDKEY_ORDERED | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
-			times[vkCode] = GetTickCount64() + 500;
+			times[vkCode] = GetTickCount64() + 10000;
 			if (state.Compare(hk_save))
 			{
 				if (state.IsHold()) // already hold
