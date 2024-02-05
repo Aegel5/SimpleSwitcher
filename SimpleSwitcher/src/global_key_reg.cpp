@@ -72,6 +72,7 @@ namespace {
 
 
 void Rereg_all() {
+    //g_global_reg_data.clear();
     auto conf = conf_get();
     for (auto& hk : conf->hotkeysList) {
         int cur = 1;

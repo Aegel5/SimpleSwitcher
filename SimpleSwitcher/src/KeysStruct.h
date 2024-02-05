@@ -95,6 +95,81 @@ private:
 	TUInt32 m_size = 0;
 };
 
+struct CurStateWrapper {
+
+	CHotKey state;
+	std::map<int, ULONGLONG> times;
+	bool isSkipRepeat = false;
+
+	void Update(TKeyCode vkCode, KeyState curKeyState) {
+
+		isSkipRepeat = false;
+
+		if (curKeyState == KEY_STATE_UP)
+		{
+			state.SetHold(false);
+			auto it = times.find(vkCode);
+			if (it != times.end()) { times.erase(it); }
+			if (!state.Remove(vkCode))
+			{
+				if (CHotKey::IsKnownMods(vkCode))
+				{
+					std::wstring s1;
+					CHotKey::ToString(vkCode, s1);
+					IFS_LOG(SW_ERR_UNKNOWN, L"Not found up for key %s", s1.c_str());
+				}
+			}
+		}
+		else if (curKeyState == KEY_STATE_DOWN)
+		{
+			CHotKey hk_save = state;
+			state.Add(vkCode, CHotKey::ADDKEY_ORDERED | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
+			times[vkCode] = GetTickCount64() + 500;
+			if (state.Compare(hk_save))
+			{
+				if (state.IsHold()) // already hold
+				{
+					isSkipRepeat = true;
+				}
+				else
+				{
+					state.SetHold(true);
+				}
+			}
+			else
+			{
+				// была нажата другая клавиша, сбрасываем флаг hold
+				state.SetHold(false);
+			}
+		}
+		else
+		{
+			// err?
+		}
+
+		// Может быть так, что событие UP - не придет. Поэтому, очистим базу, если прошло много времени.
+		while (true) {
+			bool found = false;
+			for (auto& el : times) {
+				if (GetTickCount64() > el.second) {
+					if (!(GetAsyncKeyState(el.first) & 0x8000)) {
+						std::wstring s1;
+						CHotKey::ToString(el.first, s1);
+						LOG_WARN(L"delete key because it not down now %s", s1.c_str());
+						times.erase(el.first);
+						state.Remove(el.first);
+						found = true;
+						break;
+					}
+				}
+			}
+			if (!found) {
+				break;
+			}
+		}
+	}
+};
+
 
 
 

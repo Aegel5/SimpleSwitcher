@@ -173,17 +173,15 @@ public:
 		return hkNames;
 	}
 
+	std::map<TKeyCode, std::wstring> unknownNames;
+
 	TStr GetName(TKeyCode k)
 	{
-		if (k >= vkMap.size()) {
-			return L"Unknown";
+		if (k >= vkMap.size() || vkMap[k] == nullptr) {
+			return L"UNKNOWN";
 		}
 
-		auto res = vkMap[k];
-		if(res == nullptr) 
-			return L"Unknown";
-
-		return res;
+		return vkMap[k];
 	}
 
 	void GenerateMap()
@@ -193,8 +191,13 @@ public:
 		for(int i = 0; i < vkMap.size(); ++i)
 		{
 			TStr sName = vkMap[i];
-			if(!sName)
-				continue;
+			if (!sName) {
+				std::wostringstream ss;
+				ss << L"KEY_" << std::hex << i;
+				unknownNames[i] = ss.str(); // холдер.
+				sName = unknownNames[i].c_str();
+				vkMap[i] = sName;
+			}
 			std::wstring sNameLower = sName;
 			Str_Utils::ToLower(sNameLower);
 			mapCode[sNameLower] = i;
@@ -482,6 +485,9 @@ public:
 		std::wstring s;
 		ToString(key, s);
 		return s;
+	}
+	static TStr GetName(TKeyCode key) {
+		return HotKeyNames::Global().GetName(key);
 	}
 	static void ToString(TKeyCode key, std::wstring& s)
 	{

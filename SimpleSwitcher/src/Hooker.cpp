@@ -176,48 +176,8 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 		}
 	}
 
-	bool isSkipRepeat = false;
-
-	if(curKeyState == KEY_STATE_UP)
-	{
-		m_curKeyState.SetHold(false);
-
-		if(!m_curKeyState.Remove(vkCode))
-		{
-			if (CHotKey::IsKnownMods(vkCode))
-			{
-				std::wstring s1;
-				CHotKey::ToString(vkCode, s1);
-				IFS_LOG(SW_ERR_UNKNOWN, L"Not found up for key %s", s1.c_str());
-			}
-		}
-	}
-	else if(curKeyState == KEY_STATE_DOWN)
-	{
-		CHotKey hk_save = m_curKeyState;
-		m_curKeyState.Add(vkCode,  CHotKey::ADDKEY_ORDERED | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
-		if (m_curKeyState.Compare(hk_save))
-		{
-			if (m_curKeyState.IsHold()) // already hold
-			{
-				isSkipRepeat = true;
-			}
-			else
-			{
-				m_curKeyState.SetHold(true);
-			}
-		}
-		else
-		{
-			// была нажата другая клавиша, сбрасываем флаг hold
-			m_curKeyState.SetHold(false);
-		}
-		//m_curHotKey = m_curKeyState;
-	}
-	else
-	{
-		return SW_ERR_UNKNOWN;
-	}
+	m_curStateWrap.Update(vkCode, curKeyState);
+	m_curKeyState = m_curStateWrap.state;
 
 
 	if (GetLogLevel() >= LOG_LEVEL_3)
@@ -247,7 +207,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	bool isUp;
 	if (GetTypeForKey(m_curKeyState, hotKeyType, isUp))
 	{
-		if (isSkipRepeat)
+		if (m_curStateWrap.isSkipRepeat)
 		{
 			LOG_INFO_2(L"Skip repeat evt");
 			RETURN_SUCCESS;

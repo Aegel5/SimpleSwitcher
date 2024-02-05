@@ -259,6 +259,11 @@ LRESULT CALLBACK KeyboardProc(
 	//}
 }
 
+namespace {
+	CurStateWrapper curKey;
+	TKeyCode disable_up = 0;
+};
+
 LRESULT CALLBACK LowLevelKeyboardProc(
 	_In_  int nCode,
 	_In_  WPARAM wParam,
@@ -280,6 +285,43 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		kData.wParam = wParam;
 		Worker()->PostMsg(msg);
 
+		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
+		KeyState curKeyState = GetKeyState(wParam);
+		bool isInjected = TestFlag(kStruct->flags, LLKHF_INJECTED);
+		if (!isInjected) {
+			// Consume HOT KEY (не отдаем хот-кей для текущей программы)
+			curKey.Update(vkCode, curKeyState);
+			if (curKeyState == KeyState::KEY_STATE_DOWN) {
+				bool skip = curKey.state.IsEmpty();
+				if (curKey.state.IsKnownMods(curKey.state.ValueKey()) && curKey.state.Size() == 1) {
+					// Скипаем когда хот-кей состоит из 1 клавиши known mod.
+					skip = true;
+				}
+
+				if (!skip) {
+					auto conf = conf_get();
+					for (auto it : conf->hotkeysList) {
+						if (it.second.HasKey(curKey.state, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP))) {
+							// у нас есть такой хот-кей, запрещаем это событие для программы.
+							disable_up = curKey.state.ValueKey(); // up тоже будет в будущем запрещать.
+							LOG_INFO_1(L"Key %s was disabled(down)", CHotKey::GetName(disable_up));
+							return 1;
+						}
+					}
+				}
+			}
+			else if (curKeyState == KeyState::KEY_STATE_UP) {
+				if (disable_up == vkCode) {
+					LOG_INFO_1(L"Key %s was disabled(up)", CHotKey::GetName(disable_up));
+					disable_up = 0;
+					return 1;
+				}
+			}
+
+			if (curKey.state.IsEmpty()) {
+				disable_up = 0;
+			}
+		}
 	}
 
 	if (conf_get()->fEnableKeyLoggerDefence) {
