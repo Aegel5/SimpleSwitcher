@@ -1,0 +1,9 @@
+﻿оригинальные флаги
+скрипт для конверта
+https://github.com/hampusborgos/country-flags
+
+3x2
+https://github.com/catamphetamine/country-flag-icons
+
+4x3
+https://github.com/mantinedev/mantine-flagpack

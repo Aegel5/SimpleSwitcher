@@ -1,0 +1,25 @@
+{
+  "name": "svg-country-flags",
+  "version": "1.2.10",
+  "description": "SVG and PNG renders of all countries' flags.",
+  "scripts": {
+    "build-pngs": "node scripts/build-pngs.js",
+    "build-100-250-1000-pngs": "node scripts/build-pngs.js 100: && node scripts/build-pngs.js 250: && node scripts/build-pngs.js 1000:"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hampusborgos/country-flags.git"
+  },
+  "keywords": [
+    "flags",
+    "countries",
+    "country",
+    "svg"
+  ],
+  "author": "Hampus Nilsson",
+  "license": "PD",
+  "bugs": {
+    "url": "https://github.com/hampusborgos/country-flags/issues"
+  },
+  "homepage": "https://hampusborgos.github.io/country-flags/"
+}
