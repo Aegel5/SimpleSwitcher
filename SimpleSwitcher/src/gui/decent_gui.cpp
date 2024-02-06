@@ -198,7 +198,39 @@ private:
                    // since the default event handler does call Destroy(), too
     }
 
-    std::map<std::wstring, wxIcon> icons;
+    std::map<wxString, wxBitmapBundle> flags_map;
+    std::set<wxString> flags_miss;
+
+    wxBitmapBundle GetFlag2(const wxString& _name) {
+
+        auto name16 = _name + L"16";
+        auto name32 = _name + L"32";
+
+        static bool inited = false;
+
+        if (!inited) {
+            ::wxInitAllImageHandlers();
+            inited = true;
+        }
+
+        auto it = flags_map.find(name16);
+        if (it != flags_map.end()) return it->second;
+
+        auto it2 = flags_miss.find(name16);
+        if (it2 != flags_miss.end()) return {};
+
+        if (FindResource(0, name16, RT_RCDATA) == nullptr || FindResource(0, name32, RT_RCDATA) == nullptr) {
+            flags_miss.insert(name16);
+            return {};
+        }
+
+        wxVector<wxBitmap> bitmaps;
+        bitmaps.push_back(wxBitmap(name16, wxBITMAP_TYPE_PNG_RESOURCE));
+        bitmaps.push_back(wxBitmap(name32, wxBITMAP_TYPE_PNG_RESOURCE));
+        flags_map.emplace(name16, wxBitmapBundle::FromBitmaps(bitmaps));
+
+        return flags_map[name16];
+    }
 
    virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override {
 
@@ -212,7 +244,6 @@ private:
 
             HKL newLayout = (HKL)wParam;
 
-
             std::wstring name = L"appicon";
 
             WORD langid = LOWORD(newLayout);
@@ -220,40 +251,31 @@ private:
             TCHAR buf[512];
             buf[0] = 0;
 
-            int flag = LOCALE_ICOUNTRY;
+            int flag = LOCALE_SNAME;
             int len  = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, SW_ARRAY_SIZE(buf));
             IFW_LOG(len != 0);
 
 
-            if (Str_Utils::IsEqual(buf, L"1")) { // todo get country
-                name = L"flag_us";
-            } else if (Str_Utils::IsEqual(buf, L"7")) {
-                name = L"flag_ru";
-            } else if (Str_Utils::IsEqual(buf, L"380")) {
-                // name = "flag_uk";
-            } else {
-                int k = 0;
+            wxBitmapBundle bndl;
+
+            auto len_str = wcslen(buf);
+            if (len_str >= 2) {
+
+                TStr name = buf + len_str - 2;
+                wxString wname = name;
+
+                LOG_INFO_1(L"mainguid new layout: 0x%x, name=%s", newLayout, name);
+
+                bndl = GetFlag2(wname);
             }
 
-            LOG_INFO_1(L"mainguid new layout: 0x%x, name=%s", newLayout, name.c_str());
+            if (!bndl.IsOk()) {
+                LOG_INFO_1(L"ERR. can't find flag for ");
+                bndl = icon;
+            }
 
-            auto it = icons.find(name);
-            if (it == icons.end()) {
-
-                wxIcon icon(name);
-
-                if (!icon.IsOk()) { //
-                    LOG_INFO_1(L"icon not ok. SKIP");
-                    return TRUE;
-                }
-
-                icons.emplace(name, icon);
-                it = icons.find(name);
-            } 
-
-            
-            if (!myTray.SetIcon(it->second, trayTooltip)) {
-                LOG_INFO_1(L"ERR. can't set icon");
+            if (!myTray.SetIcon(bndl, trayTooltip)) {
+                LOG_INFO_1(L"ERR. can't set icon ");
             }
 
             return TRUE;

@@ -2,6 +2,9 @@ appicon ICON "yy.ico"
 flag_ru ICON "flags/ru.ico"
 flag_us ICON "flags/en.ico"
 
+#include "flags/flag_res16.rc"
+#include "flags/flag_res32.rc"
+
 lang_ru MOFILE  "../localization/ru_RU.mo"
 
 #include "../../wxWidgets/include/wx/msw/wx.rc"        
