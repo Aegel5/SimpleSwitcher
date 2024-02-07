@@ -29,6 +29,11 @@ set(wxUSE_MEDIACTRL OFF)
 set(wxUSE_JOYSTICK OFF)
 set(wxUSE_TGA OFF)
 set(wxUSE_GIF OFF)
+set(wxUSE_PNM OFF)
+set(wxUSE_PCX OFF)
+set(wxUSE_IFF OFF)
+set(wxUSE_XPM OFF)
+set(wxUSE_RICHTEXT OFF)
 
  set(wxUSE_STL ON)
 
