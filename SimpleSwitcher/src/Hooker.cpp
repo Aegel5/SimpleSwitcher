@@ -1180,47 +1180,38 @@ void Hooker::CheckCurLay(bool forceSend) {
     }
 }
 
-TStatus Hooker::AnalizeTopWnd()
-{
+TStatus Hooker::AnalizeTopWnd() {
+
     CheckCurLay();
 
-	HWND hwndFocused;
+	HWND hwndFocused = NULL;
 	IFS_RET(Utils::GetFocusWindow(hwndFocused));
-	PrintHwnd(hwndFocused, L"hwndFocused");
-
-	//HWND hwndForeg = GetForegroundWindow();
-	//DWORD prFor;
-	//DWORD trFor = GetWindowThreadProcessId(hwndForeg, &prFor);
-	//HKL layFor = GetKeyboardLayout(trFor);
-	//LOG_INFO_1(
-	//	L"hwnd=0x%p, pid=%u, threadid=%u, lay=0x%x",
-	//	hwndForeg,
-	//	prFor,
-	//	trFor,
-	//	layFor);
-
-	//Test();
-
-	auto m_dwIdThreadTopWnd = GetWindowThreadProcessId(hwndFocused, &m_dwTopPid);
-	auto m_layoutTopWnd = GetKeyboardLayout(m_dwIdThreadTopWnd);
-
-	//auto lay2 = g_procEnum.GetTopWnd2();
-
-
-    //if (g_laynotif.inited && m_layoutTopWnd != g_laynotif.g_curLay) {
-    //    LOG_WARN(L"laynotif not equals");
-    //}
 	m_hwndTop = hwndFocused;
 
-	IFS_LOG(Utils::GetProcLowerNameByPid(m_dwTopPid, m_sTopProcPath, m_sTopProcName));
+	DWORD dwTopPid = 0;
+	DWORD dwIdThreadTopWnd = GetWindowThreadProcessId(hwndFocused, &dwTopPid);
+	IFW_LOG(dwIdThreadTopWnd != 0);
 
-	LOG_INFO_1(
-		L"hwnd=0x%p, pid=%u, threadid=%u, lay=0x%x(0x%x), prg=%s",
-		m_hwndTop,
-		m_dwTopPid,
-		m_dwIdThreadTopWnd,
-		m_layoutTopWnd,           topWndInfo2.lay,
-		m_sTopProcName.c_str());
+	m_sTopProcPath = L"";
+	m_sTopProcName = L"";
+
+	if (dwTopPid == 0) {
+		LOG_WARN("can't get pid");
+		RETURN_SUCCESS;
+	}
+
+	IFS_LOG(Utils::GetProcLowerNameByPid(dwTopPid, m_sTopProcPath, m_sTopProcName));
+
+	if (GetLogLevel() >= 1) {
+		HKL m_layoutTopWnd = GetKeyboardLayout(dwIdThreadTopWnd);
+		LOG_INFO_1(
+			L"hwnd=0x%p, pid=%u, threadid=%u, lay=0x%x(0x%x), prg=%s",
+			m_hwndTop,
+			dwTopPid,
+			dwIdThreadTopWnd,
+			m_layoutTopWnd, topWndInfo2.lay,
+			m_sTopProcName.c_str());
+	}
 
 	RETURN_SUCCESS;
 }

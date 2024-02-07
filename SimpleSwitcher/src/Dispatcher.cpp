@@ -264,6 +264,24 @@ namespace {
 	TKeyCode disable_up = 0;
 };
 
+bool CheckInDisabled() {
+
+	HWND hwndFocused = NULL;
+	IFS_LOG(Utils::GetFocusWindow(hwndFocused));
+	if (hwndFocused == NULL) return false;
+
+	DWORD dwTopPid = 0;
+	DWORD dwIdThreadTopWnd = GetWindowThreadProcessId(hwndFocused, &dwTopPid);
+	IFW_LOG(dwIdThreadTopWnd != 0);
+	if (dwTopPid == 0) return false;
+
+	std::wstring path;
+	std::wstring name;
+	IFS_LOG(Utils::GetProcLowerNameByPid(dwTopPid, path, name));
+
+	return conf_get()->IsSkipProgram(name);
+}
+
 LRESULT CALLBACK LowLevelKeyboardProc(
 	_In_  int nCode,
 	_In_  WPARAM wParam,
@@ -297,15 +315,17 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 					// Скипаем когда хот-кей состоит из 1 клавиши known mod.
 					skip = true;
 				}
-
 				if (!skip) {
 					auto conf = conf_get();
 					for (auto it : conf->hotkeysList) {
 						if (it.second.HasKey(curKey.state, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP))) {
-							// у нас есть такой хот-кей, запрещаем это событие для программы.
-							disable_up = curKey.state.ValueKey(); // up тоже будет в будущем запрещать.
-							LOG_INFO_1(L"Key %s was disabled(down)", CHotKey::GetName(disable_up));
-							return 1;
+							// К сожалению, вынуждены дублировать эти проверки, но ничего не поделать, нам нужен второй поток.
+							if (!CheckInDisabled()) {
+								// у нас есть такой хот-кей, запрещаем это событие для программы.
+								disable_up = curKey.state.ValueKey(); // up тоже будет в будущем запрещать.
+								LOG_INFO_1(L"Key %s was disabled(down)", CHotKey::GetName(disable_up));
+								return 1;
+							}
 						}
 					}
 				}

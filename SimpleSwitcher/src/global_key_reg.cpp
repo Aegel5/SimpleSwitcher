@@ -72,6 +72,9 @@ namespace {
 
 
 void Rereg_all() {
+
+    return; // отключаем за ненадобностью...
+
     //g_global_reg_data.clear();
     auto conf = conf_get();
     for (auto& hk : conf->hotkeysList) {

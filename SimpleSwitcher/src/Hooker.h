@@ -109,7 +109,7 @@ public:
 	DWORD m_dwIdProcoreground = -1;
 
 	//DWORD m_dwIdThreadTopWnd = 0;
-	DWORD m_dwTopPid = 0;
+	//DWORD m_dwTopPid = 0;
 	//HKL m_layoutTopWnd = 0;
 	HWND m_hwndTop = 0;
 

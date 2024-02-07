@@ -146,7 +146,8 @@ public:
 
     TLogLevel logLevel = LOG_LEVEL_3;
 
-    bool IsSkipProgram(std::wstring sExeName) const {
+    bool IsSkipProgram(const std::wstring& sExeName) const {
+        if (sExeName.empty()) return false;
         auto has = __disableInPrograms.find(sExeName) != __disableInPrograms.end();
         if (has) {
             LOG_INFO_1(L"Skip process %s because of disableInProcess", sExeName.c_str());
