@@ -747,7 +747,17 @@ void Hooker::HandleSymbolDown()
 		break;
 	}
 }
+void Hooker::UpAllKeys() {
 
+	if (m_curKeyState.IsEmpty()) return;
+
+	InputSender inputSender;
+	for (auto key : m_curKeyState) {
+		inputSender.Add(key, KEY_STATE_UP);
+	}
+	IFS_LOG(SendOurInput(inputSender));
+
+}
 TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 {
 	bool fUseAltMode = false;
@@ -763,7 +773,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		if (!fClearedState)
 		{
 			fClearedState = true;
-			IFS_LOG(ClearModsBySend(m_curKeyState));
+			//IFS_LOG(ClearModsBySend(m_curKeyState));
 		}
 	};
 
@@ -783,14 +793,9 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		}
 		else
 		{
-			if (m_sTopProcName == L"notepad.exe") {
-				// отпустим клавиши перед отправкой языка...
-				InputSender inputSender;
-				for (auto key : m_curKeyState) {
-					inputSender.Add(key, KEY_STATE_UP);
-				}
-				IFS_LOG(SendOurInput(inputSender));
-			}
+			//if (m_sTopProcName == L"notepad.exe") {
+			//	UpAllKeys();
+			//}
 			LOG_INFO_1(L"post change");
 			PostMessage(m_hwndTop, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
 		}
@@ -956,7 +961,6 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
 	// --------------- skip
 
-    bool allow_do_layout = true;
     bool allow_do_revert = true;
 
 	auto conf = conf_get();
@@ -967,47 +971,46 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
     }
     else if (conf->IsSkipProgram(m_sTopProcName)) {
         LOG_INFO_1(L"Skip process %s because of disableInProcess", m_sTopProcName.c_str());
-        allow_do_revert = false;
-        allow_do_layout = false;
-    }
+		RETURN_SUCCESS;
+	}
+
+	// Сбросим сразу все клавиши для программы. Будет двойной (или даже тройной и более) up, но пока что это не проблема... 
+	UpAllKeys();
 
 	// CHANGE LAYOUT WITHOUT REVERT
 
-	if (allow_do_layout) {
+    if (Utils::is_in(typeRevert, hk_CapsGenerate, hk_ScrollGenerate)) {
+        TKeyCode k = (typeRevert == hk_CapsGenerate) ? VK_CAPITAL : VK_SCROLL;
+        InputSender inputSender;
+        inputSender.Add(k, KEY_STATE_DOWN);
+        inputSender.Add(k, KEY_STATE_UP);
+        IFS_LOG(SendOurInput(inputSender));
+        RETURN_SUCCESS;
+    }
 
-        if (Utils::is_in(typeRevert, hk_CapsGenerate, hk_ScrollGenerate)) {
-            TKeyCode k = (typeRevert == hk_CapsGenerate) ? VK_CAPITAL : VK_SCROLL;
-            InputSender inputSender;
-            inputSender.Add(k, KEY_STATE_DOWN);
-            inputSender.Add(k, KEY_STATE_UP);
-            IFS_LOG(SendOurInput(inputSender));
-            RETURN_SUCCESS;
-        }
+    IFS_RET(AnalizeTopWnd());
 
-        IFS_RET(AnalizeTopWnd());
+    if (typeRevert == hk_CycleCustomLang) {
+        data.flags = SW_CLIENT_SetLang;
+        data.lay   = getNextLang();
+        IFS_RET(ProcessRevert(data));
+        RETURN_SUCCESS;
+    }
 
-        if (typeRevert == hk_CycleCustomLang) {
-            data.flags = SW_CLIENT_SetLang;
-            data.lay   = getNextLang();
-            IFS_RET(ProcessRevert(data));
-            RETURN_SUCCESS;
-        }
+    if (Utils::is_in(typeRevert, hk_ChangeSetLayout_1, hk_ChangeSetLayout_2, hk_ChangeSetLayout_3)) {
+        HKL hkl = 0;
+        if (typeRevert == hk_ChangeSetLayout_1)
+            hkl = conf->hkl_lay[SettingsGui::SW_HKL_1];
+        else if (typeRevert == hk_ChangeSetLayout_2)
+            hkl = conf->hkl_lay[SettingsGui::SW_HKL_2];
+        else if (typeRevert == hk_ChangeSetLayout_3)
+            hkl = conf->hkl_lay[SettingsGui::SW_HKL_3];
 
-        if (Utils::is_in(typeRevert, hk_ChangeSetLayout_1, hk_ChangeSetLayout_2, hk_ChangeSetLayout_3)) {
-            HKL hkl = 0;
-            if (typeRevert == hk_ChangeSetLayout_1)
-                hkl = conf->hkl_lay[SettingsGui::SW_HKL_1];
-            else if (typeRevert == hk_ChangeSetLayout_2)
-                hkl = conf->hkl_lay[SettingsGui::SW_HKL_2];
-            else if (typeRevert == hk_ChangeSetLayout_3)
-                hkl = conf->hkl_lay[SettingsGui::SW_HKL_3];
+        data.flags = SW_CLIENT_SetLang;
+        data.lay   = (HKL)hkl;
+        IFS_RET(ProcessRevert(data));
 
-            data.flags = SW_CLIENT_SetLang;
-            data.lay   = (HKL)hkl;
-            IFS_RET(ProcessRevert(data));
-
-            RETURN_SUCCESS;
-        }
+        RETURN_SUCCESS;
     }
 
 

@@ -161,6 +161,8 @@ public:
 	};
 	std::deque<SkipInjectEntry> skipdata;
 
+	void UpAllKeys();
+
 };
 
 inline Hooker* g_hooker;
