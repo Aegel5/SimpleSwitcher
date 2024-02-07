@@ -48,11 +48,12 @@ public:
         if (hwndFocused == nullptr)
             return res;
 
-        DWORD pid;
+        DWORD pid = 0;
         res.threadid = GetWindowThreadProcessId(hwndFocused, &pid);
+        IFW_LOG(res.threadid != 0);
         res.hwnd      = hwndFocused;
 
-        if (IsWindows10OrGreater()) {
+        if (pid != 0 && IsWindows10OrGreater()) {
 
             auto it = mp.find(pid);
             if (GetTickCount64() > disableScanUntil && (it == mp.end() || GetTickCount64() - lastscan >= 5000 * 60)) {
