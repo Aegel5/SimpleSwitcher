@@ -228,8 +228,9 @@ TStatus LoadConfig(SettingsGui& sets, bool createIfNotExists = false);
 TStatus Save2(const SettingsGui& gui);
 inline TStatus Save() { return Save2(*conf_get());}
 
-inline void conf_set(ConfPtr conf) {
+inline void conf_set(ConfPtr& conf) {
     __g_config.swap(conf);
+    conf.reset();
     IFS_LOG(Save()); // сразу сохраняем в файл.
 }
 
