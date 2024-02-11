@@ -101,9 +101,13 @@ struct CurStateWrapper {
 	std::map<int, ULONGLONG> times;
 	bool isSkipRepeat = false;
 
-	void Update(TKeyCode vkCode, KeyState curKeyState) {
+	void Update(KBDLLHOOKSTRUCT* kStruct, KeyState curKeyState) {
+
+		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
+		bool isAltDown = TestFlag(kStruct->flags, LLKHF_ALTDOWN);
 
 		isSkipRepeat = false;
+
 
 		if (curKeyState == KEY_STATE_UP)
 		{
@@ -120,24 +124,29 @@ struct CurStateWrapper {
 		}
 		else if (curKeyState == KEY_STATE_DOWN)
 		{
-			CHotKey hk_save = state;
-			state.Add(vkCode, CHotKey::ADDKEY_ORDERED | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
-			times[vkCode] = GetTickCount64() + 10000;
-			if (state.Compare(hk_save))
-			{
-				if (state.IsHold()) // already hold
+			if (isAltDown && vkCode == VK_LCONTROL) {
+				LOG_INFO_1(L"Skip fake LCtrl");
+			}
+			else {
+				CHotKey hk_save = state;
+				state.Add(vkCode, CHotKey::ADDKEY_ORDERED | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
+				times[vkCode] = GetTickCount64() + 10000;
+				if (state.Compare(hk_save))
 				{
-					isSkipRepeat = true;
+					if (state.IsHold()) // already hold
+					{
+						isSkipRepeat = true;
+					}
+					else
+					{
+						state.SetHold(true);
+					}
 				}
 				else
 				{
-					state.SetHold(true);
+					// была нажата другая клавиша, сбрасываем флаг hold
+					state.SetHold(false);
 				}
-			}
-			else
-			{
-				// была нажата другая клавиша, сбрасываем флаг hold
-				state.SetHold(false);
 			}
 		}
 		else

@@ -367,6 +367,15 @@ public:
 		}
 		return false;
 	}
+	bool HasAllMod()
+	{
+		for (int i = 0; i < size; ++i)
+		{
+			if (!IsKnownMods(keys[i]))
+				return false;
+		}
+		return true;
+	}
 	TKeyCode At(int i) {return keys[i];}
 	bool HasMod(TKeyCode k, bool leftrightCheck = false)
 	{

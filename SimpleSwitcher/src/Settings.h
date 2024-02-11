@@ -91,6 +91,14 @@ struct CHotKeySet
         return false;
     }
 
+    bool HasKey_skipkeyup(CHotKey ktest, CHotKey::TCompareFlags flags) {
+        for (auto& k : keys) {
+            if (!k.GetKeyup() && ktest.Compare(k, flags))
+                return true;
+        }
+        return false;
+    }
+
     CHotKey& key() {
         return keys[0];
     }

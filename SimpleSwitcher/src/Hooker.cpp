@@ -144,12 +144,16 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	TKeyCode vkCode = (TKeyCode)k->vkCode;
 	KeyState curKeyState = GetKeyState(wParam);
     bool isInjected      = TestFlag(k->flags, LLKHF_INJECTED);
+    bool isAltDown      = TestFlag(k->flags, LLKHF_ALTDOWN);
+	bool isSysKey = wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP;
 
 
-	LOG_INFO_3(L"KEY_MSG: %s(%s),inject=%d",
+	LOG_INFO_3(L"KEY_MSG: %s(%s),inject=%d,altdown=%d,syskey=%d",
         HotKeyNames::Global().GetName(vkCode),  
 		get_state_name(curKeyState), 
-		isInjected ? 1:0
+		isInjected,
+		isAltDown,
+		isSysKey
 	);
 
 	if (isInjected)
@@ -176,7 +180,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 		}
 	}
 
-	m_curStateWrap.Update(vkCode, curKeyState);
+	m_curStateWrap.Update(k, curKeyState);
 	m_curKeyState = m_curStateWrap.state;
 
 

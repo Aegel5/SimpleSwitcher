@@ -328,7 +328,7 @@ private:
         conf->showFlags = event.IsChecked();
         conf_set(conf);
 
-        if (!conf->showFlags) {
+        if (!conf_get()->showFlags) {
             myTray.SetIcon(icon, trayTooltip);
         } else {
             GetCurLayRequest();
@@ -417,8 +417,8 @@ private:
         if (ChangeHotKey(this, type, newkey)) {
             auto conf = conf_copy();
             conf->hotkeysList[type].key() = newkey;
-            conf_set(conf);
             auto res = conf->GetHk(type).key().ToString();
+            conf_set(conf);
             obj->SetValue(res);
 
             Rereg_all();
