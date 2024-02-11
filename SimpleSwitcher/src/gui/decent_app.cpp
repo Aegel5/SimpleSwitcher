@@ -45,14 +45,12 @@ bool MyApp::OnInit() {
             Sleep(1000); // дать системе прогрузиться
         }
 
-        auto conf = conf_copy();
+        auto conf = __g_config.get();
 
         SetLogLevel(conf->fDbgMode ? LOG_LEVEL_1 : LOG_LEVEL_0);
 
         auto errLoadConf = LoadConfig(*conf, true);
         IFS_LOG(errLoadConf);
-		if(errLoadConf == SW_ERR_SUCCESS) 
-			conf_set(conf);
 
         SetLogLevel_v3(conf->fDbgMode ? conf->logLevel : LOG_LEVEL_0);
 
