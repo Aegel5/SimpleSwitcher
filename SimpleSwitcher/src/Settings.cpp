@@ -31,7 +31,7 @@ void SettingsGui::GenerateListHK()
     {
         CHotKeySet set;
         set.def           = CHotKey(VK_PAUSE);
-        set.def2            = CHotKey(VK_F24);
+        set.def2            = CHotKey(VK_CAPITAL);
         set.fUseDef        = true;
         set.fNeedSavedWord = true;
         AddHotKey(hk_RevertLastWord, set);
@@ -57,7 +57,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def = CHotKey(VK_F24, VK_CONTROL);
+        set.def = CHotKey(VK_CAPITAL, VK_CONTROL);
         AddHotKey(hk_CapsGenerate, set);
     }
 
@@ -70,7 +70,7 @@ void SettingsGui::GenerateListHK()
     {
         CHotKeySet set;
         set.def           = CHotKey(VK_SHIFT, VK_PAUSE);
-        set.def2            = CHotKey(VK_SHIFT, VK_F24);
+        set.def2            = CHotKey(VK_SHIFT, VK_CAPITAL);
         set.fUseDef        = true;
         set.fNeedSavedWord = true;
         AddHotKey(hk_RevertCycle, set);
@@ -86,7 +86,7 @@ void SettingsGui::GenerateListHK()
     {
         CHotKeySet set;
         set.def    = CHotKey(VK_PAUSE);
-        set.def2     = CHotKey(VK_F24);
+        set.def2     = CHotKey(VK_CAPITAL);
         set.fUseDef = true;
         AddHotKey(hk_RevertSel, set);
     }

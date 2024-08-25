@@ -4,6 +4,7 @@ import re
 import os
 import shutil 
 import sys
+import subprocess
 
 is_debug = False
 is_publ = False
@@ -45,7 +46,14 @@ def delfold(fold):
         shutil.rmtree(fold) 
         
 delfold(result_dir_root)      
-result_dir.mkdir(parents=True, exist_ok=True)    
+result_dir.mkdir(parents=True, exist_ok=True) 
+
+def run(exe, arg):
+    cmd = f'{exe} {arg}'
+    print(cmd)
+    
+    #subprocess.run([exe, arg], capture_output=True, check=True, shell=True)
+    os.system(cmd)
 
 def build(subfold, is64):
 
@@ -64,8 +72,13 @@ def build(subfold, is64):
     release_folder = path / rel_name
     delfold(release_folder) # ensure we get only builded now binares
     
-    os.system(f'cmake -G "Visual Studio 17 2022"  {" " if is64 else "-A Win32"} -DCMAKE_BUILD_TYPE={rel_name} ./{subfold} -B {path}')
-    os.system(f'cmake --build {path} --parallel --config {rel_name}')        
+    cmake_path = "cmake.exe"
+    
+    #cmake_path_2 = r"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+    #if os.path.isfile(cmake_path_2):cmake_path = cmake_path_2
+        
+    run(cmake_path, f'-G "Visual Studio 17 2022"  {" " if is64 else "-A Win32"} -DCMAKE_BUILD_TYPE={rel_name} ./{subfold} -B {path}')
+    run(cmake_path, f'--build {path} --parallel --config {rel_name}')
 
     tocopy = ['.exe', '.dll']
     for root, dirs, files in os.walk(release_folder):
