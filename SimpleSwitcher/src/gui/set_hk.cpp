@@ -37,10 +37,11 @@ public:
 
         key     = info.key();
 
-        auto ss = [](CHotKey key) { return key.IsEmpty() ? L"[None]" : key.ToString(); };
-
-        m_radioBox1->SetString(1, ss(info.def));
-        m_radioBox1->SetString(2, ss(info.def2));
+        std::vector<wxString> choices = { "Custom" };
+        for (auto& def : info.def_list) {
+            choices.push_back(def.ToString());
+        }
+        m_choiceKey->Set(choices);
 
         updateField();
 
@@ -55,31 +56,32 @@ private:
     void updateField()
     {
         m_textKey->SetValue(key.ToString());
-
-        if (key.Compare(info.def, CHotKey::COMPARE_CHECK_LEFT_RIGHT_FLAG)) {
-            m_radioBox1->SetSelection(1);
-        } else if (key.Compare(info.def2, CHotKey::COMPARE_CHECK_LEFT_RIGHT_FLAG)) {
-            m_radioBox1->SetSelection(2);
-        } else {
-            m_radioBox1->SetSelection(0);
-        }
-
         m_checkBox12->SetValue(key.GetLeftRightMode());
         m_checkBox13->SetValue(key.GetKeyup());
+        m_choiceKey->SetSelection(0);
+
+        for(int i = 0; i < info.def_list.size(); i++){
+            auto& def = info.def_list[i];
+            if (key.Compare(def, CHotKey::COMPARE_CHECK_LEFT_RIGHT_FLAG)) {
+                m_choiceKey->SetSelection(i+1);
+                break;
+            }
+        }
+
     }
     CHotKeySet info;
 
-    virtual void onSelected(wxCommandEvent& event)
+    virtual void OnChoiceSelect(wxCommandEvent& event)
     {
-        auto cur = m_radioBox1->GetSelection();
+        auto cur = m_choiceKey->GetSelection();
+
         if (cur == 0) {
             key.Clear();
         }
-        else if (cur == 1) {
-            key = info.def;
-        } else {
-            key = info.def2;
+        else {
+            key = info.def_list[cur-1];
         }
+
         updateField();
     }
 

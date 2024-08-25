@@ -30,8 +30,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def           = CHotKey(VK_PAUSE);
-        set.def2            = CHotKey(VK_CAPITAL);
+        set.def_list = { CHotKey(VK_PAUSE), CHotKey(VK_CAPITAL), CHotKey(VK_F24) };
         set.fUseDef        = true;
         set.fNeedSavedWord = true;
         AddHotKey(hk_RevertLastWord, set);
@@ -39,26 +38,24 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def = CHotKey().Add(VK_LCONTROL).SetLeftRightMode(true).SetKeyup(true);
+        set.def_list = { CHotKey().Add(VK_LCONTROL).SetLeftRightMode(true).SetKeyup(true) };
         AddHotKey(hk_ChangeSetLayout_1, set);
     }
 
     {
         CHotKeySet set;
-        set.def = CHotKey().Add(VK_RCONTROL).SetLeftRightMode(true).SetKeyup(true);
+        set.def_list = { CHotKey().Add(VK_RCONTROL).SetLeftRightMode(true).SetKeyup(true) };
         AddHotKey(hk_ChangeSetLayout_2, set);
     }
 
     {
         CHotKeySet set;
-        set.def = CHotKey();
         AddHotKey(hk_ChangeSetLayout_3, set);
     }
 
     {
         CHotKeySet set;
-        set.def = CHotKey(VK_CAPITAL, VK_CONTROL);
-        set.def2 = CHotKey(VK_F24, VK_CONTROL);
+        set.def_list = { CHotKey(VK_CAPITAL, VK_CONTROL), CHotKey(VK_F24, VK_CONTROL) };
         AddHotKey(hk_CapsGenerate, set);
     }
 
@@ -70,8 +67,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def           = CHotKey(VK_SHIFT, VK_PAUSE);
-        set.def2            = CHotKey(VK_SHIFT, VK_CAPITAL);
+        set.def_list = { CHotKey(VK_SHIFT, VK_PAUSE), CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_F24) };
         set.fUseDef        = true;
         set.fNeedSavedWord = true;
         AddHotKey(hk_RevertCycle, set);
@@ -79,22 +75,21 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def = CHotKey(VK_LSHIFT, VK_RSHIFT);
+        set.def_list = { CHotKey(VK_LSHIFT, VK_RSHIFT) };
         //set.def.SetLeftRightMode(true);
         AddHotKey(hk_CycleCustomLang, set);
     }
 
     {
         CHotKeySet set;
-        set.def    = CHotKey(VK_PAUSE);
-        set.def2     = CHotKey(VK_CAPITAL);
+        set.def_list = { CHotKey(VK_PAUSE), CHotKey(VK_CAPITAL), CHotKey(VK_F24) };
         set.fUseDef = true;
         AddHotKey(hk_RevertSel, set);
     }
 
     {
         CHotKeySet set;
-        set.def = CHotKey(VK_F23);
+        set.def_list = { CHotKey(VK_F23) };
         AddHotKey(hk_toUpperSelected, set);
     }
   
@@ -102,7 +97,7 @@ void SettingsGui::GenerateListHK()
     for (auto& it : hotkeysList) {
         auto& hk = it.second;
         if (hk.fUseDef) {
-            hk.key() = hk.def;
+            hk.key() = hk.def_list[0];
         }
     }
 }

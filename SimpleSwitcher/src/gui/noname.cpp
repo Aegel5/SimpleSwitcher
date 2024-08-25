@@ -1,5 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b3)
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version 4.2.1-0-g80c4cb6)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO *NOT* EDIT THIS FILE!
@@ -127,7 +127,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panelMain->SetSizer( bSizer3 );
 	m_panelMain->Layout();
 	bSizer3->Fit( m_panelMain );
-	m_notebook2->AddPage( m_panelMain, _("Main"), false );
+	m_notebook2->AddPage( m_panelMain, _("Main"), true );
 	m_panel14 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
@@ -341,7 +341,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel16->SetSizer( bSizer24 );
 	m_panel16->Layout();
 	bSizer24->Fit( m_panel16 );
-	m_notebook2->AddPage( m_panel16, _("Settings"), true );
+	m_notebook2->AddPage( m_panel16, _("Settings"), false );
 	m_panel6 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer191;
 	bSizer191 = new wxBoxSizer( wxVERTICAL );
@@ -402,7 +402,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBoxKeyDef->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onPrevent ), NULL, this );
 	m_checkBoxDisablAcc->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onDisableAccessebl ), NULL, this );
 	m_checkBoxClearForm->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onClearFormat ), NULL, this );
-	m_checkBoxAllowInjected->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAllowInject ), NULL, this );
+	m_checkBoxAllowInjected->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onClearFormat ), NULL, this );
 	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onExit ), NULL, this );
 	m_button2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onCloseToTray ), NULL, this );
 }
@@ -428,7 +428,7 @@ MyFrame4::~MyFrame4()
 	m_checkBoxKeyDef->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onPrevent ), NULL, this );
 	m_checkBoxDisablAcc->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onDisableAccessebl ), NULL, this );
 	m_checkBoxClearForm->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onClearFormat ), NULL, this );
-	m_checkBoxAllowInjected->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAllowInject ), NULL, this );
+	m_checkBoxAllowInjected->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onClearFormat ), NULL, this );
 	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onExit ), NULL, this );
 	m_button2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame4::onCloseToTray ), NULL, this );
 
@@ -444,19 +444,15 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* bSizer16;
 	bSizer16 = new wxBoxSizer( wxVERTICAL );
 
-	wxString m_radioBox1Choices[] = { _("Custom"), _("123"), _("333") };
-	int m_radioBox1NChoices = sizeof( m_radioBox1Choices ) / sizeof( wxString );
-	m_radioBox1 = new wxRadioBox( this, wxID_ANY, _("Hotkey"), wxDefaultPosition, wxDefaultSize, m_radioBox1NChoices, m_radioBox1Choices, 1, wxRA_SPECIFY_COLS );
-	m_radioBox1->SetSelection( 0 );
-	m_radioBox1->SetMinSize( wxSize( 400,-1 ) );
+	wxString m_choiceKeyChoices[] = { _("Custom"), _("123") };
+	int m_choiceKeyNChoices = sizeof( m_choiceKeyChoices ) / sizeof( wxString );
+	m_choiceKey = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceKeyNChoices, m_choiceKeyChoices, 0 );
+	m_choiceKey->SetSelection( 0 );
+	bSizer16->Add( m_choiceKey, 0, wxALL, 5 );
 
-	bSizer16->Add( m_radioBox1, 0, wxALL|wxEXPAND, 5 );
-
-	m_checkBox12 = new wxCheckBox( this, wxID_ANY, _("Distinguish between left and right modifiers"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer16->Add( m_checkBox12, 0, wxALL, 5 );
-
-	m_checkBox13 = new wxCheckBox( this, wxID_ANY, _("Triggers on KEYUP"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer16->Add( m_checkBox13, 0, wxALL, 5 );
+	m_staticText10 = new wxStaticText( this, wxID_ANY, _("Press any key..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText10->Wrap( -1 );
+	bSizer16->Add( m_staticText10, 0, wxALL, 5 );
 
 	wxBoxSizer* bSizer20;
 	bSizer20 = new wxBoxSizer( wxHORIZONTAL );
@@ -468,7 +464,13 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	bSizer20->Add( m_button6, 0, wxALL, 5 );
 
 
-	bSizer16->Add( bSizer20, 1, wxEXPAND, 5 );
+	bSizer16->Add( bSizer20, 1, wxEXPAND, 0 );
+
+	m_checkBox12 = new wxCheckBox( this, wxID_ANY, _("Distinguish between left and right modifiers"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer16->Add( m_checkBox12, 0, wxALL, 5 );
+
+	m_checkBox13 = new wxCheckBox( this, wxID_ANY, _("Triggers on KEYUP"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer16->Add( m_checkBox13, 0, wxALL, 5 );
 
 	wxBoxSizer* bSizer18;
 	bSizer18 = new wxBoxSizer( wxHORIZONTAL );
@@ -493,10 +495,10 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	this->Centre( wxBOTH );
 
 	// Connect Events
-	m_radioBox1->Connect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( MyDialog1::onSelected ), NULL, this );
+	m_choiceKey->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyDialog1::OnChoiceSelect ), NULL, this );
+	m_button6->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onclear ), NULL, this );
 	m_checkBox12->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyDialog1::onSetLeftRight ), NULL, this );
 	m_checkBox13->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyDialog1::onSetKeyup ), NULL, this );
-	m_button6->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onclear ), NULL, this );
 	m_button4->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onOk ), NULL, this );
 	m_button5->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onCancel ), NULL, this );
 }
@@ -504,10 +506,10 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 MyDialog1::~MyDialog1()
 {
 	// Disconnect Events
-	m_radioBox1->Disconnect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( MyDialog1::onSelected ), NULL, this );
+	m_choiceKey->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyDialog1::OnChoiceSelect ), NULL, this );
+	m_button6->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onclear ), NULL, this );
 	m_checkBox12->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyDialog1::onSetLeftRight ), NULL, this );
 	m_checkBox13->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyDialog1::onSetKeyup ), NULL, this );
-	m_button6->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onclear ), NULL, this );
 	m_button4->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onOk ), NULL, this );
 	m_button5->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onCancel ), NULL, this );
 

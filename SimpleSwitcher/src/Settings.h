@@ -72,8 +72,9 @@ struct CHotKeySet
 {
 	//tstring name = L"unknown";
 	//CHotKey key;
-	CHotKey def;
-	CHotKey def2;
+    std::vector<CHotKey> def_list;
+	//CHotKey def;
+	//CHotKey def2;
 	//bool fReserveHotKey = true;
 	bool fNeedSavedWord = false;
 	bool fUseDef = false;
