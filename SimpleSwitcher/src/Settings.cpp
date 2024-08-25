@@ -58,6 +58,7 @@ void SettingsGui::GenerateListHK()
     {
         CHotKeySet set;
         set.def = CHotKey(VK_CAPITAL, VK_CONTROL);
+        set.def2 = CHotKey(VK_F24, VK_CONTROL);
         AddHotKey(hk_CapsGenerate, set);
     }
 
