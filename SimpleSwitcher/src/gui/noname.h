@@ -117,6 +117,7 @@ class MyFrame4 : public wxFrame
 		virtual void onPrevent( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onDisableAccessebl( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onClearFormat( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onAllowInject( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onExit( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onCloseToTray( wxCommandEvent& event ) { event.Skip(); }
 
