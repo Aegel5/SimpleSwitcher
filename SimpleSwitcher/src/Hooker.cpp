@@ -979,7 +979,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	}
 
 	// Сбросим сразу все клавиши для программы. Будет двойной (или даже тройной и более) up, но пока что это не проблема... 
-	UpAllKeys();
+	// UpAllKeys(); // https://github.com/Aegel5/SimpleSwitcher/issues/61
 
 	// CHANGE LAYOUT WITHOUT REVERT
 
