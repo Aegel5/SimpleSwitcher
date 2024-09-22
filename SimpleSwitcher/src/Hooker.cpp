@@ -983,6 +983,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	// UpAllKeys(); 
 	// https://github.com/Aegel5/SimpleSwitcher/issues/61
 	// Для клавиши LCtrl событие отсылается дважды, причем второй раз без флага inject (баг windows?)
+	// TODO: так как LCtrl наврядли будет использован для исправления раскладки, то можно убирать UpAllKeys только для переключения раскладки (а для исправления оставлять).
 
 	// CHANGE LAYOUT WITHOUT REVERT
 
