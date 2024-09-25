@@ -980,10 +980,13 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
 	// Сбросим сразу все клавиши для программы. Будет двойной (или даже тройной и более) up, но пока что это не проблема... 
 	
-	// UpAllKeys(); 
-	// https://github.com/Aegel5/SimpleSwitcher/issues/61
-	// Для клавиши LCtrl событие отсылается дважды, причем второй раз без флага inject (баг windows?)
-	// TODO: так как LCtrl наврядли будет использован для исправления раскладки, то можно убирать UpAllKeys только для переключения раскладки (а для исправления оставлять).
+	// если нужно просто сменить язык - то не будем делать up https://github.com/Aegel5/SimpleSwitcher/issues/61
+	// в остальных случаях мы эмулируем нажатия каких-то клавиш, поэтому нужно сбросить текущее состояние нажатых клавиш.
+	bool skipUpKeys = Utils::is_in(typeRevert, hk_ChangeSetLayout_1, hk_ChangeSetLayout_2, hk_ChangeSetLayout_3, hk_CycleCustomLang);
+	if (!skipUpKeys) {
+		UpAllKeys();
+	}
+
 
 	// CHANGE LAYOUT WITHOUT REVERT
 
