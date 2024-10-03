@@ -89,7 +89,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_F23) };
+        set.def_list = { CHotKey(VK_SCROLL), CHotKey(VK_F23) };
         AddHotKey(hk_toUpperSelected, set);
     }
   
