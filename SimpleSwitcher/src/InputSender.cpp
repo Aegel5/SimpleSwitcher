@@ -14,11 +14,12 @@ TStatus InputSender::Send()
 
 	bool doPause = false;
 
-	if (g_hooker->m_sTopProcName == L"notepad.exe") { 
-		// костыль для нового notepad...
-		// не используем по дефолту, так как работаем медленнее...
-		doPause = true; 
-	}
+	// https://github.com/Aegel5/SimpleSwitcher/issues/53
+	//if (g_hooker->m_sTopProcName == L"notepad.exe") { 
+	//	// костыль для нового notepad...
+	//	// не используем по дефолту, так как работаем медленнее...
+	//	doPause = true; 
+	//}
 
 	if (doPause) {
 		for (auto& elem : list) {
