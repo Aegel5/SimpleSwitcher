@@ -95,6 +95,7 @@ class MyFrame4 : public wxFrame
 		wxCheckBox* m_checkBoxDisablAcc;
 		wxCheckBox* m_checkBoxClearForm;
 		wxCheckBox* m_checkBoxAllowInjected;
+		wxCheckBox* m_checkBoxAlterantiveLayoutChange;
 		wxPanel* m_panel6;
 		wxStaticText* m_staticTextBuildDate;
 		wxHyperlinkCtrl* m_hyperlink1;
@@ -118,6 +119,7 @@ class MyFrame4 : public wxFrame
 		virtual void onDisableAccessebl( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onClearFormat( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onAllowInject( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onAlternative( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onExit( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onCloseToTray( wxCommandEvent& event ) { event.Skip(); }
 

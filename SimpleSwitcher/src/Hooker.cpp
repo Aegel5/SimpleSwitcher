@@ -764,7 +764,7 @@ void Hooker::UpAllKeys() {
 }
 TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 {
-	bool fUseAltMode = false;
+	bool fUseAltMode = conf_get()->AlternativeLayoutChange;
 	bool fDels = false;
 
 	//AnalizeProblemByName(m_sTopProcPath, m_sTopProcName, fUseAltMode, fDels);
@@ -1161,8 +1161,8 @@ TStatus Hooker::SwitchLangByEmulate(HKL_W lay)
 {
 	InputSender inputSender;
 
-	CHotKey altshift;
-	IFS_LOG(FoundEmulateHotKey(altshift));
+	CHotKey altshift(VK_LMENU, VK_LSHIFT);
+	//IFS_LOG(FoundEmulateHotKey(altshift));
 
 	std::wstring s1 = altshift.ToString();
 	LOG_INFO_2(L"Add press %s", s1.c_str());

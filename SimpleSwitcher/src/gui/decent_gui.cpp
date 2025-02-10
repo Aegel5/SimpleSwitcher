@@ -293,6 +293,7 @@ private:
         m_checkDebuglog->SetValue(conf->fDbgMode);
         m_checkBoxShowFlags->SetValue(conf->showFlags);
         m_checkBoxAllowInjected->SetValue(conf->AllowRemoteKeys);
+        m_checkBoxAlterantiveLayoutChange->SetValue(conf->AlternativeLayoutChange);
     }
 
     virtual void onEnableLog(wxCommandEvent& event)
@@ -315,6 +316,11 @@ private:
     virtual void onAllowInject(wxCommandEvent& event) { 
         auto conf = conf_copy();
         conf->AllowRemoteKeys = event.IsChecked();
+        conf_set(conf);
+    }
+    virtual void onAlternative(wxCommandEvent& event) {
+        auto conf = conf_copy();
+        conf->AlternativeLayoutChange = event.IsChecked();
         conf_set(conf);
     }
 
