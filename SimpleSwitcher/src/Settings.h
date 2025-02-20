@@ -183,6 +183,8 @@ public:
     bool AllowRemoteKeys = false;
     bool AlternativeLayoutChange = false;
 
+    CHotKey SystemLayoutChange { VK_LMENU, VK_LSHIFT };
+
     std::vector<HKL> customLangList;
     std::vector<HKL> hkl_lay{ 3 };
 

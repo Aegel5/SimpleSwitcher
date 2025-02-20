@@ -1161,7 +1161,7 @@ TStatus Hooker::SwitchLangByEmulate(HKL_W lay)
 {
 	InputSender inputSender;
 
-	CHotKey altshift(VK_LMENU, VK_LSHIFT);
+	CHotKey altshift = conf_get()->SystemLayoutChange;
 	//IFS_LOG(FoundEmulateHotKey(altshift));
 
 	std::wstring s1 = altshift.ToString();
