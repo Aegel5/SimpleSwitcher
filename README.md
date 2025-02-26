@@ -3,7 +3,7 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/alexzh2/SimpleSwitcher/total?style=plastic)
 ![GitHub last commit](https://img.shields.io/github/last-commit/alexzh2/SimpleSwitcher?style=plastic)
 
-SimpleSwitcher - программа для быстрого исправления раскладки набранного текста в Windows.
+Simple Switcher - программа для быстрого исправления раскладки набранного текста в Windows.
 
 ## Features
 
@@ -19,7 +19,7 @@ SimpleSwitcher - программа для быстрого исправлени
 
 ## Download & Install
 
-Программа поставляется в portable виде (не требует установки).
+Simple Switcher поставляется в portable виде (не требует установки).
 Можно скачать последний опубликованный <a href="https://github.com/Aegel5/SimpleSwitcher/releases">релиз</a>, либо собрать из кода самостоятельно.
 
 ### Инструкция по сборке:
