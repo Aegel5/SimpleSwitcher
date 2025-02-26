@@ -2,7 +2,7 @@
 
 //#include "swlocal.h"
 
-typedef unsigned char TKeyCode;
+using TKeyCode = WORD;
 using TScanCode = WORD;
 
 class HotKeyNames
@@ -224,7 +224,7 @@ class CHotKey
 {
 	
 public:
-	CHotKey():value(0){}
+	CHotKey() { Clear(); }
 	explicit CHotKey(TKeyCode key)
 	{
 		Clear().Add(key);
@@ -407,9 +407,6 @@ public:
 
 		COMPARE_CHECK_LEFT_RIGHT_FLAG = 0x8,
 	};
-	bool CompareRaw(CHotKey& other) {
-		return this->AsUInt64() == other.AsUInt64();
-	}
 	bool Compare(CHotKey& other, TCompareFlags flags = COMPARE_NORMAL)
 	{
 		if(size != other.size)
@@ -512,7 +509,6 @@ public:
 			s += std::to_wstring(key);
 		}
 	}
-	TUInt64& AsUInt64() { return value; }
 	static bool IsKnownMods(TKeyCode key)
 	{
 		switch (Normalize(key))
@@ -537,7 +533,11 @@ public:
 		}
 		return false;
 	}
-	CHotKey& Clear(){value = 0; return *this;}
+	CHotKey& Clear()
+	{
+		SwZeroMemory(*this);
+		return *this;
+	}
 	bool operator== ( CHotKey& other) {return Compare(other);}
 	bool operator!= ( CHotKey& other) { return !(*this == other); }
 	static TKeyCode Normalize(TKeyCode key)
@@ -690,22 +690,15 @@ private:
 		return false;
 	}
 	static const int c_MAX = 6;
-	union
+	struct
 	{
-		TUInt64 value;
-		struct 
-		{
-			struct
-			{
-				TUInt8 m_ignoreOrderValueKey : 1;
-				TUInt8 m_leftRightDifferene : 1;
-				TUInt8 m_keyup : 1;
-				TUInt8 m_hold : 1;
-			};
-			TKeyCode size;
-			TKeyCode keys[c_MAX];
-		};
+		TUInt8 m_ignoreOrderValueKey : 1;
+		TUInt8 m_leftRightDifferene : 1;
+		TUInt8 m_keyup : 1;
+		TUInt8 m_hold : 1;
 	};
+	TUInt8 size;
+	TKeyCode keys[c_MAX];
 	bool IsHasAnyLeftRight() {
 		for (size_t i = 0; i < Size(); i++)
 		{
