@@ -51,8 +51,7 @@ TKeyType Hooker::GetCurKeyType(CHotKey hotkey)
 	//	}
 	//}
 
-	BYTE keyState[256];
-	SwZeroMemory(keyState);
+	BYTE keyState[256] = { 0 };
 	keyState[VK_SHIFT] = m_curKeyState.HasMod(VK_SHIFT) ? 0x80 : 0;
 	TCHAR sBufKey[0x10] = { 0 };
 	int res = ToUnicodeEx(key.ValueKey(), m_curScanCode, keyState, sBufKey, ARRAYSIZE(sBufKey), 0, NULL);
