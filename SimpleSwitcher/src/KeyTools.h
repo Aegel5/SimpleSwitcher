@@ -18,7 +18,6 @@ struct ContextRevert
 
 TStatus SendKeys(TKeyRevert& sendData);
 TStatus SendBacks(TUInt32 count);
-TStatus FunnyMoving(TKeyRevert& sendData);
 TStatus SendDels(TUInt32 count);
 
 

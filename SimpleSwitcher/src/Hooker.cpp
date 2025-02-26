@@ -533,7 +533,9 @@ TStatus Hooker::ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist)
 		BYTE mods = HIBYTE(res);
 		BYTE code = LOBYTE(res);
 
-		TKeyBaseInfo key = {};
+		TKeyBaseInfo key;
+		SwZeroMemory(key);
+
 		key.vk_code = code;
 		if (TestFlag(mods, 0x1))
 			key.shift_key = VK_SHIFT;

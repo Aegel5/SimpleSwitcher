@@ -32,12 +32,11 @@ struct TKeyBaseInfo {
 	};
 };
 
-struct TKeyHookInfo
-{
+struct TKeyHookInfo{
+
 	struct {
 		TKeyBaseInfo key;
 		TInt64 _random_data;
-
 	} crypted;
 
 
@@ -47,8 +46,6 @@ struct TKeyHookInfo
 
 	TKeyType type;
 	TKeyFlags keyFlags;
-
-	TKeyHookInfo() {}
 };
 
 
