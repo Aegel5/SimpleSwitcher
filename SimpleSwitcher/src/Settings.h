@@ -170,6 +170,8 @@ public:
         eng,
     };
 
+    int config_version = 0;
+
     UiLang uiLang = UiLang::rus;
 
     bool isMonitorAdmin = false;

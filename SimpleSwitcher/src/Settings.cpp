@@ -145,7 +145,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SettingsGui,
                                                 uiLang,
     AllowRemoteKeys,
     AlternativeLayoutChange,
-    SystemLayoutChange
+    SystemLayoutChange,
+    config_version
+
 
     )
     

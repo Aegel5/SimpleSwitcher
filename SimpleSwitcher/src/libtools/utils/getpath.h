@@ -84,6 +84,6 @@ inline TStatus GetPath_fileExe_lower(std::wstring& sPath) {
 
 inline TStatus GetPath_Conf(std::wstring& path) {
 	IFS_RET(GetPath_folder_noLower(path));
-	path += L"conf.json";
+	path += L"SimpleSwitcher.json";
 	RETURN_SUCCESS;
 }

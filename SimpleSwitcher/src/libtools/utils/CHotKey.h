@@ -706,6 +706,15 @@ private:
 			TKeyCode keys[c_MAX];
 		};
 	};
+	bool IsHasAnyLeftRight() {
+		for (size_t i = 0; i < Size(); i++)
+		{
+			auto cur = keys[i];
+			if (Utils::is_in(keys[i], VK_LSHIFT, VK_RSHIFT, VK_LCONTROL, VK_RCONTROL, VK_LMENU, VK_RMENU, VK_LWIN, VK_RWIN))
+				return true;
+		}
+		return false;
+	}
 };
 
 inline CHotKey ParseStringHK(std::wstring& s)
