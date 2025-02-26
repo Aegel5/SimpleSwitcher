@@ -64,7 +64,6 @@ public:
 	TStatus AddScanCode(TKeyBaseInfo& key, KeyState keyState = KEY_STATE_DOWN, InputSendPos pos = INPUTSEND_BACK)
 	{
 		if (key.shift_key != 0) {
-			// да пользователь мог выбрать левый или правый shift, мы пока на это забиваем и используем всегда "по-умолчанию"
 			IFS_RET(Add(key.shift_key, keyState, pos));
 		}
 
