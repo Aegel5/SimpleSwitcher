@@ -154,17 +154,28 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SettingsGui,
 TStatus LoadConfig(SettingsGui& gui, bool createIfNotExists) {
     try {
 
-        std::wstring path;
-        IFS_RET(GetPath_Conf(path));
 
-        if (!FileUtils::IsFileExists(path.c_str())) {
-            if (createIfNotExists) {
-                IFS_RET(Save2(gui));
+        std::wstring path_old;
+        std::wstring path_new;
+        IFS_RET(GetPath_folder_noLower(path_old));
+        path_new = path_old;
+        path_old += L"conf.json";
+        path_new += L"SimpleSwitcher.json";
+
+
+        if (!FileUtils::IsFileExists(path_new.c_str())) {
+            if (FileUtils::IsFileExists(path_old.c_str())) {
+                FileUtils::RenameFile(path_old.c_str(), path_new.c_str());
             }
-            RETURN_SUCCESS;
+            else {
+                if (createIfNotExists) {
+                    IFS_RET(Save2(gui));
+                }
+                RETURN_SUCCESS;
+            }
         }
 
-        std::ifstream ifs(path);
+        std::ifstream ifs(path_new);
 
         json data = json::parse(ifs, nullptr, true, true);
 

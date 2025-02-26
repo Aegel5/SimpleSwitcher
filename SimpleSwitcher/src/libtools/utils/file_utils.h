@@ -37,5 +37,10 @@ namespace FileUtils
 		return PathFileExists(sPath) ? true : false;
 	}
 
+	inline bool RenameFile(const wchar_t* old, const wchar_t* newf)
+	{
+		return MoveFile(old, newf);
+	}
+
 }
 
