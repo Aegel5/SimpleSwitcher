@@ -5,7 +5,8 @@
 
 //#include "Hooker.h"
 
-using TKeyRevert = std::vector<CHotKey>;
+using TKeyRevert = std::vector<TKeyBaseInfo>;
+
 struct ContextRevert
 {
 	TKeyRevert keylist;

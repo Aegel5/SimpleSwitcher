@@ -303,7 +303,7 @@ void Hooker::ClearAllWords()
 	
 }
 
-void Hooker::AddKeyToList(TKeyType type, CHotKey hotkey)
+void Hooker::AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode scan_code)
 {
 	ClearCycleRevert();
 
@@ -314,7 +314,11 @@ void Hooker::AddKeyToList(TKeyType type, CHotKey hotkey)
 
 	TKeyHookInfo key2;
 	SwZeroMemory(key2);
-	key2.key() = hotkey;
+	key2.key().vk_code = hotkey.ValueKey();
+	key2.key().scan_code = scan_code;
+	if (hotkey.Size() == 2) {
+		key2.key().shift_key = hotkey.At(1); // надеемся это shift, пока так.
+	}
 	key2.type = type;
 	if (hotkey.ValueKey() == VK_OEM_2 && conf_get()->isTryOEM2) {
 		SetFlag(key2.keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT);
@@ -323,7 +327,7 @@ void Hooker::AddKeyToList(TKeyType type, CHotKey hotkey)
 	IFS_LOG(Encrypter::Encrypt(key2));
 	m_wordList.push_back(key2);
 }
-TStatus Hooker::FillKeyToRevert(TKeyRevert& keyList, HotKeyType typeRevert)
+TStatus Hooker::FillKeyToRevert(TKeyRevert& keyList, HotKeyType typeRevert) // m_wordList -> keyList
 {
 	auto get_decrtypted = [this](int i) {
 		TKeyHookInfo cur;
@@ -451,12 +455,7 @@ void Hooker::ClearCycleRevert()
 }
 
 
-void Hooker::AddToWordsByHotKey(CHotKey key)
-{
-	TKeyType type = GetCurKeyType(key);
 
-	AddKeyToList(type, key);
-}
 TStatus ClipHasTextFormating(bool& fres)
 {
 	fres = false;
@@ -534,13 +533,11 @@ TStatus Hooker::ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist)
 		BYTE mods = HIBYTE(res);
 		BYTE code = LOBYTE(res);
 
-		//SW_LOG_INFO_2(L"found vkcode=%u mods=%u", code, mods);
-		CHotKey key;
-		key.Add(code);
+		TKeyBaseInfo key = {};
+		key.vk_code = code;
 		if (TestFlag(mods, 0x1))
-			key.Add(VK_SHIFT);
-
-		//AddToWordsByHotKey(key);
+			key.shift_key = VK_SHIFT;
+		
 		keylist.push_back(key);
 	}
 	RETURN_SUCCESS;
@@ -602,9 +599,11 @@ TStatus Hooker::GetClipStringCallback() {
 
             IFS_LOG(ClipboardToSendData(data, ctxRev.keylist));
 
-            for (auto k : ctxRev.keylist) {
-                AddToWordsByHotKey(k);
-            }
+    //        for (auto k : ctxRev.keylist) {
+				//TKeyType type = GetCurKeyType(k);
+				//AddKeyToList(type, k);
+    //        }
+
             ctxRev.lay        = getNextLang();
             ctxRev.flags      = SW_CLIENT_PUTTEXT | SW_CLIENT_SetLang;
             IFS_LOG(ProcessRevert(ctxRev));
@@ -741,7 +740,7 @@ void Hooker::HandleSymbolDown()
 	case KEYTYPE_SYMBOL:
 	case KEYTYPE_SPACE:
 	{
-						  AddKeyToList(type, m_curKeyState);
+						  AddKeyToList(type, m_curKeyState, m_curStateWrap.scan_code);
 						  break;
 	}
 	case KEYTYPE_COMMAND_NO_CLEAR:
@@ -1166,7 +1165,7 @@ TStatus Hooker::SwitchLangByEmulate(HKL_W lay)
 
 	std::wstring s1 = altshift.ToString();
 	LOG_INFO_2(L"Add press %s", s1.c_str());
-	IFS_RET(inputSender.AddPress(altshift));
+	IFS_RET(inputSender.AddPressVk(altshift));
 
 	IFS_RET(SendOurInput(inputSender));
 

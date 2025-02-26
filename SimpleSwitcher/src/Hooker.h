@@ -45,7 +45,6 @@ public:
 	TStatus NeedRevert2(ContextRevert& data);
 	//void ThreadInputSender();
 	TStatus AnalizeTopWnd();
-	void AddToWordsByHotKey(CHotKey key);
 	TStatus SwitchLangByEmulate(HKL_W lay);
 	void CliboardChanged() 
 	{ 
@@ -62,7 +61,7 @@ public:
 	TStatus ProcessKeyMsg(KeyMsgData& keyData);
 	TStatus ClearModsBySend(CHotKey key);
 	void HandleSymbolDown();
-	void AddKeyToList(TKeyType type, CHotKey hotkey);
+	void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode scan_code = 0);
 	TStatus Init();
 	TStatus SendCtrlC(EClipRequest clRequest);
 	//TStatus SavePrevDataCallback(EClipRequest clRequest);

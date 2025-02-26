@@ -3,6 +3,7 @@
 //#include "swlocal.h"
 
 typedef unsigned char TKeyCode;
+using TScanCode = WORD;
 
 class HotKeyNames
 {

@@ -19,17 +19,29 @@ enum class TKeyFlags : TUInt8 {
 };
 DEFINE_ENUM_FLAG_OPERATORS(TKeyFlags);
 
+
+// базовая структура для хранения нажатия одной клавиши.
+struct TKeyBaseInfo {
+	union {
+		TUInt64 _unused;
+		struct {
+			TKeyCode vk_code;
+			TScanCode scan_code;
+			TKeyCode shift_key;
+		};
+	};
+};
+
 struct TKeyHookInfo
 {
-	//union {
-		struct {
-			CHotKey key;
-			TInt64 _random_data;
-		} crypted;
-	//	char buf[16];
-	//};
+	struct {
+		TKeyBaseInfo key;
+		TInt64 _random_data;
 
-	CHotKey& key() {
+	} crypted;
+
+
+	TKeyBaseInfo& key() {
 		return crypted.key;
 	}
 
@@ -98,11 +110,13 @@ private:
 struct CurStateWrapper {
 
 	CHotKey state;
+	TScanCode scan_code;
 	std::map<int, ULONGLONG> times;
 	bool isSkipRepeat = false;
 
 	void Update(KBDLLHOOKSTRUCT* kStruct, KeyState curKeyState) {
 
+		scan_code = kStruct->scanCode;
 		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
 		bool isAltDown = TestFlag(kStruct->flags, LLKHF_ALTDOWN);
 
