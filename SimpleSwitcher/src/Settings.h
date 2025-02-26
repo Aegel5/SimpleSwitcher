@@ -238,7 +238,7 @@ inline ConfPtr conf_copy() { return ConfPtr(new SettingsGui(*conf_get())); }
 
 inline int g_hotkeyWndOpened = 0;
 
-TStatus LoadConfig(SettingsGui& sets, bool createIfNotExists = false);
+TStatus LoadConfig(SettingsGui& sets);
 TStatus Save2(const SettingsGui& gui);
 inline TStatus Save() { return Save2(*conf_get());}
 

@@ -49,7 +49,7 @@ bool MyApp::OnInit() {
 
         SetLogLevel(conf->fDbgMode ? LOG_LEVEL_1 : LOG_LEVEL_0);
 
-        auto errLoadConf = LoadConfig(*conf, true);
+        auto errLoadConf = LoadConfig(*conf);
         IFS_LOG(errLoadConf);
 
         SetLogLevel_v3(conf->fDbgMode ? conf->logLevel : LOG_LEVEL_0);
@@ -59,24 +59,19 @@ bool MyApp::OnInit() {
 
         setlocale(LC_ALL, "en_US.utf8");
 
-        if (errLoadConf == SW_ERR_SUCCESS) {
+        if (conf->config_version != 2) {
+            conf->config_version = 2;
+            IFS_LOG(Save()); // пересохраним конфиг, чтобы туда добавились все последние настройки, которые заполнены по-умолчанию.
+        }
 
-            if (conf->config_version != 2) {
-                conf->config_version = 2;
-                IFS_LOG(Save()); // пересохраним конфиг, чтобы туда добавились все последние настройки, которые заполнены по-умолчанию.
-            }
+        // init ui
+        if (conf->uiLang == SettingsGui::UiLang::rus) {
 
-            // init ui
-            if (conf->uiLang == SettingsGui::UiLang::rus) {
-
-                wxTranslations* const trans = new wxTranslations();
-                wxTranslations::Set(trans);
-                trans->SetLoader(new wxResourceTranslationsLoader());
-                trans->SetLanguage(wxLANGUAGE_RUSSIAN);
-                trans->AddCatalog("lang");
-            }
-
-            Rereg_all();
+            wxTranslations* const trans = new wxTranslations();
+            wxTranslations::Set(trans);
+            trans->SetLoader(new wxResourceTranslationsLoader());
+            trans->SetLanguage(wxLANGUAGE_RUSSIAN);
+            trans->AddCatalog("lang");
         }
 
 

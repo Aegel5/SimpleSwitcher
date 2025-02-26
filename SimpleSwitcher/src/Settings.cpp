@@ -153,7 +153,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SettingsGui,
     
 
 
-TStatus LoadConfig(SettingsGui& gui, bool createIfNotExists) {
+TStatus LoadConfig(SettingsGui& gui) {
     try {
 
 
@@ -170,9 +170,7 @@ TStatus LoadConfig(SettingsGui& gui, bool createIfNotExists) {
                 FileUtils::RenameFile(path_old.c_str(), path_new.c_str());
             }
             else {
-                if (createIfNotExists) {
-                    IFS_RET(Save2(gui));
-                }
+                // конфиг файла еще нет - считаем что загружены конфигом по-умолчанию.
                 RETURN_SUCCESS;
             }
         }
