@@ -2,10 +2,7 @@
 #include <deque>
 #include <vector>
 
-enum  InputSendPos
-{
-	INPUTSEND_BACK
-};
+
 struct InputSender
 {
 private:
@@ -23,82 +20,83 @@ public:
 	{
 		list.clear();
 	}
-	TStatus Add(WORD key, KeyState state, InputSendPos pos = INPUTSEND_BACK, bool isScanCode = false)
+	TStatus Add(TKeyCode key, KeyState state, TScanCode_Ext scan = {})
 	{
-		if(key == 0)
-			RETURN_SUCCESS;
-
-		INPUT cur = {0};
+		INPUT cur;
+		SwZeroMemory(cur);
 		cur.type = INPUT_KEYBOARD;
-		if (isScanCode) {
-			cur.ki.wScan = key;
+
+		if (scan.scan != 0) {
+			cur.ki.wScan = scan.scan;
 			SetFlag(cur.ki.dwFlags, KEYEVENTF_SCANCODE);
+			if (scan.is_ext) {
+				SetFlag(cur.ki.dwFlags, KEYEVENTF_EXTENDEDKEY);
+			}
 		}
 		else {
+			if (key == 0) {
+				LOG_WARN(L"try add empty key");
+				RETURN_SUCCESS;
+			}
 			cur.ki.wVk = key;
 		}
 
 		if (state == KEY_STATE_UP)
 			SetFlag(cur.ki.dwFlags, KEYEVENTF_KEYUP);
 
-		if(pos == INPUTSEND_BACK)
-			list.push_back(cur);
-		else
-		{
-			IFS_RET(SW_ERR_UNSUPPORTED);
-		}
+		list.push_back(cur);
 
 		RETURN_SUCCESS;
 	}
-	TStatus AddDown(CHotKey& key, InputSendPos pos = INPUTSEND_BACK)
+	TStatus AddDown(CHotKey& key)
 	{
 		if(key.Size() == 0)
 			RETURN_SUCCESS;
 		for(TKeyCode* k = key.ModsBegin(); k != key.ModsEnd(); ++k)
 		{
-			IFS_RET(Add(*k, KEY_STATE_DOWN, pos));
+			IFS_RET(Add(*k, KEY_STATE_DOWN));
 		}
-		IFS_RET(Add(key.ValueKey(), KEY_STATE_DOWN, pos));
+		IFS_RET(Add(key.ValueKey(), KEY_STATE_DOWN));
 		RETURN_SUCCESS;
 	}
-	TStatus AddScanCode(TKeyBaseInfo& key, KeyState keyState = KEY_STATE_DOWN, InputSendPos pos = INPUTSEND_BACK)
+	TStatus AddScanCode(const TKeyBaseInfo& key, KeyState keyState = KEY_STATE_DOWN)
 	{
 		if (key.shift_key != 0) {
-			IFS_RET(Add(key.shift_key, keyState, pos));
+			IFS_RET(Add(key.shift_key, keyState));
 		}
 
 		//IFS_RET(Add(key.vk_code, keyState, pos, false));
 
-		if (key.scan_code == 0) {
-			IFS_RET(Add(key.vk_code, keyState, pos, false));
+		if (key.scan_code.scan == 0) {
+			IFS_RET(Add(key.vk_code, keyState));
 		}
 		else {
-			IFS_RET(Add(key.scan_code, keyState, pos, true));
+			IFS_RET(Add(0, keyState, key.scan_code));
 		}
 
 		RETURN_SUCCESS;
 	}
-	TStatus AddUp(CHotKey& key, InputSendPos pos = INPUTSEND_BACK)
+	TStatus AddUp(CHotKey& key)
 	{
 		if (key.Size() == 0)
 			RETURN_SUCCESS;
-		IFS_RET(Add(key.ValueKey(), KEY_STATE_UP, pos));
-		for (TKeyCode* k = key.ModsBegin(); k != key.ModsEnd(); ++k)
+		IFS_RET(Add(key.ValueKey(), KEY_STATE_UP));
+		for (const TKeyCode* k = key.ModsBegin(); k != key.ModsEnd(); ++k)
 		{
-			IFS_RET(Add(*k, KEY_STATE_UP, pos));
+			IFS_RET(Add(*k, KEY_STATE_UP));
 		}
 		RETURN_SUCCESS;
 	}
-	TStatus AddPressVk(CHotKey& key, InputSendPos pos = INPUTSEND_BACK)
+	TStatus AddPressVk(CHotKey& key)
 	{
-		IFS_RET(AddDown(key, pos));
-		IFS_RET(AddUp(key, pos));
+		IFS_RET(AddDown(key));
+		IFS_RET(AddUp(key));
 		RETURN_SUCCESS;
 	}
-	TStatus AddPressBase(TKeyBaseInfo& key, InputSendPos pos = INPUTSEND_BACK)
+	TStatus AddPressBase(const TKeyBaseInfo& key)
 	{
-		IFS_RET(AddScanCode(key, KEY_STATE_DOWN, pos));
-		IFS_RET(AddScanCode(key, KEY_STATE_UP, pos));
+		IFS_RET(AddScanCode(key, KEY_STATE_DOWN));
+		IFS_RET(AddScanCode(key, KEY_STATE_UP));
 		RETURN_SUCCESS;
 	}
 };

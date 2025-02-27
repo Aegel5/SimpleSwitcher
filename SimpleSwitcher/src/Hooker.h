@@ -61,7 +61,7 @@ public:
 	TStatus ProcessKeyMsg(KeyMsgData& keyData);
 	TStatus ClearModsBySend(CHotKey key);
 	void HandleSymbolDown();
-	void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode scan_code = 0);
+	void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code);
 	TStatus Init();
 	TStatus SendCtrlC(EClipRequest clRequest);
 	//TStatus SavePrevDataCallback(EClipRequest clRequest);
@@ -150,7 +150,7 @@ public:
 	//TSyncVal32 m_fOurSend = 0;
 	CHotKey m_curKeyState;
 	CurStateWrapper m_curStateWrap;
-	TScanCode m_curScanCode = 0;
+	TScanCode_Ext m_curScanCode; 
 
 	HotKeyType m_needRevertUnderUP = hk_MAX;
 

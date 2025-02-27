@@ -54,7 +54,7 @@ TKeyType Hooker::GetCurKeyType(CHotKey hotkey)
 	BYTE keyState[256] = { 0 };
 	keyState[VK_SHIFT] = m_curKeyState.HasMod(VK_SHIFT) ? 0x80 : 0;
 	TCHAR sBufKey[0x10] = { 0 };
-	int res = ToUnicodeEx(key.ValueKey(), m_curScanCode, keyState, sBufKey, ARRAYSIZE(sBufKey), 0, NULL);
+	int res = ToUnicodeEx(key.ValueKey(), m_curScanCode.scan, keyState, sBufKey, ARRAYSIZE(sBufKey), 0, NULL);
 	if (res == 1)
 	{
 		auto c = sBufKey[0];
@@ -138,21 +138,27 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 		RETURN_SUCCESS;
 	}
 
-	m_curScanCode = k->scanCode;
+
 
 	TKeyCode vkCode = (TKeyCode)k->vkCode;
 	KeyState curKeyState = GetKeyState(wParam);
     bool isInjected      = TestFlag(k->flags, LLKHF_INJECTED);
     bool isAltDown      = TestFlag(k->flags, LLKHF_ALTDOWN);
 	bool isSysKey = wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP;
+	bool isExtended = TestFlag(k->flags, LLKHF_EXTENDED);
+
+	m_curScanCode.scan = k->scanCode;
+	m_curScanCode.is_ext = isExtended;
 
 
-	LOG_INFO_3(L"KEY_MSG: %s(%s),inject=%d,altdown=%d,syskey=%d",
+	LOG_INFO_3(L"KEY_MSG: %s(%s),scan=%d,inject=%d,altdown=%d,syskey=%d,extended=%d",
         HotKeyNames::Global().GetName(vkCode),  
 		get_state_name(curKeyState), 
+		m_curScanCode.scan,
 		isInjected,
 		isAltDown,
-		isSysKey
+		isSysKey,
+		isExtended
 	);
 
 	if (isInjected)
@@ -181,6 +187,14 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 
 	m_curStateWrap.Update(k, curKeyState);
 	m_curKeyState = m_curStateWrap.state;
+
+	//if (m_curKeyState.Size() == 2 && curKeyState == KEY_STATE_DOWN && m_curKeyState.ValueKey() == VK_LMENU && m_curKeyState.At(1) == VK_LCONTROL) {
+	//	InputSender inputSender;
+	//	inputSender.Add(VK_LMENU, KEY_STATE_UP);
+	//	inputSender.Add(56, KEY_STATE_DOWN, true);
+	//	IFS_LOG(SendOurInput(inputSender));
+	//	RETURN_SUCCESS;
+	//}
 
 
 	if (GetLogLevel() >= LOG_LEVEL_3)
@@ -302,7 +316,7 @@ void Hooker::ClearAllWords()
 	
 }
 
-void Hooker::AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode scan_code)
+void Hooker::AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code)
 {
 	ClearCycleRevert();
 
@@ -312,7 +326,7 @@ void Hooker::AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode scan_code)
 	}
 
 	TKeyHookInfo key2;
-	SwZeroMemory(key2);
+
 	key2.key().vk_code = hotkey.ValueKey();
 	key2.key().scan_code = scan_code;
 	if (hotkey.Size() == 2) {
@@ -533,7 +547,6 @@ TStatus Hooker::ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist)
 		BYTE code = LOBYTE(res);
 
 		TKeyBaseInfo key;
-		SwZeroMemory(key);
 
 		key.vk_code = code;
 		if (TestFlag(mods, 0x1))

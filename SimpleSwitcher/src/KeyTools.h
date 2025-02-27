@@ -28,7 +28,7 @@ enum CLEARMODS
 	CLEARMODS_NORESTORE,
 	CLEARMODS_NOCLEAR,
 };
-bool IsOurInput();
+
 TStatus SendOurInput(InputSender& sender);
 inline TStatus ClearMods()
 {

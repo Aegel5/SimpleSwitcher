@@ -3,7 +3,8 @@
 //#include "swlocal.h"
 
 using TKeyCode = WORD;
-using TScanCode = WORD;
+
+
 
 class HotKeyNames
 {
@@ -432,13 +433,13 @@ public:
 			return CompareIgnoreOrder(keys + 1, other.keys + 1, size - 1, fCheckLeftRight);
 		}
 	}
-	bool IsEmpty(){return Size() == 0;}
+	bool IsEmpty() const {return Size() == 0;}
 	TKeyCode ValueKey()	{		return keys[0];	}
 	TKeyCode* begin() {return keys;}
 	TKeyCode* end() {return keys+size;}
-	TKeyCode* ModsBegin()	{		return keys + 1;	}
-	TKeyCode* ModsEnd(){		return keys + 1 + (size > 0 ? size-1 : 0);	}
-	TUInt8 Size() {return size;}
+	TKeyCode* ModsBegin() {		return keys + 1;	}
+	TKeyCode* ModsEnd() {		return keys + 1 + (size > 0 ? size-1 : 0);	}
+	TUInt8 Size() const  {return size;}
 	//TKeyCode operator[] (int i) { return keys[i]; }
 	void ToString(std::wstring& s)
 	{

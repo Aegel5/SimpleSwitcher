@@ -20,16 +20,16 @@ enum class TKeyFlags : TUInt8 {
 DEFINE_ENUM_FLAG_OPERATORS(TKeyFlags);
 
 
+struct TScanCode_Ext { 
+	WORD scan = 0;
+	bool is_ext = false;
+};
+
 // базовая структура для хранения нажатия одной клавиши.
 struct TKeyBaseInfo {
-	union {
-		TUInt64 _unused;
-		struct {
-			TKeyCode vk_code;
-			TScanCode scan_code;
-			TKeyCode shift_key;
-		};
-	};
+	TKeyCode vk_code = 0;
+	TScanCode_Ext scan_code;
+	TKeyCode shift_key = 0;
 };
 
 struct TKeyHookInfo{
@@ -44,8 +44,8 @@ struct TKeyHookInfo{
 		return crypted.key;
 	}
 
-	TKeyType type;
-	TKeyFlags keyFlags;
+	TKeyType type = (TKeyType)0;
+	TKeyFlags keyFlags = (TKeyFlags)0;
 };
 
 
