@@ -135,7 +135,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	if(k->vkCode > 255)
 	{
 		LOG_INFO_1(L"k->vkCode > 255: %d", k->vkCode);
-		RETURN_SUCCESS;
+		//RETURN_SUCCESS;
 	}
 
 
