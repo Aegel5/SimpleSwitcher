@@ -31,7 +31,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 
 	IFW_LOG(SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL));
 
-	WNDCLASSEX wcex = { 0 };
+	WNDCLASSEX wcex {};
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.lpfnWndProc = DefWindowProc;

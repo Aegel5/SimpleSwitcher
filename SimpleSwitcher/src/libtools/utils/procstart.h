@@ -110,7 +110,7 @@ namespace procstart
 
 		if (parm.mode == SW_CREATEPROC_SHELLEXE)
 		{
-			SHELLEXECUTEINFO shExInfo = { 0 };
+			SHELLEXECUTEINFO shExInfo {};
 			shExInfo.cbSize = sizeof(shExInfo);
 			shExInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
 			shExInfo.hwnd = 0;

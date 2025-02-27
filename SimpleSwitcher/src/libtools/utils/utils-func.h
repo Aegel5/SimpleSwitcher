@@ -203,7 +203,7 @@ namespace Utils
 	inline TStatus GetFocusWindow(HWND& hwndFocused)
 	{
 		hwndFocused = NULL;
-		GUITHREADINFO gui = { 0 };
+		GUITHREADINFO gui {};
 		gui.cbSize = sizeof(gui);
 		IFW_LOG(GetGUIThreadInfo(0, &gui));
 

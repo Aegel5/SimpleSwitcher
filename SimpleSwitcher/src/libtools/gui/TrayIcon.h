@@ -105,7 +105,7 @@ namespace gui_tools
 	private:
 		void DeleteNotifyIcon()
 		{
-			NOTIFYICONDATA nid = { 0 };
+			NOTIFYICONDATA nid {};
 			nid.cbSize = sizeof(nid);
 			nid.uID = ICON_ID;
 			nid.hWnd = m_hwnd;
@@ -114,7 +114,7 @@ namespace gui_tools
 		bool AddIconToTray()
 		{
 			// Add a Shell_NotifyIcon notificaion
-			NOTIFYICONDATA nid = { 0 };
+			NOTIFYICONDATA nid {};
 			nid.cbSize = sizeof(nid);
 			nid.uID = ICON_ID;
 			nid.hWnd = m_hwnd;
