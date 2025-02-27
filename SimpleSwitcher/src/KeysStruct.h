@@ -107,13 +107,11 @@ private:
 struct CurStateWrapper {
 
 	CHotKey state;
-	TScanCode scan_code;
 	std::map<int, ULONGLONG> times;
 	bool isSkipRepeat = false;
 
 	void Update(KBDLLHOOKSTRUCT* kStruct, KeyState curKeyState) {
 
-		scan_code = kStruct->scanCode;
 		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
 		bool isAltDown = TestFlag(kStruct->flags, LLKHF_ALTDOWN);
 

@@ -741,7 +741,7 @@ void Hooker::HandleSymbolDown()
 	case KEYTYPE_SYMBOL:
 	case KEYTYPE_SPACE:
 	{
-						  AddKeyToList(type, m_curKeyState, m_curStateWrap.scan_code);
+						  AddKeyToList(type, m_curKeyState, m_curScanCode);
 						  break;
 	}
 	case KEYTYPE_COMMAND_NO_CLEAR:
