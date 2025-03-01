@@ -71,17 +71,17 @@ namespace {
 }
 
 
-void Rereg_all() {
-
-    return; // отключаем за ненадобностью...
-
-    //g_global_reg_data.clear();
-    auto conf = conf_get();
-    for (auto& hk : conf->hotkeysList) {
-        int cur = 1;
-        for (auto& kk : hk.second.keys) {
-            int id = hk.first*10 + cur++;
-            GlobRegHotKey(id, kk);
-        }
-    }
-}
+//void Rereg_all() {
+//
+//    return; // отключаем за ненадобностью...
+//
+//    //g_global_reg_data.clear();
+//    auto conf = conf_get();
+//    for (auto& hk : conf->hotkeysList) {
+//        int cur = 1;
+//        for (auto& kk : hk.second.keys) {
+//            int id = hk.first*10 + cur++;
+//            GlobRegHotKey(id, kk);
+//        }
+//    }
+//}

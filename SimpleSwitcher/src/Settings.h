@@ -84,16 +84,16 @@ struct CHotKeySet
 
     std::vector<CHotKey> keys { 1 };
 
-    bool HasKey(CHotKey ktest, CHotKey::TCompareFlags flags) {
-        for (auto& k : keys) {
+    bool HasKey(CHotKey ktest, CHotKey::TCompareFlags flags) const{
+        for (const auto& k : keys) {
             if (ktest.Compare(k, flags))
                 return true;
         }
         return false;
     }
 
-    bool HasKey_skipkeyup(CHotKey ktest, CHotKey::TCompareFlags flags) {
-        for (auto& k : keys) {
+    bool HasKey_skipkeyup(CHotKey ktest, CHotKey::TCompareFlags flags) const {
+        for (const auto& k : keys) {
             if (!k.GetKeyup() && ktest.Compare(k, flags))
                 return true;
         }
@@ -248,7 +248,7 @@ inline void conf_set(ConfPtr& conf) {
     IFS_LOG(Save()); // сразу сохраняем в файл.
 }
 
-extern void Rereg_all();
+//extern void Rereg_all();
 
 
 

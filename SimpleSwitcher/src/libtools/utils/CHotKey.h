@@ -408,7 +408,7 @@ public:
 
 		COMPARE_CHECK_LEFT_RIGHT_FLAG = 0x8,
 	};
-	bool Compare(CHotKey& other, TCompareFlags flags = COMPARE_NORMAL)
+	bool Compare (const CHotKey& other, TCompareFlags flags = COMPARE_NORMAL) const
 	{
 		if(size != other.size)
 			return false;
@@ -541,7 +541,7 @@ public:
 	}
 	bool operator== ( CHotKey& other) {return Compare(other);}
 	bool operator!= ( CHotKey& other) { return !(*this == other); }
-	static TKeyCode Normalize(TKeyCode key)
+	static TKeyCode Normalize(TKeyCode key) 
 	{
 		switch (key)
 		{
@@ -574,7 +574,7 @@ public:
 		m_keyup = val;
 		return *this;
 	}
-	bool GetKeyup()
+	bool GetKeyup () const
 	{
 		return m_keyup;
 	}
@@ -635,7 +635,7 @@ public:
 		RETURN_SUCCESS;
 	}
 private:
-	bool CompareIgnoreOrder(TKeyCode* list1, TKeyCode* list2, int size, bool checkLeftRight)
+	bool CompareIgnoreOrder(const TKeyCode* list1, const TKeyCode* list2, int size, bool checkLeftRight) const
 	{
 		for(int i = 0; i < size; ++i)
 		{
@@ -662,7 +662,7 @@ private:
 	}
 
 
-	bool CompareKeys(TKeyCode k1, TKeyCode k2, bool checkLeftRight)
+	bool CompareKeys (TKeyCode k1, TKeyCode k2, bool checkLeftRight) const
 	{
 		TKeyCode k1norm = Normalize(k1);
 		TKeyCode k2norm = Normalize(k2);
@@ -679,7 +679,7 @@ private:
 
 		return true;
 	}
-	bool IsCommonMods(TKeyCode key)
+	bool IsCommonMods(TKeyCode key) const
 	{
 		switch (key)
 		{

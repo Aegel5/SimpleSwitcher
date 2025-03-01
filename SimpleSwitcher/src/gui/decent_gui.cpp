@@ -427,7 +427,7 @@ private:
             conf_set(conf);
             obj->SetValue(res);
 
-            Rereg_all();
+            //Rereg_all();
         }
     }
 

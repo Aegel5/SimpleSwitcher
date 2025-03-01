@@ -317,7 +317,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 				//}
 				if (!skip) {
 					auto conf = conf_get();
-					for (auto it : conf->hotkeysList) {
+					for (const auto& it : conf->hotkeysList) {
 						if (it.second.HasKey_skipkeyup(curKey.state, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP))) {
 							// К сожалению, вынуждены дублировать эти проверки, но ничего не поделать, нам нужен второй поток.
 							if (!CheckInDisabled()) {
