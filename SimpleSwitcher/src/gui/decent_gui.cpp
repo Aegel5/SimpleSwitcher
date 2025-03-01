@@ -98,17 +98,13 @@ public:
             BindHotCtrl(m_textSeveralWords, hk_RevertCycle);
             BindHotCtrl(m_textSelected, hk_RevertSel);
             BindHotCtrl(m_textCycleLay, hk_CycleCustomLang);
-            BindHotCtrl(m_textSetlay1, hk_ChangeSetLayout_1);
-            BindHotCtrl(m_textSetlay2, hk_ChangeSetLayout_2);
-            BindHotCtrl(m_textSetlay3, hk_ChangeSetLayout_3);
             BindHotCtrl(m_textcapsgen, hk_CapsGenerate);
             BindHotCtrl(m_text_sel_toupper, hk_toUpperSelected);
 
             updateBools();
 
             updateAutoStart();
-            FillCombo();
-            updateLayFilter();
+            FillLayoutsInfo();
 
             updateCapsTab();
             handleDisableAccess();
@@ -122,9 +118,9 @@ public:
                 myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
                 myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
                 myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
-                for (int i = 0; i < all_lay_size; i++) {
-                    myTray.AddLay(all_lays[i]);
-                    myTray.Bind(wxEVT_MENU, &MainWnd::onSetLay, this, Minimal_SetLay1 + i);
+                for (const auto& it : conf_get()->layouts_info) {
+                    myTray.AddLay(it.layout);
+                    myTray.Bind(wxEVT_MENU, &MainWnd::onSetLay, this, Minimal_SetLay1);
                 }
             }
 
@@ -166,7 +162,7 @@ private:
         elem->SetClientData((void*)type);
 
         elem->SetEditable(false);
-        auto key = conf_get()->GetHk(type).key();
+        auto key = conf_get()->GetHk(type).keys.key();
         elem->SetValue(key.ToString());
 
         //auto sizer = elem->GetSizer();
@@ -422,8 +418,8 @@ private:
         CHotKey newkey;
         if (ChangeHotKey(this, type, newkey)) {
             auto conf = conf_copy();
-            conf->hotkeysList[type].key() = newkey;
-            auto res = conf->GetHk(type).key().ToString();
+            conf->hotkeysList[type].keys.key() = newkey;
+            auto res = conf->GetHk(type).keys.key().ToString();
             conf_set(conf);
             obj->SetValue(res);
 
@@ -473,15 +469,6 @@ private:
             wxMessageBox(_("Error while UpdateAutostartExplain: ") + e.what());
         }
     }
-    HKL all_lays[50] = { 0 };
-    int all_lay_size = 0;
-    wxChoice* getByIndex(int i) {
-        if (i == 0)            return m_choiceset1;
-        if(i == 1)            return m_choiceset2;
-        if (i == 2)
-            return m_choiceset3;
-        return nullptr;
-    }
     void onUiSelect(wxCommandEvent& event) override {
         auto conf = conf_copy();
         conf->uiLang = (SettingsGui::UiLang)m_comboUiLang->GetSelection();
@@ -494,80 +481,66 @@ private:
         m_comboUiLang->AppendString(_("English"));
         m_comboUiLang->SetSelection((int)conf_get()->uiLang);
     }
-    void FillCombo() {
-        m_choiceLayFilter->Clear();
-        for (int i = 0; i < 3; i++) {
-            getByIndex(i)->Clear();
+    void FillLayoutsInfo() {
+
+
+
+        HKL all_lays[50] = { 0 };
+        int all_lay_size = GetKeyboardLayoutList(SW_ARRAY_SIZE(all_lays), all_lays);
+        auto has_system_layout = [&](HKL lay) {
+            for (int i = 0; i < all_lay_size; i++) {
+                auto cur = all_lays[i];
+                if (cur == lay) return true;
+            }
+            return false;
+        };
+
+        auto info_copy = conf_get()->layouts_info;
+        bool was_changes = false;
+
+        // удалим те, которых сейчас нет в системе
+        for (int i = (int)info_copy.size()-1; i >= 0; i--) {
+            if (!has_system_layout(info_copy[i].layout)) {
+                info_copy.erase(info_copy.begin()+i);
+                was_changes = true;
+            }
         }
-        all_lay_size = GetKeyboardLayoutList(SW_ARRAY_SIZE(all_lays), all_lays);
+
+        // добавим все новые
         for (int i = 0; i < all_lay_size; i++) {
-            auto name = Utils::GetNameForHKL(all_lays[i]);
-            m_choiceLayFilter->AppendString(name);
-
-            for (int i = 0; i < 3; i++) {
-                getByIndex(i)->AppendString(name);
+            auto cur = all_lays[i];
+            if (!conf_get()->HasLayout(cur)) {
+                was_changes = true;
+                info_copy.push_back({.layout=cur});
             }
         }
 
-        auto conf = conf_get();
-        for (int i = 0; i < 3; i++) {
-            auto cur = conf->hkl_lay[i];
-            for (int j = 0; j < all_lay_size; j++) {
-                if (all_lays[j] == cur) {
-                    getByIndex(i)->SetSelection(j);
-                    break;
-                }
-            }
-        }
-    }
-    void onLayChoice(wxCommandEvent& event) override {
-
-        auto obj = wxDynamicCast(event.GetEventObject(), wxChoice);
-        if (!obj)
-            return;
-        auto cur = event.GetSelection();
-        auto lay = all_lays[cur];
-
-        auto conf = conf_copy();
-
-        if (obj == m_choiceLayFilter) {
-            for (auto& elem : conf->customLangList) {
-                if (elem == lay)
-                    return;
-            }
-            conf->customLangList.push_back(lay);
-            conf_set(conf);
-            updateLayFilter();
-        } else {
-            if (obj == m_choiceset1) {
-                conf->hkl_lay[0] = lay;
-            } else if (obj == m_choiceset2) {
-                conf->hkl_lay[1] = lay;
-            } else {
-                conf->hkl_lay[2] = lay;
-            }
+        if (was_changes) {
+            // пересохраним если были изменения.
+            auto conf = conf_copy();
+            conf->layouts_info = info_copy;
             conf_set(conf);
         }
-    }
-    void onClearFilter(wxCommandEvent& event) override {
-        auto conf = conf_copy();
-        conf->customLangList.clear();
-        conf_set(conf);
-        updateLayFilter();
-    }
-    void updateLayFilter() {
-        std::wstring res;
-        auto conf = conf_get();
-        auto& lst = conf->customLangList;
-        for (size_t i = 0; i <lst.size(); ++i)
-        {
-            res += Utils::GetNameForHKL(lst[i]);
-            if (i != lst.size() - 1)
-            {
-                res += L", ";
+
+        // отобразим в gui
+        int i = 0;
+        for (const auto& it : conf_get()->layouts_info) {
+            auto name = Utils::GetNameForHKL(it.layout);
+            m_gridLayouts->AppendRows();
+            m_gridLayouts->SetRowLabelValue(i, name);
+            if (it.enabled) {
+                m_gridLayouts->SetCellValue(i, 0, "X");
             }
+            if (i < 3) {
+                m_gridLayouts->SetCellValue(i, 1, it.hotkey.key().ToString2());
+            }
+            i++;
         }
-        m_textFilterLay->SetValue(res);
+        m_gridLayouts->SetRowLabelSize(wxGRID_AUTOSIZE);
+        //m_gridLayouts->AutoSizeColumns(false);
+        m_gridLayouts->AutoSizeRows();
+        //m_gridLayouts->HideRowLabels();
+
     }
 
     void ensureAuto(bool enable) {
@@ -646,11 +619,11 @@ public:
         Show(true);
     }
     void onSetLay(wxCommandEvent& event) {
-        auto lay = myTray.LayById(event.GetId());
-        //ActivateKeyboardLayout(lay,0);
-        HWND hwndFocused = NULL;
-        IFS_LOG(Utils::GetFocusWindow(hwndFocused));
-        PostMessage(hwndFocused, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
+        //auto lay = myTray.LayById(event.GetId());
+        ////ActivateKeyboardLayout(lay,0);
+        //HWND hwndFocused = NULL;
+        //IFS_LOG(Utils::GetFocusWindow(hwndFocused));
+        //PostMessage(hwndFocused, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
     }
     void onCloseToTray(wxCommandEvent& event)     { 
         Hide();

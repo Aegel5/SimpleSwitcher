@@ -94,13 +94,13 @@ bool Hooker::GetTypeForKey(CHotKey curkey, HotKeyType& type, bool& isUp)
 			const auto& info = it.second;
 			auto hkId = it.first;
 
-			const CHotKey& key = info.key();
+			const CHotKey& key = info.keys.key();
 
-			if (info.HasKey(curkey, CHotKey::COMPARE_IGNORE_KEYUP))
+			if (info.keys.HasKey(curkey, CHotKey::COMPARE_IGNORE_KEYUP))
 			{
 				if (info.fNeedSavedWord && !HasAnyWord())
 				{
-					LOG_INFO_2(L"skip key %u because not has any word", info.key());
+					LOG_INFO_2(L"skip key %u because not has any word", info.keys.key());
 					// skip current, add chance for other hotkey
 					continue;
 				}
@@ -251,7 +251,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 		auto& info = it.second;
 		auto hkId = it.first;
 
-		CHotKey key = info.key();
+		CHotKey key = info.keys.key();
 		if (m_curKeyState.Compare(key, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP)))
 		{
 			auto s1 = m_curKeyState.ToString();
@@ -933,12 +933,13 @@ TStatus SendUpForKey(CHotKey key)
 }
 
 HKL Hooker::getNextLang () {
+	HKL result = (HKL)HKL_NEXT;
 	auto conf = conf_get();
-    auto& lst = conf->customLangList;
 
-    if (lst.size() <= 1) {
-        return (HKL)HKL_NEXT;
-    }
+	// если все enabled - то обычная циклическая смена
+	if (conf->AllLayoutEnabled()) {
+		return result;
+	}
 
     auto lay = CurLay();
     if (lay == 0) {
@@ -947,17 +948,17 @@ HKL Hooker::getNextLang () {
         // языка)
 
 		LOG_WARN(L"___ NOT FOUND CUR LAY while customLangList.size > 1");
-        return (HKL)HKL_NEXT;
-		//return lst[0]; // не выходим за границы языков, требуемых пользователем.
+        return result;
     }
 
     HKL toSet = 0;
+	const auto& lst = conf->layouts_info;
     for (size_t i = 0; i < lst.size(); ++i) {
-        if (lay == lst[i]) {
+        if (lay == lst[i].layout) {
             if (i == lst.size() - 1) {
-                toSet = lst[0];
+                toSet = lst[0].layout;
             } else {
-                toSet = lst[i + 1];
+                toSet = lst[i + 1].layout;
             }
             break;
         }
@@ -965,7 +966,7 @@ HKL Hooker::getNextLang () {
     if (toSet == 0) // not found
     {
         LOG_WARN(L"not found hwnd lay in our list");
-        toSet = lst[0];
+        toSet = lst[0].layout;
     }
 
     return toSet;
@@ -1024,16 +1025,21 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
     }
 
     if (Utils::is_in(typeRevert, hk_ChangeSetLayout_1, hk_ChangeSetLayout_2, hk_ChangeSetLayout_3)) {
-        HKL hkl = 0;
-        if (typeRevert == hk_ChangeSetLayout_1)
-            hkl = conf->hkl_lay[SettingsGui::SW_HKL_1];
-        else if (typeRevert == hk_ChangeSetLayout_2)
-            hkl = conf->hkl_lay[SettingsGui::SW_HKL_2];
-        else if (typeRevert == hk_ChangeSetLayout_3)
-            hkl = conf->hkl_lay[SettingsGui::SW_HKL_3];
+		int i = 0;
+		if (typeRevert == hk_ChangeSetLayout_1)
+			i = 0;
+		else if (typeRevert == hk_ChangeSetLayout_2)
+			i = 1;
+		else if (typeRevert == hk_ChangeSetLayout_3)
+			i = 2;
+
+		if (i >= conf_get()->layouts_info.size()) {
+			LOG_WARN(L"not found hot key for set layout");
+			RETURN_SUCCESS;
+		}
 
         data.flags = SW_CLIENT_SetLang;
-        data.lay   = (HKL)hkl;
+        data.lay   = conf_get()->layouts_info[i].layout;
         IFS_RET(ProcessRevert(data));
 
         RETURN_SUCCESS;

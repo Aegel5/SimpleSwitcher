@@ -68,23 +68,9 @@ inline const char* HotKeyTypeName(HotKeyType hk_type)
 	}
 }
 
-struct CHotKeySet
-{
-	//tstring name = L"unknown";
-	//CHotKey key;
-    std::vector<CHotKey> def_list;
-	//CHotKey def;
-	//CHotKey def2;
-	//bool fReserveHotKey = true;
-	bool fNeedSavedWord = false;
-	bool fUseDef = false;
-	//bool fGui = true;
-	//bool fDisabled = false;
-    HotKeyType hkId = hk_NULL;
-
-    std::vector<CHotKey> keys { 1 };
-
-    bool HasKey(CHotKey ktest, CHotKey::TCompareFlags flags) const{
+struct CHotKeyList {
+    std::vector<CHotKey> keys{ 1 };
+    bool HasKey(CHotKey ktest, CHotKey::TCompareFlags flags) const {
         for (const auto& k : keys) {
             if (ktest.Compare(k, flags))
                 return true;
@@ -107,6 +93,24 @@ struct CHotKeySet
     const CHotKey& key() const {
         return keys[0];
     }
+};
+
+struct CHotKeySet
+{
+	//tstring name = L"unknown";
+	//CHotKey key;
+    std::vector<CHotKey> def_list;
+	//CHotKey def;
+	//CHotKey def2;
+	//bool fReserveHotKey = true;
+	bool fNeedSavedWord = false;
+	bool fUseDef = false;
+	//bool fGui = true;
+	//bool fDisabled = false;
+    HotKeyType hkId = hk_NULL;
+
+    CHotKeyList keys;
+
 };
 
 inline TStatus PostMsgSettingChanges()
@@ -135,6 +139,13 @@ using TStrList = std::vector<std::wstring>;
 //    TStatus Load2();
 //};
 
+struct LayoutInfo {
+    HKL layout = 0;
+    bool enabled = true;
+    CHotKey WinHotKey;
+    CHotKeyList hotkey;
+};
+
 
 class SettingsGui {
 public:
@@ -148,6 +159,20 @@ public:
 #else
             false;
 #endif
+    }
+
+    std::vector<LayoutInfo> layouts_info;
+    bool AllLayoutEnabled() const {
+        for (const auto& it : layouts_info) {
+            if (!it.enabled) return false;
+        }
+        return true;
+    }
+    bool HasLayout(HKL lay) const {
+        for (const auto& it : layouts_info) {
+            if (it.layout == lay) return true;
+        }
+        return false;
     }
 
     std::set<std::string> disableInPrograms;
@@ -187,10 +212,6 @@ public:
 
     CHotKey SystemLayoutChange { VK_LMENU, VK_LSHIFT };
 
-    std::vector<HKL> customLangList;
-    std::vector<HKL> hkl_lay{ 3 };
-
-
     typedef std::map<HotKeyType, CHotKeySet> THotKeyMap;
     THotKeyMap hotkeysList;
 
@@ -204,12 +225,9 @@ public:
         }
         return it->second;
     }
-
-    enum {
-        SW_HKL_1 = 0,
-        SW_HKL_2,
-        SW_HKL_3,
-    };
+    const auto& GetHk(int type) const {
+        return GetHk((HotKeyType)type);
+    }
 
     void GenerateListHK();
 

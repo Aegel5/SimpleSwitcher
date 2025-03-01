@@ -24,9 +24,10 @@
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/choice.h>
 #include <wx/panel.h>
+#include <wx/grid.h>
 #include <wx/listbox.h>
+#include <wx/choice.h>
 #include <wx/hyperlink.h>
 #include <wx/notebook.h>
 #include <wx/frame.h>
@@ -58,22 +59,11 @@ class MyFrame4 : public wxFrame
 		wxStaticText* m_staticText31;
 		wxTextCtrl* m_textSelected;
 		wxButton* m_button92;
-		wxChoice* m_choiceLayFilter;
-		wxTextCtrl* m_textFilterLay;
-		wxButton* m_button3;
 		wxPanel* m_panel14;
 		wxStaticText* m_staticText32;
 		wxTextCtrl* m_textCycleLay;
 		wxButton* m_button93;
-		wxChoice* m_choiceset1;
-		wxTextCtrl* m_textSetlay1;
-		wxButton* m_button94;
-		wxChoice* m_choiceset2;
-		wxTextCtrl* m_textSetlay2;
-		wxButton* m_button95;
-		wxChoice* m_choiceset3;
-		wxTextCtrl* m_textSetlay3;
-		wxButton* m_button96;
+		wxGrid* m_gridLayouts;
 		wxPanel* m_panel5;
 		wxCheckBox* m_checkcapsrem;
 		wxCheckBox* m_check_scrollremap;
@@ -107,8 +97,6 @@ class MyFrame4 : public wxFrame
 		virtual void onAutocheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onWorkInAdminCheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onShowFlags( wxCommandEvent& event ) { event.Skip(); }
-		virtual void onLayChoice( wxCommandEvent& event ) { event.Skip(); }
-		virtual void onClearFilter( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onRemapCaps( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onUpdateRemap( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onDeleteRemap( wxCommandEvent& event ) { event.Skip(); }

@@ -59,8 +59,9 @@ bool MyApp::OnInit() {
 
         setlocale(LC_ALL, "en_US.utf8");
 
-        if (conf->config_version != 2) {
-            conf->config_version = 2;
+        static const int last_ver = 3;
+        if (conf->config_version != last_ver) {
+            conf->config_version = last_ver;
             IFS_LOG(Save()); // пересохраним конфиг, чтобы туда добавились все последние настройки, которые заполнены по-умолчанию.
         }
 

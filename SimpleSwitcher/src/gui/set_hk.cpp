@@ -35,7 +35,7 @@ public:
         g_hotkeyWndOpened++;
         //SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxRESIZE_BORDER);
 
-        key     = info.key();
+        key     = info.keys.key();
 
         std::vector<wxString> choices = { "Custom" };
         for (auto& def : info.def_list) {

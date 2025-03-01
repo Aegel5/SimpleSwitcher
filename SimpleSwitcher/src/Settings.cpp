@@ -97,7 +97,7 @@ void SettingsGui::GenerateListHK()
     for (auto& it : hotkeysList) {
         auto& hk = it.second;
         if (hk.fUseDef) {
-            hk.key() = hk.def_list[0];
+            hk.keys.key() = hk.def_list[0];
         }
     }
 }
@@ -131,24 +131,21 @@ void from_json(const json& j, CHotKey& p) {
 }
 
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SettingsGui,
-                                                isMonitorAdmin,
-                                                fDbgMode,
-                                                fClipboardClearFormat,
-                                                fEnableKeyLoggerDefence,
-                                                disableAccessebility,
-                                                showFlags,
-                                                disableInPrograms,
-                                                customLangList,
-                                                hkl_lay,
-                                                logLevel,
-                                                uiLang,
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    SettingsGui,
+    isMonitorAdmin,
+    fDbgMode,
+    fClipboardClearFormat,
+    fEnableKeyLoggerDefence,
+    disableAccessebility,
+    showFlags,
+    disableInPrograms,
+    logLevel,
+    uiLang,
     AllowRemoteKeys,
     AlternativeLayoutChange,
     SystemLayoutChange,
     config_version
-
-
     )
     
 
@@ -181,10 +178,6 @@ TStatus LoadConfig(SettingsGui& gui) {
 
         gui = data.get<SettingsGui>();
 
-        if (gui.hkl_lay.size() != 3) {
-            gui.hkl_lay.resize(3);
-        }
-
         auto& arr = data["hotkeys"];
 
         if (arr.is_object()) {
@@ -194,9 +187,9 @@ TStatus LoadConfig(SettingsGui& gui) {
                 if (it != arr.end()) {
                     auto& obj = it.value();
                     if (obj.is_array()) {
-                        elem.second.keys = obj;
-                        if (elem.second.keys.empty()) {
-                            elem.second.keys.resize(1);
+                        elem.second.keys.keys = obj;
+                        if (elem.second.keys.keys.empty()) {
+                            elem.second.keys.keys.resize(1);
                         }
                     }
                 }
@@ -229,7 +222,7 @@ TStatus Save2(const SettingsGui& gui) {
 
         for (auto& elem : gui.hotkeysList) {
             auto key = HotKeyTypeName(elem.second.hkId);
-            hk[key]  = elem.second.keys;
+            hk[key]  = elem.second.keys.keys;
         }
 
         data["hotkeys"] = hk;
