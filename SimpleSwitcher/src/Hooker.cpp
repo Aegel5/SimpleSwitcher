@@ -207,10 +207,10 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 		//LOG_INFO_1(L"curHotKey=%s", s3.c_str());
 	}
 
-	if (m_needRevertUnderUP != hk_MAX)
+	if (m_needRevertUnderUP != hk_NULL)
 	{
 		auto needRevert = m_needRevertUnderUP;
-		m_needRevertUnderUP = hk_MAX;
+		m_needRevertUnderUP = hk_NULL;
 		if (curKeyState == KEY_STATE_UP)
 		{
 			IFS_LOG(NeedRevert((HotKeyType)needRevert));
@@ -220,7 +220,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	if (curKeyState != KEY_STATE_DOWN)
 		RETURN_SUCCESS;
 
-	HotKeyType hotKeyType = hk_MAX;
+	HotKeyType hotKeyType = hk_NULL;
 	bool isUp;
 	if (GetTypeForKey(m_curKeyState, hotKeyType, isUp))
 	{
@@ -998,7 +998,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	// https://github.com/Aegel5/SimpleSwitcher/issues/61
 	// Для клавиши LCtrl событие отсылается дважды, причем второй раз без флага inject (баг windows?)
 	// в остальных случаях мы эмулируем нажатия каких-то клавиш, поэтому нужно сбросить текущее состояние нажатых клавиш.
-	bool skipUpKeys = Utils::is_in(typeRevert, hk_ChangeSetLayout_1, hk_ChangeSetLayout_2, hk_ChangeSetLayout_3, hk_CycleCustomLang);
+	bool skipUpKeys = (TestFlag(typeRevert, hk_SetLayout_flag) || typeRevert == hk_CycleCustomLang) && conf_get()->AlternativeLayoutChange == false;
 	if (!skipUpKeys) {
 		UpAllKeys();
 	}
@@ -1024,14 +1024,15 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
         RETURN_SUCCESS;
     }
 
-    if (Utils::is_in(typeRevert, hk_ChangeSetLayout_1, hk_ChangeSetLayout_2, hk_ChangeSetLayout_3)) {
+    if (TestFlag(typeRevert, hk_SetLayout_flag)) {
 		int i = 0;
-		if (typeRevert == hk_ChangeSetLayout_1)
-			i = 0;
-		else if (typeRevert == hk_ChangeSetLayout_2)
-			i = 1;
-		else if (typeRevert == hk_ChangeSetLayout_3)
-			i = 2;
+
+		//if (typeRevert == hk_ChangeSetLayout_1)
+		//	i = 0;
+		//else if (typeRevert == hk_ChangeSetLayout_2)
+		//	i = 1;
+		//else if (typeRevert == hk_ChangeSetLayout_3)
+		//	i = 2;
 
 		if (i >= conf_get()->layouts_info.size()) {
 			LOG_WARN(L"not found hot key for set layout");

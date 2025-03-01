@@ -36,22 +36,22 @@ void SettingsGui::GenerateListHK()
         AddHotKey(hk_RevertLastWord, set);
     }
 
-    {
-        CHotKeySet set;
-        set.def_list = { CHotKey().Add(VK_LCONTROL).SetLeftRightMode(true).SetKeyup(true) };
-        AddHotKey(hk_ChangeSetLayout_1, set);
-    }
+    //{
+    //    CHotKeySet set;
+    //    set.def_list = { CHotKey().Add(VK_LCONTROL).SetLeftRightMode(true).SetKeyup(true) };
+    //    AddHotKey(hk_ChangeSetLayout_1, set);
+    //}
 
-    {
-        CHotKeySet set;
-        set.def_list = { CHotKey().Add(VK_RCONTROL).SetLeftRightMode(true).SetKeyup(true) };
-        AddHotKey(hk_ChangeSetLayout_2, set);
-    }
+    //{
+    //    CHotKeySet set;
+    //    set.def_list = { CHotKey().Add(VK_RCONTROL).SetLeftRightMode(true).SetKeyup(true) };
+    //    AddHotKey(hk_ChangeSetLayout_2, set);
+    //}
 
-    {
-        CHotKeySet set;
-        AddHotKey(hk_ChangeSetLayout_3, set);
-    }
+    //{
+    //    CHotKeySet set;
+    //    AddHotKey(hk_ChangeSetLayout_3, set);
+    //}
 
     {
         CHotKeySet set;
@@ -129,6 +129,32 @@ void from_json(const json& j, CHotKey& p) {
         IFS_LOG(p.FromString(j.get<std::string>()));
     }
 }
+void to_json(json& j, const CHotKeyList& p) {
+    j = p.keys;
+}
+
+void from_json(const json& j, CHotKeyList& p) {
+    if (j.is_array()) {
+        p.keys = j;
+    }
+}
+void to_json(json& j, const LayoutInfo& p) {
+    j["enabled"] = p.enabled;
+    j["hotkey"] = p.hotkey.keys;
+    j["win_hotkey"] = p.WinHotKey;
+}
+
+void from_json(const json& j, LayoutInfo& p) {
+    if (j.is_object()) {
+        if (j.contains("enabled"))
+            p.enabled = j["enabled"].get<bool>();
+        if (j.contains("hotkey"))
+            p.hotkey = j["hotkey"];
+        if(j.contains("win_hotkey"))
+            p.WinHotKey = j["win_hotkey"];
+    }
+}
+
 
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
@@ -145,7 +171,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     AllowRemoteKeys,
     AlternativeLayoutChange,
     SystemLayoutChange,
-    config_version
+    config_version,
+    layouts_info
     )
     
 
@@ -203,6 +230,8 @@ TStatus LoadConfig(SettingsGui& gui) {
             gui.__disableInPrograms.insert(s);
         }
 
+        gui.Update_hk_from_layouts();
+
     } catch (std::exception& e) {
         return SW_ERR_JSON;
     }
@@ -218,14 +247,17 @@ TStatus Save2(const SettingsGui& gui) {
         IFS_RET(GetPath_Conf(path));
 
         json data = gui;
-        json hk;
+        json hk_json;
 
         for (auto& elem : gui.hotkeysList) {
-            auto key = HotKeyTypeName(elem.second.hkId);
-            hk[key]  = elem.second.keys.keys;
+            auto hk = elem.first;
+            if (!TestFlag(hk, hk_SetLayout_flag)) {
+                auto key = HotKeyTypeName(hk);
+                hk_json[key] = elem.second.keys.keys;
+            }
         }
 
-        data["hotkeys"] = hk;
+        data["hotkeys"] = hk_json;
 
         std::stringstream o;
         // std::ofstream o(res);

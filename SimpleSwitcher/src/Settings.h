@@ -7,40 +7,42 @@
 
 enum HotKeyType : TUInt32
 {
-    hk_NULL = 0xFFFFFF,
+    hk_NULL = 0b100000000000000000000,
 
-	hk_RevertLastWord = 0,
-	hk_RevertCycle = 1,
-	hk_RevertSel = 2,
+    hk_RevertLastWord = 0,
+    hk_RevertCycle = 1,
+    hk_RevertSel = 2,
 
-	//hk_RevertAdv = 3,
-	//hk_RevertCycleAdv = 4,
+    //hk_RevertAdv = 3,
+    //hk_RevertCycleAdv = 4,
 
-	//hk_ChangeLayoutCycle = 5,
+    //hk_ChangeLayoutCycle = 5,
 
-	hk_ChangeSetLayout_1 = 6,
-	hk_ChangeSetLayout_2 = 7,
-	hk_ChangeSetLayout_3 = 8,
+    //hk_ChangeSetLayout_1 = 6,
+    //hk_ChangeSetLayout_2 = 7,
+    //hk_ChangeSetLayout_3 = 8,
 
-	hk_CapsGenerate = 9,
+    hk_CapsGenerate = 9,
 
-	hk_CycleCustomLang = 10,
+    hk_CycleCustomLang = 10,
 
-	//hk_ChangeCase = 11,
+    //hk_ChangeCase = 11,
 
-	hk_ScrollGenerate = 12,
+    hk_ScrollGenerate = 12,
 
-	//hk_EmulCopyNoFormat = 13,
-	//hk_EmulCopyWithFormat = 14,
+    //hk_EmulCopyNoFormat = 13,
+    //hk_EmulCopyWithFormat = 14,
 
-	//hk_RevertRecentTyped = 15,
+    //hk_RevertRecentTyped = 15,
 
-	//hk_ChangeTextCase = 16,
+    //hk_ChangeTextCase = 16,
 
-	//hk_RevertLastWord_CustomLang = 17,
-	//hk_RevertCycle_CustomLang = 18,
+    //hk_RevertLastWord_CustomLang = 17,
+    //hk_RevertCycle_CustomLang = 18,
 
     hk_toUpperSelected = 19,
+
+    hk_SetLayout_flag = 0b10000000000,
 
 	hk_MAX,
 
@@ -56,14 +58,10 @@ inline const char* HotKeyTypeName(HotKeyType hk_type)
 	case hk_RevertLastWord:	return "hk_RevertLastWord";
 	case hk_RevertCycle: return "hk_RevertSeveralWords";
 	case hk_RevertSel: return "hk_RevertSelelected";
-	case hk_ChangeSetLayout_1:return "hk_SetLayout_1";
-	case hk_ChangeSetLayout_2:return "hk_SetLayout_2";
-	case hk_ChangeSetLayout_3:return "hk_SetLayout_3";
 	case hk_CapsGenerate:return "hk_EmulateCapsLock";
 	case hk_CycleCustomLang:return "hk_CycleSwitchLayout";
 	case hk_ScrollGenerate:return "hk_EmulateScrollLock";
     case hk_toUpperSelected:    return "hk_toUpperSelected";
-	case hk_MAX:return "hk_MAX";
 	default: return "hk_Unknown";
 	}
 }
@@ -76,6 +74,14 @@ struct CHotKeyList {
                 return true;
         }
         return false;
+    }
+
+    bool Empty() {
+        for (const auto& k : keys) {
+            if (k.IsEmpty())
+                return false;
+        }
+        return true;
     }
 
     bool HasKey_skipkeyup(CHotKey ktest, CHotKey::TCompareFlags flags) const {
@@ -227,6 +233,29 @@ public:
     }
     const auto& GetHk(int type) const {
         return GetHk((HotKeyType)type);
+    }
+
+    void Update_hk_from_layouts() {
+        std::vector<HotKeyType> to_del;
+        for (auto& it : hotkeysList) {
+            if (TestFlag(it.first, hk_SetLayout_flag)) {
+                to_del.push_back(it.first);
+            }
+        }
+        for (auto& it : to_del) {
+            hotkeysList.erase(it);
+        }
+
+        for (int i = 0; i < layouts_info.size(); i++) {
+            auto& it = layouts_info[i];
+            if (!it.hotkey.Empty()) {
+                auto hk = (HotKeyType)(hk_SetLayout_flag | i);
+                CHotKeySet data;
+                data.hkId = hk;
+                data.keys = it.hotkey;
+                hotkeysList[hk] = data;
+            }
+        }
     }
 
     void GenerateListHK();

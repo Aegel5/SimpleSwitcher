@@ -152,7 +152,7 @@ public:
 	CurStateWrapper m_curStateWrap;
 	TScanCode_Ext m_curScanCode; 
 
-	HotKeyType m_needRevertUnderUP = hk_MAX;
+	HotKeyType m_needRevertUnderUP = hk_NULL;
 
 	struct SkipInjectEntry {
 		ULONGLONG actualUNTIL;
