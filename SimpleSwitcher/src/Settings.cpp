@@ -142,16 +142,18 @@ void to_json(json& j, const LayoutInfo& p) {
     j["enabled"] = p.enabled;
     j["hotkey"] = p.hotkey.keys;
     j["win_hotkey"] = p.WinHotKey;
+    j["layout"] = p.layout;
 }
 
 void from_json(const json& j, LayoutInfo& p) {
-    if (j.is_object()) {
+    if (j.is_object() && j.contains("layout")) {
         if (j.contains("enabled"))
             p.enabled = j["enabled"].get<bool>();
         if (j.contains("hotkey"))
             p.hotkey = j["hotkey"];
         if(j.contains("win_hotkey"))
             p.WinHotKey = j["win_hotkey"];
+        p.layout = j["layout"].get<HKL>();
     }
 }
 

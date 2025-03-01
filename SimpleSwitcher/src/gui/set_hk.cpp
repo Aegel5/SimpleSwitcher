@@ -126,11 +126,14 @@ private:
 };
 } // namespace
 
-bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key)
-{
-    HotKeyDlg dlg(conf_get()->GetHk(type), frame);
+bool ChangeHotKey2(wxFrame* frame, CHotKeySet set, CHotKey& key) {
+    HotKeyDlg dlg(set, frame);
     auto res = dlg.ShowModal();
-    key      = dlg.key;
+    key = dlg.key;
     return (res == wxID_OK);
-
 }
+
+bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key){
+    return ChangeHotKey2(frame, conf_get()->GetHk(type), key);
+}
+

@@ -78,7 +78,7 @@ struct CHotKeyList {
 
     bool Empty() {
         for (const auto& k : keys) {
-            if (k.IsEmpty())
+            if (!k.IsEmpty())
                 return false;
         }
         return true;

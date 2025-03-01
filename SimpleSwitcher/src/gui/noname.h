@@ -97,6 +97,7 @@ class MyFrame4 : public wxFrame
 		virtual void onAutocheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onWorkInAdminCheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onShowFlags( wxCommandEvent& event ) { event.Skip(); }
+		virtual void on_grid_lay_double( wxGridEvent& event ) { event.Skip(); }
 		virtual void onRemapCaps( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onUpdateRemap( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onDeleteRemap( wxCommandEvent& event ) { event.Skip(); }

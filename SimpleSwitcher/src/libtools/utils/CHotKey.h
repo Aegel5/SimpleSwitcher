@@ -560,7 +560,7 @@ public:
 			return key;
 		}
 	}
-	CHotKey& SetLeftRightMode(bool checkLeftRight)
+	CHotKey& SetLeftRightMode(bool checkLeftRight = true)
 	{
 		m_leftRightDifferene = checkLeftRight;
 		return *this;
@@ -569,7 +569,7 @@ public:
 	{
 		return m_leftRightDifferene;
 	}
-	CHotKey& SetKeyup(bool val)
+	CHotKey& SetKeyup(bool val=true)
 	{
 		m_keyup = val;
 		return *this;

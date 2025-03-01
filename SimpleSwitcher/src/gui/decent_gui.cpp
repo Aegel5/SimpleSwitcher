@@ -17,6 +17,7 @@
 
 
 extern bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key);
+extern bool ChangeHotKey2(wxFrame* frame, CHotKeySet set, CHotKey& key);
 
 enum
 {
@@ -325,7 +326,7 @@ private:
             AllowAccessibilityShortcutKeys(false);
         }
     }
-    virtual void onShowFlags(wxCommandEvent& event) {
+    virtual void onShowFlags(wxCommandEvent& event) override {
         auto conf = conf_copy();
         conf->showFlags = event.IsChecked();
         conf_set(conf);
@@ -337,12 +338,57 @@ private:
         }
 
     }
-    virtual void onDisableAccessebl(wxCommandEvent& event) {
+    virtual void onDisableAccessebl(wxCommandEvent& event) override {
         auto conf = conf_copy();
         conf->disableAccessebility = event.IsChecked();
         conf_set(conf);
 
         handleDisableAccess();
+    }
+
+    virtual void on_grid_lay_double(wxGridEvent& event) override {
+        int col = event.GetCol();
+        int row = event.GetRow();
+
+        auto& lays = conf_get()->layouts_info;
+        if (row >= lays.size()) return;
+        auto& data = lays[row];
+
+        if (col == 1) {
+            CHotKey newkey;
+            CHotKeySet set;
+            set.def_list.push_back(CHotKey(VK_LCONTROL).SetKeyup().SetLeftRightMode());
+            set.def_list.push_back(CHotKey(VK_RCONTROL).SetKeyup().SetLeftRightMode());
+            set.keys = data.hotkey;
+            if (ChangeHotKey2(this, set, newkey)) {
+                auto conf = conf_copy();
+                conf->layouts_info[row].hotkey.key() = newkey;
+                conf->Update_hk_from_layouts();
+                conf_set(conf);
+                FillLayoutsInfo();
+            }
+        }
+        if (col == 0) {
+            auto conf = conf_copy();
+            conf->layouts_info[row].enabled ^= 1;
+            //conf->Update_hk_from_layouts();
+            conf_set(conf);
+            FillLayoutsInfo();
+        }
+        if (col == 2) {
+            CHotKey newkey;
+            CHotKeySet set;
+            set.def_list.push_back(CHotKey(VK_LSHIFT, VK_LMENU, 0x31).SetLeftRightMode());
+            set.def_list.push_back(CHotKey(VK_LSHIFT, VK_LMENU, 0x32).SetLeftRightMode());
+            set.def_list.push_back(CHotKey(VK_LSHIFT, VK_LMENU, 0x33).SetLeftRightMode());
+            set.keys.key() = data.WinHotKey;
+            if (ChangeHotKey2(this, set, newkey)) {
+                auto conf = conf_copy();
+                conf->layouts_info[row].WinHotKey = newkey;
+                conf_set(conf);
+                FillLayoutsInfo();
+            }
+        }
     }
 
     void updateCapsTab()
@@ -483,7 +529,8 @@ private:
     }
     void FillLayoutsInfo() {
 
-
+        if(m_gridLayouts->GetNumberRows()>0)
+            m_gridLayouts->DeleteRows(0, m_gridLayouts->GetNumberRows());
 
         HKL all_lays[50] = { 0 };
         int all_lay_size = GetKeyboardLayoutList(SW_ARRAY_SIZE(all_lays), all_lays);
@@ -523,21 +570,19 @@ private:
         }
 
         // отобразим в gui
-        int i = 0;
-        for (const auto& it : conf_get()->layouts_info) {
+        for (int i = 0; i < conf_get()->layouts_info.size(); i++) {
+            const auto& it = conf_get()->layouts_info[i];
             auto name = Utils::GetNameForHKL(it.layout);
             m_gridLayouts->AppendRows();
             m_gridLayouts->SetRowLabelValue(i, name);
             if (it.enabled) {
                 m_gridLayouts->SetCellValue(i, 0, "X");
             }
-            if (i < 3) {
-                m_gridLayouts->SetCellValue(i, 1, it.hotkey.key().ToString2());
-            }
-            i++;
+            m_gridLayouts->SetCellValue(i, 1, it.hotkey.key().ToString2());
+            m_gridLayouts->SetCellValue(i, 2, it.WinHotKey.ToString2());
         }
         m_gridLayouts->SetRowLabelSize(wxGRID_AUTOSIZE);
-        //m_gridLayouts->AutoSizeColumns(false);
+        m_gridLayouts->AutoSizeColumns(false);
         m_gridLayouts->AutoSizeRows();
         //m_gridLayouts->HideRowLabels();
 
