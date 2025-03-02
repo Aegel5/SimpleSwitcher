@@ -844,7 +844,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
  //   }
 
 	//needWaitLang = false;
-	if (needWaitLang) {
+	if (needWaitLang && !TestFlag(ctxRevert.flags, SW_CLIENT_NO_WAIT_LANG)) {
 
 		// Дождемся смены языка. Нет смысла переходить в асинхронный режим. Можем ждать прямо здесь.
 		auto start = GetTickCount64();
@@ -1025,21 +1025,16 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
     }
 
     if (TestFlag(typeRevert, hk_SetLayout_flag)) {
-		int i = 0;
 
-		//if (typeRevert == hk_ChangeSetLayout_1)
-		//	i = 0;
-		//else if (typeRevert == hk_ChangeSetLayout_2)
-		//	i = 1;
-		//else if (typeRevert == hk_ChangeSetLayout_3)
-		//	i = 2;
+		int i = typeRevert;
+		ResetFlag(i, hk_SetLayout_flag);
 
 		if (i >= conf_get()->layouts_info.size()) {
 			LOG_WARN(L"not found hot key for set layout");
 			RETURN_SUCCESS;
 		}
 
-        data.flags = SW_CLIENT_SetLang;
+        data.flags = SW_CLIENT_SetLang | SW_CLIENT_NO_WAIT_LANG;
         data.lay   = conf_get()->layouts_info[i].layout;
         IFS_RET(ProcessRevert(data));
 
@@ -1177,15 +1172,27 @@ TStatus FoundEmulateHotKey(CHotKey& key)
 	RETURN_SUCCESS;
 }
 
-TStatus Hooker::SwitchLangByEmulate(HKL_W lay)
+TStatus Hooker::SwitchLangByEmulate(HKL lay)
 {
 	InputSender inputSender;
 
 	CHotKey altshift = conf_get()->SystemLayoutChange;
+
+	if ((int)lay != HKL_NEXT) {
+		auto info = conf_get()->GetLayoutInfo(lay);
+		if (info == nullptr) {
+			LOG_WARN(L"not found lay info");
+			RETURN_SUCCESS;
+		}
+		if (info->WinHotKey.IsEmpty()) {
+			LOG_WARN(L"hot key not setup");
+			RETURN_SUCCESS;
+		}
+		altshift = info->WinHotKey;
+	}
 	//IFS_LOG(FoundEmulateHotKey(altshift));
 
-	std::wstring s1 = altshift.ToString();
-	LOG_INFO_2(L"Add press %s", s1.c_str());
+	LOG_INFO_2(L"Add press %s", altshift.ToString().c_str());
 	IFS_RET(inputSender.AddPressVk(altshift));
 
 	IFS_RET(SendOurInput(inputSender));

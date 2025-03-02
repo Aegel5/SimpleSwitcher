@@ -49,11 +49,12 @@ static const TChar c_sArgScrRemapRemove[] = L"/ScrRemapRemove";
 
 enum 
 {
-	SW_CLIENT_PUTTEXT = 0x2,
-	SW_CLIENT_BACKSPACE   = 0x4,
-	SW_CLIENT_SetLang = 0x8,
-	SW_CLIENT_CTRLC = 0x10,
-	SW_CLIENT_CTRLV = 0x20,
+	SW_CLIENT_PUTTEXT =      0b1,
+	SW_CLIENT_BACKSPACE   =  0b10,
+	SW_CLIENT_SetLang =      0b100,
+	SW_CLIENT_CTRLC =        0b1000,
+	SW_CLIENT_CTRLV =        0b10000,
+	SW_CLIENT_NO_WAIT_LANG = 0b100000,
 };
 
 

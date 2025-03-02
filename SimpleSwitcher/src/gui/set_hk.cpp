@@ -10,15 +10,18 @@ LRESULT CALLBACK LowLevelKeyboardProc(_In_ int nCode, _In_ WPARAM wParam, _In_ L
 {
     if (nCode == HC_ACTION) {
         KBDLLHOOKSTRUCT* kStruct = (KBDLLHOOKSTRUCT*)lParam;
-        DWORD vkKey              = kStruct->vkCode;
-        // if (GetLogLevel() >= LOG_LEVEL_1)
-        //{
-        KeyState keyState = GetKeyState(wParam);
-        //	SW_LOG_INFO_2(L"%S 0x%x", GetKeyStateName(keyState), vkKey);
-        //}
+        bool isInjected = TestFlag(kStruct->flags, LLKHF_INJECTED);
+        if (!isInjected) {
+            DWORD vkKey = kStruct->vkCode;
+            // if (GetLogLevel() >= LOG_LEVEL_1)
+            //{
+            KeyState keyState = GetKeyState(wParam);
+            //	SW_LOG_INFO_2(L"%S 0x%x", GetKeyStateName(keyState), vkKey);
+            //}
 
-        if (keyState == KEY_STATE_DOWN) {
-            PostMessage(curwnd, c_MSG_TypeHotKey, wParam, (WPARAM)vkKey);
+            if (keyState == KEY_STATE_DOWN) {
+                PostMessage(curwnd, c_MSG_TypeHotKey, wParam, (WPARAM)vkKey);
+            }
         }
     }
     return CallNextHookEx(0, nCode, wParam, lParam);

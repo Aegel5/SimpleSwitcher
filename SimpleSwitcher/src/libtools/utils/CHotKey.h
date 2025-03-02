@@ -232,11 +232,11 @@ public:
 	}
 	CHotKey(TKeyCode key1, TKeyCode key2)
 	{
-		Clear().Add(key1).Add(key2);
+		Clear().Add(key1, ADDKEY_ORDERED).Add(key2, ADDKEY_ORDERED);
 	}
 	CHotKey(TKeyCode key1, TKeyCode key2, TKeyCode key3)
 	{
-		Clear().Add(key1).Add(key2).Add(key3);
+		Clear().Add(key1, ADDKEY_ORDERED).Add(key2, ADDKEY_ORDERED).Add(key3, ADDKEY_ORDERED);
 	}
 	enum 
 	{
@@ -483,9 +483,6 @@ public:
 			{
 				s += L" #up";
 			}
-			//if (m_leftRightDifferene) {
-			//	s += L" #lr";
-			//}
 		}
 	}
 	static std::wstring ToString(TKeyCode key)

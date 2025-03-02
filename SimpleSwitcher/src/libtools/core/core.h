@@ -60,9 +60,9 @@ inline void SetFlag(T& V, T2 F)
 }
 
 template <typename T, typename TE>
-inline T ResetFlag(T& V, TE F)
+inline void ResetFlag(T& V, TE F)
 {
-	return V &= (-1 ^ (F));
+	V &= (-1 ^ (F));
 }
 
 // TODO move to win

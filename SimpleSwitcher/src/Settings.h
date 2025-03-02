@@ -180,6 +180,13 @@ public:
         }
         return false;
     }
+    const LayoutInfo* GetLayoutInfo(HKL lay) const {
+        for (const auto& it : layouts_info) {
+            if (it.layout == lay) 
+                return &it;
+        }
+        return nullptr;
+    }
 
     std::set<std::string> disableInPrograms;
     std::set<std::wstring> __disableInPrograms; // TODO use wxString instead!!!
@@ -234,9 +241,6 @@ public:
         LOG_INFO_1(L"CRITICAL ERR");
         abort();
     }
-    //const auto& GetHk(int type) const {
-    //    return GetHk((HotKeyType)type);
-    //}
 
     void Update_hk_from_layouts() {
 
