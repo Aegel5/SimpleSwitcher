@@ -2,6 +2,9 @@
 
 namespace Utils
 {
+	template <typename T> inline void RemoveAt(T& cont, int i) {
+		cont.erase(cont.begin() + i);
+	}
 	inline std::wstring GetNameForHKL_simple(HKL hkl)
 	{
 		WORD langid = LOWORD(hkl);

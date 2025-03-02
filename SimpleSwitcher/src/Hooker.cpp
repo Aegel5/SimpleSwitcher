@@ -91,8 +91,8 @@ bool Hooker::GetTypeForKey(CHotKey curkey, HotKeyType& type, bool& isUp)
 	{
 		for (const auto& it : conf->hotkeysList)
 		{
-			const auto& info = it.second;
-			auto hkId = it.first;
+			const auto& info = it;
+			auto hkId = it.hkId;
 
 			const CHotKey& key = info.keys.key();
 
@@ -248,8 +248,8 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	// Чтобы не очищался буфер клавиш на нажатии наших хоткеев.
 	for (const auto& it : conf->hotkeysList)
 	{
-		auto& info = it.second;
-		auto hkId = it.first;
+		auto& info = it;
+		auto hkId = it.hkId;
 
 		CHotKey key = info.keys.key();
 		if (m_curKeyState.Compare(key, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP)))

@@ -218,32 +218,33 @@ public:
 
     CHotKey SystemLayoutChange { VK_LMENU, VK_LSHIFT };
 
-    typedef std::map<HotKeyType, CHotKeySet> THotKeyMap;
-    THotKeyMap hotkeysList;
+    std::vector< CHotKeySet> hotkeysList;
 
     auto& GetHk(HotKeyType type) {
-        return hotkeysList[type];
+        for (auto& it : hotkeysList) {
+            if (it.hkId == type) return it;
+        }
+        LOG_INFO_1(L"CRITICAL ERR");
+        abort();
     }
     const auto& GetHk(HotKeyType type) const {
-        auto it = hotkeysList.find(type);
-        if (it == hotkeysList.end()) {
-            LOG_INFO_1(L"CRITICAL ERR");
+        for (auto& it : hotkeysList) {
+            if (it.hkId == type) return it;
         }
-        return it->second;
+        LOG_INFO_1(L"CRITICAL ERR");
+        abort();
     }
-    const auto& GetHk(int type) const {
-        return GetHk((HotKeyType)type);
-    }
+    //const auto& GetHk(int type) const {
+    //    return GetHk((HotKeyType)type);
+    //}
 
     void Update_hk_from_layouts() {
-        std::vector<HotKeyType> to_del;
-        for (auto& it : hotkeysList) {
-            if (TestFlag(it.first, hk_SetLayout_flag)) {
-                to_del.push_back(it.first);
+
+        for (auto i = std::ssize(hotkeysList)-1; i >= 0; i--) {
+            auto it = hotkeysList[i];
+            if (TestFlag(it.hkId, hk_SetLayout_flag)) {
+                Utils::RemoveAt(hotkeysList, i);
             }
-        }
-        for (auto& it : to_del) {
-            hotkeysList.erase(it);
         }
 
         for (int i = 0; i < layouts_info.size(); i++) {
@@ -253,7 +254,7 @@ public:
                 CHotKeySet data;
                 data.hkId = hk;
                 data.keys = it.hotkey;
-                hotkeysList[hk] = data;
+                hotkeysList.push_back(data);
             }
         }
     }

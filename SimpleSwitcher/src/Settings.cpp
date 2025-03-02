@@ -25,7 +25,7 @@ void SettingsGui::GenerateListHK()
     auto AddHotKey = [&](HotKeyType type, CHotKeySet& set) {
         set.hkId          = type;
         //set.name          = HotKeyTypeName(type);
-        hotkeysList[type] = set;
+        hotkeysList.push_back(set);
     };
 
     {
@@ -95,9 +95,8 @@ void SettingsGui::GenerateListHK()
   
 
     for (auto& it : hotkeysList) {
-        auto& hk = it.second;
-        if (hk.fUseDef) {
-            hk.keys.key() = hk.def_list[0];
+        if (it.fUseDef) {
+            it.keys.key() = it.def_list[0];
         }
     }
 }
@@ -211,14 +210,14 @@ TStatus LoadConfig(SettingsGui& gui) {
 
         if (arr.is_object()) {
             for (auto& elem : gui.hotkeysList) {
-                auto key = HotKeyTypeName(elem.second.hkId);
+                auto key = HotKeyTypeName(elem.hkId);
                 auto it  = arr.find(key);
                 if (it != arr.end()) {
                     auto& obj = it.value();
                     if (obj.is_array()) {
-                        elem.second.keys.keys = obj;
-                        if (elem.second.keys.keys.empty()) {
-                            elem.second.keys.keys.resize(1);
+                        elem.keys.keys = obj;
+                        if (elem.keys.keys.empty()) {
+                            elem.keys.keys.resize(1);
                         }
                     }
                 }
@@ -252,10 +251,10 @@ TStatus Save2(const SettingsGui& gui) {
         json hk_json;
 
         for (auto& elem : gui.hotkeysList) {
-            auto hk = elem.first;
+            auto hk = elem.hkId;
             if (!TestFlag(hk, hk_SetLayout_flag)) {
                 auto key = HotKeyTypeName(hk);
-                hk_json[key] = elem.second.keys.keys;
+                hk_json[key] = elem.keys.keys;
             }
         }
 
