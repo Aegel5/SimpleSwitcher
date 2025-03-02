@@ -49,92 +49,42 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	bSizer3->Add( sbSizer1, 0, wxALL|wxEXPAND, 5 );
 
-	wxStaticBoxSizer* sbSizer2;
-	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_panelMain, wxID_ANY, _("Fix layout") ), wxVERTICAL );
+	m_gridHotKeys = new wxGrid( m_panelMain, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 
-	wxBoxSizer* bSizer5;
-	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
+	// Grid
+	m_gridHotKeys->CreateGrid( 5, 1 );
+	m_gridHotKeys->EnableEditing( false );
+	m_gridHotKeys->EnableGridLines( true );
+	m_gridHotKeys->EnableDragGridSize( false );
+	m_gridHotKeys->SetMargins( 0, 0 );
 
-	m_staticText3 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, _("Last word"), wxDefaultPosition, wxSize( 150,-1 ), 0 );
-	m_staticText3->Wrap( -1 );
-	bSizer5->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	// Columns
+	m_gridHotKeys->AutoSizeColumns();
+	m_gridHotKeys->EnableDragColMove( false );
+	m_gridHotKeys->EnableDragColSize( true );
+	m_gridHotKeys->SetColLabelValue( 0, _("Hotkey") );
+	m_gridHotKeys->SetColLabelAlignment( wxALIGN_CENTER, wxALIGN_CENTER );
 
-	m_textLastword = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, _("F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer5->Add( m_textLastword, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	// Rows
+	m_gridHotKeys->AutoSizeRows();
+	m_gridHotKeys->EnableDragRowSize( true );
+	m_gridHotKeys->SetRowLabelValue( 0, _("Selected text to upper/lower") );
+	m_gridHotKeys->SetRowLabelAlignment( wxALIGN_LEFT, wxALIGN_CENTER );
 
-	m_button9 = new wxButton( sbSizer2->GetStaticBox(), wxID_ANY, _("Set"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer5->Add( m_button9, 0, wxALL, 5 );
+	// Label Appearance
 
-
-	sbSizer2->Add( bSizer5, 0, wxEXPAND, 5 );
-
-	wxBoxSizer* bSizer51;
-	bSizer51 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_staticText7 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, _("Several words"), wxDefaultPosition, wxSize( 150,-1 ), 0 );
-	m_staticText7->Wrap( -1 );
-	bSizer51->Add( m_staticText7, 0, wxALL, 5 );
-
-	m_textSeveralWords = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, _("Ctrl + F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer51->Add( m_textSeveralWords, 1, wxALL|wxEXPAND, 5 );
-
-	m_button91 = new wxButton( sbSizer2->GetStaticBox(), wxID_ANY, _("Set"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer51->Add( m_button91, 0, wxALL, 5 );
-
-
-	sbSizer2->Add( bSizer51, 0, wxEXPAND, 5 );
-
-	wxBoxSizer* bSizer52;
-	bSizer52 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_staticText31 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, _("Selected text"), wxDefaultPosition, wxSize( 150,-1 ), 0 );
-	m_staticText31->Wrap( -1 );
-	bSizer52->Add( m_staticText31, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-
-	m_textSelected = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, _("F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_textSelected->SetMinSize( wxSize( 300,-1 ) );
-
-	bSizer52->Add( m_textSelected, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-
-	m_button92 = new wxButton( sbSizer2->GetStaticBox(), wxID_ANY, _("Set"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer52->Add( m_button92, 0, wxALL, 5 );
-
-
-	sbSizer2->Add( bSizer52, 1, wxEXPAND, 5 );
-
-
-	bSizer3->Add( sbSizer2, 0, wxALL|wxEXPAND, 5 );
+	// Cell Defaults
+	m_gridHotKeys->SetDefaultCellAlignment( wxALIGN_LEFT, wxALIGN_CENTER );
+	bSizer3->Add( m_gridHotKeys, 1, wxALL|wxEXPAND, 5 );
 
 
 	m_panelMain->SetSizer( bSizer3 );
 	m_panelMain->Layout();
 	bSizer3->Fit( m_panelMain );
-	m_notebook2->AddPage( m_panelMain, _("Main"), false );
+	m_notebook2->AddPage( m_panelMain, _("Main"), true );
 	m_panel14 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
-
-	wxStaticBoxSizer* sbSizer4;
-	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_panel14, wxID_ANY, _("Cycle change") ), wxVERTICAL );
-
-	wxBoxSizer* bSizer53;
-	bSizer53 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_staticText32 = new wxStaticText( sbSizer4->GetStaticBox(), wxID_ANY, _("Next layout"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
-	m_staticText32->Wrap( -1 );
-	bSizer53->Add( m_staticText32, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
-
-	m_textCycleLay = new wxTextCtrl( sbSizer4->GetStaticBox(), wxID_ANY, _("F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer53->Add( m_textCycleLay, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-
-	m_button93 = new wxButton( sbSizer4->GetStaticBox(), wxID_ANY, _("Set"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer53->Add( m_button93, 0, wxALL, 5 );
-
-
-	sbSizer4->Add( bSizer53, 0, wxEXPAND, 5 );
-
-
-	bSizer4->Add( sbSizer4, 0, wxALL|wxEXPAND, 5 );
 
 	wxStaticBoxSizer* sbSizer9;
 	sbSizer9 = new wxStaticBoxSizer( new wxStaticBox( m_panel14, wxID_ANY, _("Layouts") ), wxVERTICAL );
@@ -152,9 +102,8 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_gridLayouts->EnableDragColMove( false );
 	m_gridLayouts->EnableDragColSize( true );
 	m_gridLayouts->SetColLabelValue( 0, _("Use in cycle") );
-	m_gridLayouts->SetColLabelValue( 1, _("HotKey") );
+	m_gridLayouts->SetColLabelValue( 1, _("Hotkey") );
 	m_gridLayouts->SetColLabelValue( 2, _("Win hotkey") );
-	m_gridLayouts->SetColLabelValue( 3, wxEmptyString );
 	m_gridLayouts->SetColLabelAlignment( wxALIGN_CENTER, wxALIGN_CENTER );
 
 	// Rows
@@ -175,7 +124,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel14->SetSizer( bSizer4 );
 	m_panel14->Layout();
 	bSizer4->Fit( m_panel14 );
-	m_notebook2->AddPage( m_panel14, _("Change Layout"), false );
+	m_notebook2->AddPage( m_panel14, _("Layouts"), false );
 	m_panel5 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer20;
 	bSizer20 = new wxBoxSizer( wxVERTICAL );
@@ -188,22 +137,6 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	m_check_scrollremap = new wxCheckBox( sbSizer6->GetStaticBox(), wxID_ANY, _("Remap ScrollLock as F23"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer6->Add( m_check_scrollremap, 0, wxALL, 5 );
-
-	wxBoxSizer* bSizer532;
-	bSizer532 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_staticText321 = new wxStaticText( sbSizer6->GetStaticBox(), wxID_ANY, _("Generate CapsLock"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
-	m_staticText321->Wrap( -1 );
-	bSizer532->Add( m_staticText321, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-
-	m_textcapsgen = new wxTextCtrl( sbSizer6->GetStaticBox(), wxID_ANY, _("F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer532->Add( m_textcapsgen, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-
-	m_button97 = new wxButton( sbSizer6->GetStaticBox(), wxID_ANY, _("Set"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer532->Add( m_button97, 0, wxALL, 5 );
-
-
-	sbSizer6->Add( bSizer532, 0, wxEXPAND, 5 );
 
 
 	bSizer20->Add( sbSizer6, 0, wxALL|wxEXPAND, 5 );
@@ -228,37 +161,6 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel5->Layout();
 	bSizer20->Fit( m_panel5 );
 	m_notebook2->AddPage( m_panel5, _("Keys Remap"), false );
-	m_panel61 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer21;
-	bSizer21 = new wxBoxSizer( wxVERTICAL );
-
-	wxStaticBoxSizer* sbSizer41;
-	sbSizer41 = new wxStaticBoxSizer( new wxStaticBox( m_panel61, wxID_ANY, _("Change selected text") ), wxVERTICAL );
-
-	wxBoxSizer* bSizer533;
-	bSizer533 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_staticText322 = new wxStaticText( sbSizer41->GetStaticBox(), wxID_ANY, _("To upper/lower"), wxDefaultPosition, wxSize( -1,-1 ), 0 );
-	m_staticText322->Wrap( -1 );
-	bSizer533->Add( m_staticText322, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
-
-	m_text_sel_toupper = new wxTextCtrl( sbSizer41->GetStaticBox(), wxID_ANY, _("F24"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer533->Add( m_text_sel_toupper, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-
-	m_button931 = new wxButton( sbSizer41->GetStaticBox(), wxID_ANY, _("Set"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer533->Add( m_button931, 0, wxALL, 5 );
-
-
-	sbSizer41->Add( bSizer533, 0, wxEXPAND, 5 );
-
-
-	bSizer21->Add( sbSizer41, 0, wxALL|wxEXPAND, 5 );
-
-
-	m_panel61->SetSizer( bSizer21 );
-	m_panel61->Layout();
-	bSizer21->Fit( m_panel61 );
-	m_notebook2->AddPage( m_panel61, _("Others"), false );
 	m_panel16 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer24;
 	bSizer24 = new wxBoxSizer( wxVERTICAL );
@@ -301,7 +203,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel16->SetSizer( bSizer24 );
 	m_panel16->Layout();
 	bSizer24->Fit( m_panel16 );
-	m_notebook2->AddPage( m_panel16, _("Settings"), true );
+	m_notebook2->AddPage( m_panel16, _("Settings"), false );
 	m_panel6 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer191;
 	bSizer191 = new wxBoxSizer( wxVERTICAL );

@@ -19,18 +19,18 @@
 #include <wx/stattext.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
-#include <wx/textctrl.h>
-#include <wx/button.h>
+#include <wx/grid.h>
+#include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/panel.h>
-#include <wx/grid.h>
+#include <wx/button.h>
 #include <wx/listbox.h>
 #include <wx/choice.h>
 #include <wx/hyperlink.h>
 #include <wx/notebook.h>
 #include <wx/frame.h>
+#include <wx/textctrl.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -50,33 +50,15 @@ class MyFrame4 : public wxFrame
 		wxStaticText* m_staticTextExplain;
 		wxCheckBox* m_checkBoxWorkInAdmin;
 		wxCheckBox* m_checkBoxShowFlags;
-		wxStaticText* m_staticText3;
-		wxTextCtrl* m_textLastword;
-		wxButton* m_button9;
-		wxStaticText* m_staticText7;
-		wxTextCtrl* m_textSeveralWords;
-		wxButton* m_button91;
-		wxStaticText* m_staticText31;
-		wxTextCtrl* m_textSelected;
-		wxButton* m_button92;
+		wxGrid* m_gridHotKeys;
 		wxPanel* m_panel14;
-		wxStaticText* m_staticText32;
-		wxTextCtrl* m_textCycleLay;
-		wxButton* m_button93;
 		wxGrid* m_gridLayouts;
 		wxPanel* m_panel5;
 		wxCheckBox* m_checkcapsrem;
 		wxCheckBox* m_check_scrollremap;
-		wxStaticText* m_staticText321;
-		wxTextCtrl* m_textcapsgen;
-		wxButton* m_button97;
 		wxButton* m_button7;
 		wxButton* m_button8;
 		wxListBox* m_listBoxRemap;
-		wxPanel* m_panel61;
-		wxStaticText* m_staticText322;
-		wxTextCtrl* m_text_sel_toupper;
-		wxButton* m_button931;
 		wxPanel* m_panel16;
 		wxStaticText* m_staticText9;
 		wxChoice* m_comboUiLang;

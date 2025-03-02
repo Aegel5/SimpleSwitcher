@@ -32,7 +32,25 @@ void SettingsGui::GenerateListHK()
         set.def_list = { CHotKey(VK_PAUSE), CHotKey(VK_CAPITAL), CHotKey(VK_F24) };
         set.fUseDef        = true;
         set.fNeedSavedWord = true;
+        set.gui_text = _(L"Change layout for last word");
         AddHotKey(hk_RevertLastWord, set);
+    }
+
+    {
+        CHotKeySet set;
+        set.def_list = { CHotKey(VK_SHIFT, VK_PAUSE), CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_F24) };
+        set.fUseDef = true;
+        set.fNeedSavedWord = true;
+        set.gui_text = _(L"Change layout for several words");
+        AddHotKey(hk_RevertCycle, set);
+    }
+
+    {
+        CHotKeySet set;
+        set.def_list = { CHotKey(VK_PAUSE), CHotKey(VK_CAPITAL), CHotKey(VK_F24) };
+        set.fUseDef = true;
+        set.gui_text = _(L"Change layout for selected text");
+        AddHotKey(hk_RevertSel, set);
     }
 
 
@@ -43,13 +61,7 @@ void SettingsGui::GenerateListHK()
     }
 
 
-    {
-        CHotKeySet set;
-        set.def_list = { CHotKey(VK_SHIFT, VK_PAUSE), CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_F24) };
-        set.fUseDef        = true;
-        set.fNeedSavedWord = true;
-        AddHotKey(hk_RevertCycle, set);
-    }
+
 
     {
         CHotKeySet set;
@@ -57,12 +69,7 @@ void SettingsGui::GenerateListHK()
         AddHotKey(hk_CycleCustomLang, set);
     }
 
-    {
-        CHotKeySet set;
-        set.def_list = { CHotKey(VK_PAUSE), CHotKey(VK_CAPITAL), CHotKey(VK_F24) };
-        set.fUseDef = true;
-        AddHotKey(hk_RevertSel, set);
-    }
+
 
     {
         CHotKeySet set;

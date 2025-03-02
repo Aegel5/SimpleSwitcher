@@ -117,6 +117,8 @@ struct CHotKeySet
 
     CHotKeyList keys;
 
+    const TChar* gui_text = _(L"unknown");
+
 };
 
 inline TStatus PostMsgSettingChanges()

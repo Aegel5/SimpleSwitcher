@@ -95,17 +95,18 @@ public:
 
             m_notebook2->SetSelection(0);
 
-            BindHotCtrl(m_textLastword, hk_RevertLastWord);
-            BindHotCtrl(m_textSeveralWords, hk_RevertCycle);
-            BindHotCtrl(m_textSelected, hk_RevertSel);
-            BindHotCtrl(m_textCycleLay, hk_CycleCustomLang);
-            BindHotCtrl(m_textcapsgen, hk_CapsGenerate);
-            BindHotCtrl(m_text_sel_toupper, hk_toUpperSelected);
+            //BindHotCtrl(m_textLastword, hk_RevertLastWord);
+            //BindHotCtrl(m_textSeveralWords, hk_RevertCycle);
+            //BindHotCtrl(m_textSelected, hk_RevertSel);
+            //BindHotCtrl(m_textCycleLay, hk_CycleCustomLang);
+            //BindHotCtrl(m_textcapsgen, hk_CapsGenerate);
+            //BindHotCtrl(m_text_sel_toupper, hk_toUpperSelected);
 
             updateBools();
 
             updateAutoStart();
             FillLayoutsInfo();
+            FillHotkeysInfo();
 
             updateCapsTab();
             handleDisableAccess();
@@ -158,30 +159,30 @@ private:
 
 
 
-    void BindHotCtrl(wxTextCtrl* elem, HotKeyType type) {
+    //void BindHotCtrl(wxTextCtrl* elem, HotKeyType type) {
 
-        elem->SetClientData((void*)type);
+    //    elem->SetClientData((void*)type);
 
-        elem->SetEditable(false);
-        auto key = conf_get()->GetHk(type).keys.key();
-        elem->SetValue(key.ToString());
+    //    elem->SetEditable(false);
+    //    auto key = conf_get()->GetHk(type).keys.key();
+    //    elem->SetValue(key.ToString());
 
-        //auto sizer = elem->GetSizer();
-        //auto size = sizer->GetSize();
-        //return;
-        auto par  = elem->GetParent();
-        //auto sizer = wxDynamicCast(par, wxBoxSizer);
-        auto* btn = wxDynamicCast(par->GetChildren()[getChildIndex(elem)+1], wxButton);
-        if (btn == nullptr) {
-            return;
-        }
-        btn->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainWnd::onHotKeyChange_btn), NULL, this);
+    //    //auto sizer = elem->GetSizer();
+    //    //auto size = sizer->GetSize();
+    //    //return;
+    //    auto par  = elem->GetParent();
+    //    //auto sizer = wxDynamicCast(par, wxBoxSizer);
+    //    auto* btn = wxDynamicCast(par->GetChildren()[getChildIndex(elem)+1], wxButton);
+    //    if (btn == nullptr) {
+    //        return;
+    //    }
+    //    btn->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainWnd::onHotKeyChange_btn), NULL, this);
 
 
-        //elem->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
-        //elem->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
+    //    //elem->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
+    //    //elem->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
 
-    }
+    //}
 
     void onExitReqest(wxCloseEvent& event) {
 
@@ -451,36 +452,36 @@ private:
             wxMessageBox(_("Will be applied after PC reboot"));
     }
 
-    void onHotKeyChange_btn(wxCommandEvent& ev) {
-        auto btn      = wxDynamicCast(ev.GetEventObject(), wxButton);
-        auto* edit_bx = wxDynamicCast(btn->GetParent()->GetChildren()[getChildIndex(btn)-1], wxTextCtrl);
-        onHotKey_ForEditBox(edit_bx);
-    }
+    //void onHotKeyChange_btn(wxCommandEvent& ev) {
+    //    auto btn      = wxDynamicCast(ev.GetEventObject(), wxButton);
+    //    auto* edit_bx = wxDynamicCast(btn->GetParent()->GetChildren()[getChildIndex(btn)-1], wxTextCtrl);
+    //    onHotKey_ForEditBox(edit_bx);
+    //}
 
-    void onHotKey_ForEditBox(wxTextCtrl* obj) {
-        if (!obj)
-            return;
-        HotKeyType type = (HotKeyType)(TUInt32)obj->GetClientData();
-        CHotKey newkey;
-        if (ChangeHotKey(this, type, newkey)) {
-            auto conf = conf_copy();
-            conf->GetHk(type).keys.key() = newkey;
-            auto res = conf->GetHk(type).keys.key().ToString();
-            conf_set(conf);
-            obj->SetValue(res);
+    //void onHotKey_ForEditBox(wxTextCtrl* obj) {
+    //    if (!obj)
+    //        return;
+    //    HotKeyType type = (HotKeyType)(TUInt32)obj->GetClientData();
+    //    CHotKey newkey;
+    //    if (ChangeHotKey(this, type, newkey)) {
+    //        auto conf = conf_copy();
+    //        conf->GetHk(type).keys.key() = newkey;
+    //        auto res = conf->GetHk(type).keys.key().ToString();
+    //        conf_set(conf);
+    //        obj->SetValue(res);
 
-            //Rereg_all();
-        }
-    }
+    //        //Rereg_all();
+    //    }
+    //}
 
-    void onHotKeyChange(wxMouseEvent& ev) {
+    //void onHotKeyChange(wxMouseEvent& ev) {
 
-        auto obj = wxDynamicCast(ev.GetEventObject(), wxTextCtrl);
-        onHotKey_ForEditBox(obj);
+    //    auto obj = wxDynamicCast(ev.GetEventObject(), wxTextCtrl);
+    //    onHotKey_ForEditBox(obj);
 
-        //ev.Skip();
+    //    //ev.Skip();
 
-    }
+    //}
 
     void updateEnable() {
         if (!startOk()) {
@@ -527,10 +528,32 @@ private:
         m_comboUiLang->AppendString(_("English"));
         m_comboUiLang->SetSelection((int)conf_get()->uiLang);
     }
+    void ClearGrid(wxGrid* grid) {
+        if (grid->GetNumberRows() > 0)
+            grid->DeleteRows(0, grid->GetNumberRows());
+    }
+    void FillHotkeysInfo() {
+
+        ClearGrid(m_gridHotKeys);
+
+        int i = -1;
+        for (const auto& it : conf_get()->hotkeysList) {
+            i++;
+            if(TestFlag(it.hkId, hk_SetLayout_flag)) continue;
+            m_gridHotKeys->AppendRows();
+            m_gridHotKeys->SetRowLabelValue(i, it.gui_text);
+            m_gridHotKeys->SetCellValue(i, 0, it.keys.key().ToString());
+        }
+
+        m_gridHotKeys->SetRowLabelSize(wxGRID_AUTOSIZE);
+        m_gridHotKeys->AutoSizeColumns(false);
+        m_gridHotKeys->AutoSizeRows();
+        //m_gridHotKeys->setcol(5, 5);
+
+    }
     void FillLayoutsInfo() {
 
-        if(m_gridLayouts->GetNumberRows()>0)
-            m_gridLayouts->DeleteRows(0, m_gridLayouts->GetNumberRows());
+        ClearGrid(m_gridLayouts);
 
         HKL all_lays[50] = { 0 };
         int all_lay_size = GetKeyboardLayoutList(SW_ARRAY_SIZE(all_lays), all_lays);
@@ -570,8 +593,9 @@ private:
         }
 
         // отобразим в gui
-        for (int i = 0; i < conf_get()->layouts_info.size(); i++) {
-            const auto& it = conf_get()->layouts_info[i];
+        int i = -1;
+        for (const auto& it: conf_get()->layouts_info) {
+            i++;
             auto name = Utils::GetNameForHKL(it.layout);
             m_gridLayouts->AppendRows();
             m_gridLayouts->SetRowLabelValue(i, name);
@@ -584,8 +608,6 @@ private:
         m_gridLayouts->SetRowLabelSize(wxGRID_AUTOSIZE);
         m_gridLayouts->AutoSizeColumns(false);
         m_gridLayouts->AutoSizeRows();
-        //m_gridLayouts->HideRowLabels();
-
     }
 
     void ensureAuto(bool enable) {
