@@ -292,7 +292,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		return CallNextHookEx(0, nCode, wParam, lParam);
 	}
 
-	if (nCode == HC_ACTION)
+	auto process = [&]() -> bool
 	{
 		KBDLLHOOKSTRUCT* kStruct = (KBDLLHOOKSTRUCT*)lParam;
 
@@ -306,6 +306,11 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
 		KeyState curKeyState = GetKeyState(wParam);
 		bool isInjected = TestFlag(kStruct->flags, LLKHF_INJECTED);
+		auto scan_code = kStruct->scanCode;
+		if (scan_code == 541) {
+			LOG_INFO_2(L"skip bugged lctrl");
+			return 0;
+		}
 		if (!isInjected) {
 			// Consume HOT KEY (не отдаем хот-кей для текущей программы)
 			curKey.Update(kStruct, curKeyState);
@@ -354,7 +359,15 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		//	SendInput((UINT)1, &cur, sizeof(INPUT));
 		//	return 1;
 		//}
+
+		return 0;
+	};
+
+	if (nCode == HC_ACTION) {
+		if (process()) 
+			return 1;
 	}
+
 
 	if (conf_get()->fEnableKeyLoggerDefence) {
 		return 0;

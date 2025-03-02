@@ -175,7 +175,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel14->SetSizer( bSizer4 );
 	m_panel14->Layout();
 	bSizer4->Fit( m_panel14 );
-	m_notebook2->AddPage( m_panel14, _("Change Layout"), true );
+	m_notebook2->AddPage( m_panel14, _("Change Layout"), false );
 	m_panel5 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer20;
 	bSizer20 = new wxBoxSizer( wxVERTICAL );
@@ -294,14 +294,14 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBoxAllowInjected = new wxCheckBox( m_panel16, wxID_ANY, _("Allow remote keys"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer24->Add( m_checkBoxAllowInjected, 0, wxALL, 5 );
 
-	m_checkBoxAlterantiveLayoutChange = new wxCheckBox( m_panel16, wxID_ANY, _("Switch lang by Alt+Shift (for custom keys see config)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxAlterantiveLayoutChange = new wxCheckBox( m_panel16, wxID_ANY, _("Alternative mode layout change (emulate windows hotkeys)"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer24->Add( m_checkBoxAlterantiveLayoutChange, 0, wxALL, 5 );
 
 
 	m_panel16->SetSizer( bSizer24 );
 	m_panel16->Layout();
 	bSizer24->Fit( m_panel16 );
-	m_notebook2->AddPage( m_panel16, _("Settings"), false );
+	m_notebook2->AddPage( m_panel16, _("Settings"), true );
 	m_panel6 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer191;
 	bSizer191 = new wxBoxSizer( wxVERTICAL );

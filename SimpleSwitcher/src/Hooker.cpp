@@ -150,6 +150,11 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	m_curScanCode.scan = k->scanCode;
 	m_curScanCode.is_ext = isExtended;
 
+	if (m_curScanCode.scan == 541) {
+		LOG_INFO_2(L"skip bugged lctrl");
+		RETURN_SUCCESS;
+	}
+
 
 	LOG_INFO_3(L"KEY_MSG: %s(%s),scan=%d,inject=%d,altdown=%d,syskey=%d,extended=%d",
         HotKeyNames::Global().GetName(vkCode),  

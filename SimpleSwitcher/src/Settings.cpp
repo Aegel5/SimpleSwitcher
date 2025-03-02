@@ -24,7 +24,6 @@ void SettingsGui::GenerateListHK()
 {
     auto AddHotKey = [&](HotKeyType type, CHotKeySet& set) {
         set.hkId          = type;
-        //set.name          = HotKeyTypeName(type);
         hotkeysList.push_back(set);
     };
 
@@ -36,22 +35,6 @@ void SettingsGui::GenerateListHK()
         AddHotKey(hk_RevertLastWord, set);
     }
 
-    //{
-    //    CHotKeySet set;
-    //    set.def_list = { CHotKey().Add(VK_LCONTROL).SetLeftRightMode(true).SetKeyup(true) };
-    //    AddHotKey(hk_ChangeSetLayout_1, set);
-    //}
-
-    //{
-    //    CHotKeySet set;
-    //    set.def_list = { CHotKey().Add(VK_RCONTROL).SetLeftRightMode(true).SetKeyup(true) };
-    //    AddHotKey(hk_ChangeSetLayout_2, set);
-    //}
-
-    //{
-    //    CHotKeySet set;
-    //    AddHotKey(hk_ChangeSetLayout_3, set);
-    //}
 
     {
         CHotKeySet set;
@@ -59,11 +42,6 @@ void SettingsGui::GenerateListHK()
         AddHotKey(hk_CapsGenerate, set);
     }
 
-    //{
-    //    CHotKeySet set;
-    //    set.def = CHotKey(VK_F23, VK_CONTROL);
-    //    AddHotKey(hk_ScrollGenerate, set);
-    //}
 
     {
         CHotKeySet set;
@@ -75,8 +53,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_LSHIFT, VK_RSHIFT) };
-        //set.def.SetLeftRightMode(true);
+        set.def_list = { CHotKey(VK_LSHIFT, VK_RSHIFT), CHotKey(VK_LCONTROL, VK_SPACE).SetLeftRightMode() };
         AddHotKey(hk_CycleCustomLang, set);
     }
 

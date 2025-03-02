@@ -9,7 +9,7 @@ TStatus InputSender::Send()
 		RETURN_SUCCESS;
 	for (auto& i : list)
 	{
-		LOG_INFO_2(L"SEND %s %s", i.ki.dwFlags == KEYEVENTF_KEYUP ? L"UP" : L"DW", CHotKey::GetName(i.ki.wVk));
+		LOG_INFO_2(L"SEND %s %s", TestFlag(i.ki.dwFlags, KEYEVENTF_KEYUP) ? L"UP" : L"DW", CHotKey::GetName(i.ki.wVk));
 	}
 
 	bool doPause = false;
