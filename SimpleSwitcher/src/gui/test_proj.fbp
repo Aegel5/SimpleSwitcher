@@ -47,7 +47,7 @@
       <property name="hidden">0</property>
       <property name="id">wxID_ANY</property>
       <property name="maximum_size"></property>
-      <property name="minimum_size">650,-1</property>
+      <property name="minimum_size">650,482</property>
       <property name="name">MyFrame4</property>
       <property name="pos"></property>
       <property name="size">-1,-1</property>
@@ -564,7 +564,7 @@
                               <property name="gripper">0</property>
                               <property name="hidden">0</property>
                               <property name="id">wxID_ANY</property>
-                              <property name="label">Language</property>
+                              <property name="label">GUI Language</property>
                               <property name="markup">0</property>
                               <property name="max_size"></property>
                               <property name="maximize_button">0</property>

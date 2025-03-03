@@ -13,7 +13,7 @@
 
 MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxSize( 650,-1 ), wxDefaultSize );
+	this->SetSizeHints( wxSize( 650,482 ), wxDefaultSize );
 	this->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
 
 	wxBoxSizer* bSizer1;
@@ -49,7 +49,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer23;
 	bSizer23 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_staticText9 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, _("Language"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText9 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, _("GUI Language"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText9->Wrap( -1 );
 	bSizer23->Add( m_staticText9, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
 
