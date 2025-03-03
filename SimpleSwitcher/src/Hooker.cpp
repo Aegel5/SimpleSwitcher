@@ -1034,13 +1034,15 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		int i = typeRevert;
 		ResetFlag(i, hk_SetLayout_flag);
 
-		if (i >= conf_get()->layouts_info.size()) {
+		auto conf = conf_get();
+
+		if (i >= conf->layouts_info.size()) {
 			LOG_WARN(L"not found hot key for set layout");
 			RETURN_SUCCESS;
 		}
 
         data.flags = SW_CLIENT_SetLang | SW_CLIENT_NO_WAIT_LANG;
-        data.lay   = conf_get()->layouts_info[i].layout;
+        data.lay   = conf->layouts_info[i].layout;
         IFS_RET(ProcessRevert(data));
 
         RETURN_SUCCESS;
