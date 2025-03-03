@@ -1,13 +1,7 @@
 ﻿удалить папку wxWidgets
-
-выполнить
-git clone --recurse-submodules https://github.com/wxWidgets/wxWidgets.git
-в корне проекта
-
-
-ЛИБО (тестить)
-
-git submodule update --remote --merge
+удалить все папки с кешами
+git clone --branch v3.2.6 --recurse-submodules https://github.com/wxWidgets/wxWidgets.git
+комитить через тортоиз
 
 
-комитить !!ТОЛЬКО!! через tortoise git.
+git checkout v3.2.6
