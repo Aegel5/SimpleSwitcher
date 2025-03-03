@@ -117,7 +117,7 @@ struct CHotKeySet
 
     CHotKeyList keys;
 
-    const TChar* gui_text = _(L"unknown");
+    const TChar* gui_text = _(L"unknown").wc_str();
 
 };
 

@@ -17,16 +17,16 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/stattext.h>
+#include <wx/choice.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
-#include <wx/grid.h>
 #include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
+#include <wx/grid.h>
 #include <wx/button.h>
 #include <wx/listbox.h>
-#include <wx/choice.h>
 #include <wx/hyperlink.h>
 #include <wx/notebook.h>
 #include <wx/frame.h>
@@ -50,16 +50,6 @@ class MyFrame4 : public wxFrame
 		wxStaticText* m_staticTextExplain;
 		wxCheckBox* m_checkBoxWorkInAdmin;
 		wxCheckBox* m_checkBoxShowFlags;
-		wxGrid* m_gridHotKeys;
-		wxPanel* m_panel14;
-		wxGrid* m_gridLayouts;
-		wxPanel* m_panel5;
-		wxCheckBox* m_checkcapsrem;
-		wxCheckBox* m_check_scrollremap;
-		wxButton* m_button7;
-		wxButton* m_button8;
-		wxListBox* m_listBoxRemap;
-		wxPanel* m_panel16;
 		wxStaticText* m_staticText9;
 		wxChoice* m_comboUiLang;
 		wxCheckBox* m_checkDebuglog;
@@ -68,6 +58,15 @@ class MyFrame4 : public wxFrame
 		wxCheckBox* m_checkBoxClearForm;
 		wxCheckBox* m_checkBoxAllowInjected;
 		wxCheckBox* m_checkBoxAlterantiveLayoutChange;
+		wxPanel* m_panel141;
+		wxGrid* m_gridHotKeys;
+		wxGrid* m_gridLayouts;
+		wxPanel* m_panel5;
+		wxCheckBox* m_checkcapsrem;
+		wxCheckBox* m_check_scrollremap;
+		wxButton* m_button7;
+		wxButton* m_button8;
+		wxListBox* m_listBoxRemap;
 		wxPanel* m_panel6;
 		wxStaticText* m_staticTextBuildDate;
 		wxHyperlinkCtrl* m_hyperlink1;
@@ -79,10 +78,6 @@ class MyFrame4 : public wxFrame
 		virtual void onAutocheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onWorkInAdminCheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onShowFlags( wxCommandEvent& event ) { event.Skip(); }
-		virtual void on_grid_lay_double( wxGridEvent& event ) { event.Skip(); }
-		virtual void onRemapCaps( wxCommandEvent& event ) { event.Skip(); }
-		virtual void onUpdateRemap( wxCommandEvent& event ) { event.Skip(); }
-		virtual void onDeleteRemap( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onUiSelect( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onEnableLog( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onPrevent( wxCommandEvent& event ) { event.Skip(); }
@@ -90,6 +85,11 @@ class MyFrame4 : public wxFrame
 		virtual void onClearFormat( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onAllowInject( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onAlternative( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onHotDClick( wxGridEvent& event ) { event.Skip(); }
+		virtual void on_grid_lay_double( wxGridEvent& event ) { event.Skip(); }
+		virtual void onRemapCaps( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onUpdateRemap( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onDeleteRemap( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onExit( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onCloseToTray( wxCommandEvent& event ) { event.Skip(); }
 

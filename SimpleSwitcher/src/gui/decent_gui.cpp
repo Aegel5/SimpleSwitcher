@@ -16,7 +16,7 @@
 
 
 
-extern bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key);
+//extern bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key);
 extern bool ChangeHotKey2(wxFrame* frame, CHotKeySet set, CHotKey& key);
 
 enum
@@ -80,6 +80,7 @@ public:
     MainWnd() : MyFrame4(nullptr)
     {
         try {
+
             g_guiHandle = GetHandle();
 
             icon = wxIcon("appicon");
@@ -88,7 +89,9 @@ public:
             Bind(wxEVT_CLOSE_WINDOW, &MainWnd::onExitReqest, this);
 
             SetTitle(std::format(L"{} {}{}", GetTitle().t_str(), SW_VERSION, Utils::IsSelfElevated() ? L" Administrator" : L""));
-            SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxRESIZE_BORDER);
+            SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION 
+                //| wxRESIZE_BORDER
+            );
 
             m_staticTextBuildDate->SetLabelText(std::format(L"Built on '{}'", _SW_ADD_STR_UT(__DATE__)));
 
@@ -105,8 +108,8 @@ public:
             updateBools();
 
             updateAutoStart();
-            FillLayoutsInfo();
             FillHotkeysInfo();
+            FillLayoutsInfo();
 
             updateCapsTab();
             handleDisableAccess();
@@ -217,7 +220,7 @@ private:
         auto it2 = flags_miss.find(name16);
         if (it2 != flags_miss.end()) return {};
 
-        if (FindResource(0, name16, RT_RCDATA) == nullptr || FindResource(0, name32, RT_RCDATA) == nullptr) {
+        if (FindResource(0, name16.wc_str(), RT_RCDATA) == nullptr || FindResource(0, name32.wc_str(), RT_RCDATA) == nullptr) {
             flags_miss.insert(name16);
             return {};
         }
@@ -345,6 +348,28 @@ private:
         conf_set(conf);
 
         handleDisableAccess();
+    }
+
+    virtual void onHotDClick(wxGridEvent& event) override {
+
+        int col = event.GetCol();
+        int row = event.GetRow();
+
+        auto& hotlist = conf_get()->hotkeysList;
+        if (row >= hotlist.size()) return;
+        auto& data = hotlist[row];
+
+        if (col == 0) {
+            CHotKey newkey;
+            CHotKeySet set;
+            if (ChangeHotKey2(this, data, newkey)) {
+                auto conf = conf_copy();
+                conf->hotkeysList[row].keys.key() = newkey;
+                conf_set(conf);
+                FillHotkeysInfo();
+            }
+        }
+
     }
 
     virtual void on_grid_lay_double(wxGridEvent& event) override {
@@ -539,15 +564,18 @@ private:
         int i = -1;
         for (const auto& it : conf_get()->hotkeysList) {
             i++;
-            if(TestFlag(it.hkId, hk_SetLayout_flag)) continue;
+            if(TestFlag(it.hkId, hk_SetLayout_flag)) break;
             m_gridHotKeys->AppendRows();
             m_gridHotKeys->SetRowLabelValue(i, it.gui_text);
-            m_gridHotKeys->SetCellValue(i, 0, it.keys.key().ToString());
+            m_gridHotKeys->SetCellValue(i, 0, L" " + it.keys.key().ToString());
         }
 
         m_gridHotKeys->SetRowLabelSize(wxGRID_AUTOSIZE);
-        m_gridHotKeys->AutoSizeColumns(false);
         m_gridHotKeys->AutoSizeRows();
+        m_gridHotKeys->SetColSize(0, m_gridHotKeys->GetSize().x - m_gridHotKeys->GetRowLabelSize());
+        //m_gridHotKeys->HideColLabels();
+
+
         //m_gridHotKeys->setcol(5, 5);
 
     }
@@ -605,7 +633,8 @@ private:
             m_gridLayouts->SetCellValue(i, 1, it.hotkey.key().ToString2());
             m_gridLayouts->SetCellValue(i, 2, it.WinHotKey.ToString2());
         }
-        m_gridLayouts->SetRowLabelSize(wxGRID_AUTOSIZE);
+        //m_gridLayouts->SetRowLabelSize(wxGRID_AUTOSIZE);
+        m_gridLayouts->SetRowLabelSize(m_gridHotKeys->GetRowLabelSize());
         m_gridLayouts->AutoSizeColumns(false);
         m_gridLayouts->AutoSizeRows();
     }

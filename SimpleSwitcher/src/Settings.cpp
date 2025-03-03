@@ -32,7 +32,7 @@ void SettingsGui::GenerateListHK()
         set.def_list = { CHotKey(VK_PAUSE), CHotKey(VK_CAPITAL), CHotKey(VK_F24) };
         set.fUseDef        = true;
         set.fNeedSavedWord = true;
-        set.gui_text = _(L"Change layout for last word");
+        set.gui_text = _(L"Change layout for last word").wc_str();
         AddHotKey(hk_RevertLastWord, set);
     }
 
@@ -41,7 +41,7 @@ void SettingsGui::GenerateListHK()
         set.def_list = { CHotKey(VK_SHIFT, VK_PAUSE), CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_F24) };
         set.fUseDef = true;
         set.fNeedSavedWord = true;
-        set.gui_text = _(L"Change layout for several words");
+        set.gui_text = _(L"Change layout for last several words").wc_str();
         AddHotKey(hk_RevertCycle, set);
     }
 
@@ -49,33 +49,41 @@ void SettingsGui::GenerateListHK()
         CHotKeySet set;
         set.def_list = { CHotKey(VK_PAUSE), CHotKey(VK_CAPITAL), CHotKey(VK_F24) };
         set.fUseDef = true;
-        set.gui_text = _(L"Change layout for selected text");
+        set.gui_text = _(L"Change layout for selected text").wc_str();
         AddHotKey(hk_RevertSel, set);
     }
-
-
-    {
-        CHotKeySet set;
-        set.def_list = { CHotKey(VK_CAPITAL, VK_CONTROL), CHotKey(VK_F24, VK_CONTROL) };
-        AddHotKey(hk_CapsGenerate, set);
-    }
-
-
-
 
     {
         CHotKeySet set;
         set.def_list = { CHotKey(VK_LSHIFT, VK_RSHIFT), CHotKey(VK_LCONTROL, VK_SPACE).SetLeftRightMode() };
+        set.gui_text = _(L"Cycle change layout").wc_str();
         AddHotKey(hk_CycleCustomLang, set);
     }
 
 
+    {
+        CHotKeySet set;
+        set.def_list = { CHotKey(VK_CONTROL, VK_CAPITAL), CHotKey(VK_CONTROL, VK_F24) };
+        set.fUseDef = true;
+        set.gui_text = _(L"Generate CapsLock").wc_str();
+        AddHotKey(hk_CapsGenerate, set);
+    }
 
     {
         CHotKeySet set;
         set.def_list = { CHotKey(VK_SCROLL), CHotKey(VK_F23) };
+        set.gui_text = _(L"Selected text to UPPER/lower case").wc_str();
         AddHotKey(hk_toUpperSelected, set);
     }
+
+
+
+
+
+
+
+
+
   
 
     for (auto& it : hotkeysList) {

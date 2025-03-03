@@ -41,7 +41,7 @@ public:
         key     = info.keys.key();
 
         std::vector<wxString> choices = { "Custom" };
-        for (auto& def : info.def_list) {
+        for (const auto& def : info.def_list) {
             choices.push_back(def.ToString());
         }
         m_choiceKey->Set(choices);
@@ -136,7 +136,7 @@ bool ChangeHotKey2(wxFrame* frame, CHotKeySet set, CHotKey& key) {
     return (res == wxID_OK);
 }
 
-bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key){
-    return ChangeHotKey2(frame, conf_get()->GetHk(type), key);
-}
+//bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key){
+//    return ChangeHotKey2(frame, conf_get()->GetHk(type), key);
+//}
 
