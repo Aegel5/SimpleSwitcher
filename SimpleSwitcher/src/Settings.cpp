@@ -55,7 +55,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_LSHIFT, VK_RSHIFT), CHotKey(VK_LCONTROL, VK_SPACE).SetLeftRightMode() };
+        set.def_list = { CHotKey(VK_LSHIFT, VK_RSHIFT).SetLeftRightMode(false), CHotKey(VK_LCONTROL, VK_SPACE) };
         set.gui_text = _(L"Cycle change layout").wc_str();
         AddHotKey(hk_CycleCustomLang, set);
     }

@@ -86,7 +86,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBoxAllowInjected = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Allow remote keys"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer8->Add( m_checkBoxAllowInjected, 0, wxALL, 5 );
 
-	m_checkBoxFixRAlt = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Disable Ctrl + LAlt as RAlt on extended layouts. Layout to use: "), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxFixRAlt = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Disable Ctrl + LAlt as RAlt on extended layouts by switching to this layout: "), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer8->Add( m_checkBoxFixRAlt, 0, wxALL, 5 );
 
 

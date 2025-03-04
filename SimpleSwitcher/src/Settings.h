@@ -166,6 +166,8 @@ public:
 
     TInt64 time_debug_log_last_enabled = 0;
 
+    CHotKey SystemLayoutChange { VK_LMENU, VK_SHIFT };
+
     std::vector<LayoutInfo> layouts_info;
     bool AllLayoutEnabled() const {
         for (const auto& it : layouts_info) {

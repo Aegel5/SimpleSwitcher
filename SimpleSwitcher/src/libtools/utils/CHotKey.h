@@ -228,15 +228,15 @@ public:
 	CHotKey() { Clear(); }
 	explicit CHotKey(TKeyCode key)
 	{
-		Clear().Add(key);
+		Clear().Add(key).AdjustLeftRight();
 	}
 	CHotKey(TKeyCode key1, TKeyCode key2)
 	{
-		Clear().Add(key1, ADDKEY_ORDERED).Add(key2, ADDKEY_ORDERED);
+		Clear().Add(key1, ADDKEY_ORDERED).Add(key2, ADDKEY_ORDERED).AdjustLeftRight();
 	}
 	CHotKey(TKeyCode key1, TKeyCode key2, TKeyCode key3)
 	{
-		Clear().Add(key1, ADDKEY_ORDERED).Add(key2, ADDKEY_ORDERED).Add(key3, ADDKEY_ORDERED);
+		Clear().Add(key1, ADDKEY_ORDERED).Add(key2, ADDKEY_ORDERED).Add(key3, ADDKEY_ORDERED).AdjustLeftRight();
 	}
 	enum 
 	{
@@ -699,14 +699,17 @@ private:
 	};
 	TUInt8 size;
 	TKeyCode keys[c_MAX];
-	bool IsHasAnyLeftRight() {
+
+	void AdjustLeftRight() {
 		for (size_t i = 0; i < Size(); i++)
 		{
 			auto cur = keys[i];
-			if (Utils::is_in(keys[i], VK_LSHIFT, VK_RSHIFT, VK_LCONTROL, VK_RCONTROL, VK_LMENU, VK_RMENU, VK_LWIN, VK_RWIN))
-				return true;
+			if (Utils::is_in(keys[i], VK_LSHIFT, VK_RSHIFT, VK_LCONTROL, VK_RCONTROL, VK_LMENU, VK_RMENU, VK_LWIN, VK_RWIN)) {
+				SetLeftRightMode();
+				return;
+			}
 		}
-		return false;
+		SetLeftRightMode(false);
 	}
 };
 
