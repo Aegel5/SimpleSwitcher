@@ -52,7 +52,7 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 add_subdirectory(../wxWidgets wxWidgets)
 #set(CMAKE_CXX20_STANDARD_COMPILE_OPTION "-std:c++latest")
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 add_executable (SimpleSwitcher WIN32 ${TARGET_SOURCES})
 target_precompile_headers(SimpleSwitcher PRIVATE src/stdafx.h )
 target_link_libraries(SimpleSwitcher wx::core wx::base "Crypt32.lib")

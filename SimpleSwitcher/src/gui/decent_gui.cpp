@@ -92,6 +92,9 @@ public:
             SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION 
                 //| wxRESIZE_BORDER
             );
+            auto sz = GetSize();
+            sz.x = std::max((double)sz.x, sz.x * 1.1);
+            SetSize(sz);
 
             m_staticTextBuildDate->SetLabelText(std::format(L"Built on '{}'", _SW_ADD_STR_UT(__DATE__)));
 
@@ -361,7 +364,6 @@ private:
         auto& hotlist = conf_get()->hotkeysList;
         if (row >= hotlist.size()) return;
         auto& data = hotlist[row];
-        if (TestFlag(data.hkId, hk_SetLayout_flag)) return;
 
 
         if (col == 0) {
@@ -394,7 +396,6 @@ private:
             if (ChangeHotKey2(this, set, newkey)) {
                 auto conf = conf_copy();
                 conf->layouts_info[row].hotkey.key() = newkey;
-                conf->Update_hk_from_layouts();
                 conf_set(conf);
                 FillLayoutsInfo();
             }
@@ -568,7 +569,6 @@ private:
 
         int i = -1;
         for (const auto& it : conf_get()->hotkeysList) {
-            if(TestFlag(it.hkId, hk_SetLayout_flag)) break;
             i++;
             m_gridHotKeys->AppendRows();
             m_gridHotKeys->SetRowLabelValue(i, it.gui_text);
@@ -624,7 +624,6 @@ private:
             // пересохраним если были изменения.
             auto conf = conf_copy();
             conf->layouts_info = info_copy;
-            conf->Update_hk_from_layouts();
             conf_set(conf);
         }
 

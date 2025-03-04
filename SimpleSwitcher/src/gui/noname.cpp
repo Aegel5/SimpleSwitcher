@@ -13,7 +13,7 @@
 
 MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxSize( 650,482 ), wxDefaultSize );
+	this->SetSizeHints( wxSize( -1,-1 ), wxDefaultSize );
 	this->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
 
 	wxBoxSizer* bSizer1;
@@ -46,6 +46,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBoxShowFlags = new wxCheckBox( sbSizer1->GetStaticBox(), wxID_ANY, _("Show flags in tray"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_checkBoxShowFlags, 0, wxALL, 5 );
 
+	m_checkBoxAlterantiveLayoutChange = new wxCheckBox( sbSizer1->GetStaticBox(), wxID_ANY, _("Alternative mode layout change (emulate Windows hotkeys)"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer1->Add( m_checkBoxAlterantiveLayoutChange, 0, wxALL, 5 );
+
 	wxBoxSizer* bSizer23;
 	bSizer23 = new wxBoxSizer( wxHORIZONTAL );
 
@@ -64,36 +67,36 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	bSizer3->Add( sbSizer1, 0, wxALL|wxEXPAND, 5 );
 
-	wxStaticBoxSizer* sbSizer10;
-	sbSizer10 = new wxStaticBoxSizer( new wxStaticBox( m_panelMain, wxID_ANY, _("Advanced") ), wxVERTICAL );
+	wxStaticBoxSizer* sbSizer8;
+	sbSizer8 = new wxStaticBoxSizer( new wxStaticBox( m_panelMain, wxID_ANY, _("Advanced") ), wxVERTICAL );
 
-	m_checkDebuglog = new wxCheckBox( sbSizer10->GetStaticBox(), wxID_ANY, _("Enable debug log"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer10->Add( m_checkDebuglog, 0, wxALL, 5 );
+	m_checkDebuglog = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Enable debug log"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer8->Add( m_checkDebuglog, 0, wxALL, 5 );
 
-	m_checkBoxKeyDef = new wxCheckBox( sbSizer10->GetStaticBox(), wxID_ANY, _("Prevent other programs to hook keyboard (may cause problems in games and other apps)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxKeyDef = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Prevent other programs to hook keyboard (may cause problems in games and other apps)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxKeyDef->SetValue(true);
-	sbSizer10->Add( m_checkBoxKeyDef, 0, wxALL, 5 );
+	sbSizer8->Add( m_checkBoxKeyDef, 0, wxALL, 5 );
 
-	m_checkBoxDisablAcc = new wxCheckBox( sbSizer10->GetStaticBox(), wxID_ANY, _("Disable the accessibility shortcut keys (5 SHIFT and others)"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer10->Add( m_checkBoxDisablAcc, 0, wxALL, 5 );
+	m_checkBoxDisablAcc = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Disable the accessibility shortcut keys (5 SHIFT and others)"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer8->Add( m_checkBoxDisablAcc, 0, wxALL, 5 );
 
-	m_checkBoxClearForm = new wxCheckBox( sbSizer10->GetStaticBox(), wxID_ANY, _("Clear text format on Ctrl-C"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer10->Add( m_checkBoxClearForm, 0, wxALL, 5 );
+	m_checkBoxClearForm = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Clear text format on Ctrl-C"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer8->Add( m_checkBoxClearForm, 0, wxALL, 5 );
 
-	m_checkBoxAllowInjected = new wxCheckBox( sbSizer10->GetStaticBox(), wxID_ANY, _("Allow remote keys"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer10->Add( m_checkBoxAllowInjected, 0, wxALL, 5 );
+	m_checkBoxAllowInjected = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Allow remote keys"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer8->Add( m_checkBoxAllowInjected, 0, wxALL, 5 );
 
-	m_checkBoxAlterantiveLayoutChange = new wxCheckBox( sbSizer10->GetStaticBox(), wxID_ANY, _("Alternative mode layout change (emulate Windows hotkeys)"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer10->Add( m_checkBoxAlterantiveLayoutChange, 0, wxALL, 5 );
+	m_checkBoxFixRAlt = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Disable Ctrl + LAlt as RAlt on extended layouts. Layout to use: "), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer8->Add( m_checkBoxFixRAlt, 0, wxALL, 5 );
 
 
-	bSizer3->Add( sbSizer10, 1, wxALL|wxEXPAND, 5 );
+	bSizer3->Add( sbSizer8, 0, wxALL|wxEXPAND, 5 );
 
 
 	m_panelMain->SetSizer( bSizer3 );
 	m_panelMain->Layout();
 	bSizer3->Fit( m_panelMain );
-	m_notebook2->AddPage( m_panelMain, _("Settings"), false );
+	m_notebook2->AddPage( m_panelMain, _("Settings"), true );
 	m_panel141 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer41;
 	bSizer41 = new wxBoxSizer( wxVERTICAL );
@@ -238,13 +241,13 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkAddToAutoStart->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAutocheck ), NULL, this );
 	m_checkBoxWorkInAdmin->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onWorkInAdminCheck ), NULL, this );
 	m_checkBoxShowFlags->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onShowFlags ), NULL, this );
+	m_checkBoxAlterantiveLayoutChange->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAlternative ), NULL, this );
 	m_comboUiLang->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onUiSelect ), NULL, this );
 	m_checkDebuglog->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
 	m_checkBoxKeyDef->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onPrevent ), NULL, this );
 	m_checkBoxDisablAcc->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onDisableAccessebl ), NULL, this );
 	m_checkBoxClearForm->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onClearFormat ), NULL, this );
 	m_checkBoxAllowInjected->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAllowInject ), NULL, this );
-	m_checkBoxAlterantiveLayoutChange->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAlternative ), NULL, this );
 	m_gridHotKeys->Connect( wxEVT_GRID_CELL_LEFT_DCLICK, wxGridEventHandler( MyFrame4::onHotDClick ), NULL, this );
 	m_gridLayouts->Connect( wxEVT_GRID_CELL_LEFT_DCLICK, wxGridEventHandler( MyFrame4::on_grid_lay_double ), NULL, this );
 	m_checkcapsrem->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
@@ -262,13 +265,13 @@ MyFrame4::~MyFrame4()
 	m_checkAddToAutoStart->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAutocheck ), NULL, this );
 	m_checkBoxWorkInAdmin->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onWorkInAdminCheck ), NULL, this );
 	m_checkBoxShowFlags->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onShowFlags ), NULL, this );
+	m_checkBoxAlterantiveLayoutChange->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAlternative ), NULL, this );
 	m_comboUiLang->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( MyFrame4::onUiSelect ), NULL, this );
 	m_checkDebuglog->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
 	m_checkBoxKeyDef->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onPrevent ), NULL, this );
 	m_checkBoxDisablAcc->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onDisableAccessebl ), NULL, this );
 	m_checkBoxClearForm->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onClearFormat ), NULL, this );
 	m_checkBoxAllowInjected->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAllowInject ), NULL, this );
-	m_checkBoxAlterantiveLayoutChange->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAlternative ), NULL, this );
 	m_gridHotKeys->Disconnect( wxEVT_GRID_CELL_LEFT_DCLICK, wxGridEventHandler( MyFrame4::onHotDClick ), NULL, this );
 	m_gridLayouts->Disconnect( wxEVT_GRID_CELL_LEFT_DCLICK, wxGridEventHandler( MyFrame4::on_grid_lay_double ), NULL, this );
 	m_checkcapsrem->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );

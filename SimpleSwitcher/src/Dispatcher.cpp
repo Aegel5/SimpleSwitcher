@@ -328,8 +328,8 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 			if (!curKey.state.IsEmpty()) {
 				auto conf = conf_get();
 				bool need_our_action = false;
-				for (const auto& it : conf->hotkeysList) {
-					if (it.keys.HasKey_skipkeyup(curKey.state, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP))) {
+				for (const auto& [_1, keys, _2] : conf->All_hot_keys()) {
+					if (keys.HasKey_skipkeyup(curKey.state, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP))) {
 						// К сожалению, вынуждены дублировать эти проверки, но ничего не поделать, нам нужен второй поток.
 						if (!CheckInDisabled()) {
 							need_our_action = true;

@@ -89,23 +89,20 @@ bool Hooker::GetTypeForKey(CHotKey curkey, HotKeyType& type, bool& isUp)
 	auto conf = conf_get();
 	for (int iPrior = 0; iPrior < 2; ++iPrior)
 	{
-		for (const auto& it : conf->hotkeysList)
+		for (const auto& [hkId, keys, fNeedSavedWord] : conf->All_hot_keys())
 		{
-			const auto& info = it;
-			auto hkId = it.hkId;
+			const CHotKey& key = keys.key();
 
-			const CHotKey& key = info.keys.key();
-
-			if (info.keys.HasKey(curkey, CHotKey::COMPARE_IGNORE_KEYUP))
+			if (keys.HasKey(curkey, CHotKey::COMPARE_IGNORE_KEYUP))
 			{
-				if (info.fNeedSavedWord && !HasAnyWord())
+				if (fNeedSavedWord && !HasAnyWord())
 				{
-					LOG_INFO_2(L"skip key %u because not has any word", info.keys.key());
+					LOG_INFO_2(L"skip key %u because not has any word", keys.key());
 					// skip current, add chance for other hotkey
 					continue;
 				}
 				
-				if (iPrior == 0 && !info.fNeedSavedWord)
+				if (iPrior == 0 && !fNeedSavedWord)
 				{
 					continue;
 				}
@@ -251,12 +248,9 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	auto conf = conf_get();
 
 	// Чтобы не очищался буфер клавиш на нажатии наших хоткеев.
-	for (const auto& it : conf->hotkeysList)
+	for (const auto& [hkId, keys, _] : conf->All_hot_keys())
 	{
-		auto& info = it;
-		auto hkId = it.hkId;
-
-		CHotKey key = info.keys.key();
+		CHotKey key = keys.key();
 		if (m_curKeyState.Compare(key, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP)))
 		{
 			auto s1 = m_curKeyState.ToString();
@@ -268,8 +262,6 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 
 	if (CHotKey::IsKnownMods(vkCode))
 		RETURN_SUCCESS;
-
-	//m_caseAnalizer.Clear();
 
 	HandleSymbolDown();
 

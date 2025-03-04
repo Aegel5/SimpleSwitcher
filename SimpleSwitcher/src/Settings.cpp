@@ -159,7 +159,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     config_version,
     layouts_info, 
     time_debug_log_last_enabled,
-    fixAltCtrl
+    fixAltCtrl,
+    lay_to_fix_alt_ctrl
     )
     
 
@@ -216,8 +217,6 @@ TStatus LoadConfig(SettingsGui& gui) {
             Str_Utils::ToLower(s);
             gui.__disableInPrograms.insert(s);
         }
-
-        gui.Update_hk_from_layouts();
 
     } catch (std::exception& e) {
         return SW_ERR_JSON;

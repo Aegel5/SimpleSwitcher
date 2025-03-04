@@ -22,6 +22,8 @@
 #include <set>
 #include <format>
 
+#include <generator>
+
 #include "inc_basic.h"
 #include "utils/ScanMap.h"
 #include "consts.h"

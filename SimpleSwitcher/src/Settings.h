@@ -224,8 +224,6 @@ public:
     bool AllowRemoteKeys = false;
     bool AlternativeLayoutChange = false;
 
-    CHotKey SystemLayoutChange { VK_LMENU, VK_LSHIFT };
-
     std::vector< CHotKeySet> hotkeysList;
 
     auto& GetHk(HotKeyType type) {
@@ -243,27 +241,17 @@ public:
         abort();
     }
 
-    // todo - убрать, использовать generator на 23 cpp
-    void Update_hk_from_layouts() {
-
-        for (auto i = std::ssize(hotkeysList)-1; i >= 0; i--) {
-            auto it = hotkeysList[i];
-            if (TestFlag(it.hkId, hk_SetLayout_flag)) {
-                Utils::RemoveAt(hotkeysList, i);
-            }
+    std::generator < std::tuple<HotKeyType, const CHotKeyList&, bool>> All_hot_keys() const {
+        for (const auto& it : hotkeysList) {
+            co_yield { it.hkId, it.keys, it.fNeedSavedWord };
         }
-
-        for (int i = 0; i < layouts_info.size(); i++) {
-            auto& it = layouts_info[i];
-            if (!it.hotkey.Empty()) {
-                auto hk = (HotKeyType)(hk_SetLayout_flag | i);
-                CHotKeySet data;
-                data.hkId = hk;
-                data.keys = it.hotkey;
-                hotkeysList.push_back(data);
-            }
+        int i = -1;
+        for (const auto& it : layouts_info) {
+            i++;
+            co_yield{ (HotKeyType)(hk_SetLayout_flag | i), it.hotkey, false };
         }
     }
+
 
     void GenerateListHK();
 
