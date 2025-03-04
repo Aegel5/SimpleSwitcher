@@ -390,8 +390,8 @@ private:
         if (col == 1) {
             CHotKey newkey;
             CHotKeySet set;
-            set.def_list.push_back(CHotKey(VK_LCONTROL).SetKeyup().SetLeftRightMode());
-            set.def_list.push_back(CHotKey(VK_RCONTROL).SetKeyup().SetLeftRightMode());
+            set.def_list.push_back(CHotKey(VK_LCONTROL).SetKeyup());
+            set.def_list.push_back(CHotKey(VK_RCONTROL).SetKeyup());
             set.keys = data.hotkey;
             if (ChangeHotKey2(this, set, newkey)) {
                 auto conf = conf_copy();
@@ -410,9 +410,9 @@ private:
         if (col == 2) {
             CHotKey newkey;
             CHotKeySet set;
-            set.def_list.push_back(CHotKey(VK_LMENU, VK_SHIFT, 0x31).SetLeftRightMode());
-            set.def_list.push_back(CHotKey(VK_LMENU, VK_SHIFT, 0x32).SetLeftRightMode());
-            set.def_list.push_back(CHotKey(VK_LMENU, VK_SHIFT, 0x33).SetLeftRightMode());
+            set.def_list.push_back(CHotKey(VK_LMENU, VK_SHIFT, 0x31));
+            set.def_list.push_back(CHotKey(VK_LMENU, VK_SHIFT, 0x32));
+            set.def_list.push_back(CHotKey(VK_LMENU, VK_SHIFT, 0x33));
             set.keys.key() = data.WinHotKey;
             if (ChangeHotKey2(this, set, newkey)) {
                 auto conf = conf_copy();

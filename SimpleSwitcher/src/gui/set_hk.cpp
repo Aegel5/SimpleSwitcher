@@ -38,7 +38,7 @@ public:
         g_hotkeyWndOpened++;
         //SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxRESIZE_BORDER);
 
-        key     = info.keys.key();
+        key = info.keys.key();
 
         std::vector<wxString> choices = { "Custom" };
         for (const auto& def : info.def_list) {
@@ -58,8 +58,11 @@ private:
     CAutoHHOOK hook;
     void updateField()
     {
-        m_textKey->SetValue(key.ToString());
-        m_checkBox12->SetValue(key.GetLeftRightMode());
+        auto k2 = key;
+        if (!m_checkBox12->GetValue()) {
+            k2.NormalizeAll();
+        }
+        m_textKey->SetValue(k2.ToString());
         m_checkBox13->SetValue(key.GetKeyup());
         m_choiceKey->SetSelection(0);
 
@@ -97,7 +100,7 @@ private:
     {
         if (nMsg == c_MSG_TypeHotKey) {
             auto cur = (TKeyCode)lParam;
-            if (key.HasKey2(cur)) {
+            if (key.HasKey(cur, false)) {
                 key.Remove(cur);
             } else {
                 key.Add(cur, CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
@@ -110,7 +113,6 @@ private:
     }
     virtual void onSetLeftRight(wxCommandEvent& event)
     {
-        key.SetLeftRightMode(m_checkBox12->GetValue());
         updateField();
     }
     virtual void onSetKeyup(wxCommandEvent& event)
@@ -120,6 +122,9 @@ private:
     }
     virtual void onOk(wxCommandEvent& event)
     {
+        if (!m_checkBox12->GetValue()) {
+            key.NormalizeAll();
+        }
         this->EndModal(wxID_OK);
     }
     virtual void onCancel(wxCommandEvent& event)
@@ -136,7 +141,4 @@ bool ChangeHotKey2(wxFrame* frame, CHotKeySet set, CHotKey& key) {
     return (res == wxID_OK);
 }
 
-//bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key){
-//    return ChangeHotKey2(frame, conf_get()->GetHk(type), key);
-//}
 

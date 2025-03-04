@@ -228,15 +228,15 @@ public:
 	CHotKey() { Clear(); }
 	explicit CHotKey(TKeyCode key)
 	{
-		Clear().Add(key).AdjustLeftRight();
+		Clear().Add(key);
 	}
 	CHotKey(TKeyCode key1, TKeyCode key2)
 	{
-		Clear().Add(key1, ADDKEY_ORDERED).Add(key2, ADDKEY_ORDERED).AdjustLeftRight();
+		Clear().Add(key1, ADDKEY_ORDERED).Add(key2, ADDKEY_ORDERED);
 	}
 	CHotKey(TKeyCode key1, TKeyCode key2, TKeyCode key3)
 	{
-		Clear().Add(key1, ADDKEY_ORDERED).Add(key2, ADDKEY_ORDERED).Add(key3, ADDKEY_ORDERED).AdjustLeftRight();
+		Clear().Add(key1, ADDKEY_ORDERED).Add(key2, ADDKEY_ORDERED).Add(key3, ADDKEY_ORDERED);
 	}
 	enum 
 	{
@@ -356,10 +356,6 @@ public:
 		}
 		return false;
 	}
-	bool HasKey2(TKeyCode key)
-	{
-		return HasKey(key, m_leftRightDifferene);
-	}
 	bool HasAnyMod()
 	{
 		for (int i = 0; i < size; ++i)
@@ -414,13 +410,12 @@ public:
 			return false;
 		if(size == 0 || other.size == 0)
 			return false;
-		if (TestFlag(flags, COMPARE_CHECK_LEFT_RIGHT_FLAG) && m_leftRightDifferene != other.m_leftRightDifferene)
-			return false;
 		if (!TestFlag(flags, COMPARE_IGNORE_HOLD) && m_hold != other.m_hold)
 			return false;
 		if (!TestFlag(flags, COMPARE_IGNORE_KEYUP) && m_keyup != other.m_keyup)
 			return false;
-		bool fCheckLeftRight = m_leftRightDifferene == 1 || other.m_leftRightDifferene == 1;
+
+		bool fCheckLeftRight = TestFlag(flags, COMPARE_CHECK_LEFT_RIGHT_FLAG);
 
 		if (TestFlag(flags, COMPARE_IGNORE_ORDER_VALUEKEY) || m_ignoreOrderValueKey || other.m_ignoreOrderValueKey)
 		{
@@ -442,17 +437,7 @@ public:
 	TKeyCode* ModsBegin() {		return keys + 1;	}
 	TKeyCode* ModsEnd() {		return keys + 1 + (size > 0 ? size-1 : 0);	}
 	TUInt8 Size() const  {return size;}
-	//TKeyCode operator[] (int i) { return keys[i]; }
-	void ToString(std::wstring& s)
-	{
-		ToString(s, m_leftRightDifferene);
-	}
-	std::wstring ToString() const
-	{
-		std::wstring s;
-		ToString(s, m_leftRightDifferene);
-		return s;
-	}
+
 
 	std::string ToString2() const
 	{
@@ -462,30 +447,27 @@ public:
 		return res2;
 	}
 
-	void ToString(std::wstring& s, bool leftrightDiff) const
+	std::wstring ToString() const
 	{
-		if(size == 0)
+		std::wstring s;
+		if (size == 0)
+			return s;
+
+		for(int i = size - 1; i >= 0; --i)
 		{
-			//s = L"[Empty]";// GetMessageById(AM_5);
+			ToString(keys[i], s);
+			if(i != 0)
+				s += L" + ";
 		}
-		else
+		if (m_hold)
 		{
-			for(int i = size - 1; i >= 0; --i)
-			{
-				TKeyCode k = !leftrightDiff ? Normalize(keys[i]) : keys[i];
-				ToString(k, s);
-				if(i != 0)
-					s += L" + ";
-			}
-			if (m_hold)
-			{
-				s += L" #hold";
-			}
-			if (m_keyup)
-			{
-				s += L" #up";
-			}
+			s += L" #hold";
 		}
+		if (m_keyup)
+		{
+			s += L" #up";
+		}
+		return s;
 	}
 	static std::wstring ToString(TKeyCode key)
 	{
@@ -540,6 +522,12 @@ public:
 	}
 	bool operator== ( CHotKey& other) {return Compare(other);}
 	bool operator!= ( CHotKey& other) { return !(*this == other); }
+	void NormalizeAll() {
+		for (int i = 0; i < Size(); i++)
+		{
+			keys[i] = Normalize(keys[i]);
+		}
+	}
 	static TKeyCode Normalize(TKeyCode key) 
 	{
 		switch (key)
@@ -558,15 +546,6 @@ public:
 		default:
 			return key;
 		}
-	}
-	CHotKey& SetLeftRightMode(bool checkLeftRight = true)
-	{
-		m_leftRightDifferene = checkLeftRight;
-		return *this;
-	}
-	bool GetLeftRightMode()
-	{
-		return m_leftRightDifferene;
 	}
 	CHotKey& SetKeyup(bool val=true)
 	{
@@ -602,10 +581,6 @@ public:
 			SetHold(true);
 		}
 
-		//if (Str_Utils::replaceAll(ss, L"#lr", L"")) {
-		//	m_leftRightDifferene = true;
-		//}
-
 		Str_Utils::TVectStr sElems;
 		Str_Utils::Split2(ss, sElems, L"+", true);
 		for (auto& it : sElems)
@@ -621,17 +596,20 @@ public:
 				IFS_RET(SW_ERR_INVALID_PARAMETR, L"Not found keycode for %s", sCur.c_str());
 			}
 
-
-
-			if (Utils::is_in(sCur,  L"lshift" , L"rshift", L"lctrl", L"rctrl", L"lalt", L"ralt", L"lwin", L"rwin" )) {
-				m_leftRightDifferene = true;
-			}
-
-
 			Simple_Append(kCur);
 		}
 
 		RETURN_SUCCESS;
+	}
+	bool Has_left_right() const {
+		for (size_t i = 0; i < Size(); i++)
+		{
+			auto cur = keys[i];
+			if (Utils::is_in(keys[i], VK_LSHIFT, VK_RSHIFT, VK_LCONTROL, VK_RCONTROL, VK_LMENU, VK_RMENU, VK_LWIN, VK_RWIN)) {
+				return true;
+			}
+		}
+		return false;
 	}
 private:
 	bool CompareIgnoreOrder(const TKeyCode* list1, const TKeyCode* list2, int size, bool checkLeftRight) const
@@ -693,24 +671,13 @@ private:
 	struct
 	{
 		TUInt8 m_ignoreOrderValueKey : 1;
-		TUInt8 m_leftRightDifferene : 1;
 		TUInt8 m_keyup : 1;
 		TUInt8 m_hold : 1;
 	};
 	TUInt8 size;
 	TKeyCode keys[c_MAX];
 
-	void AdjustLeftRight() {
-		for (size_t i = 0; i < Size(); i++)
-		{
-			auto cur = keys[i];
-			if (Utils::is_in(keys[i], VK_LSHIFT, VK_RSHIFT, VK_LCONTROL, VK_RCONTROL, VK_LMENU, VK_RMENU, VK_LWIN, VK_RWIN)) {
-				SetLeftRightMode();
-				return;
-			}
-		}
-		SetLeftRightMode(false);
-	}
+
 };
 
 inline CHotKey ParseStringHK(std::wstring& s)

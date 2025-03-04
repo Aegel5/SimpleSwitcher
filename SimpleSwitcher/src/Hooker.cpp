@@ -199,15 +199,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	//}
 
 
-	if (GetLogLevel() >= LOG_LEVEL_3)
-	{
-		std::wstring s2;
-		m_curKeyState.ToString(s2, true);
-		//std::wstring s3;
-		//m_curHotKey.ToString(s3, true);
-		LOG_INFO_1(L"curState =%s", s2.c_str());
-		//LOG_INFO_1(L"curHotKey=%s", s3.c_str());
-	}
+	LOG_INFO_3(L"curState=%s", m_curKeyState.ToString().c_str());
 
 	if (m_needRevertUnderUP != hk_NULL)
 	{
