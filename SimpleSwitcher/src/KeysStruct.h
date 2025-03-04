@@ -133,10 +133,13 @@ struct CurStateWrapper {
 		}
 		else if (curKeyState == KEY_STATE_DOWN)
 		{
+			
 			if (isAltDown && vkCode == VK_LCONTROL) {
-				LOG_INFO_1(L"Skip fake LCtrl");
+				LOG_INFO_1(L"fake LCtrl");
 			}
-			else {
+
+			// больше не надо?????
+			//else {
 				CHotKey hk_save = state;
 				state.Add(vkCode, CHotKey::ADDKEY_ORDERED | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
 				times[vkCode] = GetTickCount64() + 10000;
@@ -156,7 +159,7 @@ struct CurStateWrapper {
 					// была нажата другая клавиша, сбрасываем флаг hold
 					state.SetHold(false);
 				}
-			}
+			//}
 		}
 		else
 		{

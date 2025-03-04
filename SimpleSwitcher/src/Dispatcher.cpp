@@ -301,64 +301,76 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		auto& kData = msg.data.keyData;
 		kData.ks = *kStruct;
 		kData.wParam = wParam;
-		Worker()->PostMsg(msg);
 
 		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
 		KeyState curKeyState = GetKeyState(wParam);
 		bool isInjected = TestFlag(kStruct->flags, LLKHF_INJECTED);
 		auto scan_code = kStruct->scanCode;
+
 		if (scan_code == 541) {
 			LOG_INFO_2(L"skip bugged lctrl");
 			return 0;
 		}
-		if (!isInjected) {
-			// Consume HOT KEY (не отдаем хот-кей для текущей программы)
-			curKey.Update(kStruct, curKeyState);
-			if (curKeyState == KeyState::KEY_STATE_DOWN) {
-				bool skip = curKey.state.IsEmpty();
-				//if (curKey.state.HasAllMod()) {
-				//	// Скипаем когда только known mod в хоткее
-				//	skip = true;
-				//}
-				if (!skip) {
-					auto conf = conf_get();
-					for (const auto& it : conf->hotkeysList) {
-						if (it.keys.HasKey_skipkeyup(curKey.state, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP))) {
-							// К сожалению, вынуждены дублировать эти проверки, но ничего не поделать, нам нужен второй поток.
-							if (!CheckInDisabled()) {
-								// у нас есть такой хот-кей, запрещаем это событие для программы.
-								disable_up = curKey.state.ValueKey(); // up тоже будет в будущем запрещать.
-								LOG_INFO_1(L"Key %s was disabled(down)", CHotKey::GetName(disable_up));
-								return 1;
-							}
+
+		Worker()->PostMsg(msg);
+
+		if (isInjected) {
+			// с этим пока не понятно в сценарии удаленного использования - нужно тестить...
+			return 0;
+		}
+
+		// Consume HOT KEY (не отдаем хот-кей для текущей программы)
+
+		curKey.Update(kStruct, curKeyState);
+		const auto& curk = curKey.state;
+
+		if (curKeyState == KeyState::KEY_STATE_DOWN) {
+			if (!curKey.state.IsEmpty()) {
+				auto conf = conf_get();
+				bool need_our_action = false;
+				for (const auto& it : conf->hotkeysList) {
+					if (it.keys.HasKey_skipkeyup(curKey.state, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP))) {
+						// К сожалению, вынуждены дублировать эти проверки, но ничего не поделать, нам нужен второй поток.
+						if (!CheckInDisabled()) {
+							need_our_action = true;
 						}
 					}
 				}
-			}
-			else if (curKeyState == KeyState::KEY_STATE_UP) {
-				if (disable_up == vkCode) {
-					LOG_INFO_1(L"Key %s was disabled(up)", CHotKey::GetName(disable_up));
-					disable_up = 0;
+				if (need_our_action) {
+					// у нас есть такой хот-кей, запрещаем это событие для программы.
+					disable_up = curKey.state.ValueKey(); // up тоже будет в будущем запрещать.
+					LOG_INFO_1(L"Key %s was disabled(down)", CHotKey::GetName(disable_up));
 					return 1;
 				}
+				else {
+					if (curk.Size() == 3 
+						&& curk.HasKey(VK_LMENU, true)
+						&& curk.HasKey(VK_CONTROL, false)
+						&& !curk.IsKnownMods(curk.ValueKey())
+						&& conf_get()->fixAltCtrl
+						) {
+						LOG_INFO_1(L"fix ctrl+alt");
+						MainWorkerMsg msg;
+						msg.mode = HWORKER_FixCtrlAlt;
+						msg.data.hotkey_to_fix = curKey.state;
+						Worker()->PostMsg(msg);
+						LOG_INFO_1(L"Key %s was disabled(fix)", CHotKey::GetName(curk.ValueKey()));
+						return 1; // пока запрещаем, потом заново отошлем...
+					}
+				}
 			}
-
-			if (curKey.state.IsEmpty()) {
+		}
+		else if (curKeyState == KeyState::KEY_STATE_UP) {
+			if (disable_up == vkCode) {
+				LOG_INFO_1(L"Key %s was disabled(up)", CHotKey::GetName(disable_up));
 				disable_up = 0;
+				return 1;
 			}
 		}
 
-		//if (kStruct->vkCode == VK_LMENU) {
-		//	LOG_INFO_1(L"DISABLED");
-		//	INPUT cur = { 0 };
-		//	cur.type = INPUT_KEYBOARD;
-		//	cur.ki.wVk = VK_RMENU;
-		//	if (curKeyState != KEY_STATE_DOWN) {
-		//		cur.ki.dwFlags = KEYEVENTF_KEYUP;
-		//	}
-		//	SendInput((UINT)1, &cur, sizeof(INPUT));
-		//	return 1;
-		//}
+		if (curKey.state.IsEmpty()) {
+			disable_up = 0;
+		}
 
 		return 0;
 	};

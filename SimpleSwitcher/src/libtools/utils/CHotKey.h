@@ -347,7 +347,7 @@ public:
 			}
 		}while (k);
 	}
-	bool HasKey(TKeyCode key, bool leftrightCheck)
+	bool HasKey(TKeyCode key, bool leftrightCheck) const
 	{
 		for(TKeyCode k : *this)
 		{
@@ -434,9 +434,11 @@ public:
 		}
 	}
 	bool IsEmpty() const {return Size() == 0;}
-	TKeyCode ValueKey()	{		return keys[0];	}
+	TKeyCode ValueKey() const	{		return keys[0];	}
 	TKeyCode* begin() {return keys;}
 	TKeyCode* end() {return keys+size;}
+	const TKeyCode* begin() const { return keys; }
+	const TKeyCode* end() const { return keys + size; }
 	TKeyCode* ModsBegin() {		return keys + 1;	}
 	TKeyCode* ModsEnd() {		return keys + 1 + (size > 0 ? size-1 : 0);	}
 	TUInt8 Size() const  {return size;}

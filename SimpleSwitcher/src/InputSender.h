@@ -20,7 +20,7 @@ public:
 	{
 		list.clear();
 	}
-	TStatus Add(TKeyCode key, KeyState state, TScanCode_Ext scan = {})
+	void Add(TKeyCode key, KeyState state, TScanCode_Ext scan = {})
 	{
 		INPUT cur;
 		SwZeroMemory(cur);
@@ -36,7 +36,7 @@ public:
 		else {
 			if (key == 0) {
 				LOG_WARN(L"try add empty key");
-				RETURN_SUCCESS;
+				return;
 			}
 			cur.ki.wVk = key;
 		}
@@ -45,8 +45,6 @@ public:
 			SetFlag(cur.ki.dwFlags, KEYEVENTF_KEYUP);
 
 		list.push_back(cur);
-
-		RETURN_SUCCESS;
 	}
 	TStatus AddDown(CHotKey& key)
 	{
@@ -54,24 +52,24 @@ public:
 			RETURN_SUCCESS;
 		for(TKeyCode* k = key.ModsBegin(); k != key.ModsEnd(); ++k)
 		{
-			IFS_RET(Add(*k, KEY_STATE_DOWN));
+			Add(*k, KEY_STATE_DOWN);
 		}
-		IFS_RET(Add(key.ValueKey(), KEY_STATE_DOWN));
+		Add(key.ValueKey(), KEY_STATE_DOWN);
 		RETURN_SUCCESS;
 	}
 	TStatus AddScanCode(const TKeyBaseInfo& key, KeyState keyState = KEY_STATE_DOWN)
 	{
 		if (key.shift_key != 0) {
-			IFS_RET(Add(key.shift_key, keyState));
+			Add(key.shift_key, keyState);
 		}
 
 		//IFS_RET(Add(key.vk_code, keyState, pos, false));
 
 		if (key.scan_code.scan == 0) {
-			IFS_RET(Add(key.vk_code, keyState));
+			Add(key.vk_code, keyState);
 		}
 		else {
-			IFS_RET(Add(0, keyState, key.scan_code));
+			Add(0, keyState, key.scan_code);
 		}
 
 		RETURN_SUCCESS;
@@ -80,10 +78,10 @@ public:
 	{
 		if (key.Size() == 0)
 			RETURN_SUCCESS;
-		IFS_RET(Add(key.ValueKey(), KEY_STATE_UP));
+		Add(key.ValueKey(), KEY_STATE_UP);
 		for (const TKeyCode* k = key.ModsBegin(); k != key.ModsEnd(); ++k)
 		{
-			IFS_RET(Add(*k, KEY_STATE_UP));
+			Add(*k, KEY_STATE_UP);
 		}
 		RETURN_SUCCESS;
 	}

@@ -301,6 +301,9 @@ private:
     {
         auto conf = conf_copy();
         conf->fDbgMode = event.IsChecked();
+        if (conf->fDbgMode) {
+            //conf->time_debug_log_last_enabled = std::chrono::system_clock::now();
+        }
         SetLogLevel_v3(conf->fDbgMode ? conf->logLevel : LOG_LEVEL_0);
         conf_set(conf);
     }
@@ -358,6 +361,8 @@ private:
         auto& hotlist = conf_get()->hotkeysList;
         if (row >= hotlist.size()) return;
         auto& data = hotlist[row];
+        if (TestFlag(data.hkId, hk_SetLayout_flag)) return;
+
 
         if (col == 0) {
             CHotKey newkey;
@@ -563,12 +568,16 @@ private:
 
         int i = -1;
         for (const auto& it : conf_get()->hotkeysList) {
-            i++;
             if(TestFlag(it.hkId, hk_SetLayout_flag)) break;
+            i++;
             m_gridHotKeys->AppendRows();
             m_gridHotKeys->SetRowLabelValue(i, it.gui_text);
             m_gridHotKeys->SetCellValue(i, 0, L" " + it.keys.key().ToString());
         }
+        i++;
+        m_gridHotKeys->AppendRows();
+        m_gridHotKeys->SetRowLabelValue(i, conf_get()->GetHk(hk_CycleCustomLang).gui_text + wxString(" (Win hotkey)"));
+        m_gridHotKeys->SetCellValue(i, 0, L" " + conf_get()->SystemLayoutChange.ToString());
 
         m_gridHotKeys->SetRowLabelSize(wxGRID_AUTOSIZE);
         m_gridHotKeys->AutoSizeRows();
@@ -579,9 +588,7 @@ private:
         //m_gridHotKeys->setcol(5, 5);
 
     }
-    void FillLayoutsInfo() {
-
-        ClearGrid(m_gridLayouts);
+    void SyncLayouts() {
 
         HKL all_lays[50] = { 0 };
         int all_lay_size = GetKeyboardLayoutList(SW_ARRAY_SIZE(all_lays), all_lays);
@@ -591,15 +598,15 @@ private:
                 if (cur == lay) return true;
             }
             return false;
-        };
+            };
 
         auto info_copy = conf_get()->layouts_info;
         bool was_changes = false;
 
         // удалим те, которых сейчас нет в системе
-        for (int i = (int)info_copy.size()-1; i >= 0; i--) {
+        for (int i = (int)info_copy.size() - 1; i >= 0; i--) {
             if (!has_system_layout(info_copy[i].layout)) {
-                info_copy.erase(info_copy.begin()+i);
+                info_copy.erase(info_copy.begin() + i);
                 was_changes = true;
             }
         }
@@ -609,7 +616,7 @@ private:
             auto cur = all_lays[i];
             if (!conf_get()->HasLayout(cur)) {
                 was_changes = true;
-                info_copy.push_back({.layout=cur});
+                info_copy.push_back({ .layout = cur });
             }
         }
 
@@ -617,8 +624,16 @@ private:
             // пересохраним если были изменения.
             auto conf = conf_copy();
             conf->layouts_info = info_copy;
+            conf->Update_hk_from_layouts();
             conf_set(conf);
         }
+
+    }
+    void FillLayoutsInfo() {
+
+        SyncLayouts();
+
+        ClearGrid(m_gridLayouts);
 
         // отобразим в gui
         int i = -1;

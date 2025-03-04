@@ -83,7 +83,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBoxAllowInjected = new wxCheckBox( sbSizer10->GetStaticBox(), wxID_ANY, _("Allow remote keys"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer10->Add( m_checkBoxAllowInjected, 0, wxALL, 5 );
 
-	m_checkBoxAlterantiveLayoutChange = new wxCheckBox( sbSizer10->GetStaticBox(), wxID_ANY, _("Alternative mode layout change (emulate windows hotkeys)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxAlterantiveLayoutChange = new wxCheckBox( sbSizer10->GetStaticBox(), wxID_ANY, _("Alternative mode layout change (emulate Windows hotkeys)"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer10->Add( m_checkBoxAlterantiveLayoutChange, 0, wxALL, 5 );
 
 

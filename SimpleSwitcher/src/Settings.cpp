@@ -76,16 +76,6 @@ void SettingsGui::GenerateListHK()
         AddHotKey(hk_toUpperSelected, set);
     }
 
-
-
-
-
-
-
-
-
-  
-
     for (auto& it : hotkeysList) {
         if (it.fUseDef) {
             it.keys.key() = it.def_list[0];
@@ -138,13 +128,15 @@ void to_json(json& j, const LayoutInfo& p) {
 
 void from_json(const json& j, LayoutInfo& p) {
     if (j.is_object() && j.contains("layout")) {
+
+        j.at("layout").get_to(p.layout);
+
         if (j.contains("enabled"))
-            p.enabled = j["enabled"].get<bool>();
+            j.at("enabled").get_to(p.enabled);
         if (j.contains("hotkey"))
             p.hotkey = j["hotkey"];
         if(j.contains("win_hotkey"))
             p.WinHotKey = j["win_hotkey"];
-        p.layout = j["layout"].get<HKL>();
     }
 }
 
@@ -165,7 +157,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     AlternativeLayoutChange,
     SystemLayoutChange,
     config_version,
-    layouts_info
+    layouts_info, 
+    time_debug_log_last_enabled,
+    fixAltCtrl
     )
     
 

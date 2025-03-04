@@ -782,46 +782,13 @@ void Hooker::UpAllKeys() {
 }
 TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 {
-	bool fUseAltMode = conf_get()->AlternativeLayoutChange;
 	bool fDels = false;
-
-	//AnalizeProblemByName(m_sTopProcPath, m_sTopProcName, fUseAltMode, fDels);
-	//LOG_INFO_2(L"fpnw=%u",  fUseAltMode);
-
-	bool fClearedState = false;
-
-	auto ClearState = [&fClearedState, this]()
-	{
-		if (!fClearedState)
-		{
-			fClearedState = true;
-			//IFS_LOG(ClearModsBySend(m_curKeyState));
-		}
-	};
 
 	bool needWaitLang = false;
     auto prevLay      = CurLay();
-	if (TestFlag(ctxRevert.flags, SW_CLIENT_SetLang) && ctxRevert.lay)
-	{
-		LOG_INFO_1(L"Try set 0x%x lay", ctxRevert.lay);
+	if (TestFlag(ctxRevert.flags, SW_CLIENT_SetLang) && ctxRevert.lay){
 
-		HKL lay = ctxRevert.lay;
-
-
-		if (fUseAltMode /*|| u_conf.fUseAltMode*/)
-		{
-			ClearState();
-			IFS_RET(SwitchLangByEmulate(lay));
-		}
-		else
-		{
-			//if (m_sTopProcName == L"notepad.exe") {
-			//	UpAllKeys();
-			//}
-			LOG_INFO_1(L"post change");
-			PostMessage(m_hwndTop, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
-		}
-
+		SetNewLay(ctxRevert.lay);
 
 		needWaitLang =
             IsWindows10OrGreater(); // true; //        m_sTopProcName == L"searchapp.exe"; // возможно теперь всегда
@@ -831,8 +798,6 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT) && TestFlag(ctxRevert.flags, SW_CLIENT_BACKSPACE))
 	{
-		ClearState();
-
 		if (fDels)
 		{
 			IFS_RET(SendDels(ctxRevert.keylist.size()));
@@ -850,24 +815,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 
 	//needWaitLang = false;
 	if (needWaitLang && !TestFlag(ctxRevert.flags, SW_CLIENT_NO_WAIT_LANG)) {
-
-		// Дождемся смены языка. Нет смысла переходить в асинхронный режим. Можем ждать прямо здесь.
-		auto start = GetTickCount64();
-		while (true)
-		{
-			auto curL = GetKeyboardLayout(topWndInfo2.threadid);
-            if (curL != prevLay) {
-                LOG_INFO_2(L"new lay arrived after %u", GetTickCount64() - start);
-				break;
-			}
-
-			if ((GetTickCount64() - start) >= 150) {
-				LOG_WARN(L"wait timeout language change for proc %s", m_sTopProcName.c_str());
-				break;
-			}
-
-			Sleep(5);
-		}
+		WaitOtherLay(prevLay);
 	}
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT))
@@ -876,8 +824,6 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 
 	}
     auto send = [&](CHotKey k) {
-
-        ClearState();
 
         InputSender inputSender;
         inputSender.AddDown(k);
@@ -931,7 +877,7 @@ TStatus SendUpForKey(CHotKey key)
 		std::wstring s1;
 		CHotKey::ToString(k, s1);
 		LOG_INFO_2(L"SendUpForKey press up for key %s", s1.c_str());
-		IFS_RET(sender.Add(k, KEY_STATE_UP));
+		sender.Add(k, KEY_STATE_UP);
 	}
 	IFS_RET(SendOurInput(sender));
 	RETURN_SUCCESS;
@@ -1280,7 +1226,7 @@ TStatus Hooker::ClearModsBySend(CHotKey key)
 			std::wstring s1;
 			CHotKey::ToString(k, s1);
 			//LOG_INFO_1(L"ClearModsBySend %s", s1.c_str());
-			IFS_RET(sender.Add(k, KEY_STATE_UP));
+			sender.Add(k, KEY_STATE_UP);
 		}
 	}
 
@@ -1289,32 +1235,36 @@ TStatus Hooker::ClearModsBySend(CHotKey key)
 	RETURN_SUCCESS;
 }
 
-//TStatus Hooker::SendOurInputFromHost2(UINT vk, UINT flags)
-//{
-//	CAutoCounter autoBool(m_fOurSend);
-//
-//	INPUT cur = { 0 };
-//	cur.type = INPUT_KEYBOARD;
-//	cur.ki.wVk = vk;
-//	cur.ki.dwFlags = flags;
-//
-//	IFW_LOG(SendInput((UINT)1, &cur, sizeof(INPUT)));
-//
-//	RETURN_SUCCESS;
-//}
-//
-//TStatus Hooker::SendOurInputFromHost(InputSender& sender)
-//{
-//	CAutoCounter autoBool(m_fOurSend);
-//	IFS_RET(sender.Send());
-//
-//	//for (auto i : sender)
-//	//{
-//	//	PostMessage(CommonDataGlobal().hWndMonitor, WM_Send, i.ki.wVk, i.ki.dwFlags);
-//	//}
-//
-//	RETURN_SUCCESS;
-//}
+TStatus Hooker::FixCtrlAlt(CHotKey key) {
+
+	auto lay = conf_get()->lay_to_fix_alt_ctrl;
+	if (lay == 0) {
+		RETURN_SUCCESS;
+	}
+	auto curLay = CurLay();
+
+	// сбросим любые нажатые клавиши
+	UpAllKeys();
+
+	// пока без ожидания что язык переключился...
+	IFS_RET(SetNewLay(lay));
+
+	//if (!conf_get()->AlternativeLayoutChange) {
+	//	WaitOtherLay(curLay);
+	//}
+
+	// отправляем
+	InputSender inputSender;
+	IFS_RET(inputSender.AddPressVk(key));
+	IFS_RET(SendOurInput(inputSender));
+
+	// переключаемся обратно.
+	IFS_RET(SetNewLay(curLay));
+
+	RETURN_SUCCESS;
+}
+
+
 
 
 

@@ -15,6 +15,7 @@ enum EHWorker
 	HWORKER_WM_TIMER,
 	HWORKER_LoadSettings,
     HWORKER_Getcurlay,
+    HWORKER_FixCtrlAlt,
 };
 
 struct KeyMsgData
@@ -27,7 +28,7 @@ struct MainWorkerMsg
 {
 	EHWorker mode = HWORKER_NULL;
 
-	union
+	union U
 	{
 		struct 
 		{
@@ -38,6 +39,11 @@ struct MainWorkerMsg
 			WPARAM wparm;
 			LPARAM lparm;
 		};
+		struct {
+			CHotKey hotkey_to_fix;
+		};
+		U() {} // ничего не делаем - никаких конструкторов, клиенты должны заполнять сами нужные данные...
+		
 	}data;
 };
 

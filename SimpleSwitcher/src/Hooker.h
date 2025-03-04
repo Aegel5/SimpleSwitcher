@@ -76,25 +76,48 @@ public:
 
 	void CheckCurLay(bool forceSend = false);
 
-	HKL CurLay() {
-        return        topWndInfo2.lay;
-  //      if (g_laynotif.g_curLay == 0)
-  //          return m_layoutTopWnd;
-  //      if (g_laynotif.inited) {
-  //          return g_laynotif.g_curLay;
-  //      }
-		//return m_layoutTopWnd;
-	}
-	//void RequestChangeCase()
-	//{
-	//	LOG_INFO_1(L"RequestChangeCase");
-	//	tstring data;
-	//	RequestWaitClip(CLRMY_hk_INSERT);
-	//	m_caseAnalizer.GenerateNexCurKeys(data);
-	//	m_clipWorker.SetData(data);
+	TStatus FixCtrlAlt(CHotKey key);
 
-	//	m_clipWorker.PostMsg(ClipMode_InsertData);
-	//}
+	TStatus SetNewLay(HKL lay) {
+
+		LOG_INFO_1(L"Try set 0x%x lay", lay);
+
+
+		if (conf_get()->AlternativeLayoutChange)
+		{
+			IFS_RET(SwitchLangByEmulate(lay));
+		}
+		else
+		{
+			LOG_INFO_1(L"post WM_INPUTLANGCHANGEREQUEST");
+			PostMessage(m_hwndTop, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
+		}
+
+		RETURN_SUCCESS;
+	}
+
+	void WaitOtherLay(HKL lay) {
+		// Дождемся смены языка. Нет смысла переходить в асинхронный режим. Можем ждать прямо здесь.
+		auto start = GetTickCount64();
+		while (true)
+		{
+			auto curL = GetKeyboardLayout(topWndInfo2.threadid);
+			if (curL != lay) {
+				LOG_INFO_2(L"new lay arrived after %u", GetTickCount64() - start);
+				break;
+			}
+
+			if ((GetTickCount64() - start) >= 150) {
+				LOG_WARN(L"wait timeout language change for proc %s", m_sTopProcName.c_str());
+				break;
+			}
+
+			Sleep(5);
+		}
+	}
+
+	HKL CurLay() { return        topWndInfo2.lay; }
+
 public:
 
 	ULONGLONG m_dwLastCtrlCReqvest = 0;

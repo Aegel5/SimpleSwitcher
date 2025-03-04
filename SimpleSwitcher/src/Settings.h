@@ -43,12 +43,6 @@ enum HotKeyType : TUInt32
     hk_toUpperSelected = 19,
 
     hk_SetLayout_flag = 0b10000000000,
-
-	hk_MAX,
-
-	
-
-	//hk_RevertFromClip,
 };
 
 inline const char* HotKeyTypeName(HotKeyType hk_type)
@@ -155,6 +149,7 @@ struct LayoutInfo {
 };
 
 
+
 class SettingsGui {
 public:
     SettingsGui() {
@@ -168,6 +163,8 @@ public:
             false;
 #endif
     }
+
+    TInt64 time_debug_log_last_enabled = 0;
 
     std::vector<LayoutInfo> layouts_info;
     bool AllLayoutEnabled() const {
@@ -214,6 +211,8 @@ public:
 
     UiLang uiLang = UiLang::rus;
 
+    bool fixAltCtrl = false;
+    HKL lay_to_fix_alt_ctrl = (HKL)0x4090409;
     bool isMonitorAdmin = false;
     bool isTryOEM2 = true;
     bool fDbgMode              = false;
@@ -244,6 +243,7 @@ public:
         abort();
     }
 
+    // todo - убрать, использовать generator на 23 cpp
     void Update_hk_from_layouts() {
 
         for (auto i = std::ssize(hotkeysList)-1; i >= 0; i--) {

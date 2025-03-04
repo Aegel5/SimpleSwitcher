@@ -46,6 +46,9 @@ TStatus CMainWorker::WorkerInt()
 			KeyMsgData& kmsg = msg.data.keyData;
 			IFS_LOG(hooker.ProcessKeyMsg(kmsg));
 		}
+		else if (mode == HWORKER_FixCtrlAlt) {
+			IFS_LOG(hooker.FixCtrlAlt(msg.data.hotkey_to_fix));
+		}
 		else if (mode == HWORKER_WM_TIMER)
 		{
 			UINT_PTR timerId = msg.data.wparm;
