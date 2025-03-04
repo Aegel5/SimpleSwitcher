@@ -7,44 +7,18 @@
 
 enum HotKeyType : TUInt32
 {
-    hk_NULL = 0b100000000000000000000,
+    hk_NULL,
 
-    hk_RevertLastWord = 0,
-    hk_RevertCycle = 1,
-    hk_RevertSel = 2,
+    hk_RevertLastWord,
+    hk_RevertCycle,
+    hk_RevertSel,
+    hk_CapsGenerate,
+    hk_CycleCustomLang,
+    hk_CycleLang_win_hotkey,
+    hk_ScrollGenerate,
+    hk_toUpperSelected,
 
-    //hk_RevertAdv = 3,
-    //hk_RevertCycleAdv = 4,
-
-    //hk_ChangeLayoutCycle = 5,
-
-    //hk_ChangeSetLayout_1 = 6,
-    //hk_ChangeSetLayout_2 = 7,
-    //hk_ChangeSetLayout_3 = 8,
-
-    hk_CapsGenerate = 9,
-
-    hk_CycleCustomLang = 10,
-
-    hk_CycleLang_win_hotkey = 11,
-
-    //hk_ChangeCase = 11,
-
-    hk_ScrollGenerate = 12,
-
-    //hk_EmulCopyNoFormat = 13,
-    //hk_EmulCopyWithFormat = 14,
-
-    //hk_RevertRecentTyped = 15,
-
-    //hk_ChangeTextCase = 16,
-
-    //hk_RevertLastWord_CustomLang = 17,
-    //hk_RevertCycle_CustomLang = 18,
-
-    hk_toUpperSelected = 19,
-
-    hk_SetLayout_flag = 0b10000000000,
+    hk_SetLayout_flag = 0b100000000000,
 };
 
 inline const char* HotKeyTypeName(HotKeyType hk_type)
@@ -100,16 +74,9 @@ struct CHotKeyList {
 
 struct CHotKeySet
 {
-	//tstring name = L"unknown";
-	//CHotKey key;
     std::vector<CHotKey> def_list;
-	//CHotKey def;
-	//CHotKey def2;
-	//bool fReserveHotKey = true;
 	bool fNeedSavedWord = false;
 	bool fUseDef = false;
-	//bool fGui = true;
-	//bool fDisabled = false;
     HotKeyType hkId = hk_NULL;
 
     CHotKeyList keys;
@@ -140,6 +107,7 @@ using TStrList = std::vector<std::wstring>;
 struct LayoutInfo {
     HKL layout = 0;
     bool enabled = true;
+    bool fix_ralt = false;
     CHotKey WinHotKey;
     CHotKeyList hotkey;
 };
@@ -208,7 +176,6 @@ public:
     UiLang uiLang = UiLang::rus;
 
     bool fixAltCtrl = false;
-    HKL lay_to_fix_alt_ctrl = (HKL)0x4090409;
     bool isMonitorAdmin = false;
     bool isTryOEM2 = true;
     bool fDbgMode              = false;
@@ -239,6 +206,7 @@ public:
 
     std::generator < std::tuple<HotKeyType, const CHotKeyList&, bool>> All_hot_keys() const {
         for (const auto& it : hotkeysList) {
+            if (it.hkId == hk_CycleLang_win_hotkey) continue;
             co_yield { it.hkId, it.keys, it.fNeedSavedWord };
         }
         int i = -1;
@@ -246,6 +214,13 @@ public:
             i++;
             co_yield{ (HotKeyType)(hk_SetLayout_flag | i), it.hotkey, false };
         }
+    }
+
+    HKL GetLayToFix() const {
+        for (const auto& it : layouts_info) {
+            if (it.fix_ralt) return it.layout;
+        }
+        return 0;
     }
 
 

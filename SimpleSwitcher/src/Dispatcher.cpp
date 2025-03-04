@@ -348,6 +348,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 						&& curk.HasKey(VK_CONTROL, false)
 						&& !curk.IsKnownMods(curk.ValueKey())
 						&& conf_get()->fixAltCtrl
+						&& conf_get()->GetLayToFix() != 0
 						) {
 						LOG_INFO_1(L"fix ctrl+alt");
 						MainWorkerMsg msg;

@@ -1221,7 +1221,7 @@ TStatus Hooker::ClearModsBySend(CHotKey key)
 
 TStatus Hooker::FixCtrlAlt(CHotKey key) {
 
-	auto lay = conf_get()->lay_to_fix_alt_ctrl;
+	auto lay = conf_get()->GetLayToFix();
 	if (lay == 0) {
 		RETURN_SUCCESS;
 	}

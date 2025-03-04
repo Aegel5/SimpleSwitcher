@@ -101,12 +101,23 @@ public:
 
             m_notebook2->SetSelection(0);
 
-            //BindHotCtrl(m_textLastword, hk_RevertLastWord);
-            //BindHotCtrl(m_textSeveralWords, hk_RevertCycle);
-            //BindHotCtrl(m_textSelected, hk_RevertSel);
-            //BindHotCtrl(m_textCycleLay, hk_CycleCustomLang);
-            //BindHotCtrl(m_textcapsgen, hk_CapsGenerate);
-            //BindHotCtrl(m_text_sel_toupper, hk_toUpperSelected);
+            BindCheckbox(m_checkBoxFixRAlt, []() {return conf_get()->fixAltCtrl; }, [](bool val) {
+                auto conf = conf_copy();
+                conf->fixAltCtrl = val;
+                conf_set(conf);
+                });
+
+            BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get()->AlternativeLayoutChange; }, [](bool val) {
+                auto conf = conf_copy();
+                conf->AlternativeLayoutChange = val;
+                conf_set(conf);
+                });
+
+            BindCheckbox(m_checkBoxAllowInjected, []() {return conf_get()->AllowRemoteKeys; }, [](bool val) {
+                auto conf = conf_copy();
+                conf->AllowRemoteKeys = val;
+                conf_set(conf);
+                });
 
             updateBools();
 
@@ -163,32 +174,15 @@ private:
         return -1;
     }
 
+    void BindCheckbox(wxCheckBox* elem, auto get, auto set) {
+        elem->SetValue(get());
+        elem->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED,
+            [elem,&set](wxCommandEvent& ev) {
+                set(elem->GetValue());
+            }
+        );
 
-
-    //void BindHotCtrl(wxTextCtrl* elem, HotKeyType type) {
-
-    //    elem->SetClientData((void*)type);
-
-    //    elem->SetEditable(false);
-    //    auto key = conf_get()->GetHk(type).keys.key();
-    //    elem->SetValue(key.ToString());
-
-    //    //auto sizer = elem->GetSizer();
-    //    //auto size = sizer->GetSize();
-    //    //return;
-    //    auto par  = elem->GetParent();
-    //    //auto sizer = wxDynamicCast(par, wxBoxSizer);
-    //    auto* btn = wxDynamicCast(par->GetChildren()[getChildIndex(elem)+1], wxButton);
-    //    if (btn == nullptr) {
-    //        return;
-    //    }
-    //    btn->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainWnd::onHotKeyChange_btn), NULL, this);
-
-
-    //    //elem->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
-    //    //elem->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(MainWnd::onHotKeyChange), NULL, this);
-
-    //}
+    }
 
     void onExitReqest(wxCloseEvent& event) {
 
@@ -296,8 +290,6 @@ private:
         m_checkBoxDisablAcc->SetValue(conf->disableAccessebility);
         m_checkDebuglog->SetValue(conf->fDbgMode);
         m_checkBoxShowFlags->SetValue(conf->showFlags);
-        m_checkBoxAllowInjected->SetValue(conf->AllowRemoteKeys);
-        m_checkBoxAlterantiveLayoutChange->SetValue(conf->AlternativeLayoutChange);
     }
 
     virtual void onEnableLog(wxCommandEvent& event)
@@ -318,16 +310,6 @@ private:
     virtual void onClearFormat(wxCommandEvent& event) {
         auto conf = conf_copy();
         conf->fClipboardClearFormat = event.IsChecked();
-        conf_set(conf);
-    }
-    virtual void onAllowInject(wxCommandEvent& event) { 
-        auto conf = conf_copy();
-        conf->AllowRemoteKeys = event.IsChecked();
-        conf_set(conf);
-    }
-    virtual void onAlternative(wxCommandEvent& event) {
-        auto conf = conf_copy();
-        conf->AlternativeLayoutChange = event.IsChecked();
         conf_set(conf);
     }
 
@@ -483,11 +465,7 @@ private:
             wxMessageBox(_("Will be applied after PC reboot"));
     }
 
-    //void onHotKeyChange_btn(wxCommandEvent& ev) {
-    //    auto btn      = wxDynamicCast(ev.GetEventObject(), wxButton);
-    //    auto* edit_bx = wxDynamicCast(btn->GetParent()->GetChildren()[getChildIndex(btn)-1], wxTextCtrl);
-    //    onHotKey_ForEditBox(edit_bx);
-    //}
+
 
     //void onHotKey_ForEditBox(wxTextCtrl* obj) {
     //    if (!obj)

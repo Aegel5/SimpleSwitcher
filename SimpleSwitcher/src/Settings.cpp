@@ -1,23 +1,8 @@
 ﻿#include "stdafx.h"
-
 #include "Settings.h"
-//#include "LuaConfig.h"
-//#include "utils/parsecfg.h"
-
-//#include "extern/rapidjson/document.h"
-
 #include "extern/json.hpp"
 
 using json = nlohmann::json;
-
-//using namespace rapidjson;
-
-//TStatus UserConf::Load2() {
-//
-//
-//
-//    RETURN_SUCCESS;
-//}
 
 
 void SettingsGui::GenerateListHK()
@@ -132,6 +117,7 @@ void to_json(json& j, const LayoutInfo& p) {
     j["hotkey"] = p.hotkey.keys;
     j["win_hotkey"] = p.WinHotKey;
     j["layout"] = p.layout;
+    j["fix_ralt"] = p.fix_ralt;
 }
 
 void from_json(const json& j, LayoutInfo& p) {
@@ -141,6 +127,8 @@ void from_json(const json& j, LayoutInfo& p) {
 
         if (j.contains("enabled"))
             j.at("enabled").get_to(p.enabled);
+        if (j.contains("fix_ralt"))
+            j.at("fix_ralt").get_to(p.fix_ralt);
         if (j.contains("hotkey"))
             p.hotkey = j["hotkey"];
         if(j.contains("win_hotkey"))
@@ -166,8 +154,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     config_version,
     layouts_info, 
     time_debug_log_last_enabled,
-    fixAltCtrl,
-    lay_to_fix_alt_ctrl
+    fixAltCtrl
     )
     
 
