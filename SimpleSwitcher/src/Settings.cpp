@@ -55,11 +55,17 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { 
-            CHotKey(VK_SHIFT, VK_SHIFT), 
-            CHotKey(VK_LCONTROL, VK_SPACE) };
+        set.def_list = { CHotKey(VK_SHIFT, VK_SHIFT), CHotKey(VK_LCONTROL, VK_SPACE) };
         set.gui_text = _(L"Cycle change layout").wc_str();
         AddHotKey(hk_CycleCustomLang, set);
+    }
+
+    {
+        CHotKeySet set;
+        set.def_list = { CHotKey(VK_LMENU, VK_SHIFT), CHotKey(VK_CONTROL, VK_SHIFT) };
+        set.gui_text = _(L"Cycle change layout (win hotkey)").wc_str();
+        set.fUseDef = true;
+        AddHotKey(hk_CycleLang_win_hotkey, set);
     }
 
 
@@ -157,7 +163,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     uiLang,
     AllowRemoteKeys,
     AlternativeLayoutChange,
-    SystemLayoutChange,
     config_version,
     layouts_info, 
     time_debug_log_last_enabled,

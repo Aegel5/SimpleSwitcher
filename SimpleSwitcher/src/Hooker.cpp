@@ -1113,7 +1113,7 @@ TStatus Hooker::SwitchLangByEmulate(HKL lay)
 {
 	InputSender inputSender;
 
-	CHotKey altshift = conf_get()->SystemLayoutChange;
+	CHotKey altshift = conf_get()->GetHk(hk_CycleLang_win_hotkey).keys.key();
 
 	if ((int)lay != HKL_NEXT) {
 		auto info = conf_get()->GetLayoutInfo(lay);

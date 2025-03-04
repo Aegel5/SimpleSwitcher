@@ -26,6 +26,8 @@ enum HotKeyType : TUInt32
 
     hk_CycleCustomLang = 10,
 
+    hk_CycleLang_win_hotkey = 11,
+
     //hk_ChangeCase = 11,
 
     hk_ScrollGenerate = 12,
@@ -54,6 +56,7 @@ inline const char* HotKeyTypeName(HotKeyType hk_type)
 	case hk_RevertSel: return "hk_RevertSelelected";
 	case hk_CapsGenerate:return "hk_EmulateCapsLock";
 	case hk_CycleCustomLang:return "hk_CycleSwitchLayout";
+	case hk_CycleLang_win_hotkey:return "hk_CycleLang_win_hotkey";
 	case hk_ScrollGenerate:return "hk_EmulateScrollLock";
     case hk_toUpperSelected:    return "hk_toUpperSelected";
 	default: return "hk_Unknown";
@@ -134,13 +137,6 @@ inline TStatus GetCurLayRequest() {
 using TStrList = std::vector<std::wstring>;
 
 
-//struct UserConf
-//{
-//
-//
-//    TStatus Load2();
-//};
-
 struct LayoutInfo {
     HKL layout = 0;
     bool enabled = true;
@@ -165,8 +161,6 @@ public:
     }
 
     TInt64 time_debug_log_last_enabled = 0;
-
-    CHotKey SystemLayoutChange { VK_LMENU, VK_SHIFT };
 
     std::vector<LayoutInfo> layouts_info;
     bool AllLayoutEnabled() const {

@@ -574,10 +574,6 @@ private:
             m_gridHotKeys->SetRowLabelValue(i, it.gui_text);
             m_gridHotKeys->SetCellValue(i, 0, L" " + it.keys.key().ToString());
         }
-        i++;
-        m_gridHotKeys->AppendRows();
-        m_gridHotKeys->SetRowLabelValue(i, conf_get()->GetHk(hk_CycleCustomLang).gui_text + wxString(" (Win hotkey)"));
-        m_gridHotKeys->SetCellValue(i, 0, L" " + conf_get()->SystemLayoutChange.ToString());
 
         m_gridHotKeys->SetRowLabelSize(wxGRID_AUTOSIZE);
         m_gridHotKeys->AutoSizeRows();

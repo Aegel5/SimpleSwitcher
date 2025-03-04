@@ -141,7 +141,7 @@ struct CurStateWrapper {
 			// больше не надо?????
 			//else {
 				CHotKey hk_save = state;
-				state.Add3(vkCode, CHotKey::ADDKEY_CHECK_EXIST);
+				state.Add3(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY); // todo - ADDKEY_ENSURE_ONE_VALUEKEY - возможно перезатерание.
 				times[vkCode] = GetTickCount64() + 10000;
 				if (state.Compare(hk_save))
 				{
