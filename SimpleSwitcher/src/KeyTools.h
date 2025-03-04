@@ -38,37 +38,37 @@ inline TStatus ClearMods()
 	RETURN_SUCCESS;
 }
 
-inline TStatus RestoreMods(CHotKey key)
-{
-	//SW_LOG_INFO_2(L"RestoreMods for key %s", key.ToString().c_str());
-
-	BYTE buf[256];// = {0};
-	IFW_RET(GetKeyboardState(buf));
-
-	CHotKey keyAdded;
-	for (TKeyCode k : key)
-	{
-		if (!CHotKey::IsKnownMods(k))
-			continue;
-		SHORT res = GetAsyncKeyState(k);
-		//SW_LOG_INFO_2(L"GetAsyncKeyState for key %s = 0x%x", CHotKey::ToString(k).c_str(), res);
-		if (res & 0x8000)
-		{
-			if (k >= SW_ARRAY_SIZE(buf))
-				IFS_RET(SW_ERR_BUFFER_TOO_SMALL);
-
-			buf[k] &= 0x8000;
-			keyAdded.Add(k);
-
-			//SW_LOG_INFO_2(L"Add key %s to down after input", CHotKey::ToString(k).c_str());
-
-		}
-	}
-
-	IFW_RET(SetKeyboardState(buf));
-
-	RETURN_SUCCESS;
-}
+//inline TStatus RestoreMods(CHotKey key)
+//{
+//	//SW_LOG_INFO_2(L"RestoreMods for key %s", key.ToString().c_str());
+//
+//	BYTE buf[256];// = {0};
+//	IFW_RET(GetKeyboardState(buf));
+//
+//	CHotKey keyAdded;
+//	for (TKeyCode k : key)
+//	{
+//		if (!CHotKey::IsKnownMods(k))
+//			continue;
+//		SHORT res = GetAsyncKeyState(k);
+//		//SW_LOG_INFO_2(L"GetAsyncKeyState for key %s = 0x%x", CHotKey::ToString(k).c_str(), res);
+//		if (res & 0x8000)
+//		{
+//			if (k >= SW_ARRAY_SIZE(buf))
+//				IFS_RET(SW_ERR_BUFFER_TOO_SMALL);
+//
+//			buf[k] &= 0x8000;
+//			keyAdded.Add(k);
+//
+//			//SW_LOG_INFO_2(L"Add key %s to down after input", CHotKey::ToString(k).c_str());
+//
+//		}
+//	}
+//
+//	IFW_RET(SetKeyboardState(buf));
+//
+//	RETURN_SUCCESS;
+//}
 inline void AnalizeProblemByName(std::wstring& sPath, std::wstring& sProc, bool& fPostNotWork, bool& fDels)
 {
 	LOG_INFO_3(L"AnalizeProblemByName spath=%s, sproc=%s", sPath.c_str(), sProc.c_str());

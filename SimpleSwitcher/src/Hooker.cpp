@@ -243,7 +243,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	for (const auto& [hkId, keys, _] : conf->All_hot_keys())
 	{
 		CHotKey key = keys.key();
-		if (m_curKeyState.Compare(key, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP)))
+		if (m_curKeyState.Compare(key, CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP))
 		{
 			auto s1 = m_curKeyState.ToString();
 			auto s2 = key.ToString();

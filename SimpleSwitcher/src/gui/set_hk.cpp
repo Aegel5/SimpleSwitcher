@@ -38,7 +38,7 @@ public:
         g_hotkeyWndOpened++;
         //SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxRESIZE_BORDER);
 
-        key = info.keys.key();
+        set_key(info.keys.key());
 
         std::vector<wxString> choices = { "Custom" };
         for (const auto& def : info.def_list) {
@@ -53,22 +53,29 @@ public:
         IFW_LOG(hook.IsValid());
     }
     CHotKey key;
-
-private:
-    CAutoHHOOK hook;
-    void updateField()
-    {
+    CHotKey cur_key() {
         auto k2 = key;
         if (!m_checkBox12->GetValue()) {
             k2.NormalizeAll();
         }
-        m_textKey->SetValue(k2.ToString());
+        return k2;
+    }
+private:
+
+    void set_key(CHotKey k) {
+        key = k;
+        m_checkBox12->SetValue(key.Has_left_right());
+    }
+    CAutoHHOOK hook;
+    void updateField()
+    {
+        m_textKey->SetValue(cur_key().ToString());
         m_checkBox13->SetValue(key.GetKeyup());
         m_choiceKey->SetSelection(0);
 
         for(int i = 0; i < info.def_list.size(); i++){
             auto& def = info.def_list[i];
-            if (key.Compare(def, CHotKey::COMPARE_CHECK_LEFT_RIGHT_FLAG)) {
+            if (cur_key().Compare(def, CHotKey::COMPARE_STRICK_MODIFIER)) {
                 m_choiceKey->SetSelection(i+1);
                 break;
             }
@@ -82,10 +89,10 @@ private:
         auto cur = m_choiceKey->GetSelection();
 
         if (cur == 0) {
-            key.Clear();
+            set_key({});
         }
         else {
-            key = info.def_list[cur-1];
+            set_key(info.def_list[cur - 1]);
         }
 
         updateField();
@@ -93,7 +100,7 @@ private:
 
     virtual void onclear(wxCommandEvent& event)
     {
-        key.Clear();
+        set_key({});
         updateField();
     }
     virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override
@@ -103,7 +110,7 @@ private:
             if (key.HasKey(cur, false)) {
                 key.Remove(cur);
             } else {
-                key.Add(cur, CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
+                key.Add3(cur, CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY | CHotKey::ADDKEY_CHECK_MODS | CHotKey::ADDKEY_CHECK_EXIST );
             }
             updateField();
             return true;
@@ -122,9 +129,6 @@ private:
     }
     virtual void onOk(wxCommandEvent& event)
     {
-        if (!m_checkBox12->GetValue()) {
-            key.NormalizeAll();
-        }
         this->EndModal(wxID_OK);
     }
     virtual void onCancel(wxCommandEvent& event)
@@ -137,7 +141,7 @@ private:
 bool ChangeHotKey2(wxFrame* frame, CHotKeySet set, CHotKey& key) {
     HotKeyDlg dlg(set, frame);
     auto res = dlg.ShowModal();
-    key = dlg.key;
+    key = dlg.cur_key();
     return (res == wxID_OK);
 }
 

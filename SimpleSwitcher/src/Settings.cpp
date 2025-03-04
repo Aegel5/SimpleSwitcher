@@ -55,7 +55,9 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_SHIFT, VK_SHIFT), CHotKey(VK_LCONTROL, VK_SPACE) };
+        set.def_list = { 
+            CHotKey(VK_SHIFT, VK_SHIFT), 
+            CHotKey(VK_LCONTROL, VK_SPACE) };
         set.gui_text = _(L"Cycle change layout").wc_str();
         AddHotKey(hk_CycleCustomLang, set);
     }

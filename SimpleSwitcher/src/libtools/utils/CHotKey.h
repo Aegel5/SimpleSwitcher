@@ -228,21 +228,22 @@ public:
 	CHotKey() { Clear(); }
 	explicit CHotKey(TKeyCode key)
 	{
-		Clear().Add(key);
+		Clear().Add3(key);
 	}
 	CHotKey(TKeyCode key1, TKeyCode key2)
 	{
-		Clear().Add(key1, ADDKEY_ORDERED).Add(key2, ADDKEY_ORDERED);
+		Clear().Add3(key1).Add3(key2);
 	}
 	CHotKey(TKeyCode key1, TKeyCode key2, TKeyCode key3)
 	{
-		Clear().Add(key1, ADDKEY_ORDERED).Add(key2, ADDKEY_ORDERED).Add(key3, ADDKEY_ORDERED);
+		Clear().Add3(key1).Add3(key2).Add3(key3);
 	}
 	enum 
 	{
 		ADDKEY_NORMAL = 0,
-		ADDKEY_ORDERED = 0x1,
-		ADDKEY_ENSURE_ONE_VALUEKEY = 0x2,
+		ADDKEY_CHECK_EXIST = 0b1,
+		ADDKEY_ENSURE_ONE_VALUEKEY = 0b10,
+		ADDKEY_CHECK_MODS = 0b100,
 	};
 	CHotKey& Simple_Append(TKeyCode key) {
 		if (size < c_MAX)
@@ -254,22 +255,23 @@ public:
 		keys[0] = key;
 		return *this;
 	}
-	CHotKey& Add(TKeyCode key, int flags = ADDKEY_NORMAL)
+	CHotKey& Add3(TKeyCode key, int flags = ADDKEY_NORMAL)
 	{
-		for (TKeyCode k : *this)
-		{
-			if (CompareKeys(k, key, true))
-			{
-				if (IsCommonMods(k) && !IsCommonMods(key))
+		if (TestFlag(flags, ADDKEY_CHECK_EXIST)) {
+			for (TKeyCode k : *this) {
+				if (CompareKeys(k, key, true))
 				{
-					// rewrite common key
-					Remove(k);
-					break;
-				}
-				else
-				{
-					// already exists
-					return *this;
+					if (IsCommonMods(k) && !IsCommonMods(key))
+					{
+						// rewrite common key
+						Remove(k);
+						break;
+					}
+					else
+					{
+						// already exists
+						return *this;
+					}
 				}
 			}
 		}
@@ -279,11 +281,7 @@ public:
 			RemoveAllNoMods();
 		}
 
-		if (TestFlag(flags, ADDKEY_ORDERED))
-		{
-			Simple_Append(key);
-		}
-		else
+		if (TestFlag(flags, ADDKEY_CHECK_MODS))
 		{
 			if (size == 0)
 			{
@@ -302,6 +300,11 @@ public:
 				}
 			}
 		}
+		else
+		{
+			Simple_Append(key);
+		}
+
 		return *this;
 	}
 	bool Remove(TKeyCode key)
@@ -401,10 +404,9 @@ public:
 		COMPARE_IGNORE_ORDER_VALUEKEY = 0x1,
 		COMPARE_IGNORE_HOLD = 0x2,
 		COMPARE_IGNORE_KEYUP = 0x4,
-
-		COMPARE_CHECK_LEFT_RIGHT_FLAG = 0x8,
+		COMPARE_STRICK_MODIFIER = 0x8,
 	};
-	bool Compare (const CHotKey& other, TCompareFlags flags = COMPARE_NORMAL) const
+	bool Compare (const CHotKey& other, int flags = COMPARE_NORMAL) const
 	{
 		if(size != other.size)
 			return false;
@@ -415,17 +417,17 @@ public:
 		if (!TestFlag(flags, COMPARE_IGNORE_KEYUP) && m_keyup != other.m_keyup)
 			return false;
 
-		bool fCheckLeftRight = TestFlag(flags, COMPARE_CHECK_LEFT_RIGHT_FLAG);
+		bool strick_modifier = TestFlag(flags, COMPARE_STRICK_MODIFIER);
 
 		if (TestFlag(flags, COMPARE_IGNORE_ORDER_VALUEKEY) || m_ignoreOrderValueKey || other.m_ignoreOrderValueKey)
 		{
-			return CompareIgnoreOrder(keys, other.keys, size, fCheckLeftRight);
+			return CompareIgnoreOrder(keys, other.keys, size, strick_modifier);
 		}
 		else
 		{
-			if (!CompareKeys(keys[0], other.keys[0], fCheckLeftRight))
+			if (!CompareKeys(keys[0], other.keys[0], strick_modifier))
 				return false;
-			return CompareIgnoreOrder(keys + 1, other.keys + 1, size - 1, fCheckLeftRight);
+			return CompareIgnoreOrder(keys + 1, other.keys + 1, size - 1, strick_modifier);
 		}
 	}
 	bool IsEmpty() const {return Size() == 0;}
@@ -520,8 +522,10 @@ public:
 		SwZeroMemory(*this);
 		return *this;
 	}
-	bool operator== ( CHotKey& other) {return Compare(other);}
-	bool operator!= ( CHotKey& other) { return !(*this == other); }
+
+	bool operator== (const CHotKey& other) = delete;
+	bool operator!= (const CHotKey& other) = delete;
+
 	void NormalizeAll() {
 		for (int i = 0; i < Size(); i++)
 		{
@@ -639,22 +643,22 @@ private:
 	}
 
 
-	bool CompareKeys (TKeyCode k1, TKeyCode k2, bool checkLeftRight) const
-	{
+	bool CompareKeys (TKeyCode k1, TKeyCode k2, bool strick_modifier) const	{
+
+		if (strick_modifier) {
+			return k1 == k2;
+		}
+
 		TKeyCode k1norm = Normalize(k1);
 		TKeyCode k2norm = Normalize(k2);
 
 		if(k1norm != k2norm)
 			return false;
 
-		if(checkLeftRight)
-		{
-			if (IsCommonMods(k1) || IsCommonMods(k2))
-				return true;
-			return k1 == k2;
-		}
+		if (IsCommonMods(k1) || IsCommonMods(k2))
+			return true;
 
-		return true;
+		return k1 == k2;
 	}
 	bool IsCommonMods(TKeyCode key) const
 	{
@@ -676,8 +680,6 @@ private:
 	};
 	TUInt8 size;
 	TKeyCode keys[c_MAX];
-
-
 };
 
 inline CHotKey ParseStringHK(std::wstring& s)
