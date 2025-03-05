@@ -198,20 +198,20 @@ LRESULT CALLBACK LowLevelMouseProc(
 	return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
 
-LRESULT CALLBACK KeyboardProc(
-	_In_ int    nCode,
-	_In_ WPARAM wParam,
-	_In_ LPARAM lParam
-)
-{
-	if (nCode < 0) {
-		return CallNextHookEx(0, nCode, wParam, lParam);
-	}
-
-	DWORD key = DWORD(wParam);
-
-	return 0;
-}
+//LRESULT CALLBACK KeyboardProc(
+//	_In_ int    nCode,
+//	_In_ WPARAM wParam,
+//	_In_ LPARAM lParam
+//)
+//{
+//	if (nCode < 0) {
+//		return CallNextHookEx(0, nCode, wParam, lParam);
+//	}
+//
+//	DWORD key = DWORD(wParam);
+//
+//	return 0;
+//}
 
 namespace {
 	CurStateWrapper curKey;

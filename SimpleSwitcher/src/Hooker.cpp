@@ -760,8 +760,7 @@ HKL Hooker::getNextLang () {
 
     HKL toSet = 0;
 	const auto& lst = conf->layouts_info.info;
-	int i = -1;
-	for(const auto& it : lst){
+	for(int i = -1; const auto& it : lst){
 		i++;
         if (lay == lst[i].layout) {
             if (i == lst.size() - 1) {

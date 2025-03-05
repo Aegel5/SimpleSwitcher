@@ -31,6 +31,18 @@ struct CHotKeyList {
     const CHotKey& key() const {
         return keys[0];
     }
+
+    std::wstring ToString() const {
+        std::wstring res;
+        for (int i = -1; const auto & it : keys) {
+            i++;
+            if (i != 0) {
+                res += L", ";
+            }
+            res += it.ToString();
+        }
+        return res;
+    }
 };
 
 struct CHotKeySet

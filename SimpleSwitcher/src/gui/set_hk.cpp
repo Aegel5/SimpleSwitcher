@@ -19,12 +19,13 @@ LRESULT CALLBACK LowLevelKeyboardProc(_In_ int nCode, _In_ WPARAM wParam, _In_ L
             //	SW_LOG_INFO_2(L"%S 0x%x", GetKeyStateName(keyState), vkKey);
             //}
 
-            if (keyState == KEY_STATE_DOWN) {
+            //if (keyState == KEY_STATE_DOWN) {
                 PostMessage(curwnd, c_MSG_TypeHotKey, wParam, (WPARAM)vkKey);
-            }
+            //}
         }
     }
-    return CallNextHookEx(0, nCode, wParam, lParam);
+    return 1;
+    //return CallNextHookEx(0, nCode, wParam, lParam);
 }
 
 class HotKeyDlg : public MyDialog1
@@ -53,6 +54,7 @@ public:
         IFW_LOG(hook.IsValid());
     }
     CHotKey key;
+    CHotKey state;
     CHotKey cur_key() {
         auto k2 = key;
         if (!m_checkBox12->GetValue()) {
@@ -107,14 +109,13 @@ private:
     {
         if (nMsg == c_MSG_TypeHotKey) {
             auto cur = (TKeyCode)lParam;
-            if (key.HasKey(cur,true)) {
-                key.Remove(cur);
-            }
-            else if (key.HasKey(cur, false)) {
-                key.Remove(cur,false);
+            KeyState keyState = GetKeyState(wParam);
+            if (keyState == KEY_STATE_DOWN) {
+                state.Add3(cur, CHotKey::ADDKEY_CHECK_EXIST);
+                key = state;
             }
             else {
-                key.Add3(cur, CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY | CHotKey::ADDKEY_CHECK_MODS | CHotKey::ADDKEY_CHECK_EXIST );
+                state.Remove(cur);
             }
             updateField();
             return true;

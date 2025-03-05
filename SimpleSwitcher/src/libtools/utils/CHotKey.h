@@ -60,6 +60,8 @@ public:
 		Set(0x38, L"8");
 		Set(0x39, L"9");
 
+		Set(0x5D, L"MENU");
+
 		Set(VK_SHIFT, L"Shift");
 		Set(VK_LSHIFT, L"LShift");
 		Set(VK_RSHIFT, L"RShift");

@@ -216,8 +216,8 @@ private:
 
     void InitComboFix() {
         m_choiceFixRalt->Clear();
-        int i = -1;
-        for (auto const& it : conf_get()->layouts_info.info) {
+        
+        for (int i = -1; auto const& it : conf_get()->layouts_info.info) {
             i++;
             m_choiceFixRalt->AppendString(Utils::GetNameForHKL(it.layout));
             if (it.layout == conf_get()->fixRAlt_lay) {
@@ -540,12 +540,12 @@ private:
 
         ClearGrid(m_gridHotKeys);
 
-        int i = -1;
-        for (const auto& it : conf_get()->hotkeysList) {
+        
+        for (int i = -1; const auto& it : conf_get()->hotkeysList) {
             i++;
             m_gridHotKeys->AppendRows();
             m_gridHotKeys->SetRowLabelValue(i, it.gui_text);
-            m_gridHotKeys->SetCellValue(i, 0, L" " + it.keys.key().ToString());
+            m_gridHotKeys->SetCellValue(i, 0, L" " + it.keys.ToString());
         }
 
         m_gridHotKeys->SetRowLabelSize(wxGRID_AUTOSIZE);
@@ -617,8 +617,7 @@ private:
         ClearGrid(m_gridLayouts);
 
         // отобразим в gui
-        int i = -1;
-        for (const auto& it: conf_get()->layouts_info.info) {
+        for (int i = -1; const auto& it: conf_get()->layouts_info.info) {
             i++;
             auto name = Utils::GetNameForHKL(it.layout);
             m_gridLayouts->AppendRows();
@@ -626,8 +625,8 @@ private:
             if (it.enabled) {
                 m_gridLayouts->SetCellValue(i, 0, "X");
             }
-            m_gridLayouts->SetCellValue(i, 1, it.hotkey.key().ToString2());
-            m_gridLayouts->SetCellValue(i, 2, it.WinHotKey.ToString2());
+            m_gridLayouts->SetCellValue(i, 1, it.hotkey.ToString());
+            m_gridLayouts->SetCellValue(i, 2, it.WinHotKey.ToString());
         }
         //m_gridLayouts->SetRowLabelSize(wxGRID_AUTOSIZE);
         m_gridLayouts->SetRowLabelSize(m_gridHotKeys->GetRowLabelSize());

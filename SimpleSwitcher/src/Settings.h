@@ -84,8 +84,7 @@ public:
             }
 
         }
-        int i = -1;
-        for (const auto& it : layouts_info.info) {
+        for (int i = -1; const auto& it : layouts_info.info) {
             i++;
             for (const auto& key : it.hotkey.keys) {
                 co_yield{ (HotKeyType)(hk_SetLayout_flag | i), key };

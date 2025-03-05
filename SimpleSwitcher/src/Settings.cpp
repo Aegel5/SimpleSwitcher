@@ -14,15 +14,15 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_PAUSE), CHotKey(VK_CAPITAL), CHotKey(VK_F24) };
-        set.fUseDef        = true;
+        set.def_list = { CHotKey(VK_CAPITAL), CHotKey(VK_PAUSE), CHotKey(VK_F24) };
+        set.fUseDef = true;
         set.gui_text = _(L"Change layout for last word").wc_str();
         AddHotKey(hk_RevertLastWord, set);
     }
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_SHIFT, VK_PAUSE), CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_F24) };
+        set.def_list = { CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_PAUSE), CHotKey(VK_SHIFT, VK_F24) };
         set.fUseDef = true;
         set.gui_text = _(L"Change layout for last several words").wc_str();
         AddHotKey(hk_RevertCycle, set);
@@ -30,7 +30,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_PAUSE), CHotKey(VK_CAPITAL), CHotKey(VK_F24) };
+        set.def_list = { {VK_LMENU, VK_CAPITAL}, CHotKey(VK_LMENU, VK_PAUSE), CHotKey(VK_PAUSE),, CHotKey(VK_LMENU,VK_F24) };
         set.fUseDef = true;
         set.gui_text = _(L"Change layout for selected text").wc_str();
         AddHotKey(hk_RevertSel, set);
@@ -38,7 +38,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_SHIFT, VK_SHIFT), CHotKey(VK_LCONTROL, VK_SPACE) };
+        set.def_list = { {VK_LWIN}, CHotKey(VK_LCONTROL, VK_SPACE) };
         set.gui_text = _(L"Cycle change layout").wc_str();
         AddHotKey(hk_CycleCustomLang, set);
     }
@@ -62,7 +62,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_SCROLL), CHotKey(VK_F23) };
+        set.def_list = { CHotKey(VK_SCROLL), {VK_PAUSE}, CHotKey(VK_F23) };
         set.gui_text = _(L"Selected text to UPPER/lower case").wc_str();
         AddHotKey(hk_toUpperSelected, set);
     }
