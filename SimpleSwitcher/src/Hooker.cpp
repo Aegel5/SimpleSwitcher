@@ -872,7 +872,7 @@ HKL Hooker::getNextLang () {
 	auto conf = conf_get();
 
 	// если все enabled - то обычная циклическая смена
-	if (conf->AllLayoutEnabled()) {
+	if (conf->layouts_info.AllLayoutEnabled()) {
 		return result;
 	}
 
@@ -887,8 +887,10 @@ HKL Hooker::getNextLang () {
     }
 
     HKL toSet = 0;
-	const auto& lst = conf->layouts_info;
-    for (size_t i = 0; i < lst.size(); ++i) {
+	const auto& lst = conf->layouts_info.info;
+	int i = -1;
+	for(const auto& it : lst){
+		i++;
         if (lay == lst[i].layout) {
             if (i == lst.size() - 1) {
                 toSet = lst[0].layout;
@@ -966,13 +968,14 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
 		auto conf = conf_get();
 
-		if (i >= conf->layouts_info.size()) {
+		auto info = conf->layouts_info.GetLayoutIndex(i);
+		if (info == nullptr) {
 			LOG_WARN(L"not found hot key for set layout");
 			RETURN_SUCCESS;
 		}
 
         data.flags = SW_CLIENT_SetLang | SW_CLIENT_NO_WAIT_LANG;
-        data.lay   = conf->layouts_info[i].layout;
+        data.lay   = info->layout;
         IFS_RET(ProcessRevert(data));
 
         RETURN_SUCCESS;
@@ -1116,7 +1119,7 @@ TStatus Hooker::SwitchLangByEmulate(HKL lay)
 	CHotKey altshift = conf_get()->GetHk(hk_CycleLang_win_hotkey).keys.key();
 
 	if ((int)lay != HKL_NEXT) {
-		auto info = conf_get()->GetLayoutInfo(lay);
+		auto info = conf_get()->layouts_info.GetLayoutInfo(lay);
 		if (info == nullptr) {
 			LOG_WARN(L"not found lay info");
 			RETURN_SUCCESS;
@@ -1221,7 +1224,7 @@ TStatus Hooker::ClearModsBySend(CHotKey key)
 
 TStatus Hooker::FixCtrlAlt(CHotKey key) {
 
-	auto lay = conf_get()->GetLayToFix();
+	auto lay = conf_get()->layouts_info.GetLayToFix();
 	if (lay == 0) {
 		RETURN_SUCCESS;
 	}

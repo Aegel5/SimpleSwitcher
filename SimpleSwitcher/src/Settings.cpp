@@ -136,6 +136,14 @@ void from_json(const json& j, LayoutInfo& p) {
     }
 }
 
+void to_json(json& j, const LayoutInfoList& p) {
+    j = p.info;
+}
+
+void from_json(const json& j, LayoutInfoList& p) {
+    j.get_to(p.info);
+}
+
 
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(

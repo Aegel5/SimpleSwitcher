@@ -14,6 +14,8 @@
 
 #include <wx/taskbar.h>
 
+#include "wxUtils.h"
+
 
 
 //extern bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key);
@@ -98,6 +100,7 @@ public:
 
             m_staticTextBuildDate->SetLabelText(std::format(L"Built on '{}'", _SW_ADD_STR_UT(__DATE__)));
 
+            SyncLayouts();
 
             m_notebook2->SetSelection(0);
 
@@ -125,6 +128,39 @@ public:
                 conf_set(conf);
                 });
 
+            BindCheckbox(m_checkBoxWorkInAdmin, []() {return conf_get()->isMonitorAdmin; }, [this](bool val) {
+                auto conf = conf_copy();
+                conf->isMonitorAdmin = val;
+                conf_set(conf);
+                updateAutoStart();
+                updateEnable();
+                });
+
+            BindChoice(m_comboUiLang, [](wxChoice* elem) {
+                    elem->Clear();
+                    elem->AppendString(_("Russian"));
+                    elem->AppendString(_("English"));
+                    elem->SetSelection((int)conf_get()->uiLang);
+                }, [](wxChoice* elem) {
+                    auto conf = conf_copy();
+                    conf->uiLang = (SettingsGui::UiLang)elem->GetSelection();
+                    conf_set(conf);
+                    wxMessageBox(_("Need restart program"));
+                    });
+
+            BindChoice(m_choiceFixRalt, [this](wxChoice* elem) {
+                InitComboFix();
+                }, [this](wxChoice* elem) {
+                    auto conf = conf_copy();
+                    int i = elem->GetSelection();
+                    if (i < conf->layouts_info.info.size()) {
+                        conf->layouts_info.ClearAllfix();
+                        conf->layouts_info.info[i].fix_ralt = true;
+                        conf_set(conf);
+                        InitComboFix();
+                    }
+                    });
+
             updateBools();
 
             updateAutoStart();
@@ -133,7 +169,6 @@ public:
 
             updateCapsTab();
             handleDisableAccess();
-            UpdateUiLang();
 
             if (myTray.IsAvailable()) {
                 trayTooltip = L"SimpleSwitcher";
@@ -143,7 +178,7 @@ public:
                 myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
                 myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
                 myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
-                for (const auto& it : conf_get()->layouts_info) {
+                for (const auto& it : conf_get()->layouts_info.info) {
                     myTray.AddLay(it.layout);
                     myTray.Bind(wxEVT_MENU, &MainWnd::onSetLay, this, Minimal_SetLay1);
                 }
@@ -180,15 +215,22 @@ private:
         return -1;
     }
 
-    void BindCheckbox(wxCheckBox* elem, auto get, auto set) {
-        elem->SetValue(get());
-        elem->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED,
-            [elem,&set](wxCommandEvent& ev) {
-                set(elem->GetValue());
+    void InitComboFix() {
+        m_choiceFixRalt->Clear();
+        for (auto const& it : conf_get()->layouts_info.info) {
+            m_choiceFixRalt->AppendString(Utils::GetNameForHKL(it.layout));
+        }
+        int i = -1;
+        for (auto const& it : conf_get()->layouts_info.info) {
+            i++;
+            if (it.fix_ralt) {
+                m_choiceFixRalt->SetSelection(i);
+                break;
             }
-        );
-
+        }
     }
+
+
 
     void onExitReqest(wxCloseEvent& event) {
 
@@ -290,7 +332,6 @@ private:
 
     void updateBools() {
         auto conf = conf_get();
-        m_checkBoxWorkInAdmin->SetValue(conf->isMonitorAdmin);
         m_checkBoxKeyDef->SetValue(conf->fEnableKeyLoggerDefence);
         m_checkBoxDisablAcc->SetValue(conf->disableAccessebility);
         m_checkDebuglog->SetValue(conf->fDbgMode);
@@ -365,7 +406,7 @@ private:
         int col = event.GetCol();
         int row = event.GetRow();
 
-        auto& lays = conf_get()->layouts_info;
+        auto& lays = conf_get()->layouts_info.info;
         if (row >= lays.size()) return;
         auto& data = lays[row];
 
@@ -377,14 +418,14 @@ private:
             set.keys = data.hotkey;
             if (ChangeHotKey2(this, set, newkey)) {
                 auto conf = conf_copy();
-                conf->layouts_info[row].hotkey.key() = newkey;
+                conf->layouts_info.info[row].hotkey.key() = newkey;
                 conf_set(conf);
                 FillLayoutsInfo();
             }
         }
         if (col == 0) {
             auto conf = conf_copy();
-            conf->layouts_info[row].enabled ^= 1;
+            conf->layouts_info.info[row].enabled ^= 1;
             //conf->Update_hk_from_layouts();
             conf_set(conf);
             FillLayoutsInfo();
@@ -398,7 +439,7 @@ private:
             set.keys.key() = data.WinHotKey;
             if (ChangeHotKey2(this, set, newkey)) {
                 auto conf = conf_copy();
-                conf->layouts_info[row].WinHotKey = newkey;
+                conf->layouts_info.info[row].WinHotKey = newkey;
                 conf_set(conf);
                 FillLayoutsInfo();
             }
@@ -498,22 +539,7 @@ private:
             wxMessageBox(_("Error while UpdateAutostartExplain: ") + e.what());
         }
     }
-    void onUiSelect(wxCommandEvent& event) override {
-        auto conf = conf_copy();
-        conf->uiLang = (SettingsGui::UiLang)m_comboUiLang->GetSelection();
-        conf_set(conf);
-        wxMessageBox(_("Need restart program"));
-    }
-    void UpdateUiLang() {
-        m_comboUiLang->Clear();
-        m_comboUiLang->AppendString(_("Russian"));
-        m_comboUiLang->AppendString(_("English"));
-        m_comboUiLang->SetSelection((int)conf_get()->uiLang);
-    }
-    void ClearGrid(wxGrid* grid) {
-        if (grid->GetNumberRows() > 0)
-            grid->DeleteRows(0, grid->GetNumberRows());
-    }
+
     void FillHotkeysInfo() {
 
         ClearGrid(m_gridHotKeys);
@@ -548,12 +574,13 @@ private:
             };
 
         auto info_copy = conf_get()->layouts_info;
+        auto& info = info_copy.info;
         bool was_changes = false;
 
         // удалим те, которых сейчас нет в системе
-        for (int i = (int)info_copy.size() - 1; i >= 0; i--) {
-            if (!has_system_layout(info_copy[i].layout)) {
-                info_copy.erase(info_copy.begin() + i);
+        for (int i = (int)info.size() - 1; i >= 0; i--) {
+            if (!has_system_layout(info[i].layout)) {
+                Utils::RemoveAt(info, i);
                 was_changes = true;
             }
         }
@@ -561,9 +588,21 @@ private:
         // добавим все новые
         for (int i = 0; i < all_lay_size; i++) {
             auto cur = all_lays[i];
-            if (!conf_get()->HasLayout(cur)) {
+            if (!info_copy.HasLayout(cur)) {
                 was_changes = true;
-                info_copy.push_back({ .layout = cur });
+                info.push_back({ .layout = cur });
+            }
+        }
+        // выставим fix ralt
+        int count = 0;
+        for (const auto& it : info) {
+            if (it.fix_ralt) count++;
+        }
+        if (count != 1) {
+            was_changes = true;
+            info_copy.ClearAllfix();
+            if (info.size() > 0) {
+                info[0].fix_ralt = true;
             }
         }
 
@@ -574,6 +613,9 @@ private:
             conf_set(conf);
         }
 
+
+
+
     }
     void FillLayoutsInfo() {
 
@@ -583,7 +625,7 @@ private:
 
         // отобразим в gui
         int i = -1;
-        for (const auto& it: conf_get()->layouts_info) {
+        for (const auto& it: conf_get()->layouts_info.info) {
             i++;
             auto name = Utils::GetNameForHKL(it.layout);
             m_gridLayouts->AppendRows();
@@ -692,13 +734,6 @@ public:
         Close(true);
     }
 
-    void onWorkInAdminCheck(wxCommandEvent& event) override {
-        auto conf = conf_copy();
-        conf->isMonitorAdmin = m_checkBoxWorkInAdmin->GetValue();
-        conf_set(conf);
-        updateAutoStart();
-        updateEnable();
-    }
     void onAutocheck(wxCommandEvent& event) override {
         if (conf_get()->isMonitorAdmin && !Utils::IsSelfElevated()) {
             m_checkAddToAutoStart->SetValue(!m_checkAddToAutoStart->GetValue());

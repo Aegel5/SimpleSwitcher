@@ -59,7 +59,7 @@ class MyFrame4 : public wxFrame
 		wxCheckBox* m_checkBoxClearForm;
 		wxCheckBox* m_checkBoxAllowInjected;
 		wxCheckBox* m_checkBoxFixRAlt;
-		wxChoice* m_choice5;
+		wxChoice* m_choiceFixRalt;
 		wxPanel* m_panel141;
 		wxGrid* m_gridHotKeys;
 		wxGrid* m_gridLayouts;
@@ -78,9 +78,7 @@ class MyFrame4 : public wxFrame
 		// Virtual event handlers, override them in your derived class
 		virtual void onEnable( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onAutocheck( wxCommandEvent& event ) { event.Skip(); }
-		virtual void onWorkInAdminCheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onShowFlags( wxCommandEvent& event ) { event.Skip(); }
-		virtual void onUiSelect( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onEnableLog( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onPrevent( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onDisableAccessebl( wxCommandEvent& event ) { event.Skip(); }
