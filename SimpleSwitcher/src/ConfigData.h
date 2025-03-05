@@ -83,7 +83,6 @@ struct CHotKeySet
 struct LayoutInfo {
     HKL layout = 0;
     bool enabled = true;
-    bool fix_ralt = false;
     CHotKey WinHotKey;
     CHotKeyList hotkey;
 };
@@ -100,11 +99,9 @@ struct LayoutInfoList {
         return true;
     }
     bool HasLayout(HKL lay) const {
-        for (const auto& it : info) {
-            if (it.layout == lay) return true;
-        }
-        return false;
+        return GetLayoutInfo(lay) != nullptr;
     }
+
     const LayoutInfo* GetLayoutInfo(HKL lay) const {
         for (const auto& it : info) {
             if (it.layout == lay)
@@ -115,16 +112,5 @@ struct LayoutInfoList {
     const LayoutInfo* GetLayoutIndex(int i) const {
         if (i >= info.size()) return nullptr;
         return &info[i];
-    }
-    void ClearAllfix() {
-        for (auto& it : info) {
-            it.fix_ralt = false;
-        }
-    }
-    HKL GetLayToFix() const {
-        for (const auto& it : info) {
-            if (it.fix_ralt) return it.layout;
-        }
-        return 0;
     }
 };

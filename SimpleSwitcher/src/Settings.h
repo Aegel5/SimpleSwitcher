@@ -54,7 +54,8 @@ public:
 
     UiLang uiLang = UiLang::rus;
 
-    bool fixAltCtrl = false;
+    bool fixRAlt = false;
+    HKL fixRAlt_lay = 0;
     bool isMonitorAdmin = false;
     bool isTryOEM2 = true;
     bool fDbgMode              = false;

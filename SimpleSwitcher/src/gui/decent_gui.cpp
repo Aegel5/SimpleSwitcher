@@ -104,9 +104,9 @@ public:
 
             m_notebook2->SetSelection(0);
 
-            BindCheckbox(m_checkBoxFixRAlt, []() {return conf_get()->fixAltCtrl; }, [](bool val) {
+            BindCheckbox(m_checkBoxFixRAlt, []() {return conf_get()->fixRAlt; }, [](bool val) {
                 auto conf = conf_copy();
-                conf->fixAltCtrl = val;
+                conf->fixRAlt = val;
                 conf_set(conf);
                 });
 
@@ -154,8 +154,7 @@ public:
                     auto conf = conf_copy();
                     int i = elem->GetSelection();
                     if (i < conf->layouts_info.info.size()) {
-                        conf->layouts_info.ClearAllfix();
-                        conf->layouts_info.info[i].fix_ralt = true;
+                        conf->fixRAlt_lay = conf->layouts_info.info[i].layout;
                         conf_set(conf);
                         InitComboFix();
                     }
@@ -217,15 +216,12 @@ private:
 
     void InitComboFix() {
         m_choiceFixRalt->Clear();
-        for (auto const& it : conf_get()->layouts_info.info) {
-            m_choiceFixRalt->AppendString(Utils::GetNameForHKL(it.layout));
-        }
         int i = -1;
         for (auto const& it : conf_get()->layouts_info.info) {
             i++;
-            if (it.fix_ralt) {
+            m_choiceFixRalt->AppendString(Utils::GetNameForHKL(it.layout));
+            if (it.layout == conf_get()->fixRAlt_lay) {
                 m_choiceFixRalt->SetSelection(i);
-                break;
             }
         }
     }
@@ -593,23 +589,23 @@ private:
                 info.push_back({ .layout = cur });
             }
         }
-        // выставим fix ralt
-        int count = 0;
-        for (const auto& it : info) {
-            if (it.fix_ralt) count++;
-        }
-        if (count != 1) {
+
+
+        if (info_copy.GetLayoutInfo(conf_get()->fixRAlt_lay) == nullptr) {
             was_changes = true;
-            info_copy.ClearAllfix();
-            if (info.size() > 0) {
-                info[0].fix_ralt = true;
-            }
         }
+
 
         if (was_changes) {
             // пересохраним если были изменения.
             auto conf = conf_copy();
             conf->layouts_info = info_copy;
+            if (conf->layouts_info.GetLayoutInfo(conf->fixRAlt_lay) == nullptr) {
+                conf->fixRAlt_lay = 0;
+            }
+            if (conf->fixRAlt_lay == 0 && conf->layouts_info.info.size() > 0) {
+                conf->fixRAlt_lay = conf->layouts_info.info[0].layout;
+            }
             conf_set(conf);
         }
 

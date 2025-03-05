@@ -1224,10 +1224,7 @@ TStatus Hooker::ClearModsBySend(CHotKey key)
 
 TStatus Hooker::FixCtrlAlt(CHotKey key) {
 
-	auto lay = conf_get()->layouts_info.GetLayToFix();
-	if (lay == 0) {
-		RETURN_SUCCESS;
-	}
+	auto lay = conf_get()->fixRAlt_lay;
 	auto curLay = CurLay();
 
 	// сбросим любые нажатые клавиши
