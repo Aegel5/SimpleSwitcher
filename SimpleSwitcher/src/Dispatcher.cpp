@@ -351,6 +351,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 						msg.data.hotkey_to_fix = curk;
 						Worker()->PostMsg(msg);
 						LOG_INFO_1(L"Key %s was disabled(fix)", CHotKey::GetName(curk.ValueKey()));
+						disable_up = curk.ValueKey();
 						return 1; // пока запрещаем, потом заново отошлем...
 					}
 				}

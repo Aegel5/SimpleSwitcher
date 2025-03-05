@@ -432,6 +432,9 @@ private:
             set.def_list.push_back(CHotKey(VK_LMENU, VK_SHIFT, 0x31));
             set.def_list.push_back(CHotKey(VK_LMENU, VK_SHIFT, 0x32));
             set.def_list.push_back(CHotKey(VK_LMENU, VK_SHIFT, 0x33));
+            set.def_list.push_back(CHotKey(VK_CONTROL, VK_SHIFT, 0x31));
+            set.def_list.push_back(CHotKey(VK_CONTROL, VK_SHIFT, 0x32));
+            set.def_list.push_back(CHotKey(VK_CONTROL, VK_SHIFT, 0x33));
             set.keys.key() = data.WinHotKey;
             if (ChangeHotKey2(this, set, newkey)) {
                 auto conf = conf_copy();
@@ -586,7 +589,8 @@ private:
             auto cur = all_lays[i];
             if (!info_copy.HasLayout(cur)) {
                 was_changes = true;
-                info.push_back({ .layout = cur });
+                CHotKey winhk(VK_LMENU, VK_SHIFT, VK_E_1 + info.size());
+                info.push_back({ .layout = cur, .WinHotKey=winhk });
             }
         }
 

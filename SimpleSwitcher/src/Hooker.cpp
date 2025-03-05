@@ -625,14 +625,16 @@ void Hooker::UpAllKeys() {
 	if (m_curKeyState.IsEmpty()) return;
 
 	InputSender inputSender;
+	if (m_curKeyState.HasKey(VK_LMENU, true)) {
+		// если нажата только клавиша alt - то ее простое отжатие даст хрень - нужно отжать ее еще раз
+		//inputSender.Add(VK_LMENU, KEY_STATE_DOWN);
+		//inputSender.Add(VK_LMENU, KEY_STATE_UP); 	
+		inputSender.Add(VK_CAPITAL, KEY_STATE_UP);
+	}
 	for (auto key : m_curKeyState) {
 		inputSender.Add(key, KEY_STATE_UP);
 	}
-	if (m_curKeyState.ValueKey() == VK_LMENU && m_curKeyState.Size() == 1) {
-		// если нажата только клавиша alt - то ее простое отжатие даст хрень - нужно отжать ее еще раз
-		inputSender.Add(VK_LMENU, KEY_STATE_DOWN);
-		inputSender.Add(VK_LMENU, KEY_STATE_UP); 	
-	}
+
 	IFS_LOG(SendOurInput(inputSender));
 
 }

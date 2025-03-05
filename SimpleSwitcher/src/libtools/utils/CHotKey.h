@@ -4,7 +4,12 @@
 
 using TKeyCode = WORD;
 
-
+enum {
+	VK_E_1 = 0x31,
+	VK_E_2 = 0x31,
+	VK_E_3 = 0x31,
+	VK_E_CTX_MENU = 0x5D
+};
 
 class HotKeyNames
 {
@@ -22,7 +27,6 @@ public:
 	
 	HotKeyNames()
 	{
-		Set(0x41, L"A");
 		Set(0x41, L"A");
 		Set(0x42, L"B");
 		Set(0x43, L"C");
