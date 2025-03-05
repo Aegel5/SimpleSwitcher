@@ -31,6 +31,13 @@ public:
 			vfwprintf_s(m_fp, format, args);
         }
 	}
+	void Append(const TChar* data)
+	{
+		if (LazyOpen())
+		{
+			fputws(data, m_fp);
+		}
+	}
 	void Format(const TChar* Format, ...)
 	{
 		va_list alist;
@@ -117,12 +124,11 @@ private:
 
 };
 
+
 inline SwLogger& SwLoggerGlobal() {return SwLogger::Get();}
 
-
-
-
-
+inline TLogLevel GetLogLevel() { return SwLoggerGlobal().GetLogLevel(); }
+inline void SetLogLevel(TLogLevel logLevel) { SwLoggerGlobal().SetLogLevel(logLevel); }
 
 
 inline void __SW_LOG_FORMAT_V__(const TChar* format, va_list alist)
@@ -169,23 +175,42 @@ inline void SW_LOG_INFO(const TChar* Format, ...)
 #define LOG_INFO_3(...) {if(GetLogLevel() >= LOG_LEVEL_3){SW_LOG_INFO(__VA_ARGS__);}}
 #define LOG_INFO_2(...) {if(GetLogLevel() >= LOG_LEVEL_2){SW_LOG_INFO(__VA_ARGS__);}}
 #define LOG_INFO_1(...) {if(GetLogLevel() >= LOG_LEVEL_1){SW_LOG_INFO(__VA_ARGS__);}}
-#define LOG_INFO_0(...) {SW_LOG_INFO(__VA_ARGS__);}
 
-#define LOG_WARN(...) {if(GetLogLevel() >= LOG_LEVEL_1){SW_LOG_INFO(L"[WARN] " __VA_ARGS__);}}
+inline void __LOG_LINE(const TChar* s) {
+	std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
+	__SW_LOG_TIME();
+	SwLoggerGlobal().Append(s);
+	SwLoggerGlobal().EndLineFlash();
+}
+inline void __LOG_WARN(const TChar* s, auto&& v...) {
+	std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
+	__SW_LOG_TIME();
+	SwLoggerGlobal().Append(L"[WARN] ");
+	auto res = std::vformat(s, std::make_wformat_args(v));
+	SwLoggerGlobal().Append(res.c_str());
+	SwLoggerGlobal().EndLineFlash();
+}
+void __LOG_LINE_FORMAT(const TChar* s, auto&& v...) {
+	auto res = std::vformat(s, std::make_wformat_args(v));
+	__LOG_LINE(res.c_str()); 
+}
+
+inline void LOG_ANY(const TChar* s, auto&& v...) { if (GetLogLevel() >= LOG_LEVEL_2) { __LOG_LINE_FORMAT(s, v); } }
+inline void LOG_WARN(const TChar* s, auto&& v...) {if(GetLogLevel() >= LOG_LEVEL_1) { __LOG_WARN(s,v);}}
+inline void LOG_WARN(const TChar* s) { __LOG_WARN(s, 0); }
+
+
+
+
+
+
 
 
 #define RETURN_SUCCESS {return SW_ERR_SUCCESS; }
 inline bool SW_SUCCESS(TStatus stat) { return stat == SW_ERR_SUCCESS; }
 inline bool SW_ERROR(TStatus stat) { return !SW_SUCCESS(stat); }
 
-inline TLogLevel GetLogLevel()
-{
-	return SwLoggerGlobal().GetLogLevel();
-}
-inline void SetLogLevel(TLogLevel logLevel)
-{
-	SwLoggerGlobal().SetLogLevel(logLevel);
-}
+
 
 
 

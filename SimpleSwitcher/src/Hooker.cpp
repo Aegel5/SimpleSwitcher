@@ -83,59 +83,10 @@ void PrintHwnd(HWND hwnd, const TChar* name=L"name1")
 	}
 } 
 
-
-bool Hooker::GetTypeForKey(CHotKey curkey, HotKeyType& type, bool& isUp)
-{
-	auto conf = conf_get();
-	for (int iPrior = 0; iPrior < 2; ++iPrior)
-	{
-		for (const auto& [hkId, keys, fNeedSavedWord] : conf->All_hot_keys())
-		{
-			const CHotKey& key = keys.key();
-
-			if (keys.HasKey(curkey, CHotKey::COMPARE_IGNORE_KEYUP))
-			{
-				if (fNeedSavedWord && !HasAnyWord())
-				{
-					LOG_INFO_2(L"skip key %u because not has any word", keys.key());
-					// skip current, add chance for other hotkey
-					continue;
-				}
-				
-				if (iPrior == 0 && !fNeedSavedWord)
-				{
-					continue;
-				}
-
-				type = hkId;
-				isUp = key.GetKeyup();
-
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-auto get_state_name(KeyState state) {
-    if (state == KEY_STATE_UP)
-        return L"UP";
-    if (state == KEY_STATE_DOWN)
-        return L"DW";
-    return L"ERROR";
-}
 TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 {
 	KBDLLHOOKSTRUCT* k = &keyData.ks;
 	WPARAM wParam = keyData.wParam;
-
-	if(k->vkCode > 255)
-	{
-		LOG_INFO_1(L"k->vkCode > 255: %d", k->vkCode);
-		//RETURN_SUCCESS;
-	}
-
-
 
 	TKeyCode vkCode = (TKeyCode)k->vkCode;
 	KeyState curKeyState = GetKeyState(wParam);
@@ -147,103 +98,21 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	m_curScanCode.scan = k->scanCode;
 	m_curScanCode.is_ext = isExtended;
 
-	//if (m_curScanCode.scan == 541) {
-	//	LOG_INFO_2(L"skip bugged lctrl");
-	//	RETURN_SUCCESS;
-	//}
-
-
-	LOG_INFO_3(L"KEY_MSG: %s(%s),scan=%d,inject=%d,altdown=%d,syskey=%d,extended=%d",
-        HotKeyNames::Global().GetName(vkCode),  
-		get_state_name(curKeyState), 
-		m_curScanCode.scan,
-		isInjected,
-		isAltDown,
-		isSysKey,
-		isExtended
-	);
-
-	if (isInjected)
-	{
-		if (conf_get()->AllowRemoteKeys) {
-			while (1) {
-				if (skipdata.empty()) {
-					LOG_INFO_3(L"allow injected because of setting");
-					break; // нечего пропускать.
-				}
-				if (GetTickCount64() > skipdata.front().actualUNTIL || skipdata.front().skipCnt <= 0) {
-					skipdata.pop_front(); // истек срок годности данный ноды...
-					continue;
-				}
-				// все хорошо, нода актуальна, пропускаем inject
-				skipdata.front().skipCnt--;
-				LOG_INFO_3(L"skip enjected by evristics");
-				RETURN_SUCCESS;
-			}
-		}
-		else {
-			LOG_INFO_3(L"skip enjected");
-			RETURN_SUCCESS;
-		}
-	}
 
 	m_curStateWrap.Update(k, curKeyState);
 	m_curKeyState = m_curStateWrap.state;
 
-	//if (m_curKeyState.Size() == 2 && curKeyState == KEY_STATE_DOWN && m_curKeyState.ValueKey() == VK_LMENU && m_curKeyState.At(1) == VK_LCONTROL) {
-	//	InputSender inputSender;
-	//	inputSender.Add(VK_LMENU, KEY_STATE_UP);
-	//	inputSender.Add(56, KEY_STATE_DOWN, true);
-	//	IFS_LOG(SendOurInput(inputSender));
-	//	RETURN_SUCCESS;
-	//}
-
-
 	LOG_INFO_3(L"curState=%s", m_curKeyState.ToString().c_str());
-
-	if (m_needRevertUnderUP != hk_NULL)
-	{
-		auto needRevert = m_needRevertUnderUP;
-		m_needRevertUnderUP = hk_NULL;
-		if (curKeyState == KEY_STATE_UP)
-		{
-			IFS_LOG(NeedRevert((HotKeyType)needRevert));
-		}
-	}
 
 	if (curKeyState != KEY_STATE_DOWN)
 		RETURN_SUCCESS;
 
-	HotKeyType hotKeyType = hk_NULL;
-	bool isUp;
-	if (GetTypeForKey(m_curKeyState, hotKeyType, isUp))
-	{
-		if (m_curStateWrap.isSkipRepeat)
-		{
-			LOG_INFO_2(L"Skip repeat evt");
-			RETURN_SUCCESS;
-		}
-
-		if (isUp)
-		{
-			m_needRevertUnderUP = hotKeyType;
-			RETURN_SUCCESS;
-		}
-		else
-		{
-			IFS_LOG(NeedRevert((HotKeyType)hotKeyType));
-		}
-
-		RETURN_SUCCESS;
-	}
-
 	auto conf = conf_get();
 
 	// Чтобы не очищался буфер клавиш на нажатии наших хоткеев.
-	for (const auto& [hkId, keys, _] : conf->All_hot_keys())
+	for (const auto& [hkId, key] : conf->All_hot_keys())
 	{
-		CHotKey key = keys.key();
-		if (m_curKeyState.Compare(key, CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP))
+		if (m_curKeyState.Compare(key, CHotKey::COMPARE_IGNORE_KEYUP))
 		{
 			auto s1 = m_curKeyState.ToString();
 			auto s2 = key.ToString();
@@ -719,13 +588,7 @@ void Hooker::ChangeForeground(HWND hwnd)
 	m_dwIdThreadForeground = threadid;
 	m_dwIdProcoreground = procId; 
 }
-//bool Hooker::IsOurInput()
-//{
-//	if (m_fOurSend)
-//		return true;
-//
-//	return false;
-//}
+
 void Hooker::HandleSymbolDown()
 {
 	TKeyType type = GetCurKeyType(m_curKeyState);
@@ -1176,7 +1039,7 @@ TStatus Hooker::AnalizeTopWnd() {
 	m_sTopProcName = L"";
 
 	if (dwTopPid == 0) {
-		LOG_WARN("can't get pid");
+		LOG_WARN(L"can't get pid");
 		RETURN_SUCCESS;
 	}
 

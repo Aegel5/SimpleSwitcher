@@ -66,41 +66,11 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
     CAutoProcMonitor loader64;
     g_laynotif.inited = false;
 
-	//if (g_setsgui.injectDll) {
- //       tstring sFolder;
- //       IFS_RET(GetPath_folder_noLower(sFolder));
-
- //       bool locInited    = true;
-
- //       loader.m_sWndName = c_sClassName32_2;
- //       loader.m_sCmd     = L"/load";
- //       loader.m_sExe     = sFolder + L"loader.exe";
- //       IFS_LOG(loader.EnsureStarted(SW_ADMIN_SELF));
- //       if (!loader.CheckRunning().found)
- //           locInited = false;
-
-
- //       if (IsWindows64()) {
- //           loader64.m_sWndName = c_sClassName64_2;
- //           loader64.m_sCmd     = L"/load";
- //           loader64.m_sExe     = sFolder + L"loader64.exe";
- //           IFS_LOG(loader64.EnsureStarted(SW_ADMIN_SELF));
- //           if (!loader64.CheckRunning().found)
- //               locInited = false;
- //       }
-
-	//	g_laynotif.inited = locInited;
- //   }
-
-
 	HookGlobalHandles hookHandles;
 	if (gdata().curModeBit == SW_BIT_32)
 	{
 		IFS_RET(HookGlobal(hookHandles));
 	}
-
-
-
 
 	auto timeId = SetTimer(hWnd, c_timerKeyloggerDefence, 5000, NULL);
 	IFW_LOG(timeId != 0);
@@ -130,20 +100,9 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 		if (mesg == WM_HOTKEY)
 		{
 		}
-		else if (mesg == c_MSG_SettingsChanges)
-		{
-			if (gdata().curModeBit == SW_BIT_32)
-			{
-				Worker()->PostMsg(HWORKER_LoadSettings);
-			}
-        } 
 		else if (mesg == WM_GetCurLay) {
             Worker()->PostMsg(HWORKER_Getcurlay);
         } 
-		//else if (mesg == WM_INPUTLANGCHANGE) {
-  //          HKL newLayout = (HKL)msg.lParam;
-  //          LOG_INFO_1(L"loop new layout: 0x%x", newLayout);
-  //      }
 		else if (mesg == c_MSG_Quit)
 		{
 			PostQuitMessage(0);
@@ -250,13 +209,8 @@ LRESULT CALLBACK KeyboardProc(
 	}
 
 	DWORD key = DWORD(wParam);
-	LOG_INFO_0(L"_PRINTED_ %d", key);
 
-	//if (g_setsgui.fEnableKeyLoggerDefence) {
-		return 0;
-	//} else {
-	//	return CallNextHookEx(0, nCode, wParam, lParam);
-	//}
+	return 0;
 }
 
 namespace {
@@ -292,48 +246,79 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		return CallNextHookEx(0, nCode, wParam, lParam);
 	}
 
+	MainWorkerMsg msg_type{ .mode = HWORKER_KeyMsg };
+	MainWorkerMsg msg_hotkey{ .mode = HWORKER_OurHotKey };
+	msg_hotkey.data.hk = hk_NULL;
+
 	auto process = [&]() -> bool
 	{
-		KBDLLHOOKSTRUCT* kStruct = (KBDLLHOOKSTRUCT*)lParam;
+		KBDLLHOOKSTRUCT* k = (KBDLLHOOKSTRUCT*)lParam;
 
-		MainWorkerMsg msg;
-		msg.mode = HWORKER_KeyMsg;
-		auto& kData = msg.data.keyData;
-		kData.ks = *kStruct;
-		kData.wParam = wParam;
-
-		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
+		TKeyCode vkCode = (TKeyCode)k->vkCode;
 		KeyState curKeyState = GetKeyState(wParam);
-		bool isInjected = TestFlag(kStruct->flags, LLKHF_INJECTED);
-		auto scan_code = kStruct->scanCode;
+		bool isInjected = TestFlag(k->flags, LLKHF_INJECTED);
+		bool isAltDown = TestFlag(k->flags, LLKHF_ALTDOWN);
+		bool isSysKey = wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP;
+		bool isExtended = TestFlag(k->flags, LLKHF_EXTENDED);
+		auto scan_code = k->scanCode;
+		msg_type.data.keyData.ks = *k;
+		msg_type.data.keyData.wParam = wParam;
+
+
+		LOG_ANY(
+			L"KEY_MSG: {}({}),scan={},inject={},altdown={},syskey={},extended={}", 
+			HotKeyNames::Global().GetName(vkCode),
+			(curKeyState == KEY_STATE_UP ? L"UP": L"DOWN"),
+			scan_code,
+			isInjected,
+			isAltDown,
+			isSysKey,
+			isExtended
+		);
+
+		if (k->vkCode > 255)
+		{
+			LOG_INFO_1(L"k->vkCode > 255: %d", k->vkCode);
+		}
 
 		if (scan_code == 541) {
 			LOG_INFO_2(L"skip bugged lctrl");
 			return 0;
 		}
 
-		Worker()->PostMsg(msg);
-
 		if (isInjected) {
-			// с этим пока не понятно в сценарии удаленного использования - нужно тестить...
-			return 0;
+			if (conf_get()->AllowRemoteKeys) {
+				// todo skipper
+				return 0;
+			}
+			else {
+				return 0;
+			}
 		}
 
-		// Consume HOT KEY (не отдаем хот-кей для текущей программы)
-
-		curKey.Update(kStruct, curKeyState);
+		auto prev_k = curKey.state;
+		curKey.Update(k, curKeyState); // сразу обновляем
 		const auto& curk = curKey.state;
 
+		auto check_is_our_key = [&msg_hotkey](const CHotKey& k1, const CHotKey& k2, HotKeyType hk) {
+			if (k1.Compare(k2, CHotKey::COMPARE_IGNORE_KEYUP)) {
+				if (!CheckInDisabled()) {
+					msg_hotkey.data.hotkey = k2;
+					msg_hotkey.data.hk = hk;
+					return true;
+				}
+			}
+			return false;
+			};
+
 		if (curKeyState == KeyState::KEY_STATE_DOWN) {
-			if (!curKey.state.IsEmpty()) {
+			if (!curk.IsEmpty()) {
 				auto conf = conf_get();
 				bool need_our_action = false;
-				for (const auto& [_1, keys, _2] : conf->All_hot_keys()) {
-					if (keys.HasKey_skipkeyup(curKey.state, CHotKey::TCompareFlags(CHotKey::COMPARE_IGNORE_HOLD | CHotKey::COMPARE_IGNORE_KEYUP))) {
-						// К сожалению, вынуждены дублировать эти проверки, но ничего не поделать, нам нужен второй поток.
-						if (!CheckInDisabled()) {
-							need_our_action = true;
-						}
+				for (const auto& [hk, key] : conf->All_hot_keys()) {
+					if (!key.GetKeyup() && check_is_our_key(key,curk,hk)) {
+						need_our_action = true;
+						break;
 					}
 				}
 				if (need_our_action) {
@@ -353,7 +338,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 						LOG_INFO_1(L"fix ctrl+alt");
 						MainWorkerMsg msg;
 						msg.mode = HWORKER_FixCtrlAlt;
-						msg.data.hotkey_to_fix = curKey.state;
+						msg.data.hotkey_to_fix = curk;
 						Worker()->PostMsg(msg);
 						LOG_INFO_1(L"Key %s was disabled(fix)", CHotKey::GetName(curk.ValueKey()));
 						return 1; // пока запрещаем, потом заново отошлем...
@@ -367,9 +352,19 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 				disable_up = 0;
 				return 1;
 			}
+			else {
+				// ищем наш хот-кей.
+				if (prev_k.ValueKey() == vkCode) { // up сработал именно на value_key
+					for (const auto& [hk, key] : conf_get()->All_hot_keys()) {
+						if (key.GetKeyup() && check_is_our_key(key, prev_k, hk)) {
+							break; // даже если нашли, up никогда не запрещаем.
+						}
+					}
+				}
+			}
 		}
 
-		if (curKey.state.IsEmpty()) {
+		if (curk.IsEmpty()) {
 			disable_up = 0;
 		}
 
@@ -377,8 +372,15 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 	};
 
 	if (nCode == HC_ACTION) {
-		if (process()) 
-			return 1;
+		auto res = process();
+		if (!res) {
+			Worker()->PostMsg(msg_type);
+		}
+		if (msg_hotkey.data.hk != hk_NULL) {
+			Worker()->PostMsg(msg_hotkey);
+		}
+		if (res) 
+			return 1; // запрет
 	}
 
 

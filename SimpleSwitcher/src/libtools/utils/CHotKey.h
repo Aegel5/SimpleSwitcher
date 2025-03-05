@@ -389,20 +389,20 @@ public:
 		}
 		return false;
 	}
-	CHotKey& SetHold(bool h)
-	{
-		m_hold = h;
-		return *this;
-	}
-	bool IsHold()
-	{
-		return m_hold;
-	}
+	//CHotKey& SetHold(bool h)
+	//{
+	//	m_hold = h;
+	//	return *this;
+	//}
+	//bool IsHold()
+	//{
+	//	return m_hold;
+	//}
 	enum TCompareFlags
 	{
 		COMPARE_NORMAL = 0,
 		COMPARE_IGNORE_ORDER_VALUEKEY = 0x1,
-		COMPARE_IGNORE_HOLD = 0x2,
+		//COMPARE_IGNORE_HOLD = 0x2,
 		COMPARE_IGNORE_KEYUP = 0x4,
 		COMPARE_STRICK_MODIFIER = 0x8,
 	};
@@ -412,8 +412,8 @@ public:
 			return false;
 		if(size == 0 || other.size == 0)
 			return false;
-		if (!TestFlag(flags, COMPARE_IGNORE_HOLD) && m_hold != other.m_hold)
-			return false;
+		//if (!TestFlag(flags, COMPARE_IGNORE_HOLD) && m_hold != other.m_hold)
+		//	return false;
 		if (!TestFlag(flags, COMPARE_IGNORE_KEYUP) && m_keyup != other.m_keyup)
 			return false;
 
@@ -461,10 +461,10 @@ public:
 			if(i != 0)
 				s += L" + ";
 		}
-		if (m_hold)
-		{
-			s += L" #hold";
-		}
+		//if (m_hold)
+		//{
+		//	s += L" #hold";
+		//}
 		if (m_keyup)
 		{
 			s += L" #up";
@@ -581,9 +581,9 @@ public:
 			SetKeyup(true);
 		}
 
-		if (Str_Utils::replaceAll(ss, L"#hold", L"")) {
-			SetHold(true);
-		}
+		//if (Str_Utils::replaceAll(ss, L"#hold", L"")) {
+		//	SetHold(true);
+		//}
 
 		Str_Utils::TVectStr sElems;
 		Str_Utils::Split2(ss, sElems, L"+", true);
@@ -676,7 +676,7 @@ private:
 	{
 		TUInt8 m_ignoreOrderValueKey : 1;
 		TUInt8 m_keyup : 1;
-		TUInt8 m_hold : 1;
+		//TUInt8 m_hold : 1;
 	};
 	TUInt8 size;
 	TKeyCode keys[c_MAX];

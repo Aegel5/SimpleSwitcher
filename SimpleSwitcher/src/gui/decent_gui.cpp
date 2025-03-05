@@ -609,9 +609,6 @@ private:
             conf_set(conf);
         }
 
-
-
-
     }
     void FillLayoutsInfo() {
 

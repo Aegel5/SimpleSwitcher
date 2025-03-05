@@ -79,15 +79,20 @@ public:
         abort();
     }
 
-    std::generator < std::tuple<HotKeyType, const CHotKeyList&, bool>> All_hot_keys() const {
+    std::generator < std::tuple<HotKeyType, const CHotKey&>> All_hot_keys() const {
         for (const auto& it : hotkeysList) {
             if (it.hkId == hk_CycleLang_win_hotkey) continue;
-            co_yield { it.hkId, it.keys, it.fNeedSavedWord };
+            for (const auto& key : it.keys.keys) {
+                co_yield{ it.hkId, key };
+            }
+
         }
         int i = -1;
         for (const auto& it : layouts_info.info) {
             i++;
-            co_yield{ (HotKeyType)(hk_SetLayout_flag | i), it.hotkey, false };
+            for (const auto& key : it.hotkey.keys) {
+                co_yield{ (HotKeyType)(hk_SetLayout_flag | i), key };
+            }
         }
     }
 

@@ -10,12 +10,10 @@ enum EHWorker
 	HWORKER_ChangeForeground,
 	HWORKER_KeyMsg,
 	HWORKER_ClipNotify,
-	//HWORKER_GetClipStringCallback,
-	//HWORKER_SavePrevDataCallback,
 	HWORKER_WM_TIMER,
-	HWORKER_LoadSettings,
     HWORKER_Getcurlay,
     HWORKER_FixCtrlAlt,
+    HWORKER_OurHotKey,
 };
 
 struct KeyMsgData
@@ -41,6 +39,10 @@ struct MainWorkerMsg
 		};
 		struct {
 			CHotKey hotkey_to_fix;
+		};
+		struct {
+			CHotKey hotkey;
+			HotKeyType hk;
 		};
 		U() {} // ничего не делаем - никаких конструкторов, клиенты должны заполнять сами нужные данные...
 		

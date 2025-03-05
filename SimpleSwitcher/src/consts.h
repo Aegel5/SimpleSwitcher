@@ -4,7 +4,6 @@
 
 
 static const UINT c_MSG_TypeHotKey = 0xBFFF - 37;
-static const UINT c_MSG_SettingsChanges = 0xBFFF - 36;
 static const UINT c_MSG_Quit = 0xBFFF - 35;
 static const UINT WM_SWRevert = 0xBFFF - 34;
 static const UINT c_MSG_SHOW = 0xBFFF - 33;
@@ -69,3 +68,19 @@ static const int c_nCommonWaitMtx = 30000;
 
 static const LPCWSTR c_wszTaskName = L"SimpleSwitcherTask";
 const static TChar c_sRegRunValue[] = L"SimpleSwitcher";
+
+enum HotKeyType : TUInt32
+{
+    hk_NULL,
+
+    hk_RevertLastWord,
+    hk_RevertCycle,
+    hk_RevertSel,
+    hk_CapsGenerate,
+    hk_CycleCustomLang,
+    hk_CycleLang_win_hotkey,
+    hk_ScrollGenerate,
+    hk_toUpperSelected,
+
+    hk_SetLayout_flag = 0b100000000000,
+};

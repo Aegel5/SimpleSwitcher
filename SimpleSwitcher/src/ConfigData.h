@@ -1,20 +1,6 @@
 
 
-enum HotKeyType : TUInt32
-{
-    hk_NULL,
 
-    hk_RevertLastWord,
-    hk_RevertCycle,
-    hk_RevertSel,
-    hk_CapsGenerate,
-    hk_CycleCustomLang,
-    hk_CycleLang_win_hotkey,
-    hk_ScrollGenerate,
-    hk_toUpperSelected,
-
-    hk_SetLayout_flag = 0b100000000000,
-};
 
 inline const char* HotKeyTypeName(HotKeyType hk_type)
 {
@@ -51,13 +37,6 @@ struct CHotKeyList {
         return true;
     }
 
-    bool HasKey_skipkeyup(CHotKey ktest, CHotKey::TCompareFlags flags) const {
-        for (const auto& k : keys) {
-            if (!k.GetKeyup() && ktest.Compare(k, flags))
-                return true;
-        }
-        return false;
-    }
 
     CHotKey& key() {
         return keys[0];

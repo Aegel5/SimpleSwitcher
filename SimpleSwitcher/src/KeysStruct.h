@@ -108,19 +108,19 @@ struct CurStateWrapper {
 
 	CHotKey state;
 	std::map<int, ULONGLONG> times;
-	bool isSkipRepeat = false;
+	//bool isSkipRepeat = false;
 
 	void Update(KBDLLHOOKSTRUCT* kStruct, KeyState curKeyState) {
 
 		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
 		bool isAltDown = TestFlag(kStruct->flags, LLKHF_ALTDOWN);
 
-		isSkipRepeat = false;
+		//isSkipRepeat = false;
 
 
 		if (curKeyState == KEY_STATE_UP)
 		{
-			state.SetHold(false);
+			//state.SetHold(false);
 			auto it = times.find(vkCode);
 			if (it != times.end()) { times.erase(it); }
 			if (!state.Remove(vkCode))
@@ -140,25 +140,25 @@ struct CurStateWrapper {
 
 			// больше не надо?????
 			//else {
-				CHotKey hk_save = state;
+				//CHotKey hk_save = state;
 				state.Add3(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY); // todo - ADDKEY_ENSURE_ONE_VALUEKEY - возможно перезатерание.
 				times[vkCode] = GetTickCount64() + 10000;
-				if (state.Compare(hk_save))
-				{
-					if (state.IsHold()) // already hold
-					{
-						isSkipRepeat = true;
-					}
-					else
-					{
-						state.SetHold(true);
-					}
-				}
-				else
-				{
-					// была нажата другая клавиша, сбрасываем флаг hold
-					state.SetHold(false);
-				}
+				//if (state.Compare(hk_save))
+				//{
+				//	if (state.IsHold()) // already hold
+				//	{
+				//		isSkipRepeat = true;
+				//	}
+				//	else
+				//	{
+				//		state.SetHold(true);
+				//	}
+				//}
+				//else
+				//{
+				//	// была нажата другая клавиша, сбрасываем флаг hold
+				//	state.SetHold(false);
+				//}
 			//}
 		}
 		else
@@ -174,7 +174,7 @@ struct CurStateWrapper {
 					if (!(GetAsyncKeyState(el.first) & 0x8000)) {
 						std::wstring s1;
 						CHotKey::ToString(el.first, s1);
-						LOG_WARN(L"delete key because it not down now %s", s1.c_str());
+						LOG_WARN(L"delete key because it not down now {}", s1.c_str());
 						times.erase(el.first);
 						state.Remove(el.first);
 						found = true;

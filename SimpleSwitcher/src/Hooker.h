@@ -64,8 +64,6 @@ public:
 	void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code);
 	TStatus Init();
 	TStatus SendCtrlC(EClipRequest clRequest);
-	//TStatus SavePrevDataCallback(EClipRequest clRequest);
-	bool GetTypeForKey(CHotKey curkey, HotKeyType& type, bool& isUp);
 	void RequestWaitClip(EClipRequest clRequest)
 	{
 		m_clipRequest = clRequest;
@@ -108,7 +106,7 @@ public:
 			}
 
 			if ((GetTickCount64() - start) >= 150) {
-				LOG_WARN(L"wait timeout language change for proc %s", m_sTopProcName.c_str());
+				LOG_WARN(L"wait timeout language change for proc {}", m_sTopProcName.c_str());
 				break;
 			}
 
@@ -174,14 +172,6 @@ public:
 	CHotKey m_curKeyState;
 	CurStateWrapper m_curStateWrap;
 	TScanCode_Ext m_curScanCode; 
-
-	HotKeyType m_needRevertUnderUP = hk_NULL;
-
-	struct SkipInjectEntry {
-		ULONGLONG actualUNTIL;
-		int skipCnt;
-	};
-	std::deque<SkipInjectEntry> skipdata;
 
 	void UpAllKeys();
 
