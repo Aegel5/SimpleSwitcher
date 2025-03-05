@@ -629,7 +629,9 @@ void Hooker::UpAllKeys() {
 		inputSender.Add(key, KEY_STATE_UP);
 	}
 	if (m_curKeyState.ValueKey() == VK_LMENU && m_curKeyState.Size() == 1) {
-		inputSender.Add(VK_LMENU, KEY_STATE_UP); 	// todo - если нажата только клавиша alt - то ее простое отжатие даст хрень - нужно отжать ее еще раз
+		// если нажата только клавиша alt - то ее простое отжатие даст хрень - нужно отжать ее еще раз
+		inputSender.Add(VK_LMENU, KEY_STATE_DOWN);
+		inputSender.Add(VK_LMENU, KEY_STATE_UP); 	
 	}
 	IFS_LOG(SendOurInput(inputSender));
 

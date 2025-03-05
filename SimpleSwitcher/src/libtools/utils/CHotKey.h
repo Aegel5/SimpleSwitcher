@@ -389,15 +389,6 @@ public:
 		}
 		return false;
 	}
-	//CHotKey& SetHold(bool h)
-	//{
-	//	m_hold = h;
-	//	return *this;
-	//}
-	//bool IsHold()
-	//{
-	//	return m_hold;
-	//}
 	enum TCompareFlags
 	{
 		COMPARE_NORMAL = 0,
