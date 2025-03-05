@@ -182,11 +182,11 @@ inline void __LOG_LINE(const TChar* s) {
 	SwLoggerGlobal().Append(s);
 	SwLoggerGlobal().EndLineFlash();
 }
-inline void __LOG_WARN(const TChar* s, auto&& v...) {
+inline void __LOG_WARN(const TChar* s, auto&&... v) {
 	std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
 	__SW_LOG_TIME();
 	SwLoggerGlobal().Append(L"[WARN] ");
-	auto res = std::vformat(s, std::make_wformat_args(v));
+	auto res = std::vformat(s, std::make_wformat_args(v...));
 	SwLoggerGlobal().Append(res.c_str());
 	SwLoggerGlobal().EndLineFlash();
 }
@@ -195,24 +195,10 @@ void __LOG_LINE_FORMAT(const TChar* s, auto&& v...) {
 	__LOG_LINE(res.c_str()); 
 }
 
-inline void LOG_ANY(const TChar* s, auto&& v...) { if (GetLogLevel() >= LOG_LEVEL_2) { __LOG_LINE_FORMAT(s, v); } }
-inline void LOG_WARN(const TChar* s, auto&& v...) {if(GetLogLevel() >= LOG_LEVEL_1) { __LOG_WARN(s,v);}}
-inline void LOG_WARN(const TChar* s) { __LOG_WARN(s, 0); }
-
-
-
-
-
-
-
+inline void LOG_ANY(const TChar* s, auto&&... v) { if (GetLogLevel() >= LOG_LEVEL_2) { __LOG_LINE_FORMAT(s, v...); } }
+inline void LOG_WARN(const wchar_t* s, auto&&... v) {if(GetLogLevel() >= LOG_LEVEL_1) { __LOG_WARN(s,v...);}}
 
 #define RETURN_SUCCESS {return SW_ERR_SUCCESS; }
-inline bool SW_SUCCESS(TStatus stat) { return stat == SW_ERR_SUCCESS; }
-inline bool SW_ERROR(TStatus stat) { return !SW_SUCCESS(stat); }
-
-
-
-
 
 class WinErrBOOL
 {
@@ -284,7 +270,7 @@ struct SwErrTStatus
 	TStatus res;
 	SwErrTStatus(TStatus r): res(r) {}
 	void Log()	{ __SW_LOG_FORMAT__(L"TStatus=%s(%d)", c_StatusNames[res], res); }
-	operator bool() const { return SW_ERROR(res); }
+	operator bool() const { return res!= SW_ERR_SUCCESS; }
 	TStatus ToTStatus()	{ return res; }
 };
 

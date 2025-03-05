@@ -43,8 +43,11 @@ TStatus CMainWorker::WorkerInt()
 		}
 		else if (mode == HWORKER_KeyMsg)
 		{
-			KeyMsgData& kmsg = msg.data.keyData;
-			IFS_LOG(hooker.ProcessKeyMsg(kmsg));
+			IFS_LOG(hooker.ProcessKeyMsg(msg.data.keyData));
+		}
+		else if (mode == HWORKER_OurHotKey)
+		{
+			hooker.ProcessOurHotKey(msg);
 		}
 		else if (mode == HWORKER_FixCtrlAlt) {
 			IFS_LOG(hooker.FixCtrlAlt(msg.data.hotkey_to_fix));

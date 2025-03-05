@@ -69,6 +69,11 @@ public:
 
     std::vector< CHotKeySet> hotkeysList;
 
+    static bool IsNeedSavedWords(HotKeyType hk_type) {
+        if (Utils::is_in(hk_type, hk_RevertLastWord, hk_RevertCycle)) return true;
+        return false;
+    }
+
     LayoutInfoList layouts_info;
 
     const auto& GetHk(HotKeyType type) const {

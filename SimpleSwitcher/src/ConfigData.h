@@ -2,21 +2,7 @@
 
 
 
-inline const char* HotKeyTypeName(HotKeyType hk_type)
-{
-    switch (hk_type)
-    {
-    case hk_RevertLastWord:	return "hk_RevertLastWord";
-    case hk_RevertCycle: return "hk_RevertSeveralWords";
-    case hk_RevertSel: return "hk_RevertSelelected";
-    case hk_CapsGenerate:return "hk_EmulateCapsLock";
-    case hk_CycleCustomLang:return "hk_CycleSwitchLayout";
-    case hk_CycleLang_win_hotkey:return "hk_CycleLang_win_hotkey";
-    case hk_ScrollGenerate:return "hk_EmulateScrollLock";
-    case hk_toUpperSelected:    return "hk_toUpperSelected";
-    default: return "hk_Unknown";
-    }
-}
+
 
 struct CHotKeyList {
 
@@ -50,7 +36,6 @@ struct CHotKeyList {
 struct CHotKeySet
 {
     std::vector<CHotKey> def_list;
-    bool fNeedSavedWord = false;
     bool fUseDef = false;
     HotKeyType hkId = hk_NULL;
     CHotKeyList keys;

@@ -16,7 +16,6 @@ void SettingsGui::GenerateListHK()
         CHotKeySet set;
         set.def_list = { CHotKey(VK_PAUSE), CHotKey(VK_CAPITAL), CHotKey(VK_F24) };
         set.fUseDef        = true;
-        set.fNeedSavedWord = true;
         set.gui_text = _(L"Change layout for last word").wc_str();
         AddHotKey(hk_RevertLastWord, set);
     }
@@ -25,7 +24,6 @@ void SettingsGui::GenerateListHK()
         CHotKeySet set;
         set.def_list = { CHotKey(VK_SHIFT, VK_PAUSE), CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_F24) };
         set.fUseDef = true;
-        set.fNeedSavedWord = true;
         set.gui_text = _(L"Change layout for last several words").wc_str();
         AddHotKey(hk_RevertCycle, set);
     }
