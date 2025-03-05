@@ -110,19 +110,23 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	auto conf = conf_get();
 
 	// Чтобы не очищался буфер клавиш на нажатии наших хоткеев.
-	for (const auto& [hkId, key] : conf->All_hot_keys())
-	{
-		if (m_curKeyState.Compare(key, CHotKey::COMPARE_IGNORE_KEYUP))
-		{
-			auto s1 = m_curKeyState.ToString();
-			auto s2 = key.ToString();
-			LOG_INFO_2(L"skip hk diff only flags k1=%s, k2=%s hId=%u", s1.c_str(), s2.c_str(), hkId);
-			RETURN_SUCCESS;
-		}
-	}
+	//for (const auto& [hkId, key] : conf->All_hot_keys())
+	//{
+	//	if (m_curKeyState.Compare(key, CHotKey::COMPARE_IGNORE_KEYUP))
+	//	{
+	//		auto s1 = m_curKeyState.ToString();
+	//		auto s2 = key.ToString();
+	//		LOG_INFO_2(L"skip hk diff only flags k1=%s, k2=%s hId=%u", s1.c_str(), s2.c_str(), hkId);
+	//		RETURN_SUCCESS;
+	//	}
+	//}
 
-	if (CHotKey::IsKnownMods(vkCode))
+	//if (CHotKey::IsKnownMods(vkCode))
+	//	RETURN_SUCCESS;
+
+	if (CHotKey::Normalize(vkCode) == VK_SHIFT) {
 		RETURN_SUCCESS;
+	}
 
 	HandleSymbolDown();
 
@@ -157,20 +161,20 @@ void Hooker::ClearAllWords()
 		ClearCycleRevert();
 	}
 
-	CHotKey curCopy = m_curKeyState;
-	for (TKeyCode* k = curCopy.ModsBegin(); k != curCopy.ModsEnd(); ++k)
-	{
-		if (GetAsyncKeyState(*k) & 0x8000)
-		{
-		}
-		else
-		{
-			LOG_INFO_2(L"Up key ? because GetAsyncKeyState"
-				// , CHotKey::ToString(*k).c_str()
-			);
-			m_curKeyState.Remove(*k);
-		}
-	}
+	//CHotKey curCopy = m_curKeyState;
+	//for (TKeyCode* k = curCopy.ModsBegin(); k != curCopy.ModsEnd(); ++k)
+	//{
+	//	if (GetAsyncKeyState(*k) & 0x8000)
+	//	{
+	//	}
+	//	else
+	//	{
+	//		LOG_INFO_2(L"Up key ? because GetAsyncKeyState"
+	//			// , CHotKey::ToString(*k).c_str()
+	//		);
+	//		m_curKeyState.Remove(*k);
+	//	}
+	//}
 	
 }
 
@@ -624,6 +628,9 @@ void Hooker::UpAllKeys() {
 	for (auto key : m_curKeyState) {
 		inputSender.Add(key, KEY_STATE_UP);
 	}
+	if (m_curKeyState.ValueKey() == VK_LMENU && m_curKeyState.Size() == 1) {
+		inputSender.Add(VK_LMENU, KEY_STATE_UP); 	// todo - если нажата только клавиша alt - то ее простое отжатие даст хрень - нужно отжать ее еще раз
+	}
 	IFS_LOG(SendOurInput(inputSender));
 
 }
@@ -787,10 +794,6 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
         LOG_INFO_1(L"Skip hotkey in self program");
         allow_do_revert = false;
     }
-    else if (conf->IsSkipProgram(m_sTopProcName)) {
-        LOG_INFO_1(L"Skip process %s because of disableInProcess", m_sTopProcName.c_str());
-		RETURN_SUCCESS;
-	}
 
 	// Сбросим сразу все клавиши для программы. Будет двойной (или даже тройной и более) up, но пока что это не проблема... 
 	
@@ -891,8 +894,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 }
 TStatus Hooker::NeedRevert(HotKeyType typeRevert)
 {
-	auto skey = m_curKeyState.ToString();
-	LOG_INFO_1(L"NeedRevert %S, curstate=\"%s\"", HotKeyTypeName(typeRevert), skey.c_str());
+	LOG_INFO_1(L"NeedRevert %S, curstate=\"%s\"", HotKeyTypeName(typeRevert), m_curKeyState.ToString().c_str());
 
 	ContextRevert ctxRevert;
 	ctxRevert.typeRevert = typeRevert;

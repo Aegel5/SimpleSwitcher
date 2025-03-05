@@ -307,14 +307,14 @@ public:
 
 		return *this;
 	}
-	bool Remove(TKeyCode key)
+	bool Remove(TKeyCode key, bool strick_modifier=true)
 	{
 		if(size == 0)
 			return false;
 		bool found = false;
 		for (int i = 0; i < size; i++)
 		{
-			if(CompareKeys(key, keys[i], true))
+			if(CompareKeys(key, keys[i], strick_modifier))
 			{
 				found = true;
 				keys[i] = 0;
@@ -350,11 +350,11 @@ public:
 			}
 		}while (k);
 	}
-	bool HasKey(TKeyCode key, bool leftrightCheck) const
+	bool HasKey(TKeyCode key, bool strick_modifier) const
 	{
 		for(TKeyCode k : *this)
 		{
-			if(CompareKeys(k, key, leftrightCheck))
+			if(CompareKeys(k, key, strick_modifier))
 				return true;
 		}
 		return false;

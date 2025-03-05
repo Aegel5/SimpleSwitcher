@@ -52,6 +52,10 @@ bool MyApp::OnInit() {
         auto errLoadConf = LoadConfig(*conf);
         IFS_LOG(errLoadConf);
 
+#ifdef _DEBUG
+        conf->fDbgMode = true;
+#endif
+
         SetLogLevel_v3(conf->fDbgMode ? conf->logLevel : LOG_LEVEL_0);
 
         IFS_LOG(autoCom.Init());

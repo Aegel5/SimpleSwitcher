@@ -107,9 +107,13 @@ private:
     {
         if (nMsg == c_MSG_TypeHotKey) {
             auto cur = (TKeyCode)lParam;
-            if (key.HasKey(cur, false)) {
+            if (key.HasKey(cur,true)) {
                 key.Remove(cur);
-            } else {
+            }
+            else if (key.HasKey(cur, false)) {
+                key.Remove(cur,false);
+            }
+            else {
                 key.Add3(cur, CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY | CHotKey::ADDKEY_CHECK_MODS | CHotKey::ADDKEY_CHECK_EXIST );
             }
             updateField();

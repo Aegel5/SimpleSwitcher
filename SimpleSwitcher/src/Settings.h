@@ -17,15 +17,7 @@ inline TStatus GetCurLayRequest() {
 class SettingsGui {
 public:
     SettingsGui() {
-
         GenerateListHK();
-
-        fDbgMode =
-#ifdef _DEBUG
-            true;
-#else
-            false;
-#endif
     }
 
     TInt64 time_debug_log_last_enabled = 0;

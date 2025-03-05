@@ -108,19 +108,13 @@ struct CurStateWrapper {
 
 	CHotKey state;
 	std::map<int, ULONGLONG> times;
-	//bool isSkipRepeat = false;
 
 	void Update(KBDLLHOOKSTRUCT* kStruct, KeyState curKeyState) {
 
 		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
 		bool isAltDown = TestFlag(kStruct->flags, LLKHF_ALTDOWN);
 
-		//isSkipRepeat = false;
-
-
-		if (curKeyState == KEY_STATE_UP)
-		{
-			//state.SetHold(false);
+		if (curKeyState == KEY_STATE_UP){
 			auto it = times.find(vkCode);
 			if (it != times.end()) { times.erase(it); }
 			if (!state.Remove(vkCode))
@@ -131,39 +125,12 @@ struct CurStateWrapper {
 				}
 			}
 		}
-		else if (curKeyState == KEY_STATE_DOWN)
-		{
-			
+		else if (curKeyState == KEY_STATE_DOWN){
 			if (isAltDown && vkCode == VK_LCONTROL) {
 				LOG_INFO_1(L"fake LCtrl");
 			}
-
-			// больше не надо?????
-			//else {
-				//CHotKey hk_save = state;
-				state.Add3(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY); // todo - ADDKEY_ENSURE_ONE_VALUEKEY - возможно перезатерание.
-				times[vkCode] = GetTickCount64() + 10000;
-				//if (state.Compare(hk_save))
-				//{
-				//	if (state.IsHold()) // already hold
-				//	{
-				//		isSkipRepeat = true;
-				//	}
-				//	else
-				//	{
-				//		state.SetHold(true);
-				//	}
-				//}
-				//else
-				//{
-				//	// была нажата другая клавиша, сбрасываем флаг hold
-				//	state.SetHold(false);
-				//}
-			//}
-		}
-		else
-		{
-			// err?
+			state.Add3(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY); // todo - ADDKEY_ENSURE_ONE_VALUEKEY - возможно перезатерание.
+			times[vkCode] = GetTickCount64() + 10000;
 		}
 
 		// Может быть так, что событие UP - не придет. Поэтому, очистим базу, если прошло много времени.

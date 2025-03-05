@@ -216,6 +216,7 @@ LRESULT CALLBACK KeyboardProc(
 namespace {
 	CurStateWrapper curKey;
 	TKeyCode disable_up = 0;
+	CHotKey possible_hk_up;
 };
 
 bool CheckInDisabled() {
@@ -249,6 +250,8 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 	MainWorkerMsg msg_type{ .mode = HWORKER_KeyMsg };
 	MainWorkerMsg msg_hotkey{ .mode = HWORKER_OurHotKey };
 	msg_hotkey.data.hk = hk_NULL;
+	bool send_key = false;
+
 
 	auto process = [&]() -> bool
 	{
@@ -261,9 +264,6 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		bool isSysKey = wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP;
 		bool isExtended = TestFlag(k->flags, LLKHF_EXTENDED);
 		auto scan_code = k->scanCode;
-		msg_type.data.keyData.ks = *k;
-		msg_type.data.keyData.wParam = wParam;
-
 
 		LOG_ANY(
 			L"KEY_MSG: {}({}),scan={},inject={},altdown={},syskey={},extended={}", 
@@ -296,15 +296,19 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 			}
 		}
 
-		auto prev_k = curKey.state;
+		CHotKey possible;
+		std::swap(possible, possible_hk_up); // сразу очищаем
+
+		msg_type.data.keyData.ks = *k;
+		msg_type.data.keyData.wParam = wParam;
+		send_key = true; // обрабатываем нажатие, если не будет запрета
+
 		curKey.Update(k, curKeyState); // сразу обновляем
 		const auto& curk = curKey.state;
 
-		auto check_is_our_key = [&msg_hotkey](const CHotKey& k1, const CHotKey& k2, HotKeyType hk) {
+		auto check_is_our_key = [&msg_hotkey](const CHotKey& k1, const CHotKey& k2) {
 			if (k1.Compare(k2, CHotKey::COMPARE_IGNORE_KEYUP)) {
 				if (!CheckInDisabled()) {
-					msg_hotkey.data.hotkey = k2;
-					msg_hotkey.data.hk = hk;
 					return true;
 				}
 			}
@@ -316,14 +320,20 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 				auto conf = conf_get();
 				bool need_our_action = false;
 				for (const auto& [hk, key] : conf->All_hot_keys()) {
-					if (!key.GetKeyup() && check_is_our_key(key,curk,hk)) {
+					if (!key.GetKeyup() && check_is_our_key(key,curk)) {
 						need_our_action = true;
+						possible_hk_up.Clear();
+						msg_hotkey.data.hotkey = key;
+						msg_hotkey.data.hk = hk;
 						break;
+					}
+					if (key.GetKeyup() && check_is_our_key(key, curk)) {
+						possible_hk_up = curk; // без break
 					}
 				}
 				if (need_our_action) {
 					// у нас есть такой хот-кей, запрещаем это событие для программы.
-					disable_up = curKey.state.ValueKey(); // up тоже будет в будущем запрещать.
+					disable_up = curk.ValueKey(); // up тоже будет в будущем запрещать.
 					LOG_INFO_1(L"Key %s was disabled(down)", CHotKey::GetName(disable_up));
 					return 1;
 				}
@@ -347,6 +357,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 			}
 		}
 		else if (curKeyState == KeyState::KEY_STATE_UP) {
+
 			if (disable_up == vkCode) {
 				LOG_INFO_1(L"Key %s was disabled(up)", CHotKey::GetName(disable_up));
 				disable_up = 0;
@@ -354,15 +365,19 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 			}
 			else {
 				// ищем наш хот-кей.
-				if (prev_k.ValueKey() == vkCode) { // up сработал именно на value_key
+				// даже если нашли, up никогда не запрещаем.
+				if (!possible.IsEmpty()) {
 					for (const auto& [hk, key] : conf_get()->All_hot_keys()) {
-						if (key.GetKeyup() && check_is_our_key(key, prev_k, hk)) {
-							break; // даже если нашли, up никогда не запрещаем.
+						if (key.GetKeyup() && check_is_our_key(key, possible)) {
+							msg_hotkey.data.hotkey = key;
+							msg_hotkey.data.hk = hk;
+							break; 
 						}
 					}
 				}
 			}
 		}
+
 
 		if (curk.IsEmpty()) {
 			disable_up = 0;
@@ -373,7 +388,8 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 
 	if (nCode == HC_ACTION) {
 		auto res = process();
-		if (!res) {
+		if (
+			!res && send_key) { 
 			Worker()->PostMsg(msg_type);
 		}
 		if (msg_hotkey.data.hk != hk_NULL) {

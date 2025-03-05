@@ -182,21 +182,26 @@ inline void __LOG_LINE(const TChar* s) {
 	SwLoggerGlobal().Append(s);
 	SwLoggerGlobal().EndLineFlash();
 }
-inline void __LOG_WARN(const TChar* s, auto&&... v) {
-	std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
-	__SW_LOG_TIME();
-	SwLoggerGlobal().Append(L"[WARN] ");
-	auto res = std::vformat(s, std::make_wformat_args(v...));
-	SwLoggerGlobal().Append(res.c_str());
-	SwLoggerGlobal().EndLineFlash();
-}
-void __LOG_LINE_FORMAT(const TChar* s, auto&& v...) {
-	auto res = std::vformat(s, std::make_wformat_args(v));
+
+void __LOG_LINE_FORMAT(const auto& s, auto&&... v) {
+	auto res = std::vformat(s.get(), std::make_wformat_args(v...));
 	__LOG_LINE(res.c_str()); 
 }
 
-inline void LOG_ANY(const TChar* s, auto&&... v) { if (GetLogLevel() >= LOG_LEVEL_2) { __LOG_LINE_FORMAT(s, v...); } }
-inline void LOG_WARN(const wchar_t* s, auto&&... v) {if(GetLogLevel() >= LOG_LEVEL_1) { __LOG_WARN(s,v...);}}
+template<typename... Args> inline void LOG_ANY(const std::wformat_string<Args...> s, Args&&... v)
+{ if (GetLogLevel() >= LOG_LEVEL_2) { __LOG_LINE_FORMAT(s, v...); } }
+
+template<typename... Args> inline void LOG_WARN(const std::wformat_string<Args...> s, Args&&... v){
+	if (GetLogLevel() >= LOG_LEVEL_1) {
+		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
+		__SW_LOG_TIME();
+		SwLoggerGlobal().Append(L"[WARN] ");
+		SwLoggerGlobal().Append(std::vformat(s.get(), std::make_wformat_args(v...)).c_str());
+		SwLoggerGlobal().EndLineFlash();
+	}
+}
+
+
 
 #define RETURN_SUCCESS {return SW_ERR_SUCCESS; }
 
