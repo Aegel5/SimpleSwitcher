@@ -84,7 +84,6 @@ class MyFrame4 : public wxFrame
 		virtual void onEnableLog( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onPrevent( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onDisableAccessebl( wxCommandEvent& event ) { event.Skip(); }
-		virtual void onClearFormat( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onHotDClick( wxGridEvent& event ) { event.Skip(); }
 		virtual void on_grid_lay_double( wxGridEvent& event ) { event.Skip(); }
 		virtual void onRemapCaps( wxCommandEvent& event ) { event.Skip(); }

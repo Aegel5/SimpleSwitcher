@@ -119,6 +119,12 @@ public:
                 conf_set(conf);
                 });
 
+            BindCheckbox(m_checkBoxClearForm, []() {return conf_get()->fClipboardClearFormat; }, [](bool val) {
+                auto conf = conf_copy();
+                conf->fClipboardClearFormat = val;
+                conf_set(conf);
+                });
+
             updateBools();
 
             updateAutoStart();
@@ -285,7 +291,6 @@ private:
     void updateBools() {
         auto conf = conf_get();
         m_checkBoxWorkInAdmin->SetValue(conf->isMonitorAdmin);
-        m_checkBoxClearForm->SetValue(conf->fClipboardClearFormat);
         m_checkBoxKeyDef->SetValue(conf->fEnableKeyLoggerDefence);
         m_checkBoxDisablAcc->SetValue(conf->disableAccessebility);
         m_checkDebuglog->SetValue(conf->fDbgMode);
@@ -305,11 +310,6 @@ private:
     virtual void onPrevent(wxCommandEvent& event){
         auto conf = conf_copy();
         conf->fEnableKeyLoggerDefence = event.IsChecked();
-        conf_set(conf);
-    }
-    virtual void onClearFormat(wxCommandEvent& event) {
-        auto conf = conf_copy();
-        conf->fClipboardClearFormat = event.IsChecked();
         conf_set(conf);
     }
 
@@ -464,33 +464,6 @@ private:
         if(showmsg)
             wxMessageBox(_("Will be applied after PC reboot"));
     }
-
-
-
-    //void onHotKey_ForEditBox(wxTextCtrl* obj) {
-    //    if (!obj)
-    //        return;
-    //    HotKeyType type = (HotKeyType)(TUInt32)obj->GetClientData();
-    //    CHotKey newkey;
-    //    if (ChangeHotKey(this, type, newkey)) {
-    //        auto conf = conf_copy();
-    //        conf->GetHk(type).keys.key() = newkey;
-    //        auto res = conf->GetHk(type).keys.key().ToString();
-    //        conf_set(conf);
-    //        obj->SetValue(res);
-
-    //        //Rereg_all();
-    //    }
-    //}
-
-    //void onHotKeyChange(wxMouseEvent& ev) {
-
-    //    auto obj = wxDynamicCast(ev.GetEventObject(), wxTextCtrl);
-    //    onHotKey_ForEditBox(obj);
-
-    //    //ev.Skip();
-
-    //}
 
     void updateEnable() {
         if (!startOk()) {
