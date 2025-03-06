@@ -341,7 +341,8 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 					if (curk.Size() == 3 
 						&& curk.HasKey(VK_LMENU, true)
 						&& curk.HasKey(VK_CONTROL, false)
-						&& !curk.IsKnownMods(curk.ValueKey())
+						&& !curk.IsKnownMods(vkCode)
+						&& vkCode == curk.ValueKey()
 						&& conf_get()->fixRAlt
 						&& conf_get()->fixRAlt_lay != 0
 						) {
@@ -350,8 +351,8 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 						msg.mode = HWORKER_FixCtrlAlt;
 						msg.data.hotkey_to_fix = curk;
 						Worker()->PostMsg(msg);
-						LOG_INFO_1(L"Key %s was disabled(fix)", CHotKey::GetName(curk.ValueKey()));
-						disable_up = curk.ValueKey();
+						LOG_INFO_1(L"Key %s was disabled(fix)", CHotKey::GetName(vkCode));
+						disable_up = vkCode;
 						return 1; // пока запрещаем, потом заново отошлем...
 					}
 				}
