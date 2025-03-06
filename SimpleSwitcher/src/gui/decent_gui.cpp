@@ -62,12 +62,14 @@ public:
 
         auto menu = new wxMenu();
 
-        menu->Append(Minimal_Show, _("Show"));
-        menu->Append(Minimal_Quit, _("Exit"));
-        menu->AppendSeparator();
+
         for (int i = 0; i < lays.size(); i++) {
             menu->Append(Minimal_SetLay1 + i, Utils::GetNameForHKL(lays[i]));
         }
+        menu->AppendSeparator();
+        menu->Append(Minimal_Show, _("Show"));
+        menu->Append(Minimal_Quit, _("Exit"));
+
 
         return menu;
     }
