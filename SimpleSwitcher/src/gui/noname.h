@@ -54,7 +54,6 @@ class MyFrame4 : public wxFrame
 		wxStaticText* m_staticText9;
 		wxChoice* m_comboUiLang;
 		wxCheckBox* m_checkDebuglog;
-		wxCheckBox* m_checkBoxKeyDef;
 		wxCheckBox* m_checkBoxDisablAcc;
 		wxCheckBox* m_checkBoxClearForm;
 		wxCheckBox* m_checkBoxAllowInjected;
@@ -80,7 +79,6 @@ class MyFrame4 : public wxFrame
 		virtual void onAutocheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onShowFlags( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onEnableLog( wxCommandEvent& event ) { event.Skip(); }
-		virtual void onPrevent( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onDisableAccessebl( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onHotDClick( wxGridEvent& event ) { event.Skip(); }
 		virtual void on_grid_lay_double( wxGridEvent& event ) { event.Skip(); }

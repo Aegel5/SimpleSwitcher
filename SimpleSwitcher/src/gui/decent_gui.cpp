@@ -330,7 +330,6 @@ private:
 
     void updateBools() {
         auto conf = conf_get();
-        m_checkBoxKeyDef->SetValue(conf->fEnableKeyLoggerDefence);
         m_checkBoxDisablAcc->SetValue(conf->disableAccessebility);
         m_checkDebuglog->SetValue(conf->fDbgMode);
         m_checkBoxShowFlags->SetValue(conf->showFlags);
@@ -346,11 +345,7 @@ private:
         SetLogLevel_v3(conf->fDbgMode ? conf->logLevel : LOG_LEVEL_0);
         conf_set(conf);
     }
-    virtual void onPrevent(wxCommandEvent& event){
-        auto conf = conf_copy();
-        conf->fEnableKeyLoggerDefence = event.IsChecked();
-        conf_set(conf);
-    }
+
 
     void handleDisableAccess() {
         if (conf_get()->disableAccessebility) {
