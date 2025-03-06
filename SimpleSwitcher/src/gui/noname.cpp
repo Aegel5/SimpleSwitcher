@@ -300,7 +300,7 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	int m_choiceKeyNChoices = sizeof( m_choiceKeyChoices ) / sizeof( wxString );
 	m_choiceKey = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceKeyNChoices, m_choiceKeyChoices, 0 );
 	m_choiceKey->SetSelection( 0 );
-	bSizer16->Add( m_choiceKey, 0, wxALL, 5 );
+	bSizer16->Add( m_choiceKey, 0, wxALL|wxEXPAND, 5 );
 
 	m_staticText10 = new wxStaticText( this, wxID_ANY, _("Press any key..."), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText10->Wrap( -1 );

@@ -549,6 +549,9 @@ private:
             m_gridHotKeys->AppendRows();
             m_gridHotKeys->SetRowLabelValue(i, it.gui_text);
             m_gridHotKeys->SetCellValue(i, 0, L" " + it.keys.ToString());
+            if (it.hkId == hk_CycleLang_win_hotkey) {
+                m_gridHotKeys->SetCellBackgroundColour(i, 0, wxColor(0xE3,0xF2,0xFD));
+            }
         }
 
         m_gridHotKeys->SetRowLabelSize(wxGRID_AUTOSIZE);
@@ -631,6 +634,7 @@ private:
             }
             m_gridLayouts->SetCellValue(i, 1, it.hotkey.ToString());
             m_gridLayouts->SetCellValue(i, 2, it.WinHotKey.ToString());
+            m_gridLayouts->SetCellBackgroundColour(i, 2, wxColor(0xE3, 0xF2, 0xFD));
         }
         //m_gridLayouts->SetRowLabelSize(wxGRID_AUTOSIZE);
         m_gridLayouts->SetRowLabelSize(m_gridHotKeys->GetRowLabelSize());
