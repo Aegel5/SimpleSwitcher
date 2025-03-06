@@ -96,9 +96,11 @@ public:
             SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION 
                 //| wxRESIZE_BORDER
             );
+
             auto sz = GetSize();
-            sz.x = std::max((double)sz.x, sz.x * 1.1);
+            sz.x = std::max((double)sz.x, sz.x * 1.15);
             SetSize(sz);
+
 
             m_staticTextBuildDate->SetLabelText(std::format(L"Built on '{}'", _SW_ADD_STR_UT(__DATE__)));
 
@@ -189,6 +191,8 @@ public:
                 coreWork.Start();
             }
             updateEnable();
+
+
         }
         catch (std::exception& e) {
             wxMessageBox(_("Error while initing main wnd: ") + e.what());

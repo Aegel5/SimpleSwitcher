@@ -120,7 +120,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_gridHotKeys->SetMargins( 0, 0 );
 
 	// Columns
-	m_gridHotKeys->SetColSize( 0, 500 );
+	m_gridHotKeys->SetColSize( 0, 100 );
 	m_gridHotKeys->EnableDragColMove( false );
 	m_gridHotKeys->EnableDragColSize( true );
 	m_gridHotKeys->SetColLabelValue( 0, _("Hotkey") );
