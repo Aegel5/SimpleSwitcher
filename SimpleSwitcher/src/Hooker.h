@@ -61,7 +61,6 @@ public:
 	void ChangeForeground(HWND hwnd);
 	TKeyType GetCurKeyType(CHotKey hotkey);
 	TStatus ProcessKeyMsg(KeyMsgData& keyData);
-	TStatus ClearModsBySend(CHotKey key);
 	void HandleSymbolDown();
 	void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code);
 	TStatus Init();

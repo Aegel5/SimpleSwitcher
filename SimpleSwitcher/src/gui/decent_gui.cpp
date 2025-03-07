@@ -178,11 +178,7 @@ public:
                 trayTooltip += L" ";
                 trayTooltip += SW_VERSION;
                 myTray.SetIcon(icon, trayTooltip);
-                myTray.Bind(wxEVT_MENU, [this](auto& evt) {
-                        this->exitRequest = true;
-                        LOG_INFO_1(L"exit request");
-                        this->Close(true);
-                    }, Minimal_Quit);
+                myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
                 myTray.Bind(wxEVT_MENU, [this](auto& evt) {
                         this->Show(true); 
                     }, Minimal_Show);
@@ -723,6 +719,12 @@ private:
     //    return MyFrame4::MSWWindowProc(nMsg, wParam, lParam);
     //}
 public:
+
+    void onExit(wxCommandEvent& event) override {
+        exitRequest = true;
+        LOG_INFO_1(L"exit request");
+        Close(true);
+    }
 
     void onCloseToTray(wxCommandEvent& event)     { 
         Hide();

@@ -28,7 +28,6 @@ public:
 			std::unique_lock<std::mutex> _lock(m_mtx);
 			while (1) {
 				if (skipdata.empty()) {
-					LOG_INFO_3(L"allow injected because of setting");
 					break; // нечего пропускать.
 				}
 				if (GetTickCount64() > skipdata.front().actualUNTIL || skipdata.front().skipCnt <= 0) {
@@ -38,9 +37,12 @@ public:
 				// все хорошо, нода актуальна, пропускаем inject
 				skipdata.front().skipCnt--;
 				LOG_INFO_3(L"skip enjected by evristics");
-				return true;
+				return false;
 			}
+			LOG_INFO_3(L"allow injected because of setting");
+			return true;
 		}
+		LOG_INFO_3(L"skip inject");
 		return false;
     }
 };

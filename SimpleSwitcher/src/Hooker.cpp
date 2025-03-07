@@ -102,7 +102,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	m_curStateWrap.Update(k, curKeyState);
 	m_curKeyState = m_curStateWrap.state;
 
-	LOG_INFO_3(L"curState=%s", m_curKeyState.ToString().c_str());
+	LOG_INFO_3(L"ProcessKeyMsg %s curState=%s", CHotKey::ToString(vkCode).c_str(), m_curKeyState.ToString().c_str());
 
 	if (curKeyState != KEY_STATE_DOWN)
 		RETURN_SUCCESS;
@@ -622,17 +622,18 @@ void Hooker::HandleSymbolDown()
 }
 void Hooker::UpAllKeys() {
 
-	if (m_curKeyState.IsEmpty()) return;
+	const auto& keys = m_curStateWrap.all_keys;
+	if (keys.empty()) return;
 
 	InputSender inputSender;
-	if (m_curKeyState.HasKey(VK_LMENU, true)) {
+	if (keys.find(VK_LMENU) != keys.end()) {
 		// если нажата только клавиша alt - то ее простое отжатие даст хрень - нужно отжать ее еще раз
 		//inputSender.Add(VK_LMENU, KEY_STATE_DOWN);
 		//inputSender.Add(VK_LMENU, KEY_STATE_UP); 	
 		inputSender.Add(VK_CAPITAL, KEY_STATE_UP);
 	}
-	for (auto key : m_curKeyState) {
-		inputSender.Add(key, KEY_STATE_UP);
+	for (auto key : keys) {
+		inputSender.Add(key.first, KEY_STATE_UP);
 	}
 
 	IFS_LOG(SendOurInput(inputSender));
@@ -1060,32 +1061,6 @@ TStatus Hooker::AnalizeTopWnd() {
 			m_layoutTopWnd, topWndInfo2.lay,
 			m_sTopProcName.c_str());
 	}
-
-	RETURN_SUCCESS;
-}
-
-TStatus Hooker::ClearModsBySend(CHotKey key)
-{
-	std::wstring s1 = key.ToString();
-	LOG_INFO_1(L"ClearModsBySend for key %s", s1.c_str());
-
-	InputSender sender;
-
-	for (TKeyCode k : key)
-	{
-		if (!CHotKey::IsKnownMods(k))
-			continue;
-		SHORT res = GetAsyncKeyState(k);
-		if (res & 0x8000)
-		{
-			std::wstring s1;
-			CHotKey::ToString(k, s1);
-			//LOG_INFO_1(L"ClearModsBySend %s", s1.c_str());
-			sender.Add(k, KEY_STATE_UP);
-		}
-	}
-
-	IFS_RET(SendOurInput(sender));
 
 	RETURN_SUCCESS;
 }

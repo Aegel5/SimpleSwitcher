@@ -21,6 +21,8 @@ TStatus InputSender::Send()
 	//	doPause = true; 
 	//}
 
+	InjectSkipper::Inst().AddOur(list.size());
+
 	if (doPause) {
 		for (auto& elem : list) {
 			auto res = SendInput(1, &elem, sizeof(INPUT));
@@ -32,7 +34,7 @@ TStatus InputSender::Send()
 		IFW_LOG(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size());
 	}
 
-	InjectSkipper::Inst().AddOur(list.size());
+
 
 	RETURN_SUCCESS;
 }

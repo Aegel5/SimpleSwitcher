@@ -218,6 +218,7 @@ namespace {
 	CurStateWrapper curKey;
 	TKeyCode disable_up = 0;
 	CHotKey possible_hk_up;
+	bool was_hot_key_down = false;
 };
 
 bool CheckInDisabled() {
@@ -316,11 +317,14 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 				auto conf = conf_get();
 				bool need_our_action = false;
 				for (const auto& [hk, key] : conf->All_hot_keys()) {
-					if (!key.GetKeyup() && check_is_our_key(key,curk)) {
+					if (!key.GetKeyup() && check_is_our_key(key, curk)) {
 						need_our_action = true;
 						possible_hk_up.Clear();
-						msg_hotkey.data.hotkey = key;
-						msg_hotkey.data.hk = hk;
+						if (!was_hot_key_down) { // запрещаем срабатывать на удержание наших хоткеев
+							msg_hotkey.data.hotkey = key;
+							msg_hotkey.data.hk = hk;
+							was_hot_key_down = true;
+						}
 						break;
 					}
 					if (key.GetKeyup() && check_is_our_key(key, curk)) {
@@ -354,7 +358,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 			}
 		}
 		else if (curKeyState == KeyState::KEY_STATE_UP) {
-
+			was_hot_key_down = false; // разрешаем наши хоткеи снова, только если был up
 			if (disable_up == vkCode) {
 				LOG_INFO_1(L"Key %s was disabled(up)", CHotKey::GetName(disable_up));
 				disable_up = 0;

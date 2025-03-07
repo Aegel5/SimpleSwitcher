@@ -107,52 +107,46 @@ private:
 struct CurStateWrapper {
 
 	CHotKey state;
-	std::map<int, ULONGLONG> times;
+	std::map<TKeyCode, ULONGLONG> all_keys;
+
+	void CheckOk() {
+		std::vector<TKeyCode> to_del;
+		for (const auto& it : all_keys) {
+			if (GetTickCount64() > (it.second + 10000)) {
+				if (!(GetAsyncKeyState(it.first) & 0x8000)) { // TODO: не понятно как это работает в remote сценарии....
+					to_del.push_back(it.first);
+				}
+			}
+		}
+		for (auto it : to_del) {
+			LOG_WARN(L"delete key because it not down now {}", CHotKey::ToString(it));
+			all_keys.erase(it);
+			state.Remove(it);
+		}
+	}
 
 	void Update(KBDLLHOOKSTRUCT* kStruct, KeyState curKeyState) {
+
+		CheckOk();
 
 		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
 		bool isAltDown = TestFlag(kStruct->flags, LLKHF_ALTDOWN);
 
-		if (curKeyState == KEY_STATE_UP){
-			auto it = times.find(vkCode);
-			if (it != times.end()) { times.erase(it); }
-			if (!state.Remove(vkCode))
-			{
-				if (CHotKey::IsKnownMods(vkCode))
-				{
-					IFS_LOG(SW_ERR_UNKNOWN, L"Key was already upped %s", CHotKey::GetName(vkCode));
-				}
-			}
-		}
-		else if (curKeyState == KEY_STATE_DOWN){
+		if (curKeyState == KEY_STATE_DOWN) {
 			if (isAltDown && vkCode == VK_LCONTROL) {
 				LOG_INFO_1(L"fake LCtrl");
 			}
-			state.Add3(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY); // todo - ADDKEY_ENSURE_ONE_VALUEKEY - возможно перезатерание.
-			times[vkCode] = GetTickCount64() + 10000;
+			state.Add3(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
+			all_keys[vkCode] = GetTickCount64();
 		}
 
-		// Может быть так, что событие UP - не придет. Поэтому, очистим базу, если прошло много времени.
-		while (true) {
-			bool found = false;
-			for (auto& el : times) {
-				if (GetTickCount64() > el.second) {
-					if (!(GetAsyncKeyState(el.first) & 0x8000)) {
-						std::wstring s1;
-						CHotKey::ToString(el.first, s1);
-						LOG_WARN(L"delete key because it not down now {}", s1.c_str());
-						times.erase(el.first);
-						state.Remove(el.first);
-						found = true;
-						break;
-					}
-				}
-			}
-			if (!found) {
-				break;
+		if (curKeyState == KEY_STATE_UP){
+			state.Remove(vkCode);
+			if (all_keys.erase(vkCode) == 0) {
+				LOG_WARN(L"Key was already upped {}", CHotKey::GetName(vkCode));
 			}
 		}
+
 	}
 };
 
