@@ -130,10 +130,12 @@ public:
                 conf_set(conf);
                 });
 
-            BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get()->AlternativeLayoutChange; }, [](bool val) {
+            BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get()->AlternativeLayoutChange; }, [this](bool val) {
                 auto conf = conf_copy();
                 conf->AlternativeLayoutChange = val;
                 conf_set(conf);
+                FillLayoutsInfo();
+                FillHotkeysInfo();
                 });
 
             BindCheckbox(m_checkBoxAllowInjected, []() {return conf_get()->AllowRemoteKeys; }, [](bool val) {
@@ -183,6 +185,7 @@ public:
             updateBools();
 
             updateAutoStart();
+
             FillHotkeysInfo();
             FillLayoutsInfo();
 
@@ -573,6 +576,7 @@ private:
         
         for (int i = -1; const auto& it : conf_get()->hotkeysList) {
             i++;
+            if (it.hkId == hk_CycleLang_win_hotkey&& !conf_get()->AlternativeLayoutChange) break;
             m_gridHotKeys->AppendRows();
             m_gridHotKeys->SetRowLabelValue(i, it.gui_text);
             m_gridHotKeys->SetCellValue(i, 0, L" " + it.keys.ToString());
@@ -646,9 +650,15 @@ private:
     }
     void FillLayoutsInfo() {
 
-        SyncLayouts();
-
         ClearGrid(m_gridLayouts);
+
+        while (m_gridLayouts->GetNumberCols() >= 3) {
+            m_gridLayouts->DeleteCols(2);
+        }
+        if (conf_get()->AlternativeLayoutChange) {
+            m_gridLayouts->AppendCols();
+            m_gridLayouts->SetColLabelValue(2, L"Win hotkey");
+        }
 
         // отобразим в gui
         for (int i = -1; const auto& it: conf_get()->layouts_info.info) {
@@ -660,8 +670,11 @@ private:
                 m_gridLayouts->SetCellValue(i, 0, "X");
             }
             m_gridLayouts->SetCellValue(i, 1, it.hotkey.ToString());
-            m_gridLayouts->SetCellValue(i, 2, it.WinHotKey.ToString());
-            m_gridLayouts->SetCellBackgroundColour(i, 2, wxColor(0xE3, 0xF2, 0xFD));
+
+            if (conf_get()->AlternativeLayoutChange) {
+                m_gridLayouts->SetCellValue(i, 2, it.WinHotKey.ToString());
+                m_gridLayouts->SetCellBackgroundColour(i, 2, wxColor(0xE3, 0xF2, 0xFD));
+            }
         }
         //m_gridLayouts->SetRowLabelSize(wxGRID_AUTOSIZE);
         m_gridLayouts->SetRowLabelSize(m_gridHotKeys->GetRowLabelSize());

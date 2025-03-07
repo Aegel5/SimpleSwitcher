@@ -1149,7 +1149,7 @@
             <object class="notebookpage" expanded="true">
               <property name="bitmap"></property>
               <property name="label">Hotkeys</property>
-              <property name="select">0</property>
+              <property name="select">1</property>
               <object class="wxPanel" expanded="true">
                 <property name="BottomDockable">1</property>
                 <property name="LeftDockable">1</property>
@@ -1325,9 +1325,9 @@
                       <property name="close_button">1</property>
                       <property name="col_label_horiz_alignment">wxALIGN_CENTER</property>
                       <property name="col_label_size"></property>
-                      <property name="col_label_values">&quot;Use in cycle&quot; &quot;Hotkey&quot; &quot;Win hotkey&quot;</property>
+                      <property name="col_label_values">&quot;Use in cycle&quot; &quot;Hotkey&quot;</property>
                       <property name="col_label_vert_alignment">wxALIGN_CENTER</property>
-                      <property name="cols">3</property>
+                      <property name="cols">2</property>
                       <property name="column_sizes"></property>
                       <property name="context_help"></property>
                       <property name="context_menu">1</property>
@@ -1828,7 +1828,7 @@
             <object class="notebookpage" expanded="true">
               <property name="bitmap"></property>
               <property name="label">About / Help</property>
-              <property name="select">1</property>
+              <property name="select">0</property>
               <object class="wxPanel" expanded="true">
                 <property name="BottomDockable">1</property>
                 <property name="LeftDockable">1</property>

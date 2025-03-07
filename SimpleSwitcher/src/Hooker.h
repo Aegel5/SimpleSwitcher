@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include "Msctf.h"
+#include "atlbase.h"
+
 #include "Settings.h"
 #include "KeysStruct.h"
 #include "KeyTools.h"
@@ -88,9 +91,58 @@ public:
 		}
 		else
 		{
+
+
 			LOG_INFO_1(L"post WM_INPUTLANGCHANGEREQUEST");
 			PostMessage(m_hwndTop, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
+			//IFS_LOG(SwitchByCom(lay));
 		}
+
+		RETURN_SUCCESS;
+	}
+
+	TStatus SwitchByCom(HKL lay) {
+
+		CComPtr<ITfInputProcessorProfileMgr> pProfile;
+		CComPtr<ITfInputProcessorProfiles> pProfile2;
+		
+
+		IFH_RET(CoCreateInstance(CLSID_TF_InputProcessorProfiles,
+			NULL,
+			CLSCTX_INPROC_SERVER,
+			IID_ITfInputProcessorProfileMgr,
+			(LPVOID*)&pProfile));
+
+		IFH_RET(CoCreateInstance(CLSID_TF_InputProcessorProfiles,
+			NULL,
+			CLSCTX_INPROC_SERVER,
+			IID_ITfInputProcessorProfiles,
+			(LPVOID*)&pProfile2));
+
+		TF_INPUTPROCESSORPROFILE profile = {};
+		IFH_RET(pProfile->GetActiveProfile(GUID_TFCAT_TIP_KEYBOARD, &profile));
+
+		LANGID lang;
+		IFH_RET(pProfile2->GetCurrentLanguage(&lang));
+
+		CComPtr<IEnumTfInputProcessorProfiles> profs_enum;
+		ULONG geted;
+		IFH_RET(pProfile->EnumProfiles(0, &profs_enum));
+		TF_INPUTPROCESSORPROFILE profs[100] = { 0 };
+		IFH_RET(profs_enum->Next(100, profs, &geted));
+		for (auto i = 0; i < geted; i++) {
+			auto& cur = profs[i];
+			if (cur.dwProfileType != TF_PROFILETYPE_KEYBOARDLAYOUT) continue;
+			if (cur.hkl == lay) {
+				
+				IFH_RET(pProfile->ActivateProfile(TF_PROFILETYPE_KEYBOARDLAYOUT, cur.langid, CLSID_NULL, GUID_NULL, cur.hkl, TF_IPPMF_ENABLEPROFILE|TF_IPPMF_FORSESSION));
+				//IFH_RET(pProfile2->ChangeCurrentLanguage(cur.langid));
+				LOG_ANY(L"switch ok to {}", (int)lay);
+				RETURN_SUCCESS;
+			}
+		}
+
+
 
 		RETURN_SUCCESS;
 	}

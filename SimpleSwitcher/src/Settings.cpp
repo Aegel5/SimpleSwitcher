@@ -43,14 +43,6 @@ void SettingsGui::GenerateListHK()
         AddHotKey(hk_CycleCustomLang, set);
     }
 
-    {
-        CHotKeySet set;
-        set.def_list = { CHotKey(VK_LMENU, VK_SHIFT), CHotKey(VK_CONTROL, VK_SHIFT) };
-        set.gui_text = _(L"Cycle change layout (win hotkey)").wc_str();
-        set.fUseDef = true;
-        AddHotKey(hk_CycleLang_win_hotkey, set);
-    }
-
 
     {
         CHotKeySet set;
@@ -65,6 +57,14 @@ void SettingsGui::GenerateListHK()
         set.def_list = { CHotKey(VK_SCROLL), CHotKey(VK_PAUSE), CHotKey(VK_F23) };
         set.gui_text = _(L"Selected text to UPPER/lower case").wc_str();
         AddHotKey(hk_toUpperSelected, set);
+    }
+
+    {
+        CHotKeySet set;
+        set.def_list = { CHotKey(VK_LMENU, VK_SHIFT), CHotKey(VK_CONTROL, VK_SHIFT) };
+        set.gui_text = _(L"Cycle change layout (win hotkey)").wc_str();
+        set.fUseDef = true;
+        AddHotKey(hk_CycleLang_win_hotkey, set);
     }
 
     for (auto& it : hotkeysList) {

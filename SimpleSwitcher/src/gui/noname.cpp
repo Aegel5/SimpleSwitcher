@@ -141,7 +141,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_gridLayouts = new wxGrid( m_panel141, wxID_ANY, wxPoint( -1,-1 ), wxDefaultSize, 0 );
 
 	// Grid
-	m_gridLayouts->CreateGrid( 0, 3 );
+	m_gridLayouts->CreateGrid( 0, 2 );
 	m_gridLayouts->EnableEditing( false );
 	m_gridLayouts->EnableGridLines( true );
 	m_gridLayouts->EnableDragGridSize( false );
@@ -152,7 +152,6 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_gridLayouts->EnableDragColSize( true );
 	m_gridLayouts->SetColLabelValue( 0, _("Use in cycle") );
 	m_gridLayouts->SetColLabelValue( 1, _("Hotkey") );
-	m_gridLayouts->SetColLabelValue( 2, _("Win hotkey") );
 	m_gridLayouts->SetColLabelAlignment( wxALIGN_CENTER, wxALIGN_CENTER );
 
 	// Rows
@@ -170,7 +169,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel141->SetSizer( bSizer41 );
 	m_panel141->Layout();
 	bSizer41->Fit( m_panel141 );
-	m_notebook2->AddPage( m_panel141, _("Hotkeys"), false );
+	m_notebook2->AddPage( m_panel141, _("Hotkeys"), true );
 	m_panel5 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer20;
 	bSizer20 = new wxBoxSizer( wxVERTICAL );
@@ -222,7 +221,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel6->SetSizer( bSizer191 );
 	m_panel6->Layout();
 	bSizer191->Fit( m_panel6 );
-	m_notebook2->AddPage( m_panel6, _("About / Help"), true );
+	m_notebook2->AddPage( m_panel6, _("About / Help"), false );
 
 	bSizer1->Add( m_notebook2, 1, wxEXPAND | wxALL, 0 );
 
