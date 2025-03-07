@@ -75,6 +75,22 @@ public:
     }
 };
 
+namespace {
+    void ShowNeedAdmin(const wxString& expl=L"") {
+        wxString ms(_("Need admin rights"));
+        if (expl != "") {
+            ms += _(" for: ");
+            ms += "\"";
+            ms += expl;
+            ms += "\"";
+        }
+        wxMessageBox(ms);
+    }
+    bool startOk() {
+        return Utils::IsSelfElevated() || !conf_get()->isMonitorAdmin;
+    }
+}
+
 
 
 
@@ -200,6 +216,7 @@ public:
                 coreWork.Start();
             }
             updateEnable();
+
 
 
         }
@@ -700,19 +717,7 @@ private:
         UpdateAutostartExplain();
 
     }
-    void ShowNeedAdmin(const wxString& expl) {
-        wxString ms(_("Need admin rights"));
-        if (expl != "") {
-            ms += _(" for: ");
-            ms += "\"";
-            ms += expl;
-            ms += "\"";
-        }
-        wxMessageBox(ms);
-    }
-    bool startOk() {
-        return Utils::IsSelfElevated() || !conf_get()->isMonitorAdmin;
-    }
+
     //virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override
     //{
     //    // Pass the messages to the original WinAPI window procedure
@@ -773,6 +778,10 @@ void StartMainGui(bool show, bool conf_err_msg) {
 
     if (conf_err_msg) {
         wxMessageBox(_("Error reading config"));
+    }
+
+    if(!startOk()) {
+        ShowNeedAdmin();
     }
 
 
