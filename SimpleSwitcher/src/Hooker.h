@@ -122,14 +122,14 @@ public:
 
 		if (SettingsGui::IsNeedSavedWords(hk) && !HasAnyWord()) {
 			bool found = false;
-			//for (const auto& [hk2,key2] : conf_get()->All_hot_keys()) {
-			//	if (!SettingsGui::IsNeedSavedWords(hk2) && key.Compare(key2)) {
-			//		// Есть точно такой же хот-кей, не требующий сохраненных слов, используем его.
-			//		hk = hk2;
-			//		found = true;
-			//		break;
-			//	}
-			//}
+			for (const auto& [hk2,key2] : conf_get()->All_hot_keys()) {
+				if (!SettingsGui::IsNeedSavedWords(hk2) && key.Compare(key2)) {
+					// Есть точно такой же хот-кей, не требующий сохраненных слов, используем его.
+					hk = hk2;
+					found = true;
+					break;
+				}
+			}
 			if (!found) {
 				LOG_ANY(L"skip hotkey {} because no saved word", (int)hk);
 				return;

@@ -147,7 +147,14 @@ bool ChangeHotKey2(wxFrame* frame, CHotKeySet set, CHotKey& key) {
     HotKeyDlg dlg(set, frame);
     auto res = dlg.ShowModal();
     key = dlg.cur_key();
-    return (res == wxID_OK);
+    auto res2 =  res == wxID_OK;
+    if (res2) {
+        if (key.Size() == 1 && CHotKey::IsKnownMods(key.ValueKey()) && !key.GetKeyup()) {
+            wxMessageBox(_(L"Modifier must have #up flag"));
+            res2 = false;
+        }
+    }
+    return res2;
 }
 
 
