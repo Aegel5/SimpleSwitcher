@@ -51,6 +51,14 @@ _Также возможно:_
 ### Альтернативный режим переключения (эмуляция Windows hotkeys)
 Рекомендуется включать этот режим, так как он более стабилен. Для его настройки необходимо указать программе, какие хот-кеи используются в ОС (выделены голубым цветом в GUI).
 По-умолчанию Alt+Shift - переключение яызка, Alt+Shift+1 - включить первый язык, ...
+<details>
+  <summary>Пример настройки</summary>
+  ![изображение](https://github.com/user-attachments/assets/c715be20-8b79-4c0d-be9f-4eaa2369c795)
+  ![изображение](https://github.com/user-attachments/assets/a6bc2155-ff08-4227-80b2-e2fd64e66aa1)
+
+
+ 
+</details>
 
 ### Отключение Ctrl + LAlt как RAlt на расширенных раскладках
 Подробнее: https://github.com/Aegel5/SimpleSwitcher/issues/54
