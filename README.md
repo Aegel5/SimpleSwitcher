@@ -53,7 +53,8 @@ _Также возможно:_
 По-умолчанию Alt+Shift - переключение яызка, Alt+Shift+1 - включить первый язык, ...
 <details>
   <summary>Пример назначения</summary>
-  ![screenshot](doc/img1.png) 
+  ![изображение](https://github.com/user-attachments/assets/c715be20-8b79-4c0d-be9f-4eaa2369c795)
+
  
 </details>
 
