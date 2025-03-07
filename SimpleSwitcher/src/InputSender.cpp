@@ -21,16 +21,16 @@ TStatus InputSender::Send()
 	//	doPause = true; 
 	//}
 
-	InjectSkipper::Inst().AddOur(list.size());
-
 	if (doPause) {
 		for (auto& elem : list) {
+			InjectSkipper::Inst().AddOur(1);
 			auto res = SendInput(1, &elem, sizeof(INPUT));
 			IFW_LOG(res == 1);
 			Sleep(1);
 		}
 	}
 	else {
+		InjectSkipper::Inst().AddOur(list.size());
 		IFW_LOG(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size());
 	}
 
