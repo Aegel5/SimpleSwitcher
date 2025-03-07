@@ -13,6 +13,8 @@
 
 #include "lay_notif_from_dll.h"
 
+#include "InjectSkipper.h"
+
 #include "proc_enum.h"
 
 static const int c_nMaxLettersSave = 100;

@@ -13,7 +13,7 @@ TStatus CMainWorker::WorkerInt()
 	IFS_RET(hooker.Init());
 	g_hooker = &hooker;
 
-	MainWorkerMsg msg;
+	MainWorkerMsg msg (HWORKER_NULL);
 	while (true)
 	{
 		if (!m_queue.GetMessage(msg))
@@ -29,14 +29,6 @@ TStatus CMainWorker::WorkerInt()
 		{
 			hooker.CliboardChanged();
 		}
-		//else if (mode == HWORKER_SavePrevDataCallback)
-		//{
-		//	hooker.SavePrevDataCallback((EClipRequest)msg.data.wparm);
-		//}
-		//else if (mode == HWORKER_GetClipStringCallback)
-		//{
-		//	hooker.GetClipStringCallback();
-		//}
 		else if (mode == HWORKER_ChangeForeground)
 		{
 			hooker.ChangeForeground((HWND)msg.data.wparm);
@@ -77,6 +69,9 @@ TStatus CMainWorker::WorkerInt()
 		else if (mode == HWORKER_Getcurlay) {
             hooker.CheckCurLay(true);
         }
+		else if (mode == HWORKER_Setcurlay) {
+			hooker.SetNewLay(msg.data.lay);
+		}
 		else
 		{
 			LOG_INFO_1(L"[WARN] Unknown m2=%u", mode);

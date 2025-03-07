@@ -32,7 +32,7 @@ TStatus InputSender::Send()
 		IFW_LOG(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size());
 	}
 
-
+	InjectSkipper::Inst().AddOur(list.size());
 
 	RETURN_SUCCESS;
 }

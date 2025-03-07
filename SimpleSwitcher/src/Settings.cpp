@@ -139,6 +139,18 @@ void from_json(const json& j, LayoutInfoList& p) {
     j.get_to(p.info);
 }
 
+void to_json(json& j, const wxString& p) {
+    j = p.c_str();
+
+}
+
+void from_json(const json& j, wxString& p) {
+    p.Clear();
+    if (j.is_string()) {
+        p = j.get<std::string>();
+    }
+}
+
 
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
@@ -146,7 +158,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     isMonitorAdmin,
     fDbgMode,
     fClipboardClearFormat,
-    fEnableKeyLoggerDefence,
+    EnableKeyLoggerDefence,
     disableAccessebility,
     showFlags,
     disableInPrograms,
@@ -207,13 +219,6 @@ TStatus LoadConfig(SettingsGui& gui) {
                     }
                 }
             }
-        }
-
-        for (auto& elem : gui.disableInPrograms) {
-            std::wstring s;
-            Str_Utils::Utf8ToWide(elem, s);
-            Str_Utils::ToLower(s);
-            gui.__disableInPrograms.insert(s);
         }
 
     } catch (std::exception& e) {

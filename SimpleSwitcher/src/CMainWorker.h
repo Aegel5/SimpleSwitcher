@@ -12,6 +12,7 @@ enum EHWorker
 	HWORKER_ClipNotify,
 	HWORKER_WM_TIMER,
     HWORKER_Getcurlay,
+    HWORKER_Setcurlay,
     HWORKER_FixCtrlAlt,
     HWORKER_OurHotKey,
 };
@@ -25,6 +26,7 @@ struct KeyMsgData
 struct MainWorkerMsg
 {
 	EHWorker mode = HWORKER_NULL;
+	MainWorkerMsg(EHWorker m): mode(m) {}
 
 	union U
 	{
@@ -43,6 +45,9 @@ struct MainWorkerMsg
 		struct {
 			CHotKey hotkey;
 			HotKeyType hk;
+		};
+		struct {
+			HKL lay;
 		};
 		U() {} // ничего не делаем - никаких конструкторов, клиенты должны заполнять сами нужные данные...
 		
@@ -87,14 +92,12 @@ public:
 	}
 	void PostMsg(EHWorker mode)
 	{
-		MainWorkerMsg msg;
-		msg.mode = mode;
+		MainWorkerMsg msg(mode);
 		PostMsg(msg);
 	}
 	void PostMsgW(EHWorker mode, WPARAM wparm)
 	{
-		MainWorkerMsg msg;
-		msg.mode = mode;
+		MainWorkerMsg msg(mode);
 		msg.data.wparm = wparm;
 		PostMsg(msg);
 	}

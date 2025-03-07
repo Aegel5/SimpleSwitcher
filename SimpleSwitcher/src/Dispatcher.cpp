@@ -5,6 +5,7 @@
 #include "Dispatcher.h"
 #include "CMainWorker.h"
 #include "Settings.h"
+#include "InjectSkipper.h"
 
 #include "gui/decent_gui.h"
 
@@ -135,7 +136,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 			}
 
             if (timerId == c_timerKeyloggerDefence) {
-                if (conf_get()->fEnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
+                if (conf_get()->EnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
                     IFS_LOG(resethook()); // ???
                 }
             } else if (timerId == c_timerGetcurlay) {
@@ -247,8 +248,8 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		return CallNextHookEx(0, nCode, wParam, lParam);
 	}
 
-	MainWorkerMsg msg_type{ .mode = HWORKER_KeyMsg };
-	MainWorkerMsg msg_hotkey{ .mode = HWORKER_OurHotKey };
+	MainWorkerMsg msg_type(HWORKER_KeyMsg);
+	MainWorkerMsg msg_hotkey(HWORKER_OurHotKey);
 	msg_hotkey.data.hk = hk_NULL;
 	bool send_key = false;
 
@@ -287,13 +288,8 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		}
 
 		if (isInjected) {
-			if (conf_get()->AllowRemoteKeys) {
-				// todo skipper
+			if (!InjectSkipper::Inst().IsAllowInject()) 
 				return 0;
-			}
-			else {
-				return 0;
-			}
 		}
 
 		CHotKey possible;
@@ -347,8 +343,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 						&& conf_get()->fixRAlt_lay != 0
 						) {
 						LOG_INFO_1(L"fix ctrl+alt");
-						MainWorkerMsg msg;
-						msg.mode = HWORKER_FixCtrlAlt;
+						MainWorkerMsg msg(HWORKER_FixCtrlAlt);
 						msg.data.hotkey_to_fix = curk;
 						Worker()->PostMsg(msg);
 						LOG_INFO_1(L"Key %s was disabled(fix)", CHotKey::GetName(vkCode));
@@ -402,7 +397,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 	}
 
 
-	if (conf_get()->fEnableKeyLoggerDefence) {
+	if (conf_get()->EnableKeyLoggerDefence) {
 		return 0;
 	} else {
 		return CallNextHookEx(0, nCode, wParam, lParam);

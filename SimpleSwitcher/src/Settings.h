@@ -22,14 +22,13 @@ public:
 
     TInt64 time_debug_log_last_enabled = 0;
 
-    std::set<std::string> disableInPrograms;
-    std::set<std::wstring> __disableInPrograms; // TODO use wxString instead!!!
+    std::set<wxString> disableInPrograms;
 
     TLogLevel logLevel = LOG_LEVEL_3;
 
     bool IsSkipProgram(const std::wstring& sExeName) const {
         if (sExeName.empty()) return false;
-        auto has = __disableInPrograms.find(sExeName) != __disableInPrograms.end();
+        auto has = disableInPrograms.find(sExeName) != disableInPrograms.end();
         if (has) {
             LOG_INFO_1(L"Skip process %s because of disableInProcess", sExeName.c_str());
             return true;
@@ -42,7 +41,7 @@ public:
         eng,
     };
 
-    int config_version = 0;
+    wxString config_version;
 
     UiLang uiLang = UiLang::rus;
 
@@ -52,9 +51,9 @@ public:
     bool isTryOEM2 = true;
     bool fDbgMode              = false;
     bool fClipboardClearFormat = false;
-    bool fEnableKeyLoggerDefence = false;
+    bool EnableKeyLoggerDefence = false;
     bool disableAccessebility    = false;
-    bool injectDll = false;
+    //bool injectDll = false;
     bool showFlags = IsWindows10OrGreater();
     bool AllowRemoteKeys = false;
     bool AlternativeLayoutChange = false;

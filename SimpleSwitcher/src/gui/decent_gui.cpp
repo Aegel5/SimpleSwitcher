@@ -178,12 +178,25 @@ public:
                 trayTooltip += L" ";
                 trayTooltip += SW_VERSION;
                 myTray.SetIcon(icon, trayTooltip);
-                myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
-                myTray.Bind(wxEVT_MENU, &MainWnd::onShow, this, Minimal_Show);
-                myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, &MainWnd::onShow2, this);
+                myTray.Bind(wxEVT_MENU, [this](auto& evt) {
+                        this->exitRequest = true;
+                        LOG_INFO_1(L"exit request");
+                        this->Close(true);
+                    }, Minimal_Quit);
+                myTray.Bind(wxEVT_MENU, [this](auto& evt) {
+                        this->Show(true); 
+                    }, Minimal_Show);
+                myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, [this](auto& evt) {
+                        this->Show(true); 
+                    });
                 for (const auto& it : conf_get()->layouts_info.info) {
                     myTray.AddLay(it.layout);
-                    myTray.Bind(wxEVT_MENU, &MainWnd::onSetLay, this, Minimal_SetLay1);
+                    myTray.Bind(wxEVT_MENU, [this](wxCommandEvent& event) {
+                            auto lay = myTray.LayById(event.GetId());
+                            MainWorkerMsg msg(HWORKER_Setcurlay);
+                            msg.data.lay = lay;
+                            Worker()->PostMsg(msg);
+                        }, Minimal_SetLay1);
                 }
             }
 
@@ -710,29 +723,9 @@ private:
     //    return MyFrame4::MSWWindowProc(nMsg, wParam, lParam);
     //}
 public:
-    // ctor(s)
 
-    void onShow2(wxTaskBarIconEvent& event) {
-        Show(true);
-    }
-    void onShow(wxCommandEvent& event) {
-        Show(true);
-    }
-    void onSetLay(wxCommandEvent& event) {
-        //auto lay = myTray.LayById(event.GetId());
-        ////ActivateKeyboardLayout(lay,0);
-        //HWND hwndFocused = NULL;
-        //IFS_LOG(Utils::GetFocusWindow(hwndFocused));
-        //PostMessage(hwndFocused, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
-    }
     void onCloseToTray(wxCommandEvent& event)     { 
         Hide();
-    }
-
-    void onExit(wxCommandEvent& event) override {
-        exitRequest = true;
-        LOG_INFO_1(L"exit request");
-        Close(true);
     }
 
     void onAutocheck(wxCommandEvent& event) override {
