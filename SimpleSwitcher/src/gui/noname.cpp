@@ -105,7 +105,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panelMain->SetSizer( bSizer3 );
 	m_panelMain->Layout();
 	bSizer3->Fit( m_panelMain );
-	m_notebook2->AddPage( m_panelMain, _("Settings"), true );
+	m_notebook2->AddPage( m_panelMain, _("Settings"), false );
 	m_panel141 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer41;
 	bSizer41 = new wxBoxSizer( wxVERTICAL );
@@ -222,7 +222,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel6->SetSizer( bSizer191 );
 	m_panel6->Layout();
 	bSizer191->Fit( m_panel6 );
-	m_notebook2->AddPage( m_panel6, _("About"), false );
+	m_notebook2->AddPage( m_panel6, _("About / Help"), true );
 
 	bSizer1->Add( m_notebook2, 1, wxEXPAND | wxALL, 0 );
 
