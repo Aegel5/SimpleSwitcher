@@ -48,7 +48,7 @@ TStatus SendBacks(TUInt32 count)
 	CHotKey backspace(VK_BACK);
 	for (TUInt32 i = 0; i < count; ++i)
 	{
-		IFS_RET(inputSender.AddPressVk(backspace));
+		inputSender.AddPressVk(backspace);
 	}
 
 	IFS_RET(SendOurInput(inputSender));
@@ -57,27 +57,27 @@ TStatus SendBacks(TUInt32 count)
 	RETURN_SUCCESS;
 }
 
-TStatus SendDels(TUInt32 count)
-{
-	InputSender inputSender;
-	CHotKey left(VK_LEFT);
-	CHotKey del(VK_DELETE);
-
-	for (TUInt32 i = 0; i < count; ++i)
-	{
-		IFS_RET(inputSender.AddPressVk(left));
-	}
-
-	for (TUInt32 i = 0; i < count; ++i)
-	{
-		IFS_RET(inputSender.AddPressVk(del));
-	}
-
-	IFS_RET(SendOurInput(inputSender));
-
-
-	RETURN_SUCCESS;
-}
+//TStatus SendDels(TUInt32 count)
+//{
+//	InputSender inputSender;
+//	CHotKey left(VK_LEFT);
+//	CHotKey del(VK_DELETE);
+//
+//	for (TUInt32 i = 0; i < count; ++i)
+//	{
+//		inputSender.AddPressVk(left);
+//	}
+//
+//	for (TUInt32 i = 0; i < count; ++i)
+//	{
+//		inputSender.AddPressVk(del);
+//	}
+//
+//	IFS_RET(SendOurInput(inputSender));
+//
+//
+//	RETURN_SUCCESS;
+//}
 
 TStatus SendKeys(TKeyRevert& keylist)
 {

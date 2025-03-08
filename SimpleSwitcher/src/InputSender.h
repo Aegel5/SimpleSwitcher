@@ -46,16 +46,15 @@ public:
 
 		list.push_back(cur);
 	}
-	TStatus AddDown(CHotKey& key)
+	void AddDown(CHotKey& key)
 	{
-		if(key.Size() == 0)
-			RETURN_SUCCESS;
+		if (key.Size() == 0)
+			return;
 		for(TKeyCode* k = key.ModsBegin(); k != key.ModsEnd(); ++k)
 		{
 			Add(*k, KEY_STATE_DOWN);
 		}
 		Add(key.ValueKey(), KEY_STATE_DOWN);
-		RETURN_SUCCESS;
 	}
 	TStatus AddScanCode(const TKeyBaseInfo& key, KeyState keyState = KEY_STATE_DOWN)
 	{
@@ -74,22 +73,24 @@ public:
 
 		RETURN_SUCCESS;
 	}
-	TStatus AddUp(CHotKey& key)
+	void AddUp(CHotKey& key)
 	{
 		if (key.Size() == 0)
-			RETURN_SUCCESS;
+			return;
 		Add(key.ValueKey(), KEY_STATE_UP);
 		for (const TKeyCode* k = key.ModsBegin(); k != key.ModsEnd(); ++k)
 		{
 			Add(*k, KEY_STATE_UP);
 		}
-		RETURN_SUCCESS;
 	}
-	TStatus AddPressVk(CHotKey& key)
+	void AddPressVk(TKeyCode vk)	{
+		Add(vk, KEY_STATE_DOWN);
+		Add(vk, KEY_STATE_UP);
+	}
+	void AddPressVk(CHotKey& key)
 	{
-		IFS_RET(AddDown(key));
-		IFS_RET(AddUp(key));
-		RETURN_SUCCESS;
+		AddDown(key);
+		AddUp(key);
 	}
 	TStatus AddPressBase(const TKeyBaseInfo& key)
 	{

@@ -659,7 +659,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 	{
 		if (fDels)
 		{
-			IFS_RET(SendDels(ctxRevert.keylist.size()));
+			//IFS_RET(SendDels(ctxRevert.keylist.size()));
 		}
 		else
 		{
@@ -1002,7 +1002,7 @@ TStatus Hooker::SwitchLangByEmulate(HKL lay)
 	//IFS_LOG(FoundEmulateHotKey(altshift));
 
 	LOG_INFO_2(L"Add press %s", altshift.ToString().c_str());
-	IFS_RET(inputSender.AddPressVk(altshift));
+	inputSender.AddPressVk(altshift);
 
 	IFS_RET(SendOurInput(inputSender));
 
@@ -1102,7 +1102,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 
 	// отправляем
 	InputSender inputSender;
-	IFS_LOG(inputSender.AddPressVk(key));
+	inputSender.AddPressVk(key);
 	IFS_LOG(SendOurInput(inputSender));
 
 	Sleep(300); // можем подождать подольше, ведь комбинацию мы уже отослали...
