@@ -622,18 +622,17 @@ void Hooker::HandleSymbolDown()
 }
 void Hooker::UpAllKeys() {
 
-	const auto& keys = m_curStateWrap.all_keys;
-	if (keys.empty()) return;
+	if (m_curStateWrap.Size() == 0) return;
 
 	InputSender inputSender;
-	if (keys.find(VK_LMENU) != keys.end()) {
+	if (m_curStateWrap.IsDownNow(VK_LMENU) || m_curStateWrap.IsDownNow(VK_LWIN)) {
 		// если нажата только клавиша alt - то ее простое отжатие даст хрень - нужно отжать ее еще раз
 		//inputSender.Add(VK_LMENU, KEY_STATE_DOWN);
 		//inputSender.Add(VK_LMENU, KEY_STATE_UP); 	
 		inputSender.Add(VK_CAPITAL, KEY_STATE_UP);
 	}
-	for (auto key : keys) {
-		inputSender.Add(key.first, KEY_STATE_UP);
+	for (const auto& key : m_curStateWrap.EnumVk()) {
+		inputSender.Add(key, KEY_STATE_UP);
 	}
 
 	IFS_LOG(SendOurInput(inputSender));
@@ -801,13 +800,36 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
 	// Сбросим сразу все клавиши для программы. Будет двойной (или даже тройной и более) up, но пока что это не проблема... 
 	
-	// если нужно просто сменить язык - то не будем делать up 
-	// https://github.com/Aegel5/SimpleSwitcher/issues/61
-	// Для клавиши LCtrl событие отсылается дважды, причем второй раз без флага inject (баг windows?)
-	// в остальных случаях мы эмулируем нажатия каких-то клавиш, поэтому нужно сбросить текущее состояние нажатых клавиш.
-	bool skipUpKeys = (TestFlag(typeRevert, hk_SetLayout_flag) || typeRevert == hk_CycleCustomLang) && conf_get()->AlternativeLayoutChange == false;
-	if (!skipUpKeys) {
-		UpAllKeys();
+	//// если нужно просто сменить язык - то не будем делать up 
+	//// https://github.com/Aegel5/SimpleSwitcher/issues/61
+	//// Для клавиши LCtrl событие отсылается дважды, причем второй раз без флага inject (баг windows?)
+	//// в остальных случаях мы эмулируем нажатия каких-то клавиш, поэтому нужно сбросить текущее состояние нажатых клавиш.
+	//bool skipUpKeys = (TestFlag(typeRevert, hk_SetLayout_flag) || typeRevert == hk_CycleCustomLang) && conf_get()->AlternativeLayoutChange == false;
+	//if (!skipUpKeys) {
+	//	UpAllKeys();
+	//}
+
+	UpAllKeys();
+
+	if (TestFlag(typeRevert, hk_RunProgram_flag)) {
+		int i = typeRevert;
+		ResetFlag(i, hk_RunProgram_flag);
+		auto conf = conf_get();
+		if (i >= conf->run_programs.size()) {
+			return SW_ERR_UNKNOWN;
+		}
+		const auto& it = conf->run_programs[i];
+		LOG_ANY(L"run program {} {}", it.path.wc_str(), it.args.wc_str());
+
+		procstart::CreateProcessParm parm;
+		parm.sExe = it.path.wc_str();
+		parm.sCmd = it.args.wc_str();
+		parm.admin = it.elevated ? TSWAdmin::SW_ADMIN_ON : TSWAdmin::SW_ADMIN_OFF;
+		parm.mode = procstart::SW_CREATEPROC_SHELLEXE;
+		CAutoHandle hProc;
+		IFS_RET(procstart::SwCreateProcess(parm, hProc));
+
+		RETURN_SUCCESS;
 	}
 
 
@@ -899,26 +921,6 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 TStatus Hooker::NeedRevert(HotKeyType typeRevert)
 {
 	LOG_INFO_1(L"NeedRevert %S, curstate=\"%s\"", HotKeyTypeName(typeRevert), m_curKeyState.ToString().c_str());
-
-	if (TestFlag(typeRevert, hk_RunProgram_flag)) {
-		int i = typeRevert;
-		ResetFlag(i, hk_RunProgram_flag);
-		auto conf = conf_get();
-		if (i >= conf->run_programs.size()) {
-			return SW_ERR_UNKNOWN;
-		}
-		const auto& it = conf->run_programs[i];
-		LOG_ANY(L"run program {} {}", it.path.wc_str(), it.args.wc_str());
-
-		procstart::CreateProcessParm parm;
-		parm.sExe = it.path.wc_str();
-		parm.sCmd = it.args.wc_str();
-		parm.admin = it.elevated ? TSWAdmin::SW_ADMIN_ON : TSWAdmin::SW_ADMIN_OFF;
-		CAutoHandle hProc;
-		IFS_RET(procstart::SwCreateProcess(parm, hProc));
-
-		RETURN_SUCCESS;
-	}
 
 	ContextRevert ctxRevert;
 	ctxRevert.typeRevert = typeRevert;

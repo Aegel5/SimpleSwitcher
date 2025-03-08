@@ -107,8 +107,12 @@ public:
             SetIcon(icon);
 
             Bind(wxEVT_CLOSE_WINDOW, &MainWnd::onExitReqest, this);
-
-            SetTitle(std::format(L"{} {}{}", GetTitle().t_str(), SW_VERSION, Utils::IsSelfElevated() ? L" Administrator" : L""));
+            SetTitle(std::format(
+                L"{} {}{}{}", 
+                GetTitle().t_str(), 
+                SW_VERSION, 
+                Utils::IsSelfElevated() ? L" Administrator" : L"",
+                Utils::IsDebug()?L" DEBUG": L""));
             SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION 
                 //| wxRESIZE_BORDER
             );

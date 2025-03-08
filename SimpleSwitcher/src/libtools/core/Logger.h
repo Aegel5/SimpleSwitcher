@@ -105,13 +105,14 @@ private:
 				base[0] = 0;
 				GetModuleBaseName(GetCurrentProcess(), NULL, base, SW_ARRAY_SIZE(base));
 
-				TChar sLogPath[0x1000];
-				sLogPath[0] = 0;
-				if (swprintf_s(sLogPath, L"%s\\%s(%d)_%u.log", sFolder, base, GetCurrentProcessId(), GetTick()) == -1)
-				{
-					return m_fp;
-				}
-				m_fp = _wfsopen(sLogPath, L"wt, ccs=UTF-8", _SH_DENYNO);
+				auto path = std::format(L"{}\\{}.log", sFolder, base);
+				//TChar sLogPath[0x1000];
+				//sLogPath[0] = 0;
+				//if (swprintf_s(sLogPath, L"%s\\%s(%d)_%u.log", sFolder, base, GetCurrentProcessId(), GetTick()) == -1)
+				//{
+				//	return m_fp;
+				//}
+				m_fp = _wfsopen(path.c_str(), L"wt, ccs=UTF-8", _SH_DENYNO);
 			}
 		}
 		return m_fp;

@@ -107,21 +107,18 @@ private:
 struct CurStateWrapper {
 
 	CHotKey state;
-	std::map<TKeyCode, ULONGLONG> all_keys;
 
-	void CheckOk() {
-		std::vector<TKeyCode> to_del;
+	int Size() {
+		return all_keys.size();
+	}
+
+	bool IsDownNow(TKeyCode vk) {
+		return all_keys.find(vk) != all_keys.end();
+	}
+
+	std::generator<TKeyCode> EnumVk() {
 		for (const auto& it : all_keys) {
-			if (GetTickCount64() > (it.second + 10000)) {
-				if (!(GetAsyncKeyState(it.first) & 0x8000)) { // TODO: не понятно как это работает в remote сценарии....
-					to_del.push_back(it.first);
-				}
-			}
-		}
-		for (auto it : to_del) {
-			LOG_WARN(L"delete key because it not down now {}", CHotKey::ToString(it));
-			all_keys.erase(it);
-			state.Remove(it);
+			co_yield it.first;
 		}
 	}
 
@@ -147,6 +144,23 @@ struct CurStateWrapper {
 			}
 		}
 
+	}
+private:
+	std::map<TKeyCode, ULONGLONG> all_keys;
+	void CheckOk() {
+		std::vector<TKeyCode> to_del;
+		for (const auto& it : all_keys) {
+			if (GetTickCount64() > (it.second + 10000)) {
+				if (!(GetAsyncKeyState(it.first) & 0x8000)) { // TODO: не понятно как это работает в remote сценарии....
+					to_del.push_back(it.first);
+				}
+			}
+		}
+		for (auto it : to_del) {
+			LOG_WARN(L"delete key because it not down now {}", CHotKey::ToString(it));
+			all_keys.erase(it);
+			state.Remove(it);
+		}
 	}
 };
 

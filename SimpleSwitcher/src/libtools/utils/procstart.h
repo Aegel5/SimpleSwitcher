@@ -6,10 +6,7 @@ namespace procstart
 	enum CreateProcFunc
 	{
 		SW_CREATEPROC_DEFAULT = 0,
-
-		SW_CREATEPROC_NORMAL,
 		SW_CREATEPROC_AS_USER,
-		//SW_CREATEPROC_TOKEN,
 		SW_CREATEPROC_SHELLEXE,
 	};
 
@@ -79,38 +76,17 @@ namespace procstart
 
 		LOG_INFO_1(L"Try create new process path=%s, args=%s, mode=%u", sExe, args, parm.mode);
 
-		if (parm.mode == SW_CREATEPROC_DEFAULT)
+		if (parm.mode == SW_CREATEPROC_SHELLEXE && IsWindowsVistaOrGreater())
 		{
-			if (IsWindowsVistaOrGreater())
+			if (parm.admin == SW_ADMIN_ON && !selfElevated)
 			{
-				if (parm.admin == SW_ADMIN_ON && !selfElevated)
-				{
-					parm.mode = SW_CREATEPROC_SHELLEXE;
-				}
-				//else if (parm.admin == SW_ADMIN_OFF && selfElevated)
-				//{
-				//	TStatus stat = GetUnElevatedToken(hToken);
-				//	if (SW_SUCCESS(stat))
-				//	{
-				//		parm.hToken = hToken;
-				//		parm.mode = SW_CREATEPROC_TOKEN;
-				//	}
-				//	else
-				//	{
-				//		IFS_LOG(stat);
-				//	}
-				//}
+				parm.mode = SW_CREATEPROC_SHELLEXE;
 			}
-		}
-
-		if (parm.mode == SW_CREATEPROC_DEFAULT)
-		{
-			parm.mode = SW_CREATEPROC_NORMAL;
 		}
 
 		if (parm.mode == SW_CREATEPROC_SHELLEXE)
 		{
-			SHELLEXECUTEINFO shExInfo {};
+			SHELLEXECUTEINFO shExInfo{};
 			shExInfo.cbSize = sizeof(shExInfo);
 			shExInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
 			shExInfo.hwnd = 0;
@@ -124,65 +100,52 @@ namespace procstart
 			IFW_RET(ShellExecuteEx(&shExInfo) == TRUE);
 
 			hProc = shExInfo.hProcess;
+			RETURN_SUCCESS;
 		}
-		else if (parm.mode == SW_CREATEPROC_NORMAL || parm.mode == SW_CREATEPROC_AS_USER )
+
+
+		STARTUPINFO         siStartupInfo;
+		PROCESS_INFORMATION piProcessInfo;
+
+		ZeroMemory(&siStartupInfo, sizeof(siStartupInfo));
+		ZeroMemory(&piProcessInfo, sizeof(piProcessInfo));
+
+		siStartupInfo.cb = sizeof(siStartupInfo);
+		if (parm.mode == SW_CREATEPROC_AS_USER)	{
+
+			Res = CreateProcessAsUser(
+				parm.hToken,
+				sExe,
+				args,
+				0,
+				0,
+				FALSE,
+				CREATE_DEFAULT_ERROR_MODE,
+				0,
+				0,
+				&siStartupInfo,
+				&piProcessInfo);
+		}
+		else 
 		{
-			STARTUPINFO         siStartupInfo;
-			PROCESS_INFORMATION piProcessInfo;
-
-			ZeroMemory(&siStartupInfo, sizeof(siStartupInfo));
-			ZeroMemory(&piProcessInfo, sizeof(piProcessInfo));
-
-			siStartupInfo.cb = sizeof(siStartupInfo);
-			if (parm.mode == SW_CREATEPROC_AS_USER)
-			{
-
-				Res = CreateProcessAsUser(
-					parm.hToken,
-					sExe,
-					args,
-					0,
-					0,
-					FALSE,
-					CREATE_DEFAULT_ERROR_MODE,
-					0,
-					0,
-					&siStartupInfo,
-					&piProcessInfo);
-			}
-			else if (parm.mode == SW_CREATEPROC_NORMAL)
-			{
-				Res = CreateProcess(
-					sExe,
-					args,
-					0,
-					0,
-					FALSE,
-					CREATE_DEFAULT_ERROR_MODE,
-					0,
-					0,
-					&siStartupInfo,
-					&piProcessInfo);
-			}
-			//else if (parm.mode == SW_CREATEPROC_TOKEN)
-			//{
-			//	Res = WinApiInt::CreateProcessWithTokenW(
-			//		parm.hToken,
-			//		0,
-			//		sExe,
-			//		args,
-			//		0,
-			//		NULL,
-			//		NULL,
-			//		&siStartupInfo,
-			//		&piProcessInfo);
-			//}
-			IFW_RET(Res, L"Cant create proc %s %s", sExe, args);
-
-			CloseHandle(piProcessInfo.hThread);
-			hProc = piProcessInfo.hProcess;
-
+			Res = CreateProcess(
+				sExe,
+				args,
+				0,
+				0,
+				FALSE,
+				CREATE_DEFAULT_ERROR_MODE,
+				0,
+				0,
+				&siStartupInfo,
+				&piProcessInfo);
 		}
+
+		IFW_RET(Res, L"Cant create proc %s %s", sExe, args);
+
+		CloseHandle(piProcessInfo.hThread);
+		hProc = piProcessInfo.hProcess;
+
 		RETURN_SUCCESS;
 	}
 }
