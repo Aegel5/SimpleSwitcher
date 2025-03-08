@@ -39,7 +39,7 @@ TStatus StartMonitor(
 	TSWBit bit);
 
 
-TStatus ResetAllHotKey(HotKeyHolders& keys);
+//TStatus ResetAllHotKey(HotKeyHolders& keys);
 
 
 

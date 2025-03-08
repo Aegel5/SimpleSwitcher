@@ -81,7 +81,7 @@ public:
 	TStatus FixCtrlAlt(CHotKey key);
 
 	void SetNewLayPost(HKL lay) {
-		LOG_INFO_1(L"post WM_INPUTLANGCHANGEREQUEST");
+		LOG_ANY(L"post WM_INPUTLANGCHANGEREQUEST {:x}", (ULONGLONG)lay);
 		PostMessage(m_hwndTop, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
 	}
 
