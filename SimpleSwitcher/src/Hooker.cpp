@@ -1082,6 +1082,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 		auto str = std::format(L"{:x}", (int)lay);
 		//const TChar* s = L"00000409";
 		temp = LoadKeyboardLayout(str.c_str(), 0);
+		IFW_LOG(temp != NULL);
 
 		if (temp == 0) {
 			// не получится...
@@ -1112,7 +1113,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 	}
 
 	if(temp != 0){
-		UnloadKeyboardLayout(temp);
+		IFW_LOG(UnloadKeyboardLayout(temp));
 	}
 
 	RETURN_SUCCESS;
