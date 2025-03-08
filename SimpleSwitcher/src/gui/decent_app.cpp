@@ -6,6 +6,8 @@
 
 #include "gui/decent_gui.h"
 
+#include "CMainWorker.h"
+
 extern void StartMainGui(bool show, bool err_msg);
 
 class MyApp : public wxApp
@@ -79,13 +81,16 @@ bool MyApp::OnInit() {
             trans->AddCatalog("lang");
         }
 
-
-
+        // Запускаем воркера, теперь он будет работать всегда, даже когда программа выключена, чтобы указатели всегда были валидны.
+        static CMainWorker mainWorker;
+        gdata().mainWorker = &mainWorker;
+        //IFS_LOG(Worker()->ReStart());
 
         StartMainGui(!is_autostart, errLoadConf != SW_ERR_SUCCESS);
     }
     catch (std::exception& e) {
         wxMessageBox(_("Error while initing app: ") + e.what());
+        return false;
     }
 
     // success: wxApp::OnRun() will be called which will enter the main message

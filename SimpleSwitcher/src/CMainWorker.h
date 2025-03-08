@@ -63,9 +63,9 @@ class CMainWorker
 		IFS_LOG(WorkerInt());
 	}
 public:
-	TStatus Init()
+	TStatus ReStart()
 	{
-		IFS_RET(m_queue.StartWorker(std::bind(&CMainWorker::Worker, this)));
+		IFS_RET(m_queue.ReStartWorker(std::bind(&CMainWorker::Worker, this)));
 		RETURN_SUCCESS;
 	}
 	void PostMsg(MainWorkerMsg& msg)

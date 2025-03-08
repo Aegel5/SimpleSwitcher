@@ -64,9 +64,19 @@ namespace ThreadQueue
 			m_cvQueue.notify_all();
 		}
 
-		TStatus StartWorker(TWorkerFunc func)
+		TStatus ReStartWorker(TWorkerFunc func)
 		{
-			//m_func = func;
+			IFS_RET(StopAndWait());
+
+			{
+				std::unique_lock<std::mutex> lock(m_mtxQueue);
+				m_queue.clear();
+			}
+
+			if (m_thread.joinable())
+				return SW_ERR_BAD_INTERNAL_STATE;
+
+			m_fNeedExit = false;
 			m_thread = std::thread(func);
 
 			RETURN_SUCCESS;

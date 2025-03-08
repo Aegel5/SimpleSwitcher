@@ -63,8 +63,8 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 	//	IFW_LOG(WinApiInt::ChangeWindowMessageFilterEx(hWnd, c_MSG_Quit, MSGFLT_ALLOW, 0));
 	//	IFW_LOG(WinApiInt::ChangeWindowMessageFilterEx(hWnd, c_MSG_SettingsChanges, MSGFLT_ALLOW, 0));
 	//}
-    CAutoProcMonitor loader;
-    CAutoProcMonitor loader64;
+    //CAutoProcMonitor loader;
+    //CAutoProcMonitor loader64;
     g_laynotif.inited = false;
 
 	HookGlobalHandles hookHandles;
@@ -471,9 +471,7 @@ TStatus StartMonitor(
 	//	}
 	//}
 
-	CMainWorker mainWorker;
-	IFS_RET(mainWorker.Init());
-	gdata().mainWorker = &mainWorker;
+	IFS_RET(Worker()->ReStart()); // полностью обнулим рабочий поток
 
 	IFS_RET(StartCycle(hInstance));
 
