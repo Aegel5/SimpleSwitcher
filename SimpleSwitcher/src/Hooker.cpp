@@ -1097,7 +1097,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 
 	}
 	else {
-		IFS_RET(SetNewLay(lay));
+		SetNewLay(lay);
 	}
 
 	// отправляем
@@ -1109,7 +1109,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 
 	if (!just_send) {
 		// переключаемся обратно.
-		IFS_LOG(SetNewLay(curLay));
+		SetNewLay(curLay);
 	}
 
 	if(temp != 0){

@@ -85,14 +85,14 @@ public:
 		PostMessage(m_hwndTop, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
 	}
 
-	TStatus SetNewLay(HKL lay) {
+	void SetNewLay(HKL lay) {
 
 		LOG_INFO_1(L"Try set 0x%x lay", lay);
 
 
 		if (conf_get()->AlternativeLayoutChange)
 		{
-			IFS_RET(SwitchLangByEmulate(lay));
+			IFS_LOG(SwitchLangByEmulate(lay));
 		}
 		else
 		{
@@ -101,8 +101,6 @@ public:
 
 			//IFS_LOG(SwitchByCom(lay));
 		}
-
-		RETURN_SUCCESS;
 	}
 
 	TStatus SwitchByCom(HKL lay) {
