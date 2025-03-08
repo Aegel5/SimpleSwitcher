@@ -1112,9 +1112,8 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 		SetNewLay(curLay);
 	}
 
-	Sleep(500); // ждем снова, иначе может тупо выгрузиться, пока обработается нажатие...
-
 	if(temp != 0){
+		Sleep(500); // ждем снова, иначе может тупо выгрузиться, пока обработается нажатие...
 		IFW_LOG(UnloadKeyboardLayout(temp));
 	}
 
