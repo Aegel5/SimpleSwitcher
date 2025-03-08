@@ -900,14 +900,31 @@ TStatus Hooker::NeedRevert(HotKeyType typeRevert)
 {
 	LOG_INFO_1(L"NeedRevert %S, curstate=\"%s\"", HotKeyTypeName(typeRevert), m_curKeyState.ToString().c_str());
 
+	if (TestFlag(typeRevert, hk_RunProgram_flag)) {
+		int i = typeRevert;
+		ResetFlag(i, hk_RunProgram_flag);
+		auto conf = conf_get();
+		if (i >= conf->run_programs.size()) {
+			return SW_ERR_UNKNOWN;
+		}
+		const auto& it = conf->run_programs[i];
+		LOG_ANY(L"run program {} {}", it.path.wc_str(), it.args.wc_str());
+
+		procstart::CreateProcessParm parm;
+		parm.sExe = it.path.wc_str();
+		parm.sCmd = it.args.wc_str();
+		parm.admin = it.elevated ? TSWAdmin::SW_ADMIN_ON : TSWAdmin::SW_ADMIN_OFF;
+		CAutoHandle hProc;
+		IFS_RET(procstart::SwCreateProcess(parm, hProc));
+
+		RETURN_SUCCESS;
+	}
+
 	ContextRevert ctxRevert;
 	ctxRevert.typeRevert = typeRevert;
 	m_lastRevertRequest = typeRevert;
 
 	IFS_LOG(NeedRevert2(ctxRevert));
-
-	//PostMessage(CommonDataGlobal().hWndMonitor, WM_PostRevert, 0, 0);
-	//IFS_RET(RevertData(m_sendData));
 
 	RETURN_SUCCESS;
 }

@@ -152,6 +152,14 @@ void from_json(const json& j, wxString& p) {
 }
 
 
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    RunProgramInfo,
+    path,
+    args,
+    elevated,
+    hotkey
+)
+
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     SettingsGui,
@@ -170,7 +178,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     layouts_info, 
     time_debug_log_last_enabled,
     fixRAlt,
-    fixRAlt_lay_
+    fixRAlt_lay_,
+    run_programs
     )
     
 
@@ -240,10 +249,8 @@ TStatus Save2(const SettingsGui& gui) {
 
         for (auto& elem : gui.hotkeysList) {
             auto hk = elem.hkId;
-            if (!TestFlag(hk, hk_SetLayout_flag)) {
-                auto key = HotKeyTypeName(hk);
-                hk_json[key] = elem.keys.keys;
-            }
+            auto key = HotKeyTypeName(hk);
+            hk_json[key] = elem.keys.keys;
         }
 
         data["hotkeys"] = hk_json;

@@ -63,6 +63,13 @@ struct LayoutInfo {
     CHotKeyList hotkey;
 };
 
+struct RunProgramInfo {
+    wxString path;
+    wxString args;
+    CHotKeyList hotkey;
+    bool elevated = false;
+};
+
 
 struct LayoutInfoList {
 

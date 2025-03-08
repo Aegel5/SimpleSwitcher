@@ -70,7 +70,7 @@ inline void ResetFlag(T& V, TE F)
 enum TSWAdmin
 {
 	SW_ADMIN_ON,
-	//SW_ADMIN_OFF, // not use, bugs when UAC enabled.
+	SW_ADMIN_OFF, // not use, bugs when UAC enabled.
 	SW_ADMIN_SELF,
 };
 

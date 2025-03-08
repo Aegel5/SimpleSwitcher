@@ -51,6 +51,7 @@ public:
     bool AlternativeLayoutChange = false;
 
     std::vector< CHotKeySet> hotkeysList;
+    std::vector< RunProgramInfo> run_programs = { {.path = L"example: calc.exe"} };
 
     static bool IsNeedSavedWords(HotKeyType hk_type) {
         if (Utils::is_in(hk_type, hk_RevertLastWord, hk_RevertCycle)) return true;
@@ -79,6 +80,12 @@ public:
             i++;
             for (const auto& key : it.hotkey.keys) {
                 co_yield{ (HotKeyType)(hk_SetLayout_flag | i), key };
+            }
+        }
+        for (int i = -1; const auto & it : run_programs) {
+            i++;
+            for (const auto& key : it.hotkey.keys) {
+                co_yield{ (HotKeyType)(hk_RunProgram_flag | i), key };
             }
         }
     }

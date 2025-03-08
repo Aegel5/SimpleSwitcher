@@ -81,7 +81,8 @@ enum HotKeyType : TUInt32
     hk_ScrollGenerate,
     hk_toUpperSelected,
 
-    hk_SetLayout_flag = 0b100000000000,
+    hk_SetLayout_flag  = 0b100000000000,
+    hk_RunProgram_flag = 0b1000000000000,
 };
 
 

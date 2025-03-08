@@ -274,7 +274,7 @@ struct SwErrTStatus
 {
 	TStatus res;
 	SwErrTStatus(TStatus r): res(r) {}
-	void Log()	{ __SW_LOG_FORMAT__(L"TStatus=%s(%d)", c_StatusNames[res], res); }
+	void Log()	{ __SW_LOG_FORMAT__(L"TStatus=%s(%d)", res >= SW_ARRAY_SIZE(c_StatusNames) ? L"NO_INFO" : c_StatusNames[res], res); }
 	operator bool() const { return res!= SW_ERR_SUCCESS; }
 	TStatus ToTStatus()	{ return res; }
 };
