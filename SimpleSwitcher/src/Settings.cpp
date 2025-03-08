@@ -110,26 +110,14 @@ void from_json(const json& j, CHotKeyList& p) {
         p.keys = j;
     }
 }
-void to_json(json& j, const LayoutInfo& p) {
-    j["enabled"] = p.enabled;
-    j["hotkey"] = p.hotkey.keys;
-    j["win_hotkey"] = p.WinHotKey;
-    j["layout"] = p.layout;
-}
 
-void from_json(const json& j, LayoutInfo& p) {
-    if (j.is_object() && j.contains("layout")) {
-
-        j.at("layout").get_to(p.layout);
-
-        if (j.contains("enabled"))
-            j.at("enabled").get_to(p.enabled);
-        if (j.contains("hotkey"))
-            p.hotkey = j["hotkey"];
-        if(j.contains("win_hotkey"))
-            p.WinHotKey = j["win_hotkey"];
-    }
-}
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    LayoutInfo,
+    layout,
+    enabled,
+    win_hotkey,
+    hotkey
+)
 
 void to_json(json& j, const LayoutInfoList& p) {
     j = p.info;

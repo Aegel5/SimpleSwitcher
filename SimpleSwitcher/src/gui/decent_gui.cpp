@@ -464,10 +464,10 @@ private:
             set.def_list.push_back(CHotKey(VK_CONTROL, VK_SHIFT, 0x31));
             set.def_list.push_back(CHotKey(VK_CONTROL, VK_SHIFT, 0x32));
             set.def_list.push_back(CHotKey(VK_CONTROL, VK_SHIFT, 0x33));
-            set.keys.key() = data.WinHotKey;
+            set.keys.key() = data.win_hotkey;
             if (ChangeHotKey2(this, set, newkey)) {
                 auto conf = conf_copy();
-                conf->layouts_info.info[row].WinHotKey = newkey;
+                conf->layouts_info.info[row].win_hotkey = newkey;
                 conf_set(conf);
                 FillLayoutsInfo();
             }
@@ -623,7 +623,7 @@ private:
             if (!info_copy.HasLayout(cur)) {
                 was_changes = true;
                 CHotKey winhk(VK_LMENU, VK_SHIFT, VK_E_1 + info.size());
-                info.push_back({ .layout = cur, .WinHotKey=winhk });
+                info.push_back({ .layout = cur, .win_hotkey=winhk });
             }
         }
 
@@ -659,7 +659,7 @@ private:
             m_gridLayouts->SetCellValue(i, 1, it.hotkey.ToString());
 
             if (conf_get()->AlternativeLayoutChange) {
-                m_gridLayouts->SetCellValue(i, 2, it.WinHotKey.ToString());
+                m_gridLayouts->SetCellValue(i, 2, it.win_hotkey.ToString());
                 m_gridLayouts->SetCellBackgroundColour(i, 2, wxColor(0xE3, 0xF2, 0xFD));
             }
         }

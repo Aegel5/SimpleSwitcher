@@ -83,7 +83,7 @@ namespace Utils
 	}
 
 	inline bool IsDebug() {
-#ifndef DEBUG
+#ifdef DEBUG
 		return true;
 #endif
 		return false;

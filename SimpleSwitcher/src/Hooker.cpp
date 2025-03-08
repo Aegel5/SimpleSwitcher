@@ -1012,11 +1012,11 @@ TStatus Hooker::SwitchLangByEmulate(HKL lay)
 			LOG_WARN(L"not found lay info");
 			RETURN_SUCCESS;
 		}
-		if (info->WinHotKey.IsEmpty()) {
+		if (info->win_hotkey.IsEmpty()) {
 			LOG_WARN(L"hot key not setup");
 			RETURN_SUCCESS;
 		}
-		altshift = info->WinHotKey;
+		altshift = info->win_hotkey;
 	}
 	//IFS_LOG(FoundEmulateHotKey(altshift));
 

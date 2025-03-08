@@ -59,7 +59,7 @@ struct CHotKeySet
 struct LayoutInfo {
     HKL layout = 0;
     bool enabled = true;
-    CHotKey WinHotKey;
+    CHotKey win_hotkey;
     CHotKeyList hotkey;
 };
 
