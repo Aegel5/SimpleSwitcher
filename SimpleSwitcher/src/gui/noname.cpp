@@ -13,7 +13,7 @@
 
 MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxSize( -1,-1 ), wxDefaultSize );
+	this->SetSizeHints( wxSize( -1,480 ), wxDefaultSize );
 	this->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
 
 	wxBoxSizer* bSizer1;
@@ -70,9 +70,6 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxStaticBoxSizer* sbSizer8;
 	sbSizer8 = new wxStaticBoxSizer( new wxStaticBox( m_panelMain, wxID_ANY, _("Advanced") ), wxVERTICAL );
 
-	m_checkDebuglog = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Enable debug log"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer8->Add( m_checkDebuglog, 0, wxALL, 5 );
-
 	m_checkBoxDisablAcc = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Disable the accessibility shortcut keys (5 SHIFT and others)"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer8->Add( m_checkBoxDisablAcc, 0, wxALL, 5 );
 
@@ -82,30 +79,17 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBoxAllowInjected = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Allow remote keys"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer8->Add( m_checkBoxAllowInjected, 0, wxALL, 5 );
 
-	wxBoxSizer* bSizer18;
-	bSizer18 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_checkBoxFixRAlt = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Disable Ctrl + LAlt as RAlt on extended layouts by switching to this layout"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxFixRAlt->SetValue(true);
-	bSizer18->Add( m_checkBoxFixRAlt, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
-
-	wxString m_choiceFixRaltChoices[] = { _("1"), _("2"), _("3") };
-	int m_choiceFixRaltNChoices = sizeof( m_choiceFixRaltChoices ) / sizeof( wxString );
-	m_choiceFixRalt = new wxChoice( sbSizer8->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceFixRaltNChoices, m_choiceFixRaltChoices, 0 );
-	m_choiceFixRalt->SetSelection( 2 );
-	bSizer18->Add( m_choiceFixRalt, 1, wxALL|wxEXPAND, 0 );
+	m_checkDebuglog = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Enable debug log"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer8->Add( m_checkDebuglog, 0, wxALL, 5 );
 
 
-	sbSizer8->Add( bSizer18, 1, wxEXPAND, 0 );
-
-
-	bSizer3->Add( sbSizer8, 0, wxALL|wxEXPAND, 5 );
+	bSizer3->Add( sbSizer8, 1, wxALL|wxEXPAND, 5 );
 
 
 	m_panelMain->SetSizer( bSizer3 );
 	m_panelMain->Layout();
 	bSizer3->Fit( m_panelMain );
-	m_notebook2->AddPage( m_panelMain, _("Settings"), false );
+	m_notebook2->AddPage( m_panelMain, _("Settings"), true );
 	m_panel141 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer41;
 	bSizer41 = new wxBoxSizer( wxVERTICAL );
@@ -136,7 +120,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	// Cell Defaults
 	m_gridHotKeys->SetDefaultCellAlignment( wxALIGN_LEFT, wxALIGN_CENTER );
-	bSizer41->Add( m_gridHotKeys, 1, wxALL|wxEXPAND, 5 );
+	bSizer41->Add( m_gridHotKeys, 10, wxALL|wxEXPAND, 5 );
 
 	m_gridLayouts = new wxGrid( m_panel141, wxID_ANY, wxPoint( -1,-1 ), wxDefaultSize, 0 );
 
@@ -163,13 +147,13 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	// Cell Defaults
 	m_gridLayouts->SetDefaultCellAlignment( wxALIGN_CENTER, wxALIGN_TOP );
-	bSizer41->Add( m_gridLayouts, 1, wxALL|wxEXPAND, 5 );
+	bSizer41->Add( m_gridLayouts, 9, wxALL|wxEXPAND, 5 );
 
 
 	m_panel141->SetSizer( bSizer41 );
 	m_panel141->Layout();
 	bSizer41->Fit( m_panel141 );
-	m_notebook2->AddPage( m_panel141, _("Hotkeys"), true );
+	m_notebook2->AddPage( m_panel141, _("Hotkeys"), false );
 	m_panel5 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer20;
 	bSizer20 = new wxBoxSizer( wxVERTICAL );
@@ -206,6 +190,34 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel5->Layout();
 	bSizer20->Fit( m_panel5 );
 	m_notebook2->AddPage( m_panel5, _("Keys Remap"), false );
+	m_panel61 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer1911;
+	bSizer1911 = new wxBoxSizer( wxVERTICAL );
+
+	wxBoxSizer* bSizer18;
+	bSizer18 = new wxBoxSizer( wxHORIZONTAL );
+
+	m_checkBoxFixRAlt = new wxCheckBox( m_panel61, wxID_ANY, _("Disable Ctrl + LAlt as RAlt on extended layouts by switching to this layout"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxFixRAlt->SetValue(true);
+	bSizer18->Add( m_checkBoxFixRAlt, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+	wxString m_choiceFixRaltChoices[] = { _("1"), _("2"), _("3") };
+	int m_choiceFixRaltNChoices = sizeof( m_choiceFixRaltChoices ) / sizeof( wxString );
+	m_choiceFixRalt = new wxChoice( m_panel61, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceFixRaltNChoices, m_choiceFixRaltChoices, 0 );
+	m_choiceFixRalt->SetSelection( 2 );
+	bSizer18->Add( m_choiceFixRalt, 1, wxALL|wxEXPAND, 0 );
+
+
+	bSizer1911->Add( bSizer18, 0, wxEXPAND, 0 );
+
+	m_checkBoxPrevent = new wxCheckBox( m_panel61, wxID_ANY, _("Prevent other programs to hook keyboard (may cause problems in games and other apps)"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer1911->Add( m_checkBoxPrevent, 0, wxALL, 5 );
+
+
+	m_panel61->SetSizer( bSizer1911 );
+	m_panel61->Layout();
+	bSizer1911->Fit( m_panel61 );
+	m_notebook2->AddPage( m_panel61, _("Custom"), false );
 	m_panel6 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer191;
 	bSizer191 = new wxBoxSizer( wxVERTICAL );
@@ -248,8 +260,8 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBoxEnable->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnable ), NULL, this );
 	m_checkAddToAutoStart->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAutocheck ), NULL, this );
 	m_checkBoxShowFlags->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onShowFlags ), NULL, this );
-	m_checkDebuglog->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
 	m_checkBoxDisablAcc->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onDisableAccessebl ), NULL, this );
+	m_checkDebuglog->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
 	m_gridHotKeys->Connect( wxEVT_GRID_CELL_LEFT_DCLICK, wxGridEventHandler( MyFrame4::onHotDClick ), NULL, this );
 	m_gridLayouts->Connect( wxEVT_GRID_CELL_LEFT_DCLICK, wxGridEventHandler( MyFrame4::on_grid_lay_double ), NULL, this );
 	m_checkcapsrem->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
@@ -266,8 +278,8 @@ MyFrame4::~MyFrame4()
 	m_checkBoxEnable->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnable ), NULL, this );
 	m_checkAddToAutoStart->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onAutocheck ), NULL, this );
 	m_checkBoxShowFlags->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onShowFlags ), NULL, this );
-	m_checkDebuglog->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
 	m_checkBoxDisablAcc->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onDisableAccessebl ), NULL, this );
+	m_checkDebuglog->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
 	m_gridHotKeys->Disconnect( wxEVT_GRID_CELL_LEFT_DCLICK, wxGridEventHandler( MyFrame4::onHotDClick ), NULL, this );
 	m_gridLayouts->Disconnect( wxEVT_GRID_CELL_LEFT_DCLICK, wxGridEventHandler( MyFrame4::on_grid_lay_double ), NULL, this );
 	m_checkcapsrem->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
@@ -289,9 +301,8 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* bSizer16;
 	bSizer16 = new wxBoxSizer( wxVERTICAL );
 
-	wxString m_choiceKeyChoices[] = { _("Custom"), _("123") };
-	int m_choiceKeyNChoices = sizeof( m_choiceKeyChoices ) / sizeof( wxString );
-	m_choiceKey = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceKeyNChoices, m_choiceKeyChoices, 0 );
+	wxArrayString m_choiceKeyChoices;
+	m_choiceKey = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceKeyChoices, 0 );
 	m_choiceKey->SetSelection( 0 );
 	bSizer16->Add( m_choiceKey, 0, wxALL|wxEXPAND, 5 );
 

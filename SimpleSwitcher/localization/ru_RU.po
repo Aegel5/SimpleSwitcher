@@ -7,17 +7,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-30 10:30+0300\n"
-"PO-Revision-Date: 2022-09-30 10:32+0300\n"
+"POT-Creation-Date: 2025-03-08 09:29+0300\n"
+"PO-Revision-Date: 2025-03-08 09:33+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
-"X-Generator: Poedit 3.1.1\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"X-Generator: Poedit 3.5\n"
 
 #: ../src\gui\noname.cpp:37
 msgid ""
@@ -25,85 +25,120 @@ msgid ""
 "          Scheduler: fasfdasdf"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:544
+#: ../src\gui\decent_gui.cpp:82
 msgid " for: "
 msgstr " для: "
 
-#: ../src\gui\noname.cpp:442
+#: ../src\gui\noname.cpp:204
+msgid "1"
+msgstr ""
+
+#: ../src\gui\noname.cpp:304
 msgid "123"
 msgstr ""
 
-#: ../src\gui\noname.cpp:442
-msgid "333"
+#: ../src\gui\noname.cpp:204
+msgid "2"
 msgstr ""
 
-#: ../src\gui\noname.cpp:360
-msgid "About"
-msgstr "О программе"
+#: ../src\gui\noname.cpp:204
+msgid "3"
+msgstr ""
+
+#: ../src\gui\noname.cpp:236
+msgid "About / Help"
+msgstr ""
 
 #: ../src\gui\noname.cpp:34
 msgid "Add to autostart"
 msgstr "Добавить в автозапуск"
 
+#: ../src\gui\noname.cpp:71
+msgid "Advanced"
+msgstr ""
+
+#: ../src\gui\noname.cpp:79
+msgid "Allow remote keys"
+msgstr ""
+
+#: ../src\gui\noname.cpp:49
+msgid "Alternative mode layout change (emulate Windows hotkeys)"
+msgstr ""
+
 #: ../src\gui\noname.cpp:28
 msgid "Base"
 msgstr "Основная информация"
 
-#: ../src\gui\noname.cpp:346
+#: ../src\gui\noname.cpp:225
 msgid "Build date:"
 msgstr "Дата билда:"
 
-#: ../src\gui\noname.cpp:474
+#: ../src\gui\noname.cpp:338
 msgid "Cancel"
 msgstr "Отменить"
 
-#: ../src\gui\noname.cpp:227
+#: ../src\gui\noname.cpp:162
 msgid "CapsLock / ScrollLock"
 msgstr ""
 
-#: ../src\gui\noname.cpp:221
-msgid "Change Layout"
+#: ../src\Settings.cpp:27
+msgid "Change layout for last several words"
+msgstr ""
+
+#: ../src\Settings.cpp:19
+#, fuzzy
+#| msgid "Change Layout"
+msgid "Change layout for last word"
 msgstr "Сменить раскладку"
 
-#: ../src\gui\noname.cpp:279
-msgid "Change selected text"
+#: ../src\Settings.cpp:35
+#, fuzzy
+#| msgid "Change selected text"
+msgid "Change layout for selected text"
 msgstr "Изменить выделенный текст"
 
-#: ../src\gui\noname.cpp:120 ../src\gui\noname.cpp:462
+#: ../src\gui\noname.cpp:320
 msgid "Clear"
 msgstr "Очистить"
 
-#: ../src\gui\noname.cpp:334
+#: ../src\gui\noname.cpp:76
 msgid "Clear text format on Ctrl-C"
 msgstr "Очищать форматирование текста при Ctrl-C"
 
-#: ../src\gui\noname.cpp:370
+#: ../src\gui\noname.cpp:246
 msgid "Close to tray"
 msgstr "Свернуть в трей"
 
-#: ../src\gui\noname.cpp:80
-msgid "Ctrl + F24"
+#: ../src\gui\noname.cpp:220 ../src\gui\noname.cpp:304
+msgid "Custom"
 msgstr ""
 
-#: ../src\gui\noname.cpp:442
-msgid "Custom"
-msgstr "Ввести"
-
-#: ../src\gui\noname.cpp:136
-msgid "Cycle change"
+#: ../src\Settings.cpp:42
+#, fuzzy
+#| msgid "Cycle change"
+msgid "Cycle change layout"
 msgstr "Циклическая смена"
 
-#: ../src\gui\noname.cpp:260
+#: ../src\Settings.cpp:65
+msgid "Cycle change layout (win hotkey)"
+msgstr ""
+
+#: ../src\gui\noname.cpp:179
 msgid "Delete"
 msgstr "Удалить"
 
-#: ../src\gui\noname.cpp:331
+#: ../src\gui\noname.cpp:200
+msgid ""
+"Disable Ctrl + LAlt as RAlt on extended layouts by switching to this layout"
+msgstr ""
+
+#: ../src\gui\noname.cpp:73
 msgid "Disable the accessibility shortcut keys (5 SHIFT and others)"
 msgstr ""
 "Отключить функции accessibility (залипание после нажатия 5 Shift подряд и "
 "другие)"
 
-#: ../src\gui\noname.cpp:450
+#: ../src\gui\noname.cpp:326
 msgid "Distinguish between left and right modifiers"
 msgstr "Различать левые и правые модификаторы"
 
@@ -111,78 +146,75 @@ msgstr "Различать левые и правые модификаторы"
 msgid "Enable"
 msgstr "Включить"
 
-#: ../src\gui\noname.cpp:324
+#: ../src\gui\noname.cpp:82
 msgid "Enable debug log"
 msgstr "Включить debug log"
 
-#: ../src\gui\decent_gui.cpp:419
+#: ../src\gui\decent_gui.cpp:170
 msgid "English"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:629
+#: ../src\gui\decent_gui.cpp:800
 msgid "Error reading config"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:65 ../src\gui\noname.cpp:367
+#: ../src\gui\decent_gui.cpp:575
+msgid "Error while UpdateAutostartExplain: "
+msgstr ""
+
+#: ../src\gui\decent_app.cpp:88
+msgid "Error while initing app: "
+msgstr ""
+
+#: ../src\gui\decent_gui.cpp:233
+msgid "Error while initing main wnd: "
+msgstr ""
+
+#: ../src\gui\decent_gui.cpp:71 ../src\gui\noname.cpp:243
 msgid "Exit"
 msgstr "Закрыть"
 
-#: ../src\gui\noname.cpp:62 ../src\gui\noname.cpp:96 ../src\gui\noname.cpp:145
-#: ../src\gui\noname.cpp:169 ../src\gui\noname.cpp:187
-#: ../src\gui\noname.cpp:205 ../src\gui\noname.cpp:242
-#: ../src\gui\noname.cpp:288
-msgid "F24"
+#: ../src\gui\noname.cpp:55
+msgid "GUI Language"
 msgstr ""
 
-#: ../src\gui\noname.cpp:53
-msgid "Fix layout"
-msgstr "Исправить раскладку"
-
-#: ../src\gui\noname.cpp:238
+#: ../src\Settings.cpp:51
 msgid "Generate CapsLock"
 msgstr "Генерировать CapsLock"
 
-#: ../src\gui\noname.cpp:444
+#: ../src\gui\noname.cpp:110 ../src\gui\noname.cpp:138
 msgid "Hotkey"
 msgstr ""
 
-#: ../src\gui\noname.cpp:273
+#: ../src\gui\noname.cpp:156
+msgid "Hotkeys"
+msgstr ""
+
+#: ../src\gui\noname.cpp:192
 msgid "Keys Remap"
 msgstr "Переназначение клавиш"
 
-#: ../src\gui\noname.cpp:312
-msgid "Language"
+#: ../src\gui\set_hk.cpp:153
+msgid "Modifier must have #up flag"
 msgstr ""
 
-#: ../src\gui\noname.cpp:58
-msgid "Last word"
-msgstr "Последнее слово"
-
-#: ../src\gui\noname.cpp:130
-msgid "Main"
-msgstr "Основное"
-
-#: ../src\gui\decent_gui.cpp:542
+#: ../src\gui\decent_gui.cpp:80
 msgid "Need admin rights"
 msgstr "Программа должна быть запущена от администратора"
 
-#: ../src\gui\decent_gui.cpp:414
+#: ../src\gui\decent_gui.cpp:176
 msgid "Need restart program"
 msgstr "Необходимо перезапустить программу"
 
-#: ../src\gui\noname.cpp:141
-msgid "Next layout"
-msgstr "Следующая раскладка"
-
-#: ../src\gui\noname.cpp:471
+#: ../src\gui\noname.cpp:335
 msgid "OK"
 msgstr ""
 
-#: ../src\gui\noname.cpp:304
-msgid "Others"
-msgstr "Другое"
+#: ../src\gui\noname.cpp:310
+msgid "Press any key..."
+msgstr ""
 
-#: ../src\gui\noname.cpp:327
+#: ../src\gui\noname.cpp:213
 msgid ""
 "Prevent other programs to hook keyboard (may cause problems in games and "
 "other apps)"
@@ -190,46 +222,37 @@ msgstr ""
 "Запретить другим программам перехватывать клавиатуру (может вызывать "
 "проблемы)"
 
-#: ../src\gui\noname.cpp:229
+#: ../src\gui\noname.cpp:164
 msgid "Remap CapsLock as F24"
 msgstr "Переназначить CapsLock как F24"
 
-#: ../src\gui\noname.cpp:232
+#: ../src\gui\noname.cpp:167
 msgid "Remap ScrollLock as F23"
 msgstr "Переназначить ScrollLock как F23"
 
-#: ../src\gui\decent_gui.cpp:418
+#: ../src\gui\decent_gui.cpp:169
 msgid "Russian"
 msgstr ""
 
-#: ../src\gui\noname.cpp:92
-msgid "Selected text"
+#: ../src\Settings.cpp:58
+msgid "Selected text to UPPER/lower case"
+msgstr ""
+
+#: ../src\gui\noname.cpp:116
+#, fuzzy
+#| msgid "Selected text"
+msgid "Selected text to upper/lower"
 msgstr "Выделенный текст"
 
-#: ../src\gui\noname.cpp:67 ../src\gui\noname.cpp:83 ../src\gui\noname.cpp:99
-#: ../src\gui\noname.cpp:148 ../src\gui\noname.cpp:172
-#: ../src\gui\noname.cpp:190 ../src\gui\noname.cpp:208
-#: ../src\gui\noname.cpp:245 ../src\gui\noname.cpp:291
-msgid "Set"
-msgstr "Изменить"
-
-#: ../src\gui\noname.h:160
+#: ../src\gui\noname.h:130
 msgid "Set hotkey"
 msgstr "Изменить горячую клавишу"
 
-#: ../src\gui\noname.cpp:158
-msgid "Set layout"
-msgstr "Установить раскладку"
-
-#: ../src\gui\noname.cpp:341
+#: ../src\gui\noname.cpp:92
 msgid "Settings"
 msgstr "Настройки"
 
-#: ../src\gui\noname.cpp:76
-msgid "Several words"
-msgstr "Несколько слов"
-
-#: ../src\gui\decent_gui.cpp:64
+#: ../src\gui\decent_gui.cpp:70
 msgid "Show"
 msgstr "Показать"
 
@@ -237,23 +260,23 @@ msgstr "Показать"
 msgid "Show flags in tray"
 msgstr "Показывать флаги в трее"
 
-#: ../src\gui\noname.h:127
+#: ../src\gui\noname.h:96
 msgid "SimpleSwitcher"
 msgstr ""
 
-#: ../src\gui\noname.cpp:284
-msgid "To upper/lower"
-msgstr "В верхний/нижний регистр"
-
-#: ../src\gui\noname.cpp:453
+#: ../src\gui\noname.cpp:329
 msgid "Triggers on KEYUP"
 msgstr "Срабатывать на KEYUP"
 
-#: ../src\gui\noname.cpp:257
+#: ../src\gui\noname.cpp:176
 msgid "Update"
 msgstr "Обновить"
 
-#: ../src\gui\decent_gui.cpp:343
+#: ../src\gui\noname.cpp:137
+msgid "Use in cycle"
+msgstr ""
+
+#: ../src\gui\decent_gui.cpp:542
 msgid "Will be applied after PC reboot"
 msgstr "Будет применено после перезагрузки ОС"
 
@@ -261,20 +284,43 @@ msgstr "Будет применено после перезагрузки ОС"
 msgid "Work in programs running by admin"
 msgstr "Работать в программах, запущенных от администратора"
 
-#: ../src\gui\noname.cpp:109
-msgid "Work only with this layouts (leave empty for all):"
-msgstr "Использовать только эти раскладки (пустая строка - все)"
-
-#: ../src\gui\decent_gui.cpp:513
+#: ../src\gui\decent_gui.cpp:712
 msgid "delete old task"
 msgstr ""
 
-#: ../src\gui\noname.cpp:111 ../src\gui\noname.cpp:163
-#: ../src\gui\noname.cpp:181 ../src\gui\noname.cpp:199
-msgid "ru"
+#: ../src\ConfigData.h:54
+msgid "unknown"
 msgstr ""
 
-#: ../src\gui\noname.cpp:111 ../src\gui\noname.cpp:163
-#: ../src\gui\noname.cpp:181 ../src\gui\noname.cpp:199
-msgid "us-US"
-msgstr ""
+#~ msgid "About"
+#~ msgstr "О программе"
+
+#~ msgid "Fix layout"
+#~ msgstr "Исправить раскладку"
+
+#~ msgid "Last word"
+#~ msgstr "Последнее слово"
+
+#~ msgid "Main"
+#~ msgstr "Основное"
+
+#~ msgid "Next layout"
+#~ msgstr "Следующая раскладка"
+
+#~ msgid "Others"
+#~ msgstr "Другое"
+
+#~ msgid "Set"
+#~ msgstr "Изменить"
+
+#~ msgid "Set layout"
+#~ msgstr "Установить раскладку"
+
+#~ msgid "Several words"
+#~ msgstr "Несколько слов"
+
+#~ msgid "To upper/lower"
+#~ msgstr "В верхний/нижний регистр"
+
+#~ msgid "Work only with this layouts (leave empty for all):"
+#~ msgstr "Использовать только эти раскладки (пустая строка - все)"

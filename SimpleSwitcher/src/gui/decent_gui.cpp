@@ -130,6 +130,12 @@ public:
                 conf_set(conf);
                 });
 
+            BindCheckbox(m_checkBoxPrevent, []() {return conf_get()->EnableKeyLoggerDefence; }, [](bool val) {
+                auto conf = conf_copy();
+                conf->EnableKeyLoggerDefence = val;
+                conf_set(conf);
+             });
+
             BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get()->AlternativeLayoutChange; }, [this](bool val) {
                 auto conf = conf_copy();
                 conf->AlternativeLayoutChange = val;
@@ -271,6 +277,7 @@ private:
             return;
         }
 
+        LOG_ANY(L"destroy GUI");
         Destroy(); // you may also do:  event.Skip();
                    // since the default event handler does call Destroy(), too
     }

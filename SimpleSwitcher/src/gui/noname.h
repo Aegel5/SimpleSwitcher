@@ -53,12 +53,10 @@ class MyFrame4 : public wxFrame
 		wxCheckBox* m_checkBoxAlterantiveLayoutChange;
 		wxStaticText* m_staticText9;
 		wxChoice* m_comboUiLang;
-		wxCheckBox* m_checkDebuglog;
 		wxCheckBox* m_checkBoxDisablAcc;
 		wxCheckBox* m_checkBoxClearForm;
 		wxCheckBox* m_checkBoxAllowInjected;
-		wxCheckBox* m_checkBoxFixRAlt;
-		wxChoice* m_choiceFixRalt;
+		wxCheckBox* m_checkDebuglog;
 		wxPanel* m_panel141;
 		wxGrid* m_gridHotKeys;
 		wxGrid* m_gridLayouts;
@@ -68,6 +66,10 @@ class MyFrame4 : public wxFrame
 		wxButton* m_button7;
 		wxButton* m_button8;
 		wxListBox* m_listBoxRemap;
+		wxPanel* m_panel61;
+		wxCheckBox* m_checkBoxFixRAlt;
+		wxChoice* m_choiceFixRalt;
+		wxCheckBox* m_checkBoxPrevent;
 		wxPanel* m_panel6;
 		wxStaticText* m_staticTextBuildDate;
 		wxHyperlinkCtrl* m_hyperlink1;
@@ -78,8 +80,8 @@ class MyFrame4 : public wxFrame
 		virtual void onEnable( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onAutocheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onShowFlags( wxCommandEvent& event ) { event.Skip(); }
-		virtual void onEnableLog( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onDisableAccessebl( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onEnableLog( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onHotDClick( wxGridEvent& event ) { event.Skip(); }
 		virtual void on_grid_lay_double( wxGridEvent& event ) { event.Skip(); }
 		virtual void onRemapCaps( wxCommandEvent& event ) { event.Skip(); }

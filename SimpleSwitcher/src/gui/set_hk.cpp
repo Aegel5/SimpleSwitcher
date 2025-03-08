@@ -41,7 +41,7 @@ public:
 
         set_key(info.keys.key());
 
-        std::vector<wxString> choices = { "Custom" };
+        std::vector<wxString> choices = { _(L"<Input>") };
         for (const auto& def : info.def_list) {
             choices.push_back(def.ToString());
         }
