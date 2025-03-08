@@ -388,7 +388,7 @@ private:
         if (!conf_get()->showFlags) {
             myTray.SetIcon(icon, trayTooltip);
         } else {
-            GetCurLayRequest();
+            Worker()->PostMsg(HWORKER_Getcurlay);
         }
 
     }
@@ -783,9 +783,5 @@ void StartMainGui(bool show, bool conf_err_msg) {
 
 }
 
-//TStatus Init() {
-//
-//    IFS_RET(g_setsgui.Load());
-//    RETURN_SUCCESS;
-//}
+
 

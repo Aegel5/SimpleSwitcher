@@ -5,15 +5,6 @@
 
 #include "ConfigData.h"
 
-inline TStatus GetCurLayRequest() {
-    HWND hwnd = FindWindow(c_sClassNameServer2, 0);
-    if (hwnd != NULL) {
-        PostMessage(hwnd, WM_GetCurLay, 0, 0);
-    }
-    RETURN_SUCCESS;
-}
-
-
 class SettingsGui {
 public:
     SettingsGui() {

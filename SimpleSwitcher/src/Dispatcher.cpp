@@ -101,9 +101,6 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 		if (mesg == WM_HOTKEY)
 		{
 		}
-		else if (mesg == WM_GetCurLay) {
-            Worker()->PostMsg(HWORKER_Getcurlay);
-        } 
 		else if (mesg == c_MSG_Quit)
 		{
 			PostQuitMessage(0);
