@@ -46,7 +46,8 @@ public:
     UiLang uiLang = UiLang::rus;
 
     bool fixRAlt = false;
-    HKL fixRAlt_lay = 0;
+    HKL fixRAlt_lay_ = (HKL)0x4090409;
+    std::wstring fixRAlt_lay_str() const { return std::format(L"{:x}", (int)fixRAlt_lay_); }
     bool isMonitorAdmin = false;
     bool isTryOEM2 = true;
     bool fDbgMode              = false;

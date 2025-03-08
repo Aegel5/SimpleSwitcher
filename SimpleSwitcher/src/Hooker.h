@@ -80,6 +80,11 @@ public:
 
 	TStatus FixCtrlAlt(CHotKey key);
 
+	void SetNewLayPost(HKL lay) {
+		LOG_INFO_1(L"post WM_INPUTLANGCHANGEREQUEST");
+		PostMessage(m_hwndTop, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
+	}
+
 	TStatus SetNewLay(HKL lay) {
 
 		LOG_INFO_1(L"Try set 0x%x lay", lay);
@@ -92,9 +97,8 @@ public:
 		else
 		{
 
+			SetNewLayPost(lay);
 
-			LOG_INFO_1(L"post WM_INPUTLANGCHANGEREQUEST");
-			PostMessage(m_hwndTop, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
 			//IFS_LOG(SwitchByCom(lay));
 		}
 

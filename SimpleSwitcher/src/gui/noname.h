@@ -67,9 +67,8 @@ class MyFrame4 : public wxFrame
 		wxButton* m_button8;
 		wxListBox* m_listBoxRemap;
 		wxPanel* m_panel61;
-		wxCheckBox* m_checkBoxFixRAlt;
-		wxChoice* m_choiceFixRalt;
 		wxCheckBox* m_checkBoxPrevent;
+		wxCheckBox* m_checkBoxFixRAlt;
 		wxPanel* m_panel6;
 		wxStaticText* m_staticTextBuildDate;
 		wxHyperlinkCtrl* m_hyperlink1;

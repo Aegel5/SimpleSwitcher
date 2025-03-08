@@ -344,7 +344,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 						&& !curk.IsKnownMods(vkCode)
 						&& vkCode == curk.ValueKey()
 						&& conf_get()->fixRAlt
-						&& conf_get()->fixRAlt_lay != 0
+						&& conf_get()->fixRAlt_lay_ != 0
 						) {
 						LOG_INFO_1(L"fix ctrl+alt");
 						MainWorkerMsg msg(HWORKER_FixCtrlAlt);

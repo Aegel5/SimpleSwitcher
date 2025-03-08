@@ -129,6 +129,7 @@ public:
                 conf->fixRAlt = val;
                 conf_set(conf);
                 });
+            m_checkBoxFixRAlt->SetLabelText(m_checkBoxFixRAlt->GetLabelText() + L" " + conf_get()->fixRAlt_lay_str());
 
             BindCheckbox(m_checkBoxPrevent, []() {return conf_get()->EnableKeyLoggerDefence; }, [](bool val) {
                 auto conf = conf_copy();
@@ -176,17 +177,17 @@ public:
                     wxMessageBox(_("Need restart program"));
                     });
 
-            BindChoice(m_choiceFixRalt, [this](wxChoice* elem) {
-                InitComboFix();
-                }, [this](wxChoice* elem) {
-                    auto conf = conf_copy();
-                    int i = elem->GetSelection();
-                    if (i < conf->layouts_info.info.size()) {
-                        conf->fixRAlt_lay = conf->layouts_info.info[i].layout;
-                        conf_set(conf);
-                        InitComboFix();
-                    }
-                    });
+            //BindChoice(m_choiceFixRalt, [this](wxChoice* elem) {
+            //    InitComboFix();
+            //    }, [this](wxChoice* elem) {
+            //        auto conf = conf_copy();
+            //        int i = elem->GetSelection();
+            //        if (i < conf->layouts_info.info.size()) {
+            //            conf->fixRAlt_lay_ = conf->layouts_info.info[i].layout;
+            //            conf_set(conf);
+            //            InitComboFix();
+            //        }
+            //        });
 
             updateBools();
 
@@ -254,19 +255,6 @@ private:
         }
         return -1;
     }
-
-    void InitComboFix() {
-        m_choiceFixRalt->Clear();
-        
-        for (int i = -1; auto const& it : conf_get()->layouts_info.info) {
-            i++;
-            m_choiceFixRalt->AppendString(Utils::GetNameForHKL(it.layout));
-            if (it.layout == conf_get()->fixRAlt_lay) {
-                m_choiceFixRalt->SetSelection(i);
-            }
-        }
-    }
-
 
 
     void onExitReqest(wxCloseEvent& event) {
@@ -635,22 +623,10 @@ private:
             }
         }
 
-
-        if (info_copy.GetLayoutInfo(conf_get()->fixRAlt_lay) == nullptr) {
-            was_changes = true;
-        }
-
-
         if (was_changes) {
             // пересохраним если были изменения.
             auto conf = conf_copy();
             conf->layouts_info = info_copy;
-            if (conf->layouts_info.GetLayoutInfo(conf->fixRAlt_lay) == nullptr) {
-                conf->fixRAlt_lay = 0;
-            }
-            if (conf->fixRAlt_lay == 0 && conf->layouts_info.info.size() > 0) {
-                conf->fixRAlt_lay = conf->layouts_info.info[0].layout;
-            }
             conf_set(conf);
         }
 

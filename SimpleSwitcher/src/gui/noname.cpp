@@ -89,7 +89,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panelMain->SetSizer( bSizer3 );
 	m_panelMain->Layout();
 	bSizer3->Fit( m_panelMain );
-	m_notebook2->AddPage( m_panelMain, _("Settings"), true );
+	m_notebook2->AddPage( m_panelMain, _("Settings"), false );
 	m_panel141 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer41;
 	bSizer41 = new wxBoxSizer( wxVERTICAL );
@@ -194,30 +194,18 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer1911;
 	bSizer1911 = new wxBoxSizer( wxVERTICAL );
 
-	wxBoxSizer* bSizer18;
-	bSizer18 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_checkBoxFixRAlt = new wxCheckBox( m_panel61, wxID_ANY, _("Disable Ctrl + LAlt as RAlt on extended layouts by switching to this layout"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxFixRAlt->SetValue(true);
-	bSizer18->Add( m_checkBoxFixRAlt, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
-
-	wxString m_choiceFixRaltChoices[] = { _("1"), _("2"), _("3") };
-	int m_choiceFixRaltNChoices = sizeof( m_choiceFixRaltChoices ) / sizeof( wxString );
-	m_choiceFixRalt = new wxChoice( m_panel61, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceFixRaltNChoices, m_choiceFixRaltChoices, 0 );
-	m_choiceFixRalt->SetSelection( 2 );
-	bSizer18->Add( m_choiceFixRalt, 1, wxALL|wxEXPAND, 0 );
-
-
-	bSizer1911->Add( bSizer18, 0, wxEXPAND, 0 );
-
 	m_checkBoxPrevent = new wxCheckBox( m_panel61, wxID_ANY, _("Prevent other programs to hook keyboard (may cause problems in games and other apps)"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1911->Add( m_checkBoxPrevent, 0, wxALL, 5 );
+
+	m_checkBoxFixRAlt = new wxCheckBox( m_panel61, wxID_ANY, _("Disable Ctrl + LAlt as RAlt on extended layouts by temporary switching to"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxFixRAlt->SetValue(true);
+	bSizer1911->Add( m_checkBoxFixRAlt, 0, wxALL|wxEXPAND, 5 );
 
 
 	m_panel61->SetSizer( bSizer1911 );
 	m_panel61->Layout();
 	bSizer1911->Fit( m_panel61 );
-	m_notebook2->AddPage( m_panel61, _("Custom"), false );
+	m_notebook2->AddPage( m_panel61, _("Custom"), true );
 	m_panel6 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer191;
 	bSizer191 = new wxBoxSizer( wxVERTICAL );

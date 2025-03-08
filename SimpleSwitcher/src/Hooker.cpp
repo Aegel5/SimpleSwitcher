@@ -1067,26 +1067,53 @@ TStatus Hooker::AnalizeTopWnd() {
 
 TStatus Hooker::FixCtrlAlt(CHotKey key) {
 
-	auto lay = conf_get()->fixRAlt_lay;
+	IFS_RET(AnalizeTopWnd());
+
+	auto lay = conf_get()->fixRAlt_lay_;
 	auto curLay = CurLay();
 
 	// сбросим любые нажатые клавиши
 	UpAllKeys();
 
-	// пока без ожидания что язык переключился...
-	IFS_RET(SetNewLay(lay));
+	HKL temp = 0;
+	bool just_send = false;
 
-	//if (!conf_get()->AlternativeLayoutChange) {
-	//	WaitOtherLay(curLay);
-	//}
+	if (conf_get()->layouts_info.GetLayoutInfo(lay) == nullptr) {
+		auto str = std::format(L"{:x}", (int)lay);
+		//const TChar* s = L"00000409";
+		temp = LoadKeyboardLayout(str.c_str(), 0);
+
+		if (temp == 0) {
+			// не получится...
+			just_send = true;
+		}
+		else {
+			//Sleep(1000);
+			SetNewLayPost(temp);
+			//Sleep(1000);
+			//WaitOtherLay(temp);
+		}
+
+	}
+	else {
+		IFS_RET(SetNewLay(lay));
+	}
 
 	// отправляем
 	InputSender inputSender;
-	IFS_RET(inputSender.AddPressVk(key));
-	IFS_RET(SendOurInput(inputSender));
+	IFS_LOG(inputSender.AddPressVk(key));
+	IFS_LOG(SendOurInput(inputSender));
 
-	// переключаемся обратно.
-	IFS_RET(SetNewLay(curLay));
+	Sleep(300); // можем подождать подольше, ведь комбинацию мы уже отослали...
+
+	if (!just_send) {
+		// переключаемся обратно.
+		IFS_LOG(SetNewLay(curLay));
+	}
+
+	if(temp != 0){
+		UnloadKeyboardLayout(temp);
+	}
 
 	RETURN_SUCCESS;
 }

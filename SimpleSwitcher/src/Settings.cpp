@@ -170,7 +170,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     layouts_info, 
     time_debug_log_last_enabled,
     fixRAlt,
-    fixRAlt_lay
+    fixRAlt_lay_
     )
     
 
