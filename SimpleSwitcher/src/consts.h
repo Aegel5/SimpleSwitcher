@@ -47,20 +47,14 @@ static const TChar c_sArgScrRemapRemove[] = L"/ScrRemapRemove";
 
 enum 
 {
-	SW_CLIENT_PUTTEXT =      0b1,
-	SW_CLIENT_BACKSPACE   =  0b10,
-	SW_CLIENT_SetLang =      0b100,
-	SW_CLIENT_CTRLC =        0b1000,
-	SW_CLIENT_CTRLV =        0b10000,
-	SW_CLIENT_NO_WAIT_LANG = 0b100000,
+	SW_CLIENT_PUTTEXT =      1<<0,
+	SW_CLIENT_BACKSPACE   =  1<<1,
+	SW_CLIENT_SetLang =      1<<2,
+	SW_CLIENT_CTRLC =        1<<3,
+	SW_CLIENT_CTRLV =        1<<4,
+	SW_CLIENT_NO_WAIT_LANG = 1<<5,
 };
 
-
-
-enum
-{
-	SendTop_NeedRestore = 0x10000,
-};
 
 static const int c_nCommonWaitProcess = 5000;
 static const int c_nCommonWaitMtx = 30000;
@@ -81,8 +75,8 @@ enum HotKeyType : TUInt32
     hk_ScrollGenerate,
     hk_toUpperSelected,
 
-    hk_SetLayout_flag  = 0b100000000000,
-    hk_RunProgram_flag = 0b1000000000000,
+    hk_SetLayout_flag  = 1<<30,
+    hk_RunProgram_flag = 1<<29,
 };
 
 

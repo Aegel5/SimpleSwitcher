@@ -407,7 +407,7 @@ public:
 	{
 		if(size != other.size)
 			return false;
-		if(size == 0 || other.size == 0)
+		if(size == 0)
 			return false;
 		//if (!TestFlag(flags, COMPARE_IGNORE_HOLD) && m_hold != other.m_hold)
 		//	return false;
