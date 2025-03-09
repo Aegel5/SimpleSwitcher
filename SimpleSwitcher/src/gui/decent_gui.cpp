@@ -128,6 +128,10 @@ public:
 
             m_notebook2->SetSelection(0);
 
+            BindCheckbox(m_checkDebuglog, []() {return conf_get()->IsNeedDebug(); }, [](bool val) {
+                SetLogLevel_log_info(val? conf_get()->logLevel : LOG_LEVEL_0);
+                });
+
             BindCheckbox(m_checkBoxFixRAlt, []() {return conf_get()->fixRAlt; }, [](bool val) {
                 auto conf = conf_copy();
                 conf->fixRAlt = val;
@@ -363,19 +367,7 @@ private:
     void updateBools() {
         auto conf = conf_get();
         m_checkBoxDisablAcc->SetValue(conf->disableAccessebility);
-        m_checkDebuglog->SetValue(conf->fDbgMode);
         m_checkBoxShowFlags->SetValue(conf->showFlags);
-    }
-
-    virtual void onEnableLog(wxCommandEvent& event)
-    {
-        auto conf = conf_copy();
-        conf->fDbgMode = event.IsChecked();
-        if (conf->fDbgMode) {
-            //conf->time_debug_log_last_enabled = std::chrono::system_clock::now();
-        }
-        SetLogLevel_v3(conf->fDbgMode ? conf->logLevel : LOG_LEVEL_0);
-        conf_set(conf);
     }
 
 

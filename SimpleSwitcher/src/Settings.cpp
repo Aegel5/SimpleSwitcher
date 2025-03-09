@@ -152,7 +152,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     SettingsGui,
     isMonitorAdmin,
-    fDbgMode,
+    force_DbgMode,
     fClipboardClearFormat,
     EnableKeyLoggerDefence,
     disableAccessebility,
@@ -164,7 +164,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     AlternativeLayoutChange,
     config_version,
     layouts_info, 
-    time_debug_log_last_enabled,
     fixRAlt,
     fixRAlt_lay_,
     run_programs

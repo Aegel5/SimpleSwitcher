@@ -49,16 +49,12 @@ bool MyApp::OnInit() {
 
         auto conf = __g_config.get();
 
-        SetLogLevel(conf->fDbgMode ? LOG_LEVEL_1 : LOG_LEVEL_0);
+        SetLogLevel(Utils::IsDebug() ? LOG_LEVEL_1 : LOG_LEVEL_0);
 
         auto errLoadConf = LoadConfig(*conf);
         IFS_LOG(errLoadConf);
 
-#ifdef _DEBUG
-        conf->fDbgMode = true;
-#endif
-
-        SetLogLevel_v3(conf->fDbgMode ? conf->logLevel : LOG_LEVEL_0);
+        SetLogLevel_log_info(conf->IsNeedDebug() ? conf->logLevel : LOG_LEVEL_0);
 
         IFS_LOG(autoCom.Init());
         //Initlll();
