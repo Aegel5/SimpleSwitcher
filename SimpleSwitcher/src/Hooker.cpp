@@ -1091,7 +1091,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 		auto str = std::format(L"{:x}", (int)lay);
 		//const TChar* s = L"00000409";
 		LOG_ANY(L"load temp layout {}", str);
-		temp = LoadKeyboardLayout(str.c_str(), 0);
+		temp = LoadKeyboardLayout(str.c_str(), KLF_ACTIVATE);
 		IFW_LOG(temp != NULL);
 
 		if (temp == 0) {
@@ -1114,15 +1114,13 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 	inputSender.AddPressVk(key);
 	IFS_LOG(SendOurInput(inputSender));
 
-
 	if (!just_send) {
 		// переключаемся обратно.
-		Sleep(100); // можем подождать подольше, ведь комбинацию мы уже отослали...
+		Sleep(200);
 		SetNewLay(curLay);
 	}
 
-	if(temp != 0){
-		Sleep(100); // ждем снова, иначе может тупо выгрузиться, пока обработается нажатие...
+	if (temp != 0) {
 		LOG_ANY(L"unload temp layout");
 		IFW_LOG(UnloadKeyboardLayout(temp));
 	}

@@ -61,6 +61,8 @@ bool MyApp::OnInit() {
 
         setlocale(LC_ALL, "en_US.utf8");
 
+        AllowSetForegroundWindow(ASFW_ANY);
+
 
         if (conf->config_version != SW_VERSION) {
             conf->config_version = SW_VERSION;
