@@ -1,8 +1,93 @@
 ﻿#pragma once
 #include <Shellapi.h>
+#include <atlbase.h>
+#include <Shlobj.h>
 
 namespace procstart
 {
+	namespace internal {
+		inline HRESULT FindDesktopFolderView(REFIID riid, void** ppv)
+		{
+			HRESULT hr;
+			CComPtr<IShellWindows> spShellWindows;
+			hr = spShellWindows.CoCreateInstance(CLSID_ShellWindows);
+			if (FAILED(hr))
+				return hr;
+
+			CComVariant vtLoc{ 0 };    // 0 = CSIDL_DESKTOP
+			CComVariant vtEmpty;
+			long lhwnd = 0;
+			CComPtr<IDispatch> spdisp;
+			hr = spShellWindows->FindWindowSW(&vtLoc, &vtEmpty, SWC_DESKTOP, &lhwnd, SWFO_NEEDDISPATCH, &spdisp);
+			if (FAILED(hr))
+				return hr;
+
+			CComQIPtr<IServiceProvider> spProv{ spdisp };
+			if (!spProv)
+				return E_NOINTERFACE;
+
+			CComPtr<IShellBrowser> spBrowser;
+			hr = spProv->QueryService(SID_STopLevelBrowser, IID_PPV_ARGS(&spBrowser));
+			if (FAILED(hr))
+				return hr;
+
+			CComPtr<IShellView> spView;
+			hr = spBrowser->QueryActiveShellView(&spView);
+			if (FAILED(hr))
+				return hr;
+
+			return spView->QueryInterface(riid, ppv);
+		}
+
+
+		inline HRESULT GetDesktopAutomationObject(REFIID riid, void** ppv)
+		{
+			HRESULT hr;
+			CComPtr<IShellView> spsv;
+			hr = FindDesktopFolderView(IID_PPV_ARGS(&spsv));
+			if (FAILED(hr))
+				return hr;
+			if (!spsv)
+				return E_NOINTERFACE;
+
+			CComPtr<IDispatch> spdispView;
+			hr = spsv->GetItemObject(SVGIO_BACKGROUND, IID_PPV_ARGS(&spdispView));
+			if (FAILED(hr))
+				return hr;
+
+			return spdispView->QueryInterface(riid, ppv);
+		}
+
+
+		inline HRESULT ShellExecuteFromExplorer(PCWSTR pszFile, PCWSTR pszParameters, PCWSTR pszDirectory, PCWSTR pszOperation, int nShowCmd)
+		{
+			HRESULT hr;
+			CComPtr<IShellFolderViewDual> spFolderView;
+			hr = GetDesktopAutomationObject(IID_PPV_ARGS(&spFolderView));
+			if (FAILED(hr))
+				return hr;
+
+			CComPtr<IDispatch> spdispShell;
+			hr = spFolderView->get_Application(&spdispShell);
+			if (FAILED(hr))
+				return hr;
+
+			CComQIPtr<IShellDispatch2> spdispShell2{ spdispShell };
+			if (!spdispShell2)
+				return E_NOINTERFACE;
+
+			// without this, the launched app is not moved to the foreground
+			AllowSetForegroundWindow(ASFW_ANY);
+
+			return spdispShell2->ShellExecute(
+				CComBSTR{ pszFile },
+				CComVariant{ pszParameters ? pszParameters : L"" },
+				CComVariant{ pszDirectory ? pszDirectory : L"" },
+				CComVariant{ pszOperation ? pszOperation : L"" },
+				CComVariant{ nShowCmd });
+		}
+	}
+
 	enum CreateProcFunc
 	{
 		SW_CREATEPROC_DEFAULT = 0,
@@ -19,32 +104,6 @@ namespace procstart
 		HANDLE hToken = nullptr;
 		bool isHide = false;
 	};
-
-	// not worked
-	inline TStatus GetUnElevatedToken(CAutoHandle& hToken)
-	{
-		HWND hShellWnd = GetShellWindow();
-		IFNULL(hShellWnd)
-		{
-			RETS(SW_ERR_WND_NOT_FOUND, L"GetShellWindow() return NULL");
-		}
-
-		DWORD dwShellPID = 0;
-		GetWindowThreadProcessId(hShellWnd, &dwShellPID);
-		IFW_RET(dwShellPID != 0);
-
-		CAutoHandle hShellProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, dwShellPID);
-		IFW_RET(hShellProcess.IsValid());
-
-		CAutoHandle hShellProcessToken;
-
-		IFW_RET(OpenProcessToken(hShellProcess, TOKEN_DUPLICATE, &hShellProcessToken));
-
-		const DWORD dwTokenRights = TOKEN_QUERY | TOKEN_ASSIGN_PRIMARY | TOKEN_DUPLICATE | TOKEN_ADJUST_DEFAULT | TOKEN_ADJUST_SESSIONID;
-		IFW_RET(DuplicateTokenEx(hShellProcessToken, dwTokenRights, NULL, SecurityImpersonation, TokenPrimary, &hToken));
-
-		RETURN_SUCCESS;
-	}
 
 	inline TStatus SwCreateProcess(CreateProcessParm& parm, CAutoHandle& hProc)
 	{
@@ -76,13 +135,16 @@ namespace procstart
 
 		LOG_INFO_1(L"Try create new process path=%s, args=%s, mode=%u", sExe, args, parm.mode);
 
-		if (parm.mode == SW_CREATEPROC_SHELLEXE && IsWindowsVistaOrGreater())
-		{
-			if (parm.admin == SW_ADMIN_ON && !selfElevated)
-			{
-				parm.mode = SW_CREATEPROC_SHELLEXE;
-			}
+		if (selfElevated && parm.admin == SW_ADMIN_OFF) {
+
+			if (parm.mode != SW_CREATEPROC_SHELLEXE)
+				return SW_ERR_UNSUPPORTED;
+
+			IFH_RET(internal::ShellExecuteFromExplorer(sExe, args, NULL, NULL, 0));
+
+			RETURN_SUCCESS;
 		}
+
 
 		if (parm.mode == SW_CREATEPROC_SHELLEXE)
 		{
