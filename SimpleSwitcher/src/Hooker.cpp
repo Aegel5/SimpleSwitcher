@@ -1090,6 +1090,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 	if (conf_get()->layouts_info.GetLayoutInfo(lay) == nullptr) {
 		auto str = std::format(L"{:x}", (int)lay);
 		//const TChar* s = L"00000409";
+		LOG_ANY(L"load temp layout {}", str);
 		temp = LoadKeyboardLayout(str.c_str(), 0);
 		IFW_LOG(temp != NULL);
 
@@ -1122,6 +1123,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 
 	if(temp != 0){
 		Sleep(100); // ждем снова, иначе может тупо выгрузиться, пока обработается нажатие...
+		LOG_ANY(L"unload temp layout");
 		IFW_LOG(UnloadKeyboardLayout(temp));
 	}
 
