@@ -671,7 +671,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 
 	//needWaitLang = false;
 	if (needWaitLang && !TestFlag(ctxRevert.flags, SW_CLIENT_NO_WAIT_LANG)) {
-		//WaitOtherLay(prevLay);
+		WaitOtherLay(prevLay);
 	}
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT))
@@ -1098,10 +1098,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 			just_send = true;
 		}
 		else {
-			//Sleep(1000);
 			SetNewLayPost(temp);
-			//Sleep(1000);
-			//WaitOtherLay(curLay);
 		}
 
 	}
@@ -1109,20 +1106,22 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 		SetNewLay(lay);
 	}
 
+	WaitOtherLay(curLay);
+
 	// отправляем
 	InputSender inputSender;
 	inputSender.AddPressVk(key);
 	IFS_LOG(SendOurInput(inputSender));
 
-	Sleep(300); // можем подождать подольше, ведь комбинацию мы уже отослали...
 
 	if (!just_send) {
 		// переключаемся обратно.
+		Sleep(100); // можем подождать подольше, ведь комбинацию мы уже отослали...
 		SetNewLay(curLay);
 	}
 
 	if(temp != 0){
-		Sleep(500); // ждем снова, иначе может тупо выгрузиться, пока обработается нажатие...
+		Sleep(100); // ждем снова, иначе может тупо выгрузиться, пока обработается нажатие...
 		IFW_LOG(UnloadKeyboardLayout(temp));
 	}
 
