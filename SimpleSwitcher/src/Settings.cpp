@@ -93,7 +93,7 @@ void from_json(const json& j, HKL& p) {
 }
 
 void to_json(json& j, const CHotKey& p) {
-    j             = p.ToString2();
+    j             = p.ToString().c_str();
 }
 
 void from_json(const json& j, CHotKey& p) {

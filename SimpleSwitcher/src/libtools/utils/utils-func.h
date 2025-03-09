@@ -16,6 +16,10 @@ namespace Utils
 		int len = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, SW_ARRAY_SIZE(buf));
 		IFW_LOG(len != 0);
 
+		if (len == 0) {
+			return L"Unknown";
+		}
+
 		return buf;
 	}
 

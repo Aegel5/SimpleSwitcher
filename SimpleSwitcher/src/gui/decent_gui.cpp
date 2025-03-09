@@ -133,7 +133,7 @@ public:
                 conf->fixRAlt = val;
                 conf_set(conf);
                 });
-            m_checkBoxFixRAlt->SetLabelText(m_checkBoxFixRAlt->GetLabelText() + L" " + conf_get()->fixRAlt_lay_str());
+            m_checkBoxFixRAlt->SetLabelText(m_checkBoxFixRAlt->GetLabelText() + L" \"" + Utils::GetNameForHKL(conf_get()->fixRAlt_lay_)+"\"");
 
             BindCheckbox(m_checkBoxPrevent, []() {return conf_get()->EnableKeyLoggerDefence; }, [](bool val) {
                 auto conf = conf_copy();

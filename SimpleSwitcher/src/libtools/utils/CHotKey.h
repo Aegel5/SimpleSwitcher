@@ -438,13 +438,13 @@ public:
 	TUInt8 Size() const  {return size;}
 
 
-	std::string ToString2() const
-	{
-		auto res = ToString();
-		std::string res2;
-		IFS_LOG(Str_Utils::WideToUtf8(res.c_str(), res2));
-		return res2;
-	}
+	//std::string ToString2() const
+	//{
+	//	auto res = ToString();
+	//	std::string res2;
+	//	IFS_LOG(Str_Utils::WideToUtf8(res.c_str(), res2));
+	//	return res2;
+	//}
 
 	std::wstring ToString() const
 	{
