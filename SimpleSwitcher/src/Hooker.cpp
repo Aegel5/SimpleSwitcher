@@ -5,8 +5,6 @@
 #include "Dispatcher.h"
 #include "Encrypter.h"
 
-#include "proc_enum.h"
-
 #include "gui/decent_gui.h"
 
 TKeyType Hooker::GetCurKeyType(CHotKey hotkey)
@@ -673,7 +671,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 
 	//needWaitLang = false;
 	if (needWaitLang && !TestFlag(ctxRevert.flags, SW_CLIENT_NO_WAIT_LANG)) {
-		WaitOtherLay(prevLay);
+		//WaitOtherLay(prevLay);
 	}
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT))
@@ -1034,52 +1032,52 @@ TStatus Hooker::SwitchLangByEmulate(HKL lay)
 
 void Hooker::CheckCurLay(bool forceSend) {
 
-    auto newtopWndInfo2 = g_procEnum.GetTopWnd2();
+	auto old_lay = topWndInfo2.lay;
 
-	if (newtopWndInfo2.lay == 0) {
-        return;
-    }
+	topWndInfo2 = Utils::GetFocusedWndInfo();
 
-	auto old = topWndInfo2.lay;
-    topWndInfo2 = newtopWndInfo2;
-
-	if ((forceSend || old != topWndInfo2.lay) && g_guiHandle != nullptr) {
-        PostMessage(g_guiHandle, WM_LayNotif, (WPARAM)topWndInfo2.lay, 0);
-    }
+	if (topWndInfo2.lay == 0) {
+		// оставим прежний
+		topWndInfo2.lay = old_lay;
+	}
+	else {
+		if ((forceSend || old_lay != topWndInfo2.lay) && g_guiHandle != nullptr) {
+			PostMessage(g_guiHandle, WM_LayNotif, (WPARAM)topWndInfo2.lay, 0);
+		}
+	}
 }
 
 TStatus Hooker::AnalizeTopWnd() {
 
     CheckCurLay();
 
-	HWND hwndFocused = NULL;
-	IFS_RET(Utils::GetFocusWindow(hwndFocused));
-	m_hwndTop = hwndFocused;
+	//HWND hwndFocused = NULL;
+	//IFS_RET(Utils::GetFocusWindow(hwndFocused));
+	//m_hwndTop = hwndFocused;
 
-	DWORD dwTopPid = 0;
-	DWORD dwIdThreadTopWnd = GetWindowThreadProcessId(hwndFocused, &dwTopPid);
-	IFW_LOG(dwIdThreadTopWnd != 0);
+	//m_hwndTop = topWndInfo2.hwnd;
+
+	//DWORD dwTopPid = 0;
+	//DWORD dwIdThreadTopWnd = GetWindowThreadProcessId(hwndFocused, &dwTopPid);
+	//IFW_LOG(dwIdThreadTopWnd != 0);
 
 	m_sTopProcPath = L"";
 	m_sTopProcName = L"";
 
-	if (dwTopPid == 0) {
-		LOG_WARN(L"can't get pid");
+	if (topWndInfo2.pid_top == 0) {
+		LOG_WARN(L"can't get pid for top wnd");
 		RETURN_SUCCESS;
 	}
 
-	IFS_LOG(Utils::GetProcLowerNameByPid(dwTopPid, m_sTopProcPath, m_sTopProcName));
+	IFS_LOG(Utils::GetProcLowerNameByPid(topWndInfo2.pid_top, m_sTopProcPath, m_sTopProcName));
 
-	if (GetLogLevel() >= 1) {
-		HKL m_layoutTopWnd = GetKeyboardLayout(dwIdThreadTopWnd);
-		LOG_INFO_1(
-			L"hwnd=0x%p, pid=%u, threadid=%u, lay=0x%x(0x%x), prg=%s",
-			m_hwndTop,
-			dwTopPid,
-			dwIdThreadTopWnd,
-			m_layoutTopWnd, topWndInfo2.lay,
-			m_sTopProcName.c_str());
-	}
+	LOG_ANY(
+		L"AnalizeTopWnd pid_top={}, pid_default={}, lay={:x} prg={}",
+		topWndInfo2.pid_top,
+		topWndInfo2.pid_default,
+		(ULONGLONG)topWndInfo2.lay,
+		m_sTopProcName
+	);
 
 	RETURN_SUCCESS;
 }

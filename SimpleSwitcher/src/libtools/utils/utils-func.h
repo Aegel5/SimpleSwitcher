@@ -1,5 +1,18 @@
 ﻿#pragma once
 
+struct TopWndInfo {
+
+	HKL lay = 0;
+
+	HWND hwnd_default = nullptr;
+	DWORD threadid_default = 0;
+	DWORD pid_default = 0;
+
+	HWND hwnd_top = nullptr;
+	DWORD threadid_top = 0;
+	DWORD pid_top = 0;
+};
+
 namespace Utils
 {
 	template <typename T> inline void RemoveAt(T& cont, int i) {
@@ -226,6 +239,30 @@ namespace Utils
 
 		RETURN_SUCCESS;
 
+	}
+
+
+
+	inline TopWndInfo GetFocusedWndInfo() {
+
+		TopWndInfo res;
+
+		IFS_LOG(Utils::GetFocusWindow(res.hwnd_top));
+
+		if (res.hwnd_top == nullptr)
+			return res;
+
+		res.hwnd_default = ImmGetDefaultIMEWnd(res.hwnd_top);
+
+		res.threadid_default = GetWindowThreadProcessId(res.hwnd_default, &res.pid_default);
+		IFW_LOG(res.threadid_default != 0);
+
+		res.threadid_top = GetWindowThreadProcessId(res.hwnd_top, &res.pid_top);
+		IFW_LOG(res.threadid_top != 0);
+
+		res.lay = GetKeyboardLayout(res.threadid_default);
+
+		return res;
 	}
 
 	//inline TStatus CenterWindow(HWND hwndMain, HWND hwndClient)

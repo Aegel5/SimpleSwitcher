@@ -82,7 +82,7 @@ public:
 
 	void SetNewLayPost(HKL lay) {
 		LOG_ANY(L"post WM_INPUTLANGCHANGEREQUEST {:x}", (ULONGLONG)lay);
-		PostMessage(m_hwndTop, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
+		PostMessage(topWndInfo2.hwnd_default, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
 	}
 
 	void SetNewLay(HKL lay) {
@@ -154,7 +154,7 @@ public:
 		auto start = GetTickCount64();
 		while (true)
 		{
-			auto curL = GetKeyboardLayout(topWndInfo2.threadid);
+			auto curL = GetKeyboardLayout(topWndInfo2.threadid_default);
 			if (curL != lay) {
 				LOG_INFO_2(L"new lay arrived after %u", GetTickCount64() - start);
 				break;
@@ -211,7 +211,7 @@ public:
 	//DWORD m_dwIdThreadTopWnd = 0;
 	//DWORD m_dwTopPid = 0;
 	//HKL m_layoutTopWnd = 0;
-	HWND m_hwndTop = 0;
+	//HWND m_hwndTop = 0;
 
 	TopWndInfo topWndInfo2;
 
