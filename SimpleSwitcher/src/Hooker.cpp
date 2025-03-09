@@ -1061,14 +1061,6 @@ TStatus Hooker::AnalizeTopWnd() {
 	//DWORD dwIdThreadTopWnd = GetWindowThreadProcessId(hwndFocused, &dwTopPid);
 	//IFW_LOG(dwIdThreadTopWnd != 0);
 
-	m_sTopProcPath = L"";
-	m_sTopProcName = L"";
-
-	if (topWndInfo2.pid_top == 0) {
-		LOG_WARN(L"can't get pid for top wnd");
-		RETURN_SUCCESS;
-	}
-
 	IFS_LOG(Utils::GetProcLowerNameByPid(topWndInfo2.pid_top, m_sTopProcPath, m_sTopProcName));
 
 	LOG_ANY(

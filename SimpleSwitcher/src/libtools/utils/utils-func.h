@@ -139,6 +139,10 @@ namespace Utils
 
 	inline TStatus GetProcLowerNameByPid(DWORD pid, std::wstring& sPath, std::wstring& sName)
 	{
+		sPath.clear();
+		sName.clear();
+		if (pid == 0) 
+			return SW_ERR_INVALID_PARAMETR;
 		CAutoHandle hProc = OpenProcess(IsWindowsVistaOrGreater() ? PROCESS_QUERY_LIMITED_INFORMATION : PROCESS_QUERY_INFORMATION, FALSE, pid);
 		IFW_RET(hProc.IsValid());
 		TCHAR sBuff[0x1000];
