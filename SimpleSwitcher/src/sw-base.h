@@ -21,8 +21,11 @@
 #include <string>
 #include <set>
 #include <format>
+#include <deque>
+#include <list>
 
 #include <generator>
+#include <ranges>
 
 #include "inc_basic.h"
 #include "utils/ScanMap.h"

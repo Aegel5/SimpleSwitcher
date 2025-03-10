@@ -32,6 +32,8 @@ struct TKeyBaseInfo {
 	TKeyCode shift_key = 0;
 };
 
+using TKeyRevert = std::vector<TKeyBaseInfo>;
+
 struct TKeyHookInfo{
 
 	struct {

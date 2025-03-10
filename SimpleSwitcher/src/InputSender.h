@@ -1,20 +1,47 @@
 ﻿#pragma once
-#include <deque>
-#include <vector>
-
 
 struct InputSender
 {
 private:
-	//typedef std::deque<INPUT> TInputList;
-	typedef std::vector<INPUT> TInputList;
-	TInputList list;
+	std::vector<INPUT> list;
 public:
 
-	INPUT* begin() { return &list[0]; }
-	INPUT* end() { return &list[0] + list.size(); }
 
-	TStatus Send();
+	void Send()
+	{
+		if (list.empty())
+			return;
+		for (auto& i : list)
+		{
+			LOG_INFO_2(L"SEND %s %s", TestFlag(i.ki.dwFlags, KEYEVENTF_KEYUP) ? L"UP" : L"DW", CHotKey::GetName(i.ki.wVk));
+		}
+
+		bool doPause = false;
+
+		// https://github.com/Aegel5/SimpleSwitcher/issues/53
+		//if (g_hooker->m_sTopProcName == L"notepad.exe") { 
+		//	// костыль для нового notepad...
+		//	// не используем по дефолту, так как работаем медленнее...
+		//	doPause = true; 
+		//}
+
+		if (doPause) {
+			for (auto& elem : list) {
+				InjectSkipper::Inst().AddOur(1);
+				auto res = SendInput(1, &elem, sizeof(INPUT));
+				IFW_LOG(res == 1);
+				Sleep(1);
+			}
+		}
+		else {
+			InjectSkipper::Inst().AddOur(list.size());
+			IFW_LOG(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size());
+		}
+
+
+
+		return;
+	}
 
 	void Clear()
 	{
@@ -46,17 +73,7 @@ public:
 
 		list.push_back(cur);
 	}
-	void AddDown(CHotKey& key)
-	{
-		if (key.Size() == 0)
-			return;
-		for(TKeyCode* k = key.ModsBegin(); k != key.ModsEnd(); ++k)
-		{
-			Add(*k, KEY_STATE_DOWN);
-		}
-		Add(key.ValueKey(), KEY_STATE_DOWN);
-	}
-	TStatus AddScanCode(const TKeyBaseInfo& key, KeyState keyState = KEY_STATE_DOWN)
+	void AddScanCode(const TKeyBaseInfo& key, KeyState keyState = KEY_STATE_DOWN)
 	{
 		if (key.shift_key != 0) {
 			Add(key.shift_key, keyState);
@@ -70,32 +87,65 @@ public:
 		else {
 			Add(0, keyState, key.scan_code);
 		}
-
-		RETURN_SUCCESS;
 	}
-	void AddUp(CHotKey& key)
-	{
-		if (key.Size() == 0)
-			return;
-		Add(key.ValueKey(), KEY_STATE_UP);
-		for (const TKeyCode* k = key.ModsBegin(); k != key.ModsEnd(); ++k)
-		{
-			Add(*k, KEY_STATE_UP);
+	void AddPressVk(TKeyCode vk, int num = 1)	{
+		for (int i = 0; i < num; i++) {
+			Add(vk, KEY_STATE_DOWN);
+			Add(vk, KEY_STATE_UP);
 		}
 	}
-	void AddPressVk(TKeyCode vk)	{
-		Add(vk, KEY_STATE_DOWN);
-		Add(vk, KEY_STATE_UP);
+	static void SendVkKey(TKeyCode vk, int num = 1) {
+		InputSender is;
+		is.AddPressVk(vk, num);
+		is.Send();
 	}
-	void AddPressVk(CHotKey& key)
+	void AddDownVk(const CHotKey& key) {
+		for (const auto& k : key | std::views::reverse) {
+			Add(k, KEY_STATE_DOWN);
+		}
+	}
+	void AddUpVk(const CHotKey& key) {
+		for (const auto& k : key) {
+			Add(k, KEY_STATE_UP);
+		}
+	}
+	static void AddPressVk_sendwithpause(const CHotKey& key)
 	{
-		AddDown(key);
-		AddUp(key);
+		InputSender is;
+		is.AddDownVk(key);
+		is.Send();
+		Sleep(1);
+		is.Clear();
+		is.AddUpVk(key);
+		is.Send();
 	}
-	TStatus AddPressBase(const TKeyBaseInfo& key)
+	void AddPressVk(const CHotKey& key)
 	{
-		IFS_RET(AddScanCode(key, KEY_STATE_DOWN));
-		IFS_RET(AddScanCode(key, KEY_STATE_UP));
-		RETURN_SUCCESS;
+		AddDownVk(key);
+		AddUpVk(key);
 	}
+	static void SendHotKey(const CHotKey& key) {
+		InputSender is;
+		is.AddPressVk(key);
+		is.Send();
+	}
+	void AddPressBase(const TKeyBaseInfo& key)
+	{
+		AddScanCode(key, KEY_STATE_DOWN);
+		AddScanCode(key, KEY_STATE_UP);
+	}
+	static void SendKeys(const TKeyRevert& sendData) {
+
+		InputSender inputSender;
+
+		LOG_INFO_1(L"Send %u keys", sendData.size());
+
+		for (const auto& key : sendData)
+		{
+			inputSender.AddPressBase(key);
+		}
+
+		inputSender.Send();
+	}
+
 };

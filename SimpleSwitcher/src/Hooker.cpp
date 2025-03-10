@@ -633,7 +633,7 @@ void Hooker::UpAllKeys() {
 		inputSender.Add(key, KEY_STATE_UP);
 	}
 
-	IFS_LOG(SendOurInput(inputSender));
+	inputSender.Send();
 
 }
 TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
@@ -654,14 +654,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT) && TestFlag(ctxRevert.flags, SW_CLIENT_BACKSPACE))
 	{
-		if (fDels)
-		{
-			//IFS_RET(SendDels(ctxRevert.keylist.size()));
-		}
-		else
-		{
-			IFS_RET(SendBacks(ctxRevert.keylist.size()));
-		}
+		InputSender::SendVkKey(VK_BACK, ctxRevert.keylist.size());
 	}
 
 
@@ -676,32 +669,19 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT))
 	{
-		IFS_RET(SendKeys(ctxRevert.keylist));
-
+		InputSender::SendKeys(ctxRevert.keylist);
 	}
-    auto send = [&](CHotKey k) {
-
-        InputSender inputSender;
-        inputSender.AddDown(k);
-        IFS_RET(inputSender.Send());
-        Sleep(1);
-        inputSender.Clear();
-        inputSender.AddUp(k);
-        IFS_RET(inputSender.Send());
-
-        RETURN_SUCCESS;
-	};
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_CTRLC))
 	{
         CHotKey ctrlc(VK_CONTROL, 67);
-        IFS_LOG(send(ctrlc));
+        InputSender::AddPressVk_sendwithpause(ctrlc);
 	}
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_CTRLV))
 	{
         CHotKey ctrlc(VK_CONTROL, 0x56);
-        IFS_LOG(send(ctrlc));
+		InputSender::AddPressVk_sendwithpause(ctrlc);
 	}
 
 	LOG_INFO_1(L"Revert complete");
@@ -725,19 +705,19 @@ TStatus Hooker::SendCtrlC(EClipRequest clRequest)
 
 	RETURN_SUCCESS;
 }
-TStatus SendUpForKey(CHotKey key)
-{
-	InputSender sender;
-	for (TKeyCode k : key)
-	{
-		std::wstring s1;
-		CHotKey::ToString(k, s1);
-		LOG_INFO_2(L"SendUpForKey press up for key %s", s1.c_str());
-		sender.Add(k, KEY_STATE_UP);
-	}
-	IFS_RET(SendOurInput(sender));
-	RETURN_SUCCESS;
-}
+//TStatus SendUpForKey(CHotKey key)
+//{
+//	InputSender sender;
+//	for (TKeyCode k : key)
+//	{
+//		std::wstring s1;
+//		CHotKey::ToString(k, s1);
+//		LOG_INFO_2(L"SendUpForKey press up for key %s", s1.c_str());
+//		sender.Add(k, KEY_STATE_UP);
+//	}
+//	IFS_RET(SendOurInput(sender));
+//	RETURN_SUCCESS;
+//}
 
 HKL Hooker::getNextLang () {
 	HKL result = (HKL)HKL_NEXT;
@@ -835,10 +815,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
     if (Utils::is_in(typeRevert, hk_CapsGenerate, hk_ScrollGenerate)) {
         TKeyCode k = (typeRevert == hk_CapsGenerate) ? VK_CAPITAL : VK_SCROLL;
-        InputSender inputSender;
-        inputSender.Add(k, KEY_STATE_DOWN);
-        inputSender.Add(k, KEY_STATE_UP);
-        IFS_LOG(SendOurInput(inputSender));
+		InputSender::SendVkKey(k);
         RETURN_SUCCESS;
     }
 
@@ -1000,7 +977,6 @@ TStatus FoundEmulateHotKey(CHotKey& key)
 
 TStatus Hooker::SwitchLangByEmulate(HKL lay)
 {
-	InputSender inputSender;
 
 	CHotKey altshift = conf_get()->GetHk(hk_CycleLang_win_hotkey).keys.key();
 
@@ -1016,16 +992,9 @@ TStatus Hooker::SwitchLangByEmulate(HKL lay)
 		}
 		altshift = info->win_hotkey;
 	}
-	//IFS_LOG(FoundEmulateHotKey(altshift));
 
-	LOG_INFO_2(L"Add press %s", altshift.ToString().c_str());
-	inputSender.AddPressVk(altshift);
-
-	IFS_RET(SendOurInput(inputSender));
-
-	// ------
-	// TODO switch until we get needed layout.
-
+	LOG_ANY(L"Emulate with {}", altshift.ToString());
+	InputSender::SendHotKey(altshift);
 
 	RETURN_SUCCESS;
 }
@@ -1110,9 +1079,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 	WaitOtherLay(curLay);
 
 	// отправляем
-	InputSender inputSender;
-	inputSender.AddPressVk(key);
-	IFS_LOG(SendOurInput(inputSender));
+	InputSender::SendHotKey(key);
 
 	if (!just_send) {
 		// переключаемся обратно.

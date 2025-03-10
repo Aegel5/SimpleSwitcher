@@ -5,20 +5,11 @@
 
 #include "Settings.h"
 #include "KeysStruct.h"
-#include "KeyTools.h"
-
-#include <deque>
-#include <list>
-
-#include "InputSender.h"
-//#include "CaseAnalazer.h"
-#include "CClipWorker.h"
-
-#include "lay_notif_from_dll.h"
 
 #include "InjectSkipper.h"
+#include "InputSender.h"
 
-#include "proc_enum.h"
+#include "CClipWorker.h"
 
 static const int c_nMaxLettersSave = 100;
 
@@ -27,6 +18,16 @@ static const int c_nMaxLettersSave = 100;
 class Hooker
 {
 private:
+
+	struct ContextRevert
+	{
+		TKeyRevert keylist;
+		HotKeyType typeRevert;
+		HKL lay = 0;
+		TUInt32 flags = 0;
+		//tstring txtToInsert;
+	};
+
 
 	typedef std::deque<TKeyHookInfo> TWordList;
 	typedef std::vector<CHotKey> TKeyToRevert;
