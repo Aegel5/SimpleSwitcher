@@ -15,7 +15,7 @@
 #include <wx/taskbar.h>
 
 #include "wxUtils.h"
-
+using namespace WxUtils;
 
 
 //extern bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key);
@@ -214,10 +214,10 @@ public:
                 myTray.SetIcon(icon, trayTooltip);
                 myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
                 myTray.Bind(wxEVT_MENU, [this](auto& evt) {
-                        this->Show(true); 
+                    ForceShow(this);
                     }, Minimal_Show);
                 myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, [this](auto& evt) {
-                        this->Show(true); 
+                    ForceShow(this);
                     });
                 for (const auto& it : conf_get()->layouts_info.info) {
                     myTray.AddLay(it.layout);
