@@ -802,7 +802,10 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		procstart::CreateProcessParm parm;
 		parm.sExe = it.path.wc_str();
 		parm.sCmd = it.args.wc_str();
-		parm.admin = it.elevated ? TSWAdmin::SW_ADMIN_ON : TSWAdmin::SW_ADMIN_OFF;
+
+		// todo - use proxy process for unelevated.
+		//parm.admin = it.elevated ? TSWAdmin::SW_ADMIN_ON : TSWAdmin::SW_ADMIN_OFF;
+
 		parm.mode = procstart::SW_CREATEPROC_SHELLEXE;
 		CAutoHandle hProc;
 		IFS_RET(procstart::SwCreateProcess(parm, hProc));
