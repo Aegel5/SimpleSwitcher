@@ -675,13 +675,13 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_CTRLC))
 	{
         CHotKey ctrlc(VK_CONTROL, 67);
-        InputSender::AddPressVk_sendwithpause(ctrlc);
+        InputSender::SendWithPause(ctrlc);
 	}
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_CTRLV))
 	{
         CHotKey ctrlc(VK_CONTROL, 0x56);
-		InputSender::AddPressVk_sendwithpause(ctrlc);
+		InputSender::SendWithPause(ctrlc);
 	}
 
 	LOG_INFO_1(L"Revert complete");
@@ -1079,7 +1079,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 	WaitOtherLay(curLay);
 
 	// отправляем
-	InputSender::SendHotKey(key);
+	InputSender::SendWithPause(key);
 
 	if (!just_send) {
 		// переключаемся обратно.

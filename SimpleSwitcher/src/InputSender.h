@@ -6,7 +6,6 @@ private:
 	std::vector<INPUT> list;
 public:
 
-
 	void Send()
 	{
 		if (list.empty())
@@ -37,8 +36,6 @@ public:
 			InjectSkipper::Inst().AddOur(list.size());
 			IFW_LOG(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size());
 		}
-
-
 
 		return;
 	}
@@ -79,8 +76,6 @@ public:
 			Add(key.shift_key, keyState);
 		}
 
-		//IFS_RET(Add(key.vk_code, keyState, pos, false));
-
 		if (key.scan_code.scan == 0) {
 			Add(key.vk_code, keyState);
 		}
@@ -109,7 +104,7 @@ public:
 			Add(k, KEY_STATE_UP);
 		}
 	}
-	static void AddPressVk_sendwithpause(const CHotKey& key)
+	static void SendWithPause(const CHotKey& key)
 	{
 		InputSender is;
 		is.AddDownVk(key);

@@ -10,7 +10,7 @@ static const UINT c_MSG_SHOW = 0xBFFF - 33;
 //static const UINT WM_ClipDataArrave = 0xBFFF - 32;
 //static const UINT WM_CtrlC = 0xBFFF - 31;
 static const UINT WM_HWorker = 0xBFFF - 30;
-//static const UINT WM_LayNotif = 0xBFFF - 29; 
+static const UINT WM_LayNotif = 0xBFFF - 29; 
 
 static const UINT c_timerIdClearFormat = 7;
 static const UINT c_timerIdAddToTray = 8;

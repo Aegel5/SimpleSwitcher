@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Dispatcher.h"
-#include "loader_api.h"
 
 #include "ConfigData.h"
 
