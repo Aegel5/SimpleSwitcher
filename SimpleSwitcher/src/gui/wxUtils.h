@@ -17,6 +17,14 @@ namespace WxUtils {
         );
     }
 
+    void BindButtom(wxButton* elem, auto click) {
+        elem->Bind(wxEVT_COMMAND_BUTTON_CLICKED,
+            [click](wxCommandEvent& ev) {
+                click();
+            }
+        );
+    }
+
     inline void ClearGrid(wxGrid* grid) {
         if (grid->GetNumberRows() > 0)
             grid->DeleteRows(0, grid->GetNumberRows());

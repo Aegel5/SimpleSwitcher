@@ -54,10 +54,7 @@ bool MyApp::OnInit() {
         auto errLoadConf = LoadConfig(*conf);
         IFS_LOG(errLoadConf);
 
-        SetLogLevel_log_info(conf->IsNeedDebug() ? conf->logLevel : LOG_LEVEL_0);
-
         IFS_LOG(autoCom.Init());
-        //Initlll();
 
         setlocale(LC_ALL, "en_US.utf8");
 

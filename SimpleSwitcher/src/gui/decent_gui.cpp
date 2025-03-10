@@ -124,12 +124,27 @@ public:
 
             m_staticTextBuildDate->SetLabelText(std::format(L"Built on '{}'", _SW_ADD_STR_UT(__DATE__)));
 
+            m_hyperlink11->SetLabel(GetPath_Conf());
+            m_hyperlink11->SetURL(std::format(L"file://{}", GetPath_Conf()));
+
+            BindButtom(m_buttonReloadConfig, []() {
+                auto conf = ConfPtr(new SettingsGui());
+                auto errLoadConf = LoadConfig(*conf);
+                IFS_LOG(errLoadConf);
+                if (errLoadConf) {
+                    wxMessageBox(_("Error reading config"));
+                }
+                else {
+                    conf_set(conf);
+                }
+                });
+
             SyncLayouts();
 
             m_notebook2->SetSelection(0);
 
             BindCheckbox(m_checkDebuglog, []() {return conf_get()->IsNeedDebug(); }, [](bool val) {
-                SetLogLevel_log_info(val? conf_get()->logLevel : LOG_LEVEL_0);
+                SetLogLevel_info(val? conf_get()->logLevel : LOG_LEVEL_0);
                 });
 
             BindCheckbox(m_checkBoxFixRAlt, []() {return conf_get()->fixRAlt; }, [](bool val) {

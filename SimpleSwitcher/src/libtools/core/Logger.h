@@ -202,7 +202,10 @@ template<typename... Args> inline void LOG_WARN(const std::wformat_string<Args..
 	}
 }
 
-
+inline void SetLogLevel_info(TLogLevel logLevel){
+	SetLogLevel(logLevel);
+	LOG_ANY(L"Log level now {}", (int)logLevel);
+}
 
 #define RETURN_SUCCESS {return SW_ERR_SUCCESS; }
 

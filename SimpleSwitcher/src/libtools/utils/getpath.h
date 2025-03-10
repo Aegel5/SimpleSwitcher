@@ -87,3 +87,9 @@ inline TStatus GetPath_Conf(std::wstring& path) {
 	path += L"SimpleSwitcher.json";
 	RETURN_SUCCESS;
 }
+
+inline std::wstring GetPath_Conf() {
+	std::wstring path;
+	IFS_LOG(GetPath_Conf(path));
+	return path;
+}

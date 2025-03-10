@@ -217,9 +217,12 @@ TStatus LoadConfig(SettingsGui& gui) {
             }
         }
 
+        SetLogLevel_info(gui.IsNeedDebug() ? gui.logLevel : LOG_LEVEL_0);
+
     } catch (std::exception& e) {
         return SW_ERR_JSON;
     }
+
 
     RETURN_SUCCESS;
 }

@@ -82,6 +82,18 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkDebuglog = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Enable debug log"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer8->Add( m_checkDebuglog, 0, wxALL, 5 );
 
+	wxBoxSizer* bSizer14;
+	bSizer14 = new wxBoxSizer( wxHORIZONTAL );
+
+	m_buttonReloadConfig = new wxButton( sbSizer8->GetStaticBox(), wxID_ANY, _("Reload config"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer14->Add( m_buttonReloadConfig, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+	m_hyperlink11 = new wxHyperlinkCtrl( sbSizer8->GetStaticBox(), wxID_ANY, wxEmptyString, wxT("123"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	bSizer14->Add( m_hyperlink11, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+
+	sbSizer8->Add( bSizer14, 0, wxEXPAND, 0 );
+
 
 	bSizer3->Add( sbSizer8, 1, wxALL|wxEXPAND, 5 );
 
@@ -89,7 +101,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panelMain->SetSizer( bSizer3 );
 	m_panelMain->Layout();
 	bSizer3->Fit( m_panelMain );
-	m_notebook2->AddPage( m_panelMain, _("Settings"), false );
+	m_notebook2->AddPage( m_panelMain, _("Settings"), true );
 	m_panel141 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer41;
 	bSizer41 = new wxBoxSizer( wxVERTICAL );
@@ -205,7 +217,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel61->SetSizer( bSizer1911 );
 	m_panel61->Layout();
 	bSizer1911->Fit( m_panel61 );
-	m_notebook2->AddPage( m_panel61, _("Custom"), true );
+	m_notebook2->AddPage( m_panel61, _("Custom"), false );
 	m_panel6 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer191;
 	bSizer191 = new wxBoxSizer( wxVERTICAL );

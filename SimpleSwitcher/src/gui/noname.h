@@ -20,14 +20,14 @@
 #include <wx/choice.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
-#include <wx/panel.h>
+#include <wx/button.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/grid.h>
-#include <wx/button.h>
-#include <wx/listbox.h>
 #include <wx/hyperlink.h>
+#include <wx/panel.h>
+#include <wx/grid.h>
+#include <wx/listbox.h>
 #include <wx/notebook.h>
 #include <wx/frame.h>
 #include <wx/textctrl.h>
@@ -57,6 +57,8 @@ class MyFrame4 : public wxFrame
 		wxCheckBox* m_checkBoxClearForm;
 		wxCheckBox* m_checkBoxAllowInjected;
 		wxCheckBox* m_checkDebuglog;
+		wxButton* m_buttonReloadConfig;
+		wxHyperlinkCtrl* m_hyperlink11;
 		wxPanel* m_panel141;
 		wxGrid* m_gridHotKeys;
 		wxGrid* m_gridLayouts;

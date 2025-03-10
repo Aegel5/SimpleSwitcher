@@ -36,14 +36,8 @@
 
 #include "ver.h"
 
-typedef HKL HKL_W;
-
 #define ___SW_ADD_STR_UT(X) L##X
 #define _SW_ADD_STR_UT(X) ___SW_ADD_STR_UT(X)
-
-# pragma comment(lib, "Psapi.lib")
-
-
 
 
 
