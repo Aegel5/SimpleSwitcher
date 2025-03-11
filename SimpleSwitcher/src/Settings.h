@@ -10,19 +10,46 @@ public:
         GenerateListHK();
     }
 
-    std::set<wxString> disableInPrograms;
+    std::set <wxString> disableInPrograms;
+    std::set <wxString> disableInPrograms_normalized;
 
-    TLogLevel logLevel = LOG_LEVEL_3;
+    void NormalizePaths() {
+        for (const auto& it : disableInPrograms) {
+            auto cur = it.Lower();
+            std::replace(cur.begin(), cur.end(), L'/', L'\\');
+            disableInPrograms_normalized.insert(cur);
+        }
+    }
+    bool IsSkipProgramTop() const {
 
-    bool IsSkipProgram(const std::wstring& sExeName) const {
-        if (sExeName.empty()) return false;
-        auto has = disableInPrograms.find(sExeName) != disableInPrograms.end();
-        if (has) {
-            LOG_INFO_1(L"Skip process %s because of disableInProcess", sExeName.c_str());
+        const auto& col = disableInPrograms_normalized;
+
+        if (col.empty()) return false;
+
+        auto info = Utils::GetFocusedWndInfo();
+
+        std::wstring path;
+        std::wstring name;
+        IFS_LOG(Utils::GetProcLowerNameByPid(info.pid_top, path, name));
+        if (name.empty()) {
+            LOG_ANY(L"can't find name. pid={}", info.pid_top);
+            return false;
+        }
+
+        if (col.contains(name)) {
+            LOG_ANY(L"Skip process by name {} because of disableInProcess", name);
             return true;
         }
+
+        if (col.contains(path)) {
+            LOG_ANY(L"Skip process by path {} because of disableInProcess", path);
+            return true;
+        }
+
         return false;
     }
+
+    TLogLevel logLevel = LOG_LEVEL_3;
 
     enum class UiLang {
         rus,
@@ -38,13 +65,10 @@ public:
     bool isMonitorAdmin = false;
     bool isTryOEM2 = true;
     bool force_DbgMode              = false;
-    bool IsNeedDebug() const {
-        return Utils::IsDebug() || force_DbgMode;
-    }
+    bool IsNeedDebug() const { return Utils::IsDebug() || force_DbgMode; }
     bool fClipboardClearFormat = false;
     bool EnableKeyLoggerDefence = false;
     bool disableAccessebility    = false;
-    //bool injectDll = false;
     bool showFlags = IsWindows10OrGreater();
     bool AllowRemoteKeys = false;
     bool AlternativeLayoutChange = false;

@@ -115,7 +115,7 @@ struct CurStateWrapper {
 	}
 
 	bool IsDownNow(TKeyCode vk) {
-		return all_keys.find(vk) != all_keys.end();
+		return all_keys.contains(vk);
 	}
 
 	std::generator<TKeyCode> EnumVk() {

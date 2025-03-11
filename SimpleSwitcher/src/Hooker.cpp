@@ -1082,7 +1082,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 	WaitOtherLay(curLay);
 
 	// отправляем
-	InputSender::SendWithPause(key);
+	InputSender::SendHotKey(key);
 
 	if (!just_send) {
 		// переключаемся обратно.

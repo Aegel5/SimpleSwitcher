@@ -217,6 +217,8 @@ TStatus LoadConfig(SettingsGui& gui) {
             }
         }
 
+        gui.NormalizePaths();
+
         SetLogLevel_info(gui.IsNeedDebug() ? gui.logLevel : LOG_LEVEL_0);
 
     } catch (std::exception& e) {
@@ -250,17 +252,6 @@ TStatus Save2(const SettingsGui& gui) {
         o << std::setw(4) << data << std::endl;
 
         auto json = o.str();
-
-        auto insert_after = [&](const char* s, const char* comm) {
-            auto it = json.find(s);
-            if (it != std::string::npos) {
-                it = json.find("\n", it);
-                if (it != -1)
-                    json.insert(it, comm);
-            }
-        };
-
-        insert_after("\"disableInPrograms", " // example [\"game1.exe\"]");
 
         std::ofstream outp(path);
         outp << json;

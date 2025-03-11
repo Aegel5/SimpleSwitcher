@@ -104,19 +104,6 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 		{
 			PostQuitMessage(0);
         } 
-		//else if (mesg == WM_LayNotif) {
-
-		//	HKL newLay = (HKL)msg.lParam;
-
-		//	if (newLay != g_laynotif.g_curLay) {
-  //              g_laynotif.g_curLay = (HKL)msg.lParam;
-  //              LOG_INFO_1(L"notify layout now: 0x%x", g_laynotif.g_curLay.load());
-
-  //              if (g_guiHandle != nullptr) {
-  //                  PostMessage(g_guiHandle, msg.message, msg.wParam, msg.lParam);
-  //              }
-  //          }
-  //      }
 		else if (mesg == WM_CLIPBOARDUPDATE)
 		{
 			if (gdata().curModeBit == SW_BIT_32)
@@ -218,24 +205,6 @@ namespace {
 	bool was_hot_key_down = false;
 };
 
-bool CheckInDisabled() {
-
-	HWND hwndFocused = NULL;
-	IFS_LOG(Utils::GetFocusWindow(hwndFocused));
-	if (hwndFocused == NULL) return false;
-
-	DWORD dwTopPid = 0;
-	DWORD dwIdThreadTopWnd = GetWindowThreadProcessId(hwndFocused, &dwTopPid);
-	IFW_LOG(dwIdThreadTopWnd != 0);
-	if (dwTopPid == 0) return false;
-
-	std::wstring path;
-	std::wstring name;
-	IFS_LOG(Utils::GetProcLowerNameByPid(dwTopPid, path, name));
-
-	return conf_get()->IsSkipProgram(name);
-}
-
 LRESULT CALLBACK LowLevelKeyboardProc(
 	_In_  int nCode,
 	_In_  WPARAM wParam,
@@ -300,11 +269,14 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		curKey.Update(k, curKeyState); // сразу обновляем
 		const auto& curk = curKey.state;
 
-		auto check_is_our_key = [&msg_hotkey](const CHotKey& k1, const CHotKey& k2) {
+		int check_disabled_status = -1;
+
+		auto check_is_our_key = [&check_disabled_status](const CHotKey& k1, const CHotKey& k2) {
 			if (k1.Compare(k2, CHotKey::COMPARE_IGNORE_KEYUP)) {
-				if (!CheckInDisabled()) {
-					return true;
+				if (check_disabled_status == -1) {
+					check_disabled_status = conf_get()->IsSkipProgramTop() ? 1 : 0;
 				}
+				return check_disabled_status == 0;
 			}
 			return false;
 			};
