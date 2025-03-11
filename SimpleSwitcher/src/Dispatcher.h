@@ -2,8 +2,6 @@
 
 // todo удалить всю помойку.
 
-#include "CAutoProcMonitor.h"
-
 //class Hooker;
 struct HookHandles;
 struct HotKeyHolders;
