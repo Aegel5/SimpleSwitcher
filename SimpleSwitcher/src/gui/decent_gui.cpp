@@ -18,7 +18,6 @@
 using namespace WxUtils;
 
 
-//extern bool ChangeHotKey(wxFrame* frame, HotKeyType type, CHotKey& key);
 extern bool ChangeHotKey2(wxFrame* frame, CHotKeySet set, CHotKey& key);
 
 enum
@@ -33,39 +32,56 @@ enum
 
     Minimal_Show = wxID_HIGHEST + 1,
 
-    Minimal_SetLay1,
+    Minimal_SetLay_1 = wxID_HIGHEST + 2,
 };
-//void onExit(wxCommandEvent& event) {
-//    return;
-//}
+
 class MyTray : public wxTaskBarIcon {
-    std::vector<HKL> lays;
+
+    wxString trayTooltip;
 
 public:
 
-    //MyTray() {
-    //    //Connect(Minimal_Quit, wxMouseEventHandler(MyTray::onExit), NULL, this);
-    //}
-    //~MyTray() {
-    //    return;
-    //}
+    wxIcon standart_icon;
 
-    void AddLay(HKL lay) {
-        lays.push_back(lay);
+    void ResetIcon(const auto& newIcon) {
+        SetIcon(newIcon, trayTooltip);
     }
 
-    HKL LayById(int id) {
-        return lays[id - Minimal_SetLay1];
+    void Init() {
+
+        if (!IsAvailable())
+            return;
+
+        trayTooltip = L"SimpleSwitcher";
+        trayTooltip += L" ";
+        trayTooltip += SW_VERSION;
+        standart_icon = wxIcon("appicon");
+        ResetIcon(standart_icon);
+
+        Bind(wxEVT_MENU, [this](wxCommandEvent& event) {
+            auto id = event.GetId();
+            if(id < Minimal_SetLay_1){
+                event.Skip();
+                return;
+            }
+            auto info = conf_get()->layouts_info.GetLayoutIndex(id- Minimal_SetLay_1);
+            if (info != nullptr) {
+                MainWorkerMsg msg(HWORKER_Setcurlay);
+                msg.data.lay = info->layout;
+                Worker()->PostMsg(msg);
+            }
+            });
     }
 
     virtual wxMenu* CreatePopupMenu() override {
 
         auto menu = new wxMenu();
 
-
-        for (int i = 0; i < lays.size(); i++) {
-            menu->Append(Minimal_SetLay1 + i, Utils::GetNameForHKL(lays[i]));
+        for (int i = -1; const auto & it : conf_get()->layouts_info.info) {
+            i++;
+            menu->Append(Minimal_SetLay_1+ i, Utils::GetNameForHKL(it.layout));
         }
+
         menu->AppendSeparator();
         menu->Append(Minimal_Show, _("Show"));
         menu->Append(Minimal_Quit, _("Exit"));
@@ -91,9 +107,6 @@ namespace {
     }
 }
 
-
-
-
 class MainWnd : public MyFrame4
 {
 public:
@@ -103,8 +116,7 @@ public:
 
             g_guiHandle = GetHandle();
 
-            icon = wxIcon("appicon");
-            SetIcon(icon);
+
 
             Bind(wxEVT_CLOSE_WINDOW, &MainWnd::onExitReqest, this);
             SetTitle(std::format(
@@ -200,18 +212,6 @@ public:
                     wxMessageBox(_("Need restart program"));
                     });
 
-            //BindChoice(m_choiceFixRalt, [this](wxChoice* elem) {
-            //    InitComboFix();
-            //    }, [this](wxChoice* elem) {
-            //        auto conf = conf_copy();
-            //        int i = elem->GetSelection();
-            //        if (i < conf->layouts_info.info.size()) {
-            //            conf->fixRAlt_lay_ = conf->layouts_info.info[i].layout;
-            //            conf_set(conf);
-            //            InitComboFix();
-            //        }
-            //        });
-
             updateBools();
 
             updateAutoStart();
@@ -222,35 +222,19 @@ public:
             updateCapsTab();
             handleDisableAccess();
 
-            if (myTray.IsAvailable()) {
-                trayTooltip = L"SimpleSwitcher";
-                trayTooltip += L" ";
-                trayTooltip += SW_VERSION;
-                myTray.SetIcon(icon, trayTooltip);
-                myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
-                myTray.Bind(wxEVT_MENU, [this](auto& evt) {
-                    ForceShow(this);
-                    }, Minimal_Show);
-                myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, [this](auto& evt) {
-                    ForceShow(this);
-                    });
-                for (const auto& it : conf_get()->layouts_info.info) {
-                    myTray.AddLay(it.layout);
-                    myTray.Bind(wxEVT_MENU, [this](wxCommandEvent& event) {
-                            auto lay = myTray.LayById(event.GetId());
-                            MainWorkerMsg msg(HWORKER_Setcurlay);
-                            msg.data.lay = lay;
-                            Worker()->PostMsg(msg);
-                        }, Minimal_SetLay1);
-                }
-            }
+            myTray.Init();
+            myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
+            myTray.Bind(wxEVT_MENU, [this](auto& evt) {
+                ForceShow(this);
+                }, Minimal_Show);
+            myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, [this](auto& evt) {
+                ForceShow(this);
+                });
 
             if (startOk()) {
                 coreWork.Start();
             }
             updateEnable();
-
-
 
         }
         catch (std::exception& e) {
@@ -264,8 +248,6 @@ private:
     CoreWorker coreWork;
     //DecentTray tray;
     MyTray myTray;
-    wxString trayTooltip;
-    wxIcon icon;
     //wxIcon trayIcon;
     bool exitRequest = false;
     bool inited = false;
@@ -366,12 +348,10 @@ private:
 
             if (!bndl.IsOk()) {
                 LOG_INFO_1(L"ERR. can't find flag for ");
-                bndl = icon;
+                bndl = myTray.standart_icon;
             }
 
-            if (!myTray.SetIcon(bndl, trayTooltip)) {
-                LOG_INFO_1(L"ERR. can't set icon ");
-            }
+            myTray.ResetIcon(bndl);
 
             return TRUE;
         }
@@ -397,7 +377,7 @@ private:
         conf_set(conf);
 
         if (!conf_get()->showFlags) {
-            myTray.SetIcon(icon, trayTooltip);
+            myTray.ResetIcon(myTray.standart_icon);
         } else {
             Worker()->PostMsg(HWORKER_Getcurlay);
         }
