@@ -1,4 +1,5 @@
 
+#pragma once
 // многопоточный класс для реализации настройки Allow Remote Keys
 
 class InjectSkipper {

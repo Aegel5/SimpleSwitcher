@@ -1,16 +1,12 @@
 ﻿#include "stdafx.h"
-//#include "decent_utils.h"
+
 #include "noname.h" 
 #include "Settings.h"
 #include "CoreWorker.h"
 #include "SwAutostart.h"
-//#include "decent_tray.h"
-
 #include "decent_gui.h"
 
 #include "tools/accessibil.h"
-
-
 
 #include <wx/taskbar.h>
 
@@ -309,6 +305,40 @@ private:
         return flags_map[name16];
     }
 
+    void SetLay(HKL newLayout) {
+
+        std::wstring name = L"appicon";
+
+        WORD langid = LOWORD(newLayout);
+
+        TCHAR buf[512];
+        buf[0] = 0;
+
+        int flag = LOCALE_SNAME;
+        int len = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, SW_ARRAY_SIZE(buf));
+        IFW_LOG(len != 0);
+
+        wxBitmapBundle bndl;
+
+        auto len_str = wcslen(buf);
+        if (len_str >= 2) {
+
+            TStr name = buf + len_str - 2;
+            wxString wname = name;
+
+            LOG_INFO_1(L"mainguid new layout: 0x%x, name=%s", newLayout, name);
+
+            bndl = GetFlag2(wname);
+        }
+
+        if (!bndl.IsOk()) {
+            LOG_INFO_1(L"ERR. can't find flag for ");
+            bndl = myTray.standart_icon;
+        }
+
+        myTray.ResetIcon(bndl);
+    }
+
    virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override {
 
         if (nMsg == WM_LayNotif) {
@@ -319,39 +349,7 @@ private:
             if (!conf_get()->showFlags)
                 return TRUE;
 
-            HKL newLayout = (HKL)wParam;
-
-            std::wstring name = L"appicon";
-
-            WORD langid = LOWORD(newLayout);
-
-            TCHAR buf[512];
-            buf[0] = 0;
-
-            int flag = LOCALE_SNAME;
-            int len  = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, SW_ARRAY_SIZE(buf));
-            IFW_LOG(len != 0);
-
-
-            wxBitmapBundle bndl;
-
-            auto len_str = wcslen(buf);
-            if (len_str >= 2) {
-
-                TStr name = buf + len_str - 2;
-                wxString wname = name;
-
-                LOG_INFO_1(L"mainguid new layout: 0x%x, name=%s", newLayout, name);
-
-                bndl = GetFlag2(wname);
-            }
-
-            if (!bndl.IsOk()) {
-                LOG_INFO_1(L"ERR. can't find flag for ");
-                bndl = myTray.standart_icon;
-            }
-
-            myTray.ResetIcon(bndl);
+            SetLay((HKL)wParam);
 
             return TRUE;
         }
@@ -445,12 +443,14 @@ private:
         if (col == 2) {
             CHotKey newkey;
             CHotKeySet set;
-            set.def_list.push_back(CHotKey(VK_LMENU, VK_SHIFT, 0x31));
-            set.def_list.push_back(CHotKey(VK_LMENU, VK_SHIFT, 0x32));
-            set.def_list.push_back(CHotKey(VK_LMENU, VK_SHIFT, 0x33));
-            set.def_list.push_back(CHotKey(VK_CONTROL, VK_SHIFT, 0x31));
-            set.def_list.push_back(CHotKey(VK_CONTROL, VK_SHIFT, 0x32));
-            set.def_list.push_back(CHotKey(VK_CONTROL, VK_SHIFT, 0x33));
+            set.def_list = {
+                CHotKey(VK_LMENU, VK_SHIFT, 0x31)
+                ,CHotKey(VK_LMENU, VK_SHIFT, 0x32)
+                ,CHotKey(VK_LMENU, VK_SHIFT, 0x33)
+                ,CHotKey(VK_CONTROL, VK_SHIFT, 0x31)
+                ,CHotKey(VK_CONTROL, VK_SHIFT, 0x32)
+                ,CHotKey(VK_CONTROL, VK_SHIFT, 0x33)
+            };
             set.keys.key() = data.win_hotkey;
             if (ChangeHotKey2(this, set, newkey)) {
                 auto conf = conf_copy();

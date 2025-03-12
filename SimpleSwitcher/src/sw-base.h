@@ -33,7 +33,11 @@
 #include "utils/procstart.h"
 #include "consts.h"
 
+#include "Settings.h"
+#include "InjectSkipper.h"
 #include "KeysStruct.h"
+#include "InputSender.h"
+#include "KeysCurState.h"
 
 #include "ver.h"
 

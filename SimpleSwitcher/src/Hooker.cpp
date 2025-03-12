@@ -1,7 +1,6 @@
 ﻿#include "stdafx.h"
 
 #include "Hooker.h"
-#include "Settings.h"
 #include "Dispatcher.h"
 #include "Encrypter.h"
 
@@ -618,24 +617,7 @@ void Hooker::HandleSymbolDown()
 		break;
 	}
 }
-void Hooker::UpAllKeys() {
 
-	if (m_curStateWrap.Size() == 0) return;
-
-	InputSender inputSender;
-	if (m_curStateWrap.IsDownNow(VK_LMENU) || m_curStateWrap.IsDownNow(VK_LWIN)) {
-		// если нажата только клавиша alt - то ее простое отжатие даст хрень - нужно отжать ее еще раз
-		//inputSender.Add(VK_LMENU, KEY_STATE_DOWN);
-		//inputSender.Add(VK_LMENU, KEY_STATE_UP); 	
-		inputSender.Add(VK_CAPITAL, KEY_STATE_UP);
-	}
-	for (const auto& key : m_curStateWrap.EnumVk()) {
-		inputSender.Add(key, KEY_STATE_UP);
-	}
-
-	inputSender.Send();
-
-}
 TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 {
 	bool fDels = false;
@@ -787,7 +769,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	//	UpAllKeys();
 	//}
 
-	UpAllKeys();
+	m_curStateWrap.UpAllKeys();
 
 	if (TestFlag(typeRevert, hk_RunProgram_flag)) {
 		int i = typeRevert;
@@ -942,11 +924,6 @@ void SwitchLayByDll(HWND hwnd, TUInt64 lay)
 
 }
 
-//void Hooker::SwitchLangByPostMsg(HWND hwnd, TUInt64 lay)
-//{
-//	//PostMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)lay);
-//}
-
 TStatus FoundEmulateHotKey(CHotKey& key)
 {
 	key = CHotKey(VK_LMENU, VK_LSHIFT);
@@ -1054,7 +1031,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 	auto curLay = CurLay();
 
 	// сбросим любые нажатые клавиши
-	UpAllKeys();
+	m_curStateWrap.UpAllKeys();
 
 	HKL temp = 0;
 	bool just_send = false;
@@ -1071,7 +1048,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 			just_send = true;
 		}
 		else {
-			SetNewLayPost(temp);
+			Utils::SetLayPost(topWndInfo2.hwnd_default, temp);
 		}
 
 	}

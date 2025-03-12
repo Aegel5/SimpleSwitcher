@@ -1,9 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include "Settings.h"
-
-#include "tools/lay_notif.h"
-
 #include "gui/decent_gui.h"
 
 #include "CMainWorker.h"
