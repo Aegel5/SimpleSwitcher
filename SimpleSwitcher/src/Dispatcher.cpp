@@ -202,7 +202,7 @@ namespace {
 	CurStateWrapper curKey;
 	TKeyCode disable_up = 0;
 	CHotKey possible_hk_up;
-	bool was_hot_key_down = false;
+	TKeyCode vk_last_down = 0;
 };
 
 LRESULT CALLBACK LowLevelKeyboardProc(
@@ -259,6 +259,15 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 				return 0;
 		}
 
+		bool is_hold = false;
+		if (curKeyState != KeyState::KEY_STATE_DOWN) {
+			vk_last_down = 0;
+		}
+		else {
+			is_hold = vk_last_down == vkCode && vkCode != 0;
+			vk_last_down = vkCode;
+		}
+
 		CHotKey possible;
 		std::swap(possible, possible_hk_up); // сразу очищаем
 
@@ -282,52 +291,54 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 			};
 
 		if (curKeyState == KeyState::KEY_STATE_DOWN) {
-			if (!curk.IsEmpty()) {
-				auto conf = conf_get();
-				bool need_our_action = false;
-				for (const auto& [hk, key] : conf->All_hot_keys()) {
-					if (!key.GetKeyup() && check_is_our_key(key, curk)) {
-						need_our_action = true;
-						possible_hk_up.Clear();
-						if (!was_hot_key_down) { // запрещаем срабатывать на удержание наших хоткеев
-							msg_hotkey.data.hotkey = key;
-							msg_hotkey.data.hk = hk;
-							was_hot_key_down = true;
-						}
-						break;
+			if (curk.IsEmpty())
+				return 0;
+			auto conf = conf_get();
+			bool need_our_action = false;
+			for (const auto& [hk, key] : conf->All_hot_keys()) {
+				if (!key.GetKeyup() && check_is_our_key(key, curk)) {
+					need_our_action = true;
+					possible_hk_up.Clear(); // очищаем, потому что могли заполнить прямо в этом цикле.
+					if (!is_hold) { // но даже если и холд, клавиши нужно запретить.
+						msg_hotkey.data.hotkey = key;
+						msg_hotkey.data.hk = hk;
 					}
-					if (key.GetKeyup() && check_is_our_key(key, curk)) {
-						possible_hk_up = curk; // без break
-					}
+					break;
 				}
-				if (need_our_action) {
-					// у нас есть такой хот-кей, запрещаем это событие для программы.
-					disable_up = curk.ValueKey(); // up тоже будет в будущем запрещать.
-					LOG_INFO_1(L"Key %s was disabled(down)", CHotKey::GetName(disable_up));
-					return 1;
-				}
-				else {
-					if (curk.Size() == 3 
-						&& curk.HasKey(VK_LMENU, true)
-						&& curk.HasKey(VK_CONTROL, false)
-						&& !curk.IsKnownMods(vkCode)
-						&& vkCode == curk.ValueKey()
-						&& conf_get()->fixRAlt
-						&& conf_get()->fixRAlt_lay_ != 0
-						) {
-						LOG_INFO_1(L"fix ctrl+alt");
-						MainWorkerMsg msg(HWORKER_FixCtrlAlt);
-						msg.data.hotkey_to_fix = curk;
-						Worker()->PostMsg(msg);
-						LOG_INFO_1(L"Key %s was disabled(fix)", CHotKey::GetName(vkCode));
-						disable_up = vkCode;
-						return 1; // пока запрещаем, потом заново отошлем...
-					}
+				if (key.GetKeyup() && check_is_our_key(key, curk)) {
+					possible_hk_up = curk; // без break
 				}
 			}
+			if (need_our_action) {
+				// у нас есть такой хот-кей, запрещаем это событие для программы.
+				disable_up = curk.ValueKey(); // up тоже будет в будущем запрещать.
+				LOG_INFO_1(L"Key %s was disabled(down)", CHotKey::GetName(disable_up));
+				return 1;
+			}
+			else {
+				if (curk.Size() == 3
+					&& curk.HasKey(VK_LMENU, true)
+					&& curk.HasKey(VK_CONTROL, false)
+					&& !curk.IsKnownMods(vkCode)
+					&& vkCode == curk.ValueKey()
+					&& conf_get()->fixRAlt
+					&& conf_get()->fixRAlt_lay_ != 0
+					) {
+					LOG_INFO_1(L"fix ctrl+alt");
+					MainWorkerMsg msg(HWORKER_FixCtrlAlt);
+					msg.data.hotkey_to_fix = curk;
+					if (!is_hold) { // пока просто запрещаем
+						Worker()->PostMsg(msg);
+					}
+					LOG_INFO_1(L"Key %s was disabled(fix)", CHotKey::GetName(vkCode));
+					disable_up = vkCode;
+					return 1; // пока запрещаем, потом заново отошлем...
+				}
+			}
+			return 0;
 		}
-		else if (curKeyState == KeyState::KEY_STATE_UP) {
-			was_hot_key_down = false; // разрешаем наши хоткеи снова, только если был up
+
+		if (curKeyState == KeyState::KEY_STATE_UP) {
 			if (disable_up == vkCode) {
 				LOG_INFO_1(L"Key %s was disabled(up)", CHotKey::GetName(disable_up));
 				disable_up = 0;
@@ -348,16 +359,14 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 			}
 		}
 
-
-		if (curk.IsEmpty()) {
-			disable_up = 0;
-		}
-
 		return 0;
 	};
 
 	if (nCode == HC_ACTION) {
 		auto res = process();
+		if (curKey.state.IsEmpty()) {
+			disable_up = 0;
+		}
 		if (
 			!res && send_key) { 
 			Worker()->PostMsg(msg_type);
