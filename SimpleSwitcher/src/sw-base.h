@@ -31,6 +31,7 @@
 #include "utils/ScanMap.h"
 #include "utils/getpath.h"
 #include "utils/procstart.h"
+#include "utils/layout-utils.h"
 #include "consts.h"
 
 #include "Settings.h"

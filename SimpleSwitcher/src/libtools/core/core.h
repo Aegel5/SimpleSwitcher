@@ -97,8 +97,8 @@ inline void SwZeroMemory(T& t)
 	ZeroMemory(&t, sizeof(T));
 }
 
-inline TUInt32 GetTick()
-{
-#pragma warning(suppress: 28159)
-	return GetTickCount();
-}
+//inline TUInt32 GetTick()
+//{
+//#pragma warning(suppress: 28159)
+//	return GetTickCount();
+//}

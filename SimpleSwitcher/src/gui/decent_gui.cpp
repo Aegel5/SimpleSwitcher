@@ -6,7 +6,7 @@
 #include "SwAutostart.h"
 #include "decent_gui.h"
 
-#include "tools/accessibil.h"
+#include "utils/accessibil.h"
 
 #include <wx/taskbar.h>
 
