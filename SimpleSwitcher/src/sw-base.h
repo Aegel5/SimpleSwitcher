@@ -29,9 +29,10 @@
 
 #include "inc_basic.h"
 #include "utils/ScanMap.h"
+#include "utils/getpath.h"
+#include "utils/procstart.h"
 #include "consts.h"
 
-#include "SwUtils.h"
 #include "KeysStruct.h"
 
 #include "ver.h"
