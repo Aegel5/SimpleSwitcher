@@ -32,6 +32,7 @@
 #include <wx/frame.h>
 #include <wx/textctrl.h>
 #include <wx/dialog.h>
+#include <wx/statbmp.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -53,6 +54,7 @@ class MyFrame4 : public wxFrame
 		wxCheckBox* m_checkBoxAlterantiveLayoutChange;
 		wxStaticText* m_staticText9;
 		wxChoice* m_comboUiLang;
+		wxButton* m_buttonAddPanel;
 		wxCheckBox* m_checkBoxDisablAcc;
 		wxCheckBox* m_checkBoxClearForm;
 		wxCheckBox* m_checkBoxAllowInjected;
@@ -132,6 +134,24 @@ class MyDialog1 : public wxDialog
 		MyDialog1( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Set hotkey"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 
 		~MyDialog1();
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class FloatPanelBase
+///////////////////////////////////////////////////////////////////////////////
+class FloatPanelBase : public wxFrame
+{
+	private:
+
+	protected:
+		wxStaticBitmap* m_bitmap1;
+
+	public:
+
+		FloatPanelBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 32,32 ), long style = wxSTAY_ON_TOP );
+
+		~FloatPanelBase();
 
 };
 

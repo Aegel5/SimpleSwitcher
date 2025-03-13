@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt : CMake project for cpp_test_test2, include source and define
 # project specific logic here.
 #
-cmake_minimum_required (VERSION 3.18)
+cmake_minimum_required (VERSION 3.28)
 project(SimpleSwitcher VERSION 1.0 LANGUAGES CXX)
 
 set(wxBUILD_SHARED OFF)
@@ -38,22 +38,33 @@ set(wxUSE_RICHTEXT OFF)
  set(wxUSE_STL ON)
 
 
-file(GLOB_RECURSE TARGET_SOURCES  
+file(GLOB_RECURSE all_implement_units  
 src/*.cpp 
-src/*.cc
 src/myres.rc
 src/simpleswitcher.manifest
 )
 
-#file(GLOB_RECURSE TARGET_PRIVATE_HEADERS     src/*.hpp     src/*.h)
+file(GLOB_RECURSE all_interface_modules  
+src/*.cppm 
+)
+
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 add_subdirectory(../wxWidgets wxWidgets)
-#set(CMAKE_CXX20_STANDARD_COMPILE_OPTION "-std:c++latest")
+
 
 set(CMAKE_CXX_STANDARD 23)
-add_executable (SimpleSwitcher WIN32 ${TARGET_SOURCES})
+add_executable (SimpleSwitcher WIN32)
+target_sources(SimpleSwitcher
+    PUBLIC
+    ${all_implement_units}
+)
+#target_sources(SimpleSwitcher
+#  PUBLIC
+#    FILE_SET all_my_modules TYPE CXX_MODULES FILES
+#    ${all_interface_modules}
+#)
 target_precompile_headers(SimpleSwitcher PRIVATE src/stdafx.h )
 target_link_libraries(SimpleSwitcher wx::core wx::base "Crypt32.lib" "Imm32.lib" "Psapi.lib")
 target_include_directories(SimpleSwitcher PRIVATE "src/libtools")

@@ -6,86 +6,19 @@
 #include "SwAutostart.h"
 #include "decent_gui.h"
 
+#include "FloatPanel.h"
+
 #include "utils/accessibil.h"
 
 #include <wx/taskbar.h>
 
 #include "wxUtils.h"
+
+#include "Tray.h"
+
 using namespace WxUtils;
 
-
 extern bool ChangeHotKey2(wxFrame* frame, CHotKeySet set, CHotKey& key);
-
-enum
-{
-    // menu items
-    Minimal_Quit = wxID_EXIT,
-
-    // it is important for the id corresponding to the "About" command to have
-    // this standard value as otherwise it won't be handled properly under Mac
-    // (where it is special and put into the "Apple" menu)
-    Minimal_About = wxID_ABOUT,
-
-    Minimal_Show = wxID_HIGHEST + 1,
-
-    Minimal_SetLay_1 = wxID_HIGHEST + 2,
-};
-
-class MyTray : public wxTaskBarIcon {
-
-    wxString trayTooltip;
-
-public:
-
-    wxIcon standart_icon;
-
-    void ResetIcon(const auto& newIcon) {
-        SetIcon(newIcon, trayTooltip);
-    }
-
-    void Init() {
-
-        if (!IsAvailable())
-            return;
-
-        trayTooltip = L"SimpleSwitcher";
-        trayTooltip += L" ";
-        trayTooltip += SW_VERSION;
-        standart_icon = wxIcon("appicon");
-        ResetIcon(standart_icon);
-
-        Bind(wxEVT_MENU, [this](wxCommandEvent& event) {
-            auto id = event.GetId();
-            if(id < Minimal_SetLay_1){
-                event.Skip();
-                return;
-            }
-            auto info = conf_get()->layouts_info.GetLayoutIndex(id- Minimal_SetLay_1);
-            if (info != nullptr) {
-                MainWorkerMsg msg(HWORKER_Setcurlay);
-                msg.data.lay = info->layout;
-                Worker()->PostMsg(msg);
-            }
-            });
-    }
-
-    virtual wxMenu* CreatePopupMenu() override {
-
-        auto menu = new wxMenu();
-
-        for (int i = -1; const auto & it : conf_get()->layouts_info.info) {
-            i++;
-            menu->Append(Minimal_SetLay_1+ i, Utils::GetNameForHKL(it.layout));
-        }
-
-        menu->AppendSeparator();
-        menu->Append(Minimal_Show, _("Show"));
-        menu->Append(Minimal_Quit, _("Exit"));
-
-
-        return menu;
-    }
-};
 
 namespace {
     void ShowNeedAdmin(const wxString& expl=L"") {
@@ -105,6 +38,7 @@ namespace {
 
 class MainWnd : public MyFrame4
 {
+    std::vector< FloatPanel*> floatPanels;
 public:
     MainWnd() : MyFrame4(nullptr)
     {
@@ -122,7 +56,7 @@ public:
                 Utils::IsSelfElevated() ? L" Administrator" : L"",
                 Utils::IsDebug()?L" DEBUG": L""));
             SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION 
-                //| wxRESIZE_BORDER
+                | wxRESIZE_BORDER
             );
 
             auto sz = GetSize();
@@ -145,6 +79,12 @@ public:
                 else {
                     conf_set(conf);
                 }
+                });
+
+            BindButtom(m_buttonAddPanel, [this]() {
+                auto wnd = new FloatPanel(this);
+                floatPanels.push_back(wnd);
+                wnd->Show(true);
                 });
 
             SyncLayouts();
@@ -337,6 +277,9 @@ private:
         }
 
         myTray.ResetIcon(bndl);
+        for (auto& it : floatPanels) {
+            it->SetFlag(bndl);
+        }
     }
 
    virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override {

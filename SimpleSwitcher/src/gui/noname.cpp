@@ -70,6 +70,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxStaticBoxSizer* sbSizer8;
 	sbSizer8 = new wxStaticBoxSizer( new wxStaticBox( m_panelMain, wxID_ANY, _("Advanced") ), wxVERTICAL );
 
+	m_buttonAddPanel = new wxButton( sbSizer8->GetStaticBox(), wxID_ANY, _("Add float panel"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer8->Add( m_buttonAddPanel, 0, wxALL, 5 );
+
 	m_checkBoxDisablAcc = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Disable the accessibility shortcut keys (5 SHIFT and others)"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer8->Add( m_checkBoxDisablAcc, 0, wxALL, 5 );
 
@@ -101,7 +104,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panelMain->SetSizer( bSizer3 );
 	m_panelMain->Layout();
 	bSizer3->Fit( m_panelMain );
-	m_notebook2->AddPage( m_panelMain, _("Settings"), false );
+	m_notebook2->AddPage( m_panelMain, _("Settings"), true );
 	m_panel141 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer41;
 	bSizer41 = new wxBoxSizer( wxVERTICAL );
@@ -236,7 +239,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_panel6->SetSizer( bSizer191 );
 	m_panel6->Layout();
 	bSizer191->Fit( m_panel6 );
-	m_notebook2->AddPage( m_panel6, _("About / Help"), true );
+	m_notebook2->AddPage( m_panel6, _("About / Help"), false );
 
 	bSizer1->Add( m_notebook2, 1, wxEXPAND | wxALL, 0 );
 
@@ -372,4 +375,25 @@ MyDialog1::~MyDialog1()
 	m_button4->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onOk ), NULL, this );
 	m_button5->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onCancel ), NULL, this );
 
+}
+
+FloatPanelBase::FloatPanelBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+
+	wxBoxSizer* bSizer15;
+	bSizer15 = new wxBoxSizer( wxVERTICAL );
+
+	m_bitmap1 = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer15->Add( m_bitmap1, 1, wxALL|wxEXPAND, 0 );
+
+
+	this->SetSizer( bSizer15 );
+	this->Layout();
+
+	this->Centre( wxBOTH );
+}
+
+FloatPanelBase::~FloatPanelBase()
+{
 }
