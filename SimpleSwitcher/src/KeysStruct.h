@@ -39,22 +39,36 @@ struct TKeyHookInfo{
 	union U {
 		struct {
 			TKeyBaseInfo key;
-			wchar_t typed_symbol;
-			TUInt32 _random_data;
+			//wchar_t typed_symbol;
+			TUInt64 _random_data;
 		};
 		struct {
 			char _all_data[16];
 		};
 		U() {
 			key = {};
-			typed_symbol = 0;
+			//typed_symbol = 0;
 		}
 	} crypted;
+
+	void encrypt() {
+		static_assert(sizeof(crypted) == CRYPTPROTECTMEMORY_BLOCK_SIZE);
+		crypted._random_data = GetTickCount64(); // заполняем случайными данными чтобы одна и та же буква каждый раз шифровалась по разному
+		IFW_LOG(CryptProtectMemory(&crypted, CRYPTPROTECTMEMORY_BLOCK_SIZE, CRYPTPROTECTMEMORY_SAME_PROCESS));
+	}
+
+	TKeyHookInfo decrypted() {
+		TKeyHookInfo res = *this;
+		IFW_LOG(CryptUnprotectMemory(&res.crypted, CRYPTPROTECTMEMORY_BLOCK_SIZE, CRYPTPROTECTMEMORY_SAME_PROCESS));
+		return res;
+	}
 
 
 	TKeyBaseInfo& key() {
 		return crypted.key;
 	}
+
+	// open part
 
 	TKeyType type = (TKeyType)0;
 	TKeyFlags keyFlags = (TKeyFlags)0;

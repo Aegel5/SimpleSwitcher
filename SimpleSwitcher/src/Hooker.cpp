@@ -621,8 +621,6 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
 	bool isNeedLangChange = true;
 
-	m_cycleList.GenerateCycleRevertList();
-
 	auto to_revert = m_cycleList.FillKeyToRevert(typeRevert);
 
 	if (typeRevert == hk_RevertLastWord){

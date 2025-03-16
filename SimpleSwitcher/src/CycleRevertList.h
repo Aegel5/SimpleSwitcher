@@ -1,10 +1,9 @@
 #pragma once
 
-#include "Encrypter.h"
-
 // Класс текущих набранных символов, разбивает буквы на слова.
 
 class CycleRevertList {
+
 	static const int c_maxWordRevert = 7;
 	static const int c_nMaxLettersSave = 100;
 	struct CycleRevert
@@ -15,28 +14,29 @@ class CycleRevertList {
     std::vector<CycleRevert> m_CycleRevertList; // список, разбитый по словам.
 	std::deque<TKeyHookInfo> m_symbolList; // просто список всего, что сейчас набрано.
     int m_nCurrentRevertCycle = -1;
+
 public:
 	void DeleteLastSymbol() {
 		if (!m_symbolList.empty())
 			m_symbolList.pop_back();
-		ClearWords();
+		ClearGenerated();
 	}
 	bool HasAnySymbol() { return !m_symbolList.empty(); }
 	void Clear() {
 		m_symbolList.clear();
-		ClearWords();
+		ClearGenerated();
 	}
-	void ClearWords() {
+private: void ClearGenerated() {
 		m_CycleRevertList.clear();
 		m_nCurrentRevertCycle = -1;
 	}
 
-	void GenerateCycleRevertList(){
+private: void GenerateCycleRevertList(){
 
 		if (m_nCurrentRevertCycle != -1)
 			return; // уже сгенерированно, актуальность мы поддерживаем
 
-		ClearWords();
+		ClearGenerated();
 
 		int countWords = 0;
 		if (!m_symbolList.empty()) {
@@ -81,7 +81,9 @@ public:
 		TKeyRevert keys;
 		bool needLanguageChange = false;
 	};
-	RevertKeysData FillKeyToRevert(HotKeyType typeRevert)	{
+public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert)	{
+
+		GenerateCycleRevertList();
 
 		RevertKeysData keyList;
 		auto& list = keyList.keys;
@@ -98,12 +100,7 @@ public:
 
 		keyList.needLanguageChange = m_CycleRevertList[m_nCurrentRevertCycle].fNeedLanguageChange;
 
-		auto get_decrtypted = [this](int i) {
-			TKeyHookInfo cur;
-			cur.crypted = m_symbolList[i].crypted;
-			Encrypter::Decrypt(cur);
-			return cur.key();
-			};
+		auto get_decrtypted = [this](int i) { return m_symbolList[i].decrypted().key(); };
 
 		if (m_nCurrentRevertCycle == -1)
 			return keyList;
@@ -148,9 +145,9 @@ public:
 
 		return keyList;
 	}
-	void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code)
+	public: void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code)
 	{
-		ClearWords();
+		ClearGenerated();
 
 		while (m_symbolList.size() >= c_nMaxLettersSave)
 		{
@@ -165,11 +162,11 @@ public:
 			key2.key().shift_key = hotkey.At(1); // надеемся это shift, пока так.
 		}
 		key2.type = type;
-		if (hotkey.ValueKey() == VK_OEM_2 && conf_get()->isTryOEM2) {
+		if (hotkey.ValueKey() == VK_OEM_2) {
 			SetFlag(key2.keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT);
 		}
 
-		IFS_LOG(Encrypter::Encrypt(key2));
+		key2.encrypt();
 		m_symbolList.push_back(key2);
 	}
 

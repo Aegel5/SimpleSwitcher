@@ -63,7 +63,6 @@ public:
     bool fixRAlt = false;
     HKL fixRAlt_lay_ = (HKL)0x4090409;
     bool isMonitorAdmin = false;
-    bool isTryOEM2 = true;
     bool force_DbgMode              = false;
     bool IsNeedDebug() const { return Utils::IsDebug() || force_DbgMode; }
     bool fClipboardClearFormat = false;
