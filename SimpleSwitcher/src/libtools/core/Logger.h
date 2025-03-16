@@ -192,6 +192,9 @@ void __LOG_LINE_FORMAT(const auto& s, auto&&... v) {
 template<typename... Args> inline void LOG_ANY(const std::wformat_string<Args...> s, Args&&... v)
 { if (GetLogLevel() >= LOG_LEVEL_2) { __LOG_LINE_FORMAT(s, v...); } }
 
+template<typename... Args> inline void LOG_ANY_4(const std::wformat_string<Args...> s, Args&&... v) 	{
+ if (GetLogLevel() >= LOG_LEVEL_4) { __LOG_LINE_FORMAT(s, v...); } }
+
 template<typename... Args> inline void LOG_WARN(const std::wformat_string<Args...> s, Args&&... v){
 	if (GetLogLevel() >= LOG_LEVEL_1) {
 		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());

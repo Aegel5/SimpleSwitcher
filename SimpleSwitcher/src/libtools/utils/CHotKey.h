@@ -384,13 +384,13 @@ public:
 		return true;
 	}
 	TKeyCode At(int i) {return keys[i];}
-	bool HasMod(TKeyCode k, bool leftrightCheck = false)
+	bool HasMod(TKeyCode k, bool strick_modifier = false)
 	{
 		if(size <= 1)
 			return false;
 		for(int i = 1; i < size; ++i)
 		{
-			if (CompareKeys(k, keys[i], leftrightCheck))
+			if (CompareKeys(k, keys[i], strick_modifier))
 				return true;
 		}
 		return false;

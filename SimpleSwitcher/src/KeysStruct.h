@@ -16,6 +16,7 @@ enum TKeyType : TUInt8
 enum class TKeyFlags : TUInt8 {
 	None = 0,
 	SYMB_SEPARATE_REVERT = 1,
+	SYMB_SEPARATE_IF_SEVERAL_REVERT = 1<<1,
 };
 DEFINE_ENUM_FLAG_OPERATORS(TKeyFlags);
 

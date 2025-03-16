@@ -41,7 +41,6 @@ public:
 	TStatus ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist);
 
 	void ChangeForeground(HWND hwnd);
-	TKeyType GetCurKeyType(CHotKey hotkey);
 	TStatus ProcessKeyMsg(KeyMsgData& keyData);
 	void HandleSymbolDown();
 	TStatus Init();

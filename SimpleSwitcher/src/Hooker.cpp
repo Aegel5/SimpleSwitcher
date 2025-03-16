@@ -5,60 +5,7 @@
 
 #include "gui/decent_gui.h"
 
-TKeyType Hooker::GetCurKeyType(CHotKey hotkey)
-{
-	CHotKey key = hotkey;
-	if(key.Size() == 0)
-	{
-		return KEYTYPE_COMMAND_NO_CLEAR;
-	}
-	else if(key.Size() > 2)
-	{
-		return KEYTYPE_COMMAND_CLEAR;
-	}
-	else if (key.Size() == 2)
-	{
-		if (!key.HasMod(VK_SHIFT))
-			return KEYTYPE_COMMAND_CLEAR;
-	}
 
-	switch (key.ValueKey())
-	{
-		case VK_CAPITAL:
-		case VK_SCROLL:
-		case VK_PRINT:
-		case VK_NUMLOCK:
-		case VK_INSERT:
-			return KEYTYPE_COMMAND_NO_CLEAR;
-		case VK_RETURN:
-			return KEYTYPE_COMMAND_CLEAR;
-		case VK_TAB:
-		case VK_SPACE:
-			return KEYTYPE_SPACE;
-		case VK_BACK:
-			return KEYTYPE_BACKSPACE;
-	}
-
-	BYTE keyState[256] = { 0 };
-	keyState[VK_SHIFT] = m_curKeyState.HasMod(VK_SHIFT) ? 0x80 : 0;
-	TCHAR sBufKey[0x10] = { 0 };
-	int res = ToUnicodeEx(key.ValueKey(), m_curScanCode.scan, keyState, sBufKey, ARRAYSIZE(sBufKey), 0, NULL);
-	if (res == 1)
-	{
-		auto c = sBufKey[0];
-		LOG_INFO_3(L"print char %c", c);
-		if (wcschr(L" \t-=+*()%", c) != NULL)
-		{
-			return KEYTYPE_SPACE;
-		}
-
-		return KEYTYPE_SYMBOL;
-	}
-	else
-	{
-		return KEYTYPE_COMMAND_CLEAR;
-	}
-}
 
 TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 {
@@ -376,11 +323,58 @@ void Hooker::ChangeForeground(HWND hwnd)
 	m_dwIdProcoreground = procId; 
 }
 
-void Hooker::HandleSymbolDown()
-{
+void Hooker::HandleSymbolDown() {
+	wchar_t curSymbol = 0;
+	auto GetCurKeyType = [this, &curSymbol](CHotKey hotkey) -> TKeyType {
+		CHotKey key = hotkey;
+		if (key.Size() == 0) {
+			return KEYTYPE_COMMAND_NO_CLEAR;
+		}
+		else if (key.Size() > 2) {
+			return KEYTYPE_COMMAND_CLEAR;
+		}
+		else if (key.Size() == 2) {
+			if (!key.HasMod(VK_SHIFT))
+				return KEYTYPE_COMMAND_CLEAR;
+		}
+
+		switch (key.ValueKey()) {
+		case VK_CAPITAL:
+		case VK_SCROLL:
+		case VK_PRINT:
+		case VK_NUMLOCK:
+		case VK_INSERT:
+			return KEYTYPE_COMMAND_NO_CLEAR;
+		case VK_RETURN:
+			return KEYTYPE_COMMAND_CLEAR;
+		case VK_TAB:
+		case VK_SPACE:
+			return KEYTYPE_SPACE;
+		case VK_BACK:
+			return KEYTYPE_BACKSPACE;
+		}
+
+		BYTE keyState[256] = { 0 };
+		keyState[VK_SHIFT] = m_curKeyState.HasMod(VK_SHIFT) ? 0x80 : 0;
+		TCHAR sBufKey[0x10] = { 0 };
+		int res = ToUnicodeEx(key.ValueKey(), m_curScanCode.scan, keyState, sBufKey, ARRAYSIZE(sBufKey), 0, topWndInfo2.lay);
+		if (res == 1) {
+			curSymbol = sBufKey[0];
+			LOG_ANY_4(L"print char {}", curSymbol);
+			if (wcschr(L" \t-=+*()%^", curSymbol) != NULL) {
+				return KEYTYPE_SPACE;
+			}
+
+			return KEYTYPE_SYMBOL;
+		}
+		else {
+			return KEYTYPE_COMMAND_CLEAR;
+		}
+		};
+
 	TKeyType type = GetCurKeyType(m_curKeyState);
-	switch (type)
-	{
+
+	switch (type) {
 	case KEYTYPE_BACKSPACE:
 	{
 		m_cycleList.DeleteLastSymbol();
@@ -389,7 +383,7 @@ void Hooker::HandleSymbolDown()
 	case KEYTYPE_SYMBOL:
 	case KEYTYPE_SPACE:
 	{
-		m_cycleList.AddKeyToList(type, m_curKeyState, m_curScanCode);
+		m_cycleList.AddKeyToList(type, m_curKeyState, m_curScanCode, curSymbol);
 		break;
 	}
 	case KEYTYPE_COMMAND_NO_CLEAR:
@@ -622,6 +616,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	bool isNeedLangChange = true;
 
 	auto to_revert = m_cycleList.FillKeyToRevert(typeRevert);
+	m_cycleList.SetSeparateLast();
 
 	if (typeRevert == hk_RevertLastWord){
 		isNeedLangChange = true;
