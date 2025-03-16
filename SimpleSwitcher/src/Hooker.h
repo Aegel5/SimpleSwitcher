@@ -136,7 +136,7 @@ public:
 	std::wstring m_sTopProcPath;
 	CClipWorker m_clipWorker; 
 	tstring m_savedClipData;
-	HotKeyType m_lastRevertRequest;
+	HotKeyType m_lastRevertRequest = hk_NULL;
 
 	struct CycleRevert
 	{
@@ -152,7 +152,7 @@ public:
 
 	std::wstring m_sSelfExeName;
 
-	std::deque<TKeyHookInfo> m_wordList;
+	std::deque<TKeyHookInfo> m_wordList; // просто список всего, что сейчас набрано.
 	std::vector<CycleRevert> m_CycleRevertList;
 	int m_nCurrentRevertCycle = -1;
 

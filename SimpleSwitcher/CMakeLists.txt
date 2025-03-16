@@ -44,9 +44,9 @@ src/myres.rc
 src/simpleswitcher.manifest
 )
 
-file(GLOB_RECURSE all_interface_modules  
-src/*.cppm 
-)
+#file(GLOB_RECURSE all_interface_modules  
+#src/*.ixx 
+#)
 
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")

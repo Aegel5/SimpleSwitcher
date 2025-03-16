@@ -36,9 +36,19 @@ using TKeyRevert = std::vector<TKeyBaseInfo>;
 
 struct TKeyHookInfo{
 
-	struct {
-		TKeyBaseInfo key;
-		TInt64 _random_data;
+	union U {
+		struct {
+			TKeyBaseInfo key;
+			wchar_t typed_symbol;
+			TUInt32 _random_data;
+		};
+		struct {
+			char _all_data[16];
+		};
+		U() {
+			key = {};
+			typed_symbol = 0;
+		}
 	} crypted;
 
 
