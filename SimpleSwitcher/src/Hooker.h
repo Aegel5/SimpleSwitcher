@@ -3,6 +3,8 @@
 #include "CClipWorker.h"
 #include "CycleRevertList.h"
 
+#include "AnalyzeTyped.h"
+
 
 
 class Hooker
@@ -133,9 +135,7 @@ public:
 	TStatus ProcessRevert(ContextRevert& ctxRevert);
 	std::wstring m_sSelfExeName;
 	CycleRevertList m_cycleList;
-	CHotKey m_curKeyState;
 	CurStateWrapper m_curStateWrap;
-	TScanCode_Ext m_curScanCode; 
 
 };
 

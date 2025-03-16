@@ -174,6 +174,17 @@ namespace Utils
 		RETURN_SUCCESS;
 	}
 
+	inline wchar_t TypedToChar(UINT vk, UINT scan, bool is_shift, HKL lay) {
+		BYTE keyState[256] = { 0 };
+		keyState[VK_SHIFT] =is_shift ? 0x80 : 0;
+		TCHAR sBufKey[0x10] = { 0 };
+		int res = ToUnicodeEx(vk, scan, keyState, sBufKey, ARRAYSIZE(sBufKey), 0, lay);
+		if (res == 1) {
+			return sBufKey[0];
+		}
+		return 0;
+	}
+
 }
 
 

@@ -133,7 +133,7 @@ public: void SetSeparateLast() {
 	if (!m_symbolList.empty())
 		SetFlag(m_symbolList.back().keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT);
 }
-public: void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code, wchar_t symb) {
+public: void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code) {
 	ClearGenerated();
 
 	while (m_symbolList.size() >= c_nMaxLettersSave) {
@@ -150,13 +150,12 @@ public: void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code
 		key2.key().shift_key = hotkey.At(1); // надеемся это shift, пока так.
 	}
 	key2.type = type;
-	wxString leading(L"'\"<[{");
-	if (vk == VK_OEM_2) {
+
+	if (type == KEYTYPE_CUSTOM) {
 		SetFlag(key2.keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT);
 		SetSeparateLast();
 	}
-
-	else if ((m_symbolList.empty() || m_symbolList.back().type == TKeyType::KEYTYPE_SPACE) && leading.find(symb) != -1) {
+	else if ((m_symbolList.empty() || m_symbolList.back().type == TKeyType::KEYTYPE_SPACE) && type == KEYTYPE_LEADING_POSSIBLE_LETTER) {
 		SetFlag(key2.keyFlags, TKeyFlags::SYMB_SEPARATE_IF_SEVERAL_REVERT);
 	}
 

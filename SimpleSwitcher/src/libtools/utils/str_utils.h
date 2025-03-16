@@ -3,9 +3,16 @@
 #include <sstream>
 #include <algorithm>
 #include <functional>
+#include <cwctype>
 
 namespace Str_Utils
 {
+	inline bool isLetter(wchar_t symb) {
+		return std::iswalpha(symb);
+	}
+	inline bool isDigit(wchar_t symb) {
+		return std::isdigit(symb);
+	}
 	// trim from start (in place)
 	static inline void trim_int(std::wstring &s, TStr chars, bool fLeft, bool fRight) 
 	{

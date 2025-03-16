@@ -289,11 +289,10 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 			}
 			return false;
 			};
-
+		auto conf = conf_get();
 		if (curKeyState == KeyState::KEY_STATE_DOWN) {
 			if (curk.IsEmpty())
 				return 0;
-			auto conf = conf_get();
 			bool need_our_action = false;
 			for (const auto& [hk, key] : conf->All_hot_keys()) {
 				if (!key.GetKeyup() && check_is_our_key(key, curk)) {
@@ -321,8 +320,8 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 					&& curk.HasKey(VK_CONTROL, false)
 					&& !curk.IsKnownMods(vkCode)
 					&& vkCode == curk.ValueKey()
-					&& conf_get()->fixRAlt
-					&& conf_get()->fixRAlt_lay_ != 0
+					&& conf->fixRAlt
+					&& conf->fixRAlt_lay_ != 0
 					) {
 					LOG_INFO_1(L"fix ctrl+alt");
 					MainWorkerMsg msg(HWORKER_FixCtrlAlt);
@@ -348,7 +347,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 				// ищем наш хот-кей.
 				// даже если нашли, up никогда не запрещаем.
 				if (!possible.IsEmpty()) {
-					for (const auto& [hk, key] : conf_get()->All_hot_keys()) {
+					for (const auto& [hk, key] : conf->All_hot_keys()) {
 						if (key.GetKeyup() && check_is_our_key(key, possible)) {
 							msg_hotkey.data.hotkey = key;
 							msg_hotkey.data.hk = hk;

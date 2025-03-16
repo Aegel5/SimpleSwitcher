@@ -19,40 +19,44 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	bool isSysKey = wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP;
 	bool isExtended = TestFlag(k->flags, LLKHF_EXTENDED);
 
-	m_curScanCode.scan = k->scanCode;
-	m_curScanCode.is_ext = isExtended;
-
+	TScanCode_Ext scan_ext{ (WORD)k->scanCode, isExtended };
 
 	m_curStateWrap.Update(k, curKeyState);
-	m_curKeyState = m_curStateWrap.state;
+	auto cur_hotkey = m_curStateWrap.state;
 
-	LOG_INFO_3(L"ProcessKeyMsg %s curState=%s", CHotKey::ToString(vkCode).c_str(), m_curKeyState.ToString().c_str());
+	LOG_INFO_3(L"ProcessKeyMsg %s curState=%s", CHotKey::ToString(vkCode).c_str(), cur_hotkey.ToString().c_str());
 
 	if (curKeyState != KEY_STATE_DOWN)
 		RETURN_SUCCESS;
 
 	auto conf = conf_get();
 
-	// Чтобы не очищался буфер клавиш на нажатии наших хоткеев.
-	//for (const auto& [hkId, key] : conf->All_hot_keys())
-	//{
-	//	if (m_curKeyState.Compare(key, CHotKey::COMPARE_IGNORE_KEYUP))
-	//	{
-	//		auto s1 = m_curKeyState.ToString();
-	//		auto s2 = key.ToString();
-	//		LOG_INFO_2(L"skip hk diff only flags k1=%s, k2=%s hId=%u", s1.c_str(), s2.c_str(), hkId);
-	//		RETURN_SUCCESS;
-	//	}
-	//}
-
-	//if (CHotKey::IsKnownMods(vkCode))
-	//	RETURN_SUCCESS;
-
 	if (CHotKey::Normalize(vkCode) == VK_SHIFT) {
 		RETURN_SUCCESS;
 	}
 
-	HandleSymbolDown();
+	TKeyType type = AnalizeTyped(cur_hotkey, vkCode, k->scanCode, topWndInfo2.lay);
+
+		switch (type) {
+		case KEYTYPE_BACKSPACE:
+		{
+			m_cycleList.DeleteLastSymbol();
+			break;
+		}
+		case KEYTYPE_SYMBOL:
+		case KEYTYPE_SPACE:
+		case KEYTYPE_LEADING_POSSIBLE_LETTER:
+		case KEYTYPE_CUSTOM:
+		{
+			m_cycleList.AddKeyToList(type, cur_hotkey, scan_ext);
+			break;
+		}
+		case KEYTYPE_COMMAND_NO_CLEAR:
+			break;
+		default:
+			ClearAllWords();
+			break;
+		}
 
 	RETURN_SUCCESS;
 	
@@ -323,77 +327,6 @@ void Hooker::ChangeForeground(HWND hwnd)
 	m_dwIdProcoreground = procId; 
 }
 
-void Hooker::HandleSymbolDown() {
-	wchar_t curSymbol = 0;
-	auto GetCurKeyType = [this, &curSymbol](CHotKey hotkey) -> TKeyType {
-		CHotKey key = hotkey;
-		if (key.Size() == 0) {
-			return KEYTYPE_COMMAND_NO_CLEAR;
-		}
-		else if (key.Size() > 2) {
-			return KEYTYPE_COMMAND_CLEAR;
-		}
-		else if (key.Size() == 2) {
-			if (!key.HasMod(VK_SHIFT))
-				return KEYTYPE_COMMAND_CLEAR;
-		}
-
-		switch (key.ValueKey()) {
-		case VK_CAPITAL:
-		case VK_SCROLL:
-		case VK_PRINT:
-		case VK_NUMLOCK:
-		case VK_INSERT:
-			return KEYTYPE_COMMAND_NO_CLEAR;
-		case VK_RETURN:
-			return KEYTYPE_COMMAND_CLEAR;
-		case VK_TAB:
-		case VK_SPACE:
-			return KEYTYPE_SPACE;
-		case VK_BACK:
-			return KEYTYPE_BACKSPACE;
-		}
-
-		BYTE keyState[256] = { 0 };
-		keyState[VK_SHIFT] = m_curKeyState.HasMod(VK_SHIFT) ? 0x80 : 0;
-		TCHAR sBufKey[0x10] = { 0 };
-		int res = ToUnicodeEx(key.ValueKey(), m_curScanCode.scan, keyState, sBufKey, ARRAYSIZE(sBufKey), 0, topWndInfo2.lay);
-		if (res == 1) {
-			curSymbol = sBufKey[0];
-			LOG_ANY_4(L"print char {}", curSymbol);
-			if (wcschr(L" \t-=+*()%^", curSymbol) != NULL) {
-				return KEYTYPE_SPACE;
-			}
-
-			return KEYTYPE_SYMBOL;
-		}
-		else {
-			return KEYTYPE_COMMAND_CLEAR;
-		}
-		};
-
-	TKeyType type = GetCurKeyType(m_curKeyState);
-
-	switch (type) {
-	case KEYTYPE_BACKSPACE:
-	{
-		m_cycleList.DeleteLastSymbol();
-		break;
-	}
-	case KEYTYPE_SYMBOL:
-	case KEYTYPE_SPACE:
-	{
-		m_cycleList.AddKeyToList(type, m_curKeyState, m_curScanCode, curSymbol);
-		break;
-	}
-	case KEYTYPE_COMMAND_NO_CLEAR:
-		break;
-	default:
-		ClearAllWords();
-		break;
-	}
-}
-
 TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 {
 	bool fDels = false;
@@ -634,7 +567,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 }
 TStatus Hooker::NeedRevert(HotKeyType typeRevert)
 {
-	LOG_INFO_1(L"NeedRevert %S, curstate=\"%s\"", HotKeyTypeName(typeRevert), m_curKeyState.ToString().c_str());
+	LOG_INFO_1(L"NeedRevert %S", HotKeyTypeName(typeRevert));
 
 	ContextRevert ctxRevert;
 	ctxRevert.typeRevert = typeRevert;

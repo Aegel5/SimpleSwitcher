@@ -76,11 +76,19 @@ struct LayoutInfoList {
     std::vector<LayoutInfo> info;
 
     bool AllLayoutEnabled() const {
-        for (const auto& it : info) {
-            if (!it.enabled) return false;
-        }
-        return true;
+        return std::ranges::all_of(info, [](const auto& x) {return x.enabled; });
     }
+    std::generator<HKL> EnabledLayouts() const {
+        for (const auto& it : info) {
+            if (it.enabled) co_yield it.layout;
+        }
+    }
+    int CntLayoutEnabled() const {
+        int cnt = 0;
+        for (const auto& it : EnabledLayouts()) cnt++;
+        return cnt;
+    }
+
     bool HasLayout(HKL lay) const {
         return GetLayoutInfo(lay) != nullptr;
     }
