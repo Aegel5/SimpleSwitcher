@@ -2,7 +2,6 @@
 
 #include "Hooker.h"
 #include "Dispatcher.h"
-#include "Encrypter.h"
 
 #include "gui/decent_gui.h"
 
@@ -40,14 +39,6 @@ TKeyType Hooker::GetCurKeyType(CHotKey hotkey)
 			return KEYTYPE_BACKSPACE;
 	}
 
-	//if(g_setsgui.isDashSeparate)
-	//{
-	//	if(key.ValueKey() == 189 && key.Size() == 1)
-	//	{
-	//		return KEYTYPE_SPACE;
-	//	}
-	//}
-
 	BYTE keyState[256] = { 0 };
 	keyState[VK_SHIFT] = m_curKeyState.HasMod(VK_SHIFT) ? 0x80 : 0;
 	TCHAR sBufKey[0x10] = { 0 };
@@ -68,17 +59,6 @@ TKeyType Hooker::GetCurKeyType(CHotKey hotkey)
 		return KEYTYPE_COMMAND_CLEAR;
 	}
 }
-
-
-void PrintHwnd(HWND hwnd, const TChar* name=L"name1")
-{
-	if(GetLogLevel() >= 2)
-	{
-		DWORD pid = 0;
-		DWORD threadid = GetWindowThreadProcessId(hwnd, &pid);
-		//SW_LOG_INFO_2(L"%s=%p, pid=%d threadid=%d", name, hwnd, pid, threadid);
-	}
-} 
 
 TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 {
@@ -132,184 +112,12 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 }
 
 
-TStatus Hooker::Init()
-{
+TStatus Hooker::Init() {
 	ClearAllWords();
     IFS_LOG(GetPath_fileExe_lower(m_sSelfExeName));
-	//IFS_RET(m_clipWorker.Init());
-
 	RETURN_SUCCESS;
 
 }
-bool Hooker::HasAnyWord()
-{
-	//std::unique_lock<std::recursive_mutex > lock(m_mtxKeyList);
-	return !m_wordList.empty();
-}
-void Hooker::ClearAllWords()
-{
-	LOG_INFO_2(L"ClearsKeys");
-
-	//m_caseAnalizer.Clear();
-
-	{
-		//std::unique_lock<std::recursive_mutex > lock(m_mtxKeyList);
-		m_wordList.clear();
-		ClearCycleRevert();
-	}
-
-	//CHotKey curCopy = m_curKeyState;
-	//for (TKeyCode* k = curCopy.ModsBegin(); k != curCopy.ModsEnd(); ++k)
-	//{
-	//	if (GetAsyncKeyState(*k) & 0x8000)
-	//	{
-	//	}
-	//	else
-	//	{
-	//		LOG_INFO_2(L"Up key ? because GetAsyncKeyState"
-	//			// , CHotKey::ToString(*k).c_str()
-	//		);
-	//		m_curKeyState.Remove(*k);
-	//	}
-	//}
-	
-}
-
-void Hooker::AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code)
-{
-	ClearCycleRevert();
-
-	if (m_wordList.size() >= c_nMaxLettersSave)
-	{
-		m_wordList.pop_front();
-	}
-
-	TKeyHookInfo key2;
-
-	key2.key().vk_code = hotkey.ValueKey();
-	key2.key().scan_code = scan_code;
-	if (hotkey.Size() == 2) {
-		key2.key().shift_key = hotkey.At(1); // надеемся это shift, пока так.
-	}
-	key2.type = type;
-	if (hotkey.ValueKey() == VK_OEM_2 && conf_get()->isTryOEM2) {
-		SetFlag(key2.keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT);
-	}
-
-	IFS_LOG(Encrypter::Encrypt(key2));
-	m_wordList.push_back(key2);
-}
-TStatus Hooker::FillKeyToRevert(TKeyRevert& keyList, HotKeyType typeRevert) // m_wordList -> keyList
-{
-	auto get_decrtypted = [this](int i) {
-		TKeyHookInfo cur;
-		cur.crypted = m_wordList[i].crypted;
-		Encrypter::Decrypt(cur);
-		return cur.key();
-	};
-
-	if (m_nCurrentRevertCycle == -1)
-		RETURN_SUCCESS;
-	if (m_CycleRevertList.empty())
-		RETURN_SUCCESS;
-
-	CycleRevert curRevertInfo;
-
-	if (typeRevert == hk_RevertLastWord)
-	{
-		if (m_nCurrentRevertCycle > 0)
-		{
-			m_nCurrentRevertCycle -= 1;
-			curRevertInfo = m_CycleRevertList[m_nCurrentRevertCycle];
-			m_nCurrentRevertCycle = 0;
-		}
-		else
-		{
-			curRevertInfo = m_CycleRevertList[m_nCurrentRevertCycle];
-			m_nCurrentRevertCycle = 1;
-			if (m_nCurrentRevertCycle >= (int)m_CycleRevertList.size())
-				m_nCurrentRevertCycle = 0;
-		}
-	}
-	else
-	{
-		curRevertInfo = m_CycleRevertList[m_nCurrentRevertCycle];
-		++m_nCurrentRevertCycle;
-		if (m_nCurrentRevertCycle >= (int)m_CycleRevertList.size())
-			m_nCurrentRevertCycle = 0;
-	}
-
-	if (curRevertInfo.nIndexWordList == -1)
-		RETURN_SUCCESS;
-	if (m_wordList.empty())
-		RETURN_SUCCESS;
-
-	for (int i = curRevertInfo.nIndexWordList; i < (int)m_wordList.size(); ++i)
-	{
-		keyList.push_back(get_decrtypted(i));
-	}
-
-	RETURN_SUCCESS;
-}
-TStatus Hooker::GenerateCycleRevertList()
-{
-	m_CycleRevertList.clear();
-
-	int countWords = 0;
-	if (!m_wordList.empty())
-	{
-		for (int i = (int)m_wordList.size() - 1; i >= 0; --i)
-		{
-			auto issep = [&](int i) {return TestFlag(m_wordList[i].keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT); };
-			auto add = [&](int i) {
-				CycleRevert cycleRevert = { i, m_CycleRevertList.empty() };
-				m_CycleRevertList.push_back(cycleRevert);
-				if (++countWords >= c_maxWordRevert)
-					return true;
-				return false;
-			};
-			if (issep(i))
-			{
-				if (add(i)) 
-					break;
-			}
-			else if (m_wordList[i].type != KEYTYPE_SPACE && (i == 0 || m_wordList[i - 1].type == KEYTYPE_SPACE || issep(i-1)))
-			{
-				if(add(i)) 
-					break;
-			}
-
-		}
-	}
-
-	if(m_CycleRevertList.size() > 1)
-	{
-		m_CycleRevertList.push_back(m_CycleRevertList.back());
-		m_CycleRevertList.back().fNeedLanguageChange = true;
-	}
-
-	if(m_CycleRevertList.empty())
-	{
-		CycleRevert cycleRevert = { -1, true };
-		m_CycleRevertList.push_back(cycleRevert);
-	}
-
-	m_nCurrentRevertCycle = 0;
-
-	RETURN_SUCCESS;
-}
-
-void Hooker::ClearCycleRevert()
-{
-	//SW_LOG_INFO_2(L"ClearCycleRevert");
-	{
-		//std::unique_lock<std::recursive_mutex > lock(m_mtxKeyList);
-		m_CycleRevertList.clear();
-		m_nCurrentRevertCycle = -1;
-	}
-	
-}
-
 
 
 TStatus ClipHasTextFormating(bool& fres)
@@ -575,18 +383,14 @@ void Hooker::HandleSymbolDown()
 	{
 	case KEYTYPE_BACKSPACE:
 	{
-		{
-			//std::unique_lock<std::recursive_mutex> lock(m_mtxKeyList);
-			if (!m_wordList.empty())
-				m_wordList.pop_back();
-		}
-							  break;
+		m_cycleList.DeleteLastSymbol();
+		break;
 	}
 	case KEYTYPE_SYMBOL:
 	case KEYTYPE_SPACE:
 	{
-						  AddKeyToList(type, m_curKeyState, m_curScanCode);
-						  break;
+		m_cycleList.AddKeyToList(type, m_curKeyState, m_curScanCode);
+		break;
 	}
 	case KEYTYPE_COMMAND_NO_CLEAR:
 		break;
@@ -817,24 +621,20 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
 	bool isNeedLangChange = true;
 
-	if (m_nCurrentRevertCycle == -1)
-	{
-		IFS_RET(GenerateCycleRevertList());
-	}
+	m_cycleList.GenerateCycleRevertList();
 
-	if (typeRevert == hk_RevertLastWord)
-	{
+	auto to_revert = m_cycleList.FillKeyToRevert(typeRevert);
+
+	if (typeRevert == hk_RevertLastWord){
 		isNeedLangChange = true;
 	}
-	else
-	{
-		isNeedLangChange = m_CycleRevertList[m_nCurrentRevertCycle].fNeedLanguageChange;
+	else{
+		isNeedLangChange = to_revert.needLanguageChange;
 	}
-
-	IFS_RET(FillKeyToRevert(data.keylist, typeRevert));
 	
 	data.flags = SW_CLIENT_PUTTEXT | SW_CLIENT_SetLang | SW_CLIENT_BACKSPACE;
 	data.lay = isNeedLangChange ? nextLng : 0;
+	data.keylist = std::move(to_revert.keys);
 	IFS_RET(ProcessRevert(data));
 
 	RETURN_SUCCESS;
@@ -853,8 +653,7 @@ TStatus Hooker::NeedRevert(HotKeyType typeRevert)
 }
 
 
-TStatus Hooker::SwitchLangByEmulate(HKL lay)
-{
+TStatus Hooker::SwitchLangByEmulate(HKL lay) {
 
 	CHotKey altshift = conf_get()->GetHk(hk_CycleLang_win_hotkey).keys.key();
 

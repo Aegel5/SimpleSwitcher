@@ -1,8 +1,9 @@
 ﻿#pragma once
 
 #include "CClipWorker.h"
+#include "CycleRevertList.h"
 
-static const int c_nMaxLettersSave = 100;
+
 
 class Hooker
 {
@@ -17,20 +18,14 @@ private:
 		//tstring txtToInsert;
 	};
 
-
 	typedef std::vector<CHotKey> TKeyToRevert;
-
 
 public:
 
-
-
-	Hooker()  	{}
-	~Hooker() 	{}
-
-	void ClearAllWords();
-	bool HasAnyWord();
-	void ClearCycleRevert();
+	void ClearAllWords() {
+		LOG_INFO_2(L"ClearsKeys");
+		m_cycleList.Clear();
+	}
 	TStatus NeedRevert(HotKeyType typeRevert);
 	TStatus NeedRevert2(ContextRevert& data);
 	TStatus AnalizeTopWnd();
@@ -49,7 +44,6 @@ public:
 	TKeyType GetCurKeyType(CHotKey hotkey);
 	TStatus ProcessKeyMsg(KeyMsgData& keyData);
 	void HandleSymbolDown();
-	void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code);
 	TStatus Init();
 	TStatus SendCtrlC(EClipRequest clRequest);
 	void RequestWaitClip(EClipRequest clRequest)
@@ -103,7 +97,7 @@ public:
 		auto hk = keyData.data.hk;
 		const auto& key = keyData.data.hotkey;
 
-		if (SettingsGui::IsNeedSavedWords(hk) && !HasAnyWord()) {
+		if (SettingsGui::IsNeedSavedWords(hk) && !m_cycleList.HasAnySymbol()) {
 			bool found = false;
 			for (const auto& [hk2,key2] : conf_get()->All_hot_keys()) {
 				if (!SettingsGui::IsNeedSavedWords(hk2) && key.Compare(key2)) {
@@ -137,25 +131,9 @@ public:
 	CClipWorker m_clipWorker; 
 	tstring m_savedClipData;
 	HotKeyType m_lastRevertRequest = hk_NULL;
-
-	struct CycleRevert
-	{
-		int nIndexWordList;
-		bool fNeedLanguageChange;
-	};
-
-	TStatus GenerateCycleRevertList();
-	TStatus FillKeyToRevert(TKeyRevert& keyList, HotKeyType typeRevert);
 	TStatus ProcessRevert(ContextRevert& ctxRevert);
-
-	static const int c_maxWordRevert = 7;
-
 	std::wstring m_sSelfExeName;
-
-	std::deque<TKeyHookInfo> m_wordList; // просто список всего, что сейчас набрано.
-	std::vector<CycleRevert> m_CycleRevertList;
-	int m_nCurrentRevertCycle = -1;
-
+	CycleRevertList m_cycleList;
 	CHotKey m_curKeyState;
 	CurStateWrapper m_curStateWrap;
 	TScanCode_Ext m_curScanCode; 
