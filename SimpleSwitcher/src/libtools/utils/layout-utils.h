@@ -143,6 +143,37 @@ namespace Utils
 		return res;
 	}
 
+	inline TStatus FoundEmulateHotKey(CHotKey& key)
+	{
+		key = CHotKey(VK_LMENU, VK_LSHIFT);
+
+		HKEY hKey = 0;
+		IF_LSTATUS_RET(RegOpenKeyExW(HKEY_CURRENT_USER, L"Keyboard Layout\\Toggle", 0, KEY_READ, &hKey));
+
+		DWORD dataType = REG_SZ;
+		TChar sBuf[0x100];
+		DWORD sSize = 0x100;
+		LONG nError = ::RegQueryValueExW(
+			hKey,
+			L"Hotkey",
+			0,
+			&dataType,
+			(PBYTE)sBuf,
+			&sSize);
+
+		if (nError == ERROR_SUCCESS)
+		{
+			if (wcscmp(sBuf, L"2") == 0)
+			{
+				key = CHotKey(VK_LCONTROL, VK_LSHIFT);
+			}
+		}
+
+		RegCloseKey(hKey);
+
+		RETURN_SUCCESS;
+	}
+
 }
 
 

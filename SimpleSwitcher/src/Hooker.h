@@ -18,12 +18,8 @@ private:
 	};
 
 
-	typedef std::deque<TKeyHookInfo> TWordList;
 	typedef std::vector<CHotKey> TKeyToRevert;
 
-	//TSyncVal32 requestCount = 0;
-
-	//CaseAnalazer m_caseAnalizer;
 
 public:
 
@@ -35,10 +31,8 @@ public:
 	void ClearAllWords();
 	bool HasAnyWord();
 	void ClearCycleRevert();
-	//bool IsOurInput();
 	TStatus NeedRevert(HotKeyType typeRevert);
 	TStatus NeedRevert2(ContextRevert& data);
-	//void ThreadInputSender();
 	TStatus AnalizeTopWnd();
 	TStatus SwitchLangByEmulate(HKL lay);
 	void CliboardChanged() 
@@ -134,33 +128,14 @@ public:
 public:
 
 	ULONGLONG m_dwLastCtrlCReqvest = 0;
-
-
-
 	EClipRequest m_clipRequest = CLRMY_NONE;
-	//DWORD m_clipCounter = 0;
-
 	DWORD m_dwIdThreadForeground = -1;
 	DWORD m_dwIdProcoreground = -1;
-
-	//DWORD m_dwIdThreadTopWnd = 0;
-	//DWORD m_dwTopPid = 0;
-	//HKL m_layoutTopWnd = 0;
-	//HWND m_hwndTop = 0;
-
 	TopWndInfo topWndInfo2;
-
 	std::wstring m_sTopProcName;
 	std::wstring m_sTopProcPath;
-
-	//CClipWorker m_clipWorker;
-
 	CClipWorker m_clipWorker; 
-
 	tstring m_savedClipData;
-
-
-
 	HotKeyType m_lastRevertRequest;
 
 	struct CycleRevert
@@ -172,17 +147,15 @@ public:
 	TStatus GenerateCycleRevertList();
 	TStatus FillKeyToRevert(TKeyRevert& keyList, HotKeyType typeRevert);
 	TStatus ProcessRevert(ContextRevert& ctxRevert);
-	//TStatus TimerProcWaitClip2();
 
 	static const int c_maxWordRevert = 7;
 
 	std::wstring m_sSelfExeName;
 
-	TWordList m_wordList;
+	std::deque<TKeyHookInfo> m_wordList;
 	std::vector<CycleRevert> m_CycleRevertList;
 	int m_nCurrentRevertCycle = -1;
 
-	//TSyncVal32 m_fOurSend = 0;
 	CHotKey m_curKeyState;
 	CurStateWrapper m_curStateWrap;
 	TScanCode_Ext m_curScanCode; 

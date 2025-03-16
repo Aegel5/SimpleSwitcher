@@ -208,20 +208,6 @@ TStatus Hooker::FillKeyToRevert(TKeyRevert& keyList, HotKeyType typeRevert) // m
 		return cur.key();
 	};
 
-	//if (typeRevert == hk_RevertRecentTyped)
-	//{
-	//	// reset this
-	//	m_nCurrentRevertCycle = -1;
-
-	//	// get all
-	//	for (int i = 0; i < (int)m_wordList.size(); ++i)
-	//	{
-	//		keyList.push_back(get_decrtypted(i));
-	//	}
-
-	//	RETURN_SUCCESS;
-	//}
-
 	if (m_nCurrentRevertCycle == -1)
 		RETURN_SUCCESS;
 	if (m_CycleRevertList.empty())
@@ -267,8 +253,6 @@ TStatus Hooker::FillKeyToRevert(TKeyRevert& keyList, HotKeyType typeRevert) // m
 }
 TStatus Hooker::GenerateCycleRevertList()
 {
-	bool isNeedLangChange = true;
-
 	m_CycleRevertList.clear();
 
 	int countWords = 0;
@@ -416,12 +400,6 @@ TStatus Hooker::ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist)
 	RETURN_SUCCESS;
 }
 
-//void Hooker::PostMsgThread(InputSenderMode mode)
-//{
-//	std::unique_lock<std::mutex> lock(mtxInputSenderQue);
-//	inputSenderQue.push_back(mode);
-//	cvInputSender.notify_all();
-//}
 TStatus Hooker::ClipboardClearFormat2()
 {
 	//m_clipWorker.PostMsg(ClipMode_ClipClearFormat);
@@ -639,11 +617,6 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 		InputSender::SendVkKey(VK_BACK, ctxRevert.keylist.size());
 	}
 
-
-	//if (m_layoutTopWnd == 0 || m_sTopProcName == L"far.exe") {
- //       needWaitLang = false;
- //   }
-
 	//needWaitLang = false;
 	if (needWaitLang && !TestFlag(ctxRevert.flags, SW_CLIENT_NO_WAIT_LANG)) {
 		WaitOtherLay(prevLay);
@@ -687,19 +660,7 @@ TStatus Hooker::SendCtrlC(EClipRequest clRequest)
 
 	RETURN_SUCCESS;
 }
-//TStatus SendUpForKey(CHotKey key)
-//{
-//	InputSender sender;
-//	for (TKeyCode k : key)
-//	{
-//		std::wstring s1;
-//		CHotKey::ToString(k, s1);
-//		LOG_INFO_2(L"SendUpForKey press up for key %s", s1.c_str());
-//		sender.Add(k, KEY_STATE_UP);
-//	}
-//	IFS_RET(SendOurInput(sender));
-//	RETURN_SUCCESS;
-//}
+
 
 HKL Hooker::getNextLang () {
 	HKL result = (HKL)HKL_NEXT;
@@ -891,69 +852,6 @@ TStatus Hooker::NeedRevert(HotKeyType typeRevert)
 	RETURN_SUCCESS;
 }
 
-VOID CALLBACK SendAsyncProc(
-	_In_  HWND hwnd,
-	_In_  UINT uMsg,
-	_In_  ULONG_PTR dwData,
-	_In_  LRESULT lResult
-	)
-{
-	TUInt32 request = (TUInt32)dwData;
-	LOG_INFO_2(L"SendAsyncProc request=%u", request);
-	//LOG_INFO_1(L"5: %u", GetKeyboardLayout(HookerGlobal().m_dwIdThreadTopWnd));
-	//HookerGlobal().DoneRevert();
-}
-
-void SwitchLayByDll(HWND hwnd, TUInt64 lay)
-{
-	LOG_INFO_1(L"Try SwitchLayByDll with lay=%I64u for hwnd=0x%p", lay, hwnd);
-
-	//{
-	//	CAutoWinMutexWaiter w(G_SwSharedMtx());
-	//	G_SwSharedBuf().sendData.lay = lay;
-	//}
-
-	LOG_INFO_2(L"Try SendMessageCallback...");
-	IFW_LOG(SendMessageCallback(
-		hwnd,
-		c_msgRevertID,
-		c_msgWParm,
-		(LPARAM)lay, //c_msgLParm,
-		SendAsyncProc,
-		NULL));
-
-}
-
-TStatus FoundEmulateHotKey(CHotKey& key)
-{
-	key = CHotKey(VK_LMENU, VK_LSHIFT);
-
-	HKEY hKey = 0;
-	IF_LSTATUS_RET(RegOpenKeyExW(HKEY_CURRENT_USER, L"Keyboard Layout\\Toggle", 0, KEY_READ, &hKey));
-
-	DWORD dataType = REG_SZ;
-	TChar sBuf[0x100];
-	DWORD sSize = 0x100;
-	LONG nError = ::RegQueryValueExW(
-		hKey,
-		L"Hotkey",
-		0,
-		&dataType,
-		(PBYTE)sBuf,
-		&sSize);
-
-	if (nError == ERROR_SUCCESS)
-	{
-		if (wcscmp(sBuf, L"2") == 0)
-		{
-			key = CHotKey(VK_LCONTROL, VK_LSHIFT);
-		}
-	}
-
-	RegCloseKey(hKey);
-
-	RETURN_SUCCESS;
-}
 
 TStatus Hooker::SwitchLangByEmulate(HKL lay)
 {
@@ -999,16 +897,6 @@ void Hooker::CheckCurLay(bool forceSend) {
 TStatus Hooker::AnalizeTopWnd() {
 
     CheckCurLay();
-
-	//HWND hwndFocused = NULL;
-	//IFS_RET(Utils::GetFocusWindow(hwndFocused));
-	//m_hwndTop = hwndFocused;
-
-	//m_hwndTop = topWndInfo2.hwnd;
-
-	//DWORD dwTopPid = 0;
-	//DWORD dwIdThreadTopWnd = GetWindowThreadProcessId(hwndFocused, &dwTopPid);
-	//IFW_LOG(dwIdThreadTopWnd != 0);
 
 	IFS_LOG(Utils::GetProcLowerNameByPid(topWndInfo2.pid_top, m_sTopProcPath, m_sTopProcName));
 
