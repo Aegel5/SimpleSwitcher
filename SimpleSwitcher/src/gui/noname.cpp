@@ -70,8 +70,17 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxStaticBoxSizer* sbSizer8;
 	sbSizer8 = new wxStaticBoxSizer( new wxStaticBox( m_panelMain, wxID_ANY, _("Advanced") ), wxVERTICAL );
 
+	wxBoxSizer* bSizer16;
+	bSizer16 = new wxBoxSizer( wxHORIZONTAL );
+
 	m_buttonAddPanel = new wxButton( sbSizer8->GetStaticBox(), wxID_ANY, _("Add float panel"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer8->Add( m_buttonAddPanel, 0, wxALL, 5 );
+	bSizer16->Add( m_buttonAddPanel, 0, wxALL, 5 );
+
+	m_buttonDelAllPanels = new wxButton( sbSizer8->GetStaticBox(), wxID_ANY, _("Remove all panels"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer16->Add( m_buttonDelAllPanels, 0, wxALL, 5 );
+
+
+	sbSizer8->Add( bSizer16, 1, wxEXPAND, 5 );
 
 	m_checkBoxDisablAcc = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Disable the accessibility shortcut keys (5 SHIFT and others)"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer8->Add( m_checkBoxDisablAcc, 0, wxALL, 5 );

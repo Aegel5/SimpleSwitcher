@@ -38,7 +38,13 @@ namespace {
 
 class MainWnd : public MyFrame4
 {
-    std::vector< FloatPanel*> floatPanels;
+    std::generator<FloatPanel*> all_panels() {
+        for (auto* it : this->GetChildren()) {
+            auto cur = wxDynamicCast(it, FloatPanel);
+            if (cur != 0)
+                co_yield cur;
+        }
+    }
 public:
     MainWnd() : MyFrame4(nullptr)
     {
@@ -82,9 +88,20 @@ public:
                 });
 
             BindButtom(m_buttonAddPanel, [this]() {
+                return;
                 auto wnd = new FloatPanel(this);
-                floatPanels.push_back(wnd);
                 wnd->Show(true);
+                });
+
+            BindButtom(m_buttonDelAllPanels, [this]() {
+                std::vector<FloatPanel*> to_del;
+                for (auto p : all_panels()) {
+                    to_del.push_back(p);
+                    p->Destroy();
+                }
+                for (auto p : to_del) {
+                    p->Destroy();
+                }
                 });
 
             SyncLayouts();
@@ -212,7 +229,7 @@ private:
     }
 
     std::map<wxString, wxBitmapBundle> flags_map;
-    std::set<wxString> flags_miss;
+    std::map<wxString, wxBitmap> flags_for_panel;
 
     wxBitmapBundle GetFlag2(const wxString& _name) {
 
@@ -229,18 +246,16 @@ private:
         auto it = flags_map.find(name16);
         if (it != flags_map.end()) return it->second;
 
-        auto it2 = flags_miss.find(name16);
-        if (it2 != flags_miss.end()) return {};
+        wxVector<wxBitmap> bitmaps;
 
         if (FindResource(0, name16.wc_str(), RT_RCDATA) == nullptr || FindResource(0, name32.wc_str(), RT_RCDATA) == nullptr) {
-            flags_miss.insert(name16);
-            return {};
         }
-
-        wxVector<wxBitmap> bitmaps;
-        bitmaps.push_back(wxBitmap(name16, wxBITMAP_TYPE_PNG_RESOURCE));
-        bitmaps.push_back(wxBitmap(name32, wxBITMAP_TYPE_PNG_RESOURCE));
-        flags_map.emplace(name16, wxBitmapBundle::FromBitmaps(bitmaps));
+        else {
+            bitmaps.push_back(wxBitmap(name16, wxBITMAP_TYPE_PNG_RESOURCE));
+            bitmaps.push_back(wxBitmap(name32, wxBITMAP_TYPE_PNG_RESOURCE));
+            flags_map.emplace(name16, wxBitmapBundle::FromBitmaps(bitmaps));
+            flags_for_panel.emplace(_name, bitmaps[0]);
+        }
 
         return flags_map[name16];
     }
@@ -261,10 +276,11 @@ private:
         wxBitmapBundle bndl;
 
         auto len_str = wcslen(buf);
+        wxString wname = L"unknown";
         if (len_str >= 2) {
 
             TStr name = buf + len_str - 2;
-            wxString wname = name;
+            wname = name;
 
             LOG_INFO_1(L"mainguid new layout: 0x%x, name=%s", newLayout, name);
 
@@ -277,8 +293,8 @@ private:
         }
 
         myTray.ResetIcon(bndl);
-        for (auto& it : floatPanels) {
-            it->SetFlag(bndl);
+        for (auto* it : all_panels()) {
+            it->SetFlag(flags_for_panel[wname]);
         }
     }
 

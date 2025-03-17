@@ -55,6 +55,7 @@ class MyFrame4 : public wxFrame
 		wxStaticText* m_staticText9;
 		wxChoice* m_comboUiLang;
 		wxButton* m_buttonAddPanel;
+		wxButton* m_buttonDelAllPanels;
 		wxCheckBox* m_checkBoxDisablAcc;
 		wxCheckBox* m_checkBoxClearForm;
 		wxCheckBox* m_checkBoxAllowInjected;
@@ -149,7 +150,7 @@ class FloatPanelBase : public wxFrame
 
 	public:
 
-		FloatPanelBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 32,32 ), long style = wxSTAY_ON_TOP );
+		FloatPanelBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 32,32 ), long style = wxSTAY_ON_TOP|wxBORDER_NONE );
 
 		~FloatPanelBase();
 
