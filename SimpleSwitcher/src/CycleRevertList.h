@@ -33,10 +33,15 @@ private: std::vector<CycleRevert> GenerateCycleRevertList(HotKeyType typeRevert)
 	int countWords = 0;
 	if (!m_symbolList.empty()) {
 		for (int i = std::ssize(m_symbolList) - 1; i >= 0; --i) {
-			auto issep = [&](int i) {
-				if (TestFlag(m_symbolList[i].keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT)) return true;
-				if (TestFlag(m_symbolList[i].keyFlags, TKeyFlags::SYMB_SEPARATE_IF_SEVERAL_REVERT) && typeRevert == hk_RevertCycle) 
-					return true;
+			auto is_ending = [&](int i) {
+				if (m_symbolList[i].is_end) return true;
+				auto check_type = [&](auto type) {
+					if (m_symbolList[i].type == type) return true;
+					if (i < std::ssize(m_symbolList) - 1 && m_symbolList[i + 1].type == type) return true;
+					return false;
+					};
+				if (check_type(KEYTYPE_CUSTOM)) return true;
+				if (typeRevert == hk_RevertCycle && check_type(KEYTYPE_LETTER_OR_CUSTOM)) return true;
 				return false;
 				};
 			auto add = [&](int i) {
@@ -45,7 +50,7 @@ private: std::vector<CycleRevert> GenerateCycleRevertList(HotKeyType typeRevert)
 					return true;
 				return false;
 				};
-			if (m_symbolList[i].type != KEYTYPE_SPACE && (i == 0 || m_symbolList[i - 1].type == KEYTYPE_SPACE || issep(i - 1))) {
+			if (m_symbolList[i].type != KEYTYPE_SPACE && (i == 0 || m_symbolList[i - 1].type == KEYTYPE_SPACE || is_ending(i - 1))) {
 				if (add(i))
 					break;
 			}
@@ -120,6 +125,7 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 			m_nCurrentRevertCycle = 0;
 	}
 
+
 	if (curRevertInfo.iStartFrom == -1)
 		return keyList;
 
@@ -131,7 +137,7 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 }
 public: void SetSeparateLast() {
 	if (!m_symbolList.empty())
-		SetFlag(m_symbolList.back().keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT);
+		m_symbolList.back().is_end = true;
 }
 public: void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code) {
 	ClearGenerated();
@@ -150,14 +156,6 @@ public: void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code
 		key2.key().shift_key = hotkey.At(1); // надеемся это shift, пока так.
 	}
 	key2.type = type;
-
-	if (type == KEYTYPE_CUSTOM) {
-		SetFlag(key2.keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT);
-		SetSeparateLast();
-	}
-	else if (type == KEYTYPE_LEADING_POSSIBLE_LETTER && (m_symbolList.empty() || m_symbolList.back().type == TKeyType::KEYTYPE_SPACE)) {
-		SetFlag(key2.keyFlags, TKeyFlags::SYMB_SEPARATE_IF_SEVERAL_REVERT);
-	}
 
 	key2.encrypt();
 	m_symbolList.push_back(key2);

@@ -120,8 +120,9 @@ public:
 Многопоточный конфиг
 
 Чтение: 
-    функция conf_get_unsafe - держит текущий конфиг. Если нужно обращаться к нескольким переменным, объявляем переменную-держателя для атомарности чтения.
-Запись: 1) делаем копию conf_copy 
+    GETCONF, далее используем cfg.
+Запись: 
+    1) делаем копию conf_copy 
     2) меняем новый на старый через conf_set 
     3) после set не имеем права больше писать в конфиг.
 
@@ -130,7 +131,7 @@ public:
 
 using ConfPtr = std::shared_ptr<SettingsGui>;
 inline ConfPtr __g_config(new SettingsGui()); // создаем как можно раньше.
-inline auto conf_get_unsafe() { 
+inline auto conf_get_unsafe() { // Проблемы синтаксиса conf_get_unsafe()->...  1) std::generator не держит temporary 2) множественном вызов даст другую версию.
     auto res = std::const_pointer_cast<const SettingsGui>(__g_config);
     return res; 
 }

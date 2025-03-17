@@ -5,22 +5,15 @@ enum TKeyType : TUInt8
 {
 	KEYTYPE_NONE,
 
-	KEYTYPE_SYMBOL,
+	KEYTYPE_LETTER,
 	KEYTYPE_SPACE,
 	KEYTYPE_CUSTOM,
-	KEYTYPE_LEADING_POSSIBLE_LETTER,
+	KEYTYPE_LETTER_OR_CUSTOM,
 	KEYTYPE_BACKSPACE,
 
 	KEYTYPE_COMMAND_CLEAR,
 	KEYTYPE_COMMAND_NO_CLEAR,
 };
-
-enum class TKeyFlags : TUInt8 {
-	None = 0,
-	SYMB_SEPARATE_REVERT = 1,
-	SYMB_SEPARATE_IF_SEVERAL_REVERT = 1<<1,
-};
-DEFINE_ENUM_FLAG_OPERATORS(TKeyFlags);
 
 
 struct TScanCode_Ext { 
@@ -74,7 +67,7 @@ struct TKeyHookInfo{
 	// open part
 
 	TKeyType type = (TKeyType)0;
-	TKeyFlags keyFlags = (TKeyFlags)0;
+	bool is_end = false;
 };
 
 

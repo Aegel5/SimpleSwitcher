@@ -41,9 +41,9 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 			m_cycleList.DeleteLastSymbol();
 			break;
 		}
-		case KEYTYPE_SYMBOL:
+		case KEYTYPE_LETTER:
 		case KEYTYPE_SPACE:
-		case KEYTYPE_LEADING_POSSIBLE_LETTER:
+		case KEYTYPE_LETTER_OR_CUSTOM:
 		case KEYTYPE_CUSTOM:
 		{
 			m_cycleList.AddKeyToList(type, cur_hotkey, scan_ext);
@@ -565,7 +565,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 }
 TStatus Hooker::NeedRevert(HotKeyType typeRevert)
 {
-	LOG_INFO_1(L"NeedRevert %S", HotKeyTypeName(typeRevert));
+	LOG_INFO_1(L"NeedRevert %S(%d)", HotKeyTypeName(typeRevert), typeRevert);
 
 	ContextRevert ctxRevert;
 	ctxRevert.typeRevert = typeRevert;

@@ -38,10 +38,11 @@ inline TKeyType AnalizeTyped(CHotKey key, UINT vk, UINT scan, HKL lay){
 	LOG_ANY_4(L"char {}", curSymbol);
 
 	if (Str_Utils::isDigit(curSymbol)) {
-		return KEYTYPE_SYMBOL; // никогда не являются разделителями
+		return KEYTYPE_LETTER; // никогда не являются разделителями
 	}
 
-	bool is_letter = Str_Utils::isLetter(curSymbol);
+	bool have_letter = Str_Utils::isLetter(curSymbol);
+	bool have_custom = !have_letter;
 	bool have_changes = false;
 
 	GETCONF;
@@ -57,21 +58,23 @@ inline TKeyType AnalizeTyped(CHotKey key, UINT vk, UINT scan, HKL lay){
 					have_changes = true;
 				}
 				if (Str_Utils::isLetter(symb)) {
-					is_letter = true;
+					have_letter = true;
+				}
+				else {
+					have_custom = true;
 				}
 			}
 		}
 		if (!have_changes) {
 			return KEYTYPE_SPACE;
 		}
-		if (!is_letter) {
+		if (!have_letter) {
 			return KEYTYPE_CUSTOM;
 		}
-		static const wxString leading(L"'\"<[{");
-		if (leading.Index(curSymbol) != -1) {
-			return KEYTYPE_LEADING_POSSIBLE_LETTER;
+		if (have_custom) {
+			return KEYTYPE_LETTER_OR_CUSTOM;
 		}
-		return KEYTYPE_SYMBOL;
+		return KEYTYPE_LETTER;
 	}
 	else {
 
@@ -86,7 +89,7 @@ inline TKeyType AnalizeTyped(CHotKey key, UINT vk, UINT scan, HKL lay){
 			return KEYTYPE_CUSTOM;
 		}
 
-		return KEYTYPE_SYMBOL;
+		return KEYTYPE_LETTER;
 	}
 
 }
