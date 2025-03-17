@@ -75,10 +75,7 @@ public:
     std::vector< CHotKeySet> hotkeysList;
     std::vector< RunProgramInfo> run_programs = { {.path = L"example: calc.exe"} };
 
-    static bool IsNeedSavedWords(HotKeyType hk_type) {
-        if (Utils::is_in(hk_type, hk_RevertLastWord, hk_RevertCycle)) return true;
-        return false;
-    }
+
 
     LayoutInfoList layouts_info;
 

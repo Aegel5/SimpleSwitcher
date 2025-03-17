@@ -7,8 +7,8 @@ class CycleRevertList {
 	static const int c_maxWordRevert = 7;
 	static const int c_nMaxLettersSave = 100;
 	struct CycleRevert {
-		int iStartFrom;
-		bool fNeedLanguageChange;
+		int iStartFrom = -1;
+		bool fNeedLanguageChange = false;
 	};
 	std::deque<TKeyHookInfo> m_symbolList; // просто список всего, что сейчас набрано.
 	int m_nCurrentRevertCycle = -1;
@@ -76,53 +76,65 @@ private: std::vector<CycleRevert> GenerateCycleRevertList(HotKeyType typeRevert)
 	   };
 public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 
-	auto separated = GenerateCycleRevertList(typeRevert);
-
 	RevertKeysData keyList;
 	auto& list = keyList.keys;
 
-	if (separated.empty()) {
-		LOG_WARN(L"empty separated");
-		return keyList;
-	}
-
-	if (m_symbolList.empty()) {
-		LOG_WARN(L"empty m_symbolList");
-		return keyList;
-	}
-
-	if (m_nCurrentRevertCycle < 0) {
-		m_nCurrentRevertCycle = 0;
-	}
-
-	if (m_nCurrentRevertCycle >= separated.size()) {
-		m_nCurrentRevertCycle = separated.size() - 1;
-	}
-
-	keyList.needLanguageChange = separated[m_nCurrentRevertCycle].fNeedLanguageChange;
-
-	auto get_decrtypted = [this](int i) { return m_symbolList[i].decrypted().key(); };
-
 	CycleRevert curRevertInfo;
 
-	if (typeRevert == hk_RevertLastWord) {
-		if (m_nCurrentRevertCycle > 0) {
-			m_nCurrentRevertCycle -= 1;
-			curRevertInfo = separated[m_nCurrentRevertCycle];
-			m_nCurrentRevertCycle = 0;
-		}
-		else {
-			curRevertInfo = separated[m_nCurrentRevertCycle];
-			m_nCurrentRevertCycle = 1;
-			if (m_nCurrentRevertCycle >= (int)separated.size())
-				m_nCurrentRevertCycle = 0;
+	if (typeRevert == hk_RevertAllRecentText) {
+		keyList.needLanguageChange = m_nCurrentRevertCycle <= 0;
+		m_nCurrentRevertCycle = -1;
+		
+		// простой алгоритм от позиции предыдущего реверта
+		for (int i = std::ssize(m_symbolList) - 1; i >= 0; --i) { 
+			if (i != std::ssize(m_symbolList)-1 // самый последний end не считается.
+				&& m_symbolList[i].is_end) break;
+			curRevertInfo.iStartFrom = i;
 		}
 	}
 	else {
-		curRevertInfo = separated[m_nCurrentRevertCycle];
-		++m_nCurrentRevertCycle;
-		if (m_nCurrentRevertCycle >= (int)separated.size())
+
+		auto separated = GenerateCycleRevertList(typeRevert);
+
+		if (separated.empty()) {
+			LOG_WARN(L"empty separated");
+			return keyList;
+		}
+
+		if (m_symbolList.empty()) {
+			LOG_WARN(L"empty m_symbolList");
+			return keyList;
+		}
+
+		if (m_nCurrentRevertCycle < 0) {
 			m_nCurrentRevertCycle = 0;
+		}
+
+		if (m_nCurrentRevertCycle >= separated.size()) {
+			m_nCurrentRevertCycle = separated.size() - 1;
+		}
+
+		keyList.needLanguageChange = separated[m_nCurrentRevertCycle].fNeedLanguageChange;
+
+		if (typeRevert == hk_RevertLastWord) {
+			if (m_nCurrentRevertCycle > 0) {
+				m_nCurrentRevertCycle -= 1;
+				curRevertInfo = separated[m_nCurrentRevertCycle];
+				m_nCurrentRevertCycle = 0;
+			}
+			else {
+				curRevertInfo = separated[m_nCurrentRevertCycle];
+				m_nCurrentRevertCycle = 1;
+				if (m_nCurrentRevertCycle >= (int)separated.size())
+					m_nCurrentRevertCycle = 0;
+			}
+		}
+		else {
+			curRevertInfo = separated[m_nCurrentRevertCycle];
+			++m_nCurrentRevertCycle;
+			if (m_nCurrentRevertCycle >= (int)separated.size())
+				m_nCurrentRevertCycle = 0;
+		}
 	}
 
 
@@ -130,7 +142,7 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 		return keyList;
 
 	for (int i = curRevertInfo.iStartFrom; i < (int)m_symbolList.size(); ++i) {
-		list.push_back(get_decrtypted(i));
+		list.push_back(m_symbolList[i].decrypted().key());
 	}
 
 	return keyList;

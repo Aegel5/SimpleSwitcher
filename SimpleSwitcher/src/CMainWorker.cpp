@@ -38,7 +38,7 @@ TStatus CMainWorker::WorkerInt()
 		}
 		else if (mode == HWORKER_KeyMsg)
 		{
-			IFS_LOG(hooker.ProcessKeyMsg(msg.data.keyData));
+			hooker.ProcessKeyMsg(msg.data.keyData);
 		}
 		else if (mode == HWORKER_OurHotKey)
 		{

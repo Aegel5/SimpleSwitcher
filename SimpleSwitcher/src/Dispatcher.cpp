@@ -75,7 +75,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 	auto timeId = SetTimer(hWnd, c_timerKeyloggerDefence, 5000, NULL);
 	IFW_LOG(timeId != 0);
 
-	timeId = SetTimer(hWnd, c_timerGetcurlay, 100, NULL);
+	timeId = SetTimer(hWnd, c_timerGetcurlay, 200, NULL);
     IFW_LOG(timeId != 0);
 
 

@@ -30,6 +30,13 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
+        set.def_list = { CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_PAUSE) };
+        set.gui_text = _(L"Change layout for all recent text").wc_str();
+        AddHotKey(hk_RevertAllRecentText, set);
+    }
+
+    {
+        CHotKeySet set;
         set.def_list = { {VK_LMENU, VK_CAPITAL}, CHotKey(VK_LMENU, VK_PAUSE), CHotKey(VK_PAUSE), CHotKey(VK_LMENU,VK_F24) };
         set.fUseDef = true;
         set.gui_text = _(L"Change layout for selected text").wc_str();

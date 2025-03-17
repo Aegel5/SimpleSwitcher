@@ -43,8 +43,7 @@ public:
 	TStatus ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist);
 
 	void ChangeForeground(HWND hwnd);
-	TStatus ProcessKeyMsg(KeyMsgData& keyData);
-	void HandleSymbolDown();
+	void ProcessKeyMsg(KeyMsgData& keyData);
 	TStatus Init();
 	TStatus SendCtrlC(EClipRequest clRequest);
 	void RequestWaitClip(EClipRequest clRequest)
@@ -100,10 +99,10 @@ public:
 
 		GETCONF;
 
-		if (SettingsGui::IsNeedSavedWords(hk) && !m_cycleList.HasAnySymbol()) {
+		if (IsNeedSavedWords(hk) && !m_cycleList.HasAnySymbol()) {
 			bool found = false;
 			for (const auto& [hk2,key2] : cfg->All_hot_keys()) {
-				if (!SettingsGui::IsNeedSavedWords(hk2) && key.Compare(key2)) {
+				if (!IsNeedSavedWords(hk2) && key.Compare(key2)) {
 					// Есть точно такой же хот-кей, не требующий сохраненных слов, используем его.
 					hk = hk2;
 					found = true;

@@ -7,7 +7,7 @@
 
 
 
-TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
+void Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 {
 	KBDLLHOOKSTRUCT* k = &keyData.ks;
 	WPARAM wParam = keyData.wParam;
@@ -27,37 +27,35 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	LOG_INFO_3(L"ProcessKeyMsg %s curState=%s", CHotKey::ToString(vkCode).c_str(), cur_hotkey.ToString().c_str());
 
 	if (curKeyState != KEY_STATE_DOWN)
-		RETURN_SUCCESS;
+		return;
 
-	if (CHotKey::Normalize(vkCode) == VK_SHIFT) {
-		RETURN_SUCCESS;
+	if (CHotKey::IsKnownMods(vkCode)) {
+		return; // не очищаем текущий буфер нажатых клавиш так как они могут быть частью наших хот-кеев
 	}
 
 	TKeyType type = AnalizeTyped(cur_hotkey, vkCode, k->scanCode, topWndInfo2.lay);
 
-		switch (type) {
-		case KEYTYPE_BACKSPACE:
-		{
-			m_cycleList.DeleteLastSymbol();
-			break;
-		}
-		case KEYTYPE_LETTER:
-		case KEYTYPE_SPACE:
-		case KEYTYPE_LETTER_OR_CUSTOM:
-		case KEYTYPE_CUSTOM:
-		{
-			m_cycleList.AddKeyToList(type, cur_hotkey, scan_ext);
-			break;
-		}
-		case KEYTYPE_COMMAND_NO_CLEAR:
-			break;
-		default:
-			ClearAllWords();
-			break;
-		}
-
-	RETURN_SUCCESS;
-	
+	switch (type) {
+	case KEYTYPE_BACKSPACE:
+	{
+		m_cycleList.DeleteLastSymbol();
+		break;
+	}
+	case KEYTYPE_LETTER:
+	case KEYTYPE_SPACE:
+	case KEYTYPE_LETTER_OR_CUSTOM:
+	case KEYTYPE_CUSTOM:
+	{
+		m_cycleList.AddKeyToList(type, cur_hotkey, scan_ext);
+		break;
+	}
+	case KEYTYPE_COMMAND_NO_CLEAR:
+		break;
+	default: {
+		ClearAllWords();
+		break;
+	}
+	}
 }
 
 
@@ -539,7 +537,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
 	// ---------------classic revert---------------
 
-	if (!(typeRevert == hk_RevertLastWord || typeRevert == hk_RevertCycle))
+	if (!Utils::is_in(typeRevert, hk_RevertLastWord, hk_RevertCycle, hk_RevertAllRecentText))
 	{
 		IFS_RET(SW_ERR_UNKNOWN, L"Unknown typerevert %d", typeRevert);
 	}

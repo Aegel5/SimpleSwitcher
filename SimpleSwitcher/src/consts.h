@@ -68,6 +68,7 @@ enum HotKeyType : TUInt32
 
     hk_RevertLastWord,
     hk_RevertCycle,
+    hk_RevertAllRecentText,
     hk_RevertSel,
     hk_CapsGenerate,
     hk_CycleCustomLang,
@@ -79,6 +80,10 @@ enum HotKeyType : TUInt32
     hk_RunProgram_flag = 1<<29,
 };
 
+inline bool IsNeedSavedWords(HotKeyType hk_type) {
+    if (Utils::is_in(hk_type, hk_RevertLastWord, hk_RevertCycle, hk_RevertAllRecentText)) return true;
+    return false;
+}
 
 
 inline const char* HotKeyTypeName(HotKeyType hk_type)
