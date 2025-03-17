@@ -120,7 +120,7 @@ public:
 Многопоточный конфиг
 
 Чтение: 
-    функция conf_get - держит текущий конфиг. Если нужно обращаться к нескольким переменным, объявляем переменную-держателя для атомарности чтения.
+    функция conf_get_unsafe - держит текущий конфиг. Если нужно обращаться к нескольким переменным, объявляем переменную-держателя для атомарности чтения.
 Запись: 1) делаем копию conf_copy 
     2) меняем новый на старый через conf_set 
     3) после set не имеем права больше писать в конфиг.
@@ -130,18 +130,18 @@ public:
 
 using ConfPtr = std::shared_ptr<SettingsGui>;
 inline ConfPtr __g_config(new SettingsGui()); // создаем как можно раньше.
-inline auto conf_get() { 
+inline auto conf_get_unsafe() { 
     auto res = std::const_pointer_cast<const SettingsGui>(__g_config);
     return res; 
 }
-inline ConfPtr conf_copy() { return ConfPtr(new SettingsGui(*conf_get())); }
+inline ConfPtr conf_copy() { return ConfPtr(new SettingsGui(*conf_get_unsafe())); }
 
 
 inline int g_hotkeyWndOpened = 0;
 
 TStatus LoadConfig(SettingsGui& sets);
 TStatus Save2(const SettingsGui& gui);
-inline TStatus Save() { return Save2(*conf_get());}
+inline TStatus Save() { return Save2(*conf_get_unsafe());}
 
 inline void conf_set(ConfPtr& conf) {
     __g_config.swap(conf);

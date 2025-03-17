@@ -44,7 +44,7 @@ public:
                 event.Skip();
                 return;
             }
-            auto info = conf_get()->layouts_info.GetLayoutIndex(id - Minimal_SetLay_1);
+            auto info = conf_get_unsafe()->layouts_info.GetLayoutIndex(id - Minimal_SetLay_1);
             if (info != nullptr) {
                 MainWorkerMsg msg(HWORKER_Setcurlay);
                 msg.data.lay = info->layout;
@@ -57,7 +57,7 @@ public:
 
         auto menu = new wxMenu();
 
-        for (int i = -1; const auto & it : conf_get()->layouts_info.info) {
+        for (int i = -1; const auto & it : conf_get_unsafe()->layouts_info.info) {
             i++;
             menu->Append(Minimal_SetLay_1 + i, Utils::GetNameForHKL(it.layout));
         }

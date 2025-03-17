@@ -76,7 +76,7 @@
 ////    return; // отключаем за ненадобностью...
 ////
 ////    //g_global_reg_data.clear();
-////    auto conf = conf_get();
+////    auto conf = conf_get_unsafe();
 ////    for (auto& hk : conf->hotkeysList) {
 ////        int cur = 1;
 ////        for (auto& kk : hk.second.keys) {

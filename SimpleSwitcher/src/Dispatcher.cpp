@@ -120,7 +120,7 @@ TStatus StartCycle(_In_ HINSTANCE hInstance)
 			}
 
             if (timerId == c_timerKeyloggerDefence) {
-                if (conf_get()->EnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
+                if (conf_get_unsafe()->EnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
                     IFS_LOG(resethook()); // ???
                 }
             } else if (timerId == c_timerGetcurlay) {
@@ -283,13 +283,13 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		auto check_is_our_key = [&check_disabled_status](const CHotKey& k1, const CHotKey& k2) {
 			if (k1.Compare(k2, CHotKey::COMPARE_IGNORE_KEYUP)) {
 				if (check_disabled_status == -1) {
-					check_disabled_status = conf_get()->IsSkipProgramTop() ? 1 : 0;
+					check_disabled_status = conf_get_unsafe()->IsSkipProgramTop() ? 1 : 0;
 				}
 				return check_disabled_status == 0;
 			}
 			return false;
 			};
-		auto conf = conf_get();
+		auto conf = conf_get_unsafe();
 		if (curKeyState == KeyState::KEY_STATE_DOWN) {
 			if (curk.IsEmpty())
 				return 0;
@@ -378,7 +378,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 	}
 
 
-	if (conf_get()->EnableKeyLoggerDefence) {
+	if (conf_get_unsafe()->EnableKeyLoggerDefence) {
 		return 0;
 	} else {
 		return CallNextHookEx(0, nCode, wParam, lParam);

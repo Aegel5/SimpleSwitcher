@@ -29,7 +29,7 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	if (curKeyState != KEY_STATE_DOWN)
 		RETURN_SUCCESS;
 
-	auto conf = conf_get();
+	auto conf = conf_get_unsafe();
 
 	if (CHotKey::Normalize(vkCode) == VK_SHIFT) {
 		RETURN_SUCCESS;
@@ -304,7 +304,7 @@ TStatus Hooker::ClipboardChangedInt()
 
 	// --- This is user request ----
 
-	if (conf_get()->fClipboardClearFormat)
+	if (conf_get_unsafe()->fClipboardClearFormat)
 	{
 		IFS_LOG(RequestClearFormat());
 	}
@@ -395,7 +395,7 @@ TStatus Hooker::SendCtrlC(EClipRequest clRequest)
 
 HKL Hooker::getNextLang () {
 	HKL result = (HKL)HKL_NEXT;
-	auto conf = conf_get();
+	auto conf = conf_get_unsafe();
 
 	// если все enabled - то обычная циклическая смена
 	if (conf->layouts_info.AllLayoutEnabled()) {
@@ -443,7 +443,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
     bool allow_do_revert = true;
 
-	auto conf = conf_get();
+	auto conf = conf_get_unsafe();
 
     if (m_sTopProcName == m_sSelfExeName) {
         LOG_INFO_1(L"Skip hotkey in self program");
@@ -456,7 +456,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	//// https://github.com/Aegel5/SimpleSwitcher/issues/61
 	//// Для клавиши LCtrl событие отсылается дважды, причем второй раз без флага inject (баг windows?)
 	//// в остальных случаях мы эмулируем нажатия каких-то клавиш, поэтому нужно сбросить текущее состояние нажатых клавиш.
-	//bool skipUpKeys = (TestFlag(typeRevert, hk_SetLayout_flag) || typeRevert == hk_CycleCustomLang) && conf_get()->AlternativeLayoutChange == false;
+	//bool skipUpKeys = (TestFlag(typeRevert, hk_SetLayout_flag) || typeRevert == hk_CycleCustomLang) && conf_get_unsafe()->AlternativeLayoutChange == false;
 	//if (!skipUpKeys) {
 	//	UpAllKeys();
 	//}
@@ -466,7 +466,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	if (TestFlag(typeRevert, hk_RunProgram_flag)) {
 		int i = typeRevert;
 		ResetFlag(i, hk_RunProgram_flag);
-		auto conf = conf_get();
+		auto conf = conf_get_unsafe();
 		if (i >= conf->run_programs.size()) {
 			return SW_ERR_UNKNOWN;
 		}
@@ -510,7 +510,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		int i = typeRevert;
 		ResetFlag(i, hk_SetLayout_flag);
 
-		auto conf = conf_get();
+		auto conf = conf_get_unsafe();
 
 		auto info = conf->layouts_info.GetLayoutIndex(i);
 		if (info == nullptr) {
@@ -581,10 +581,10 @@ TStatus Hooker::NeedRevert(HotKeyType typeRevert)
 
 TStatus Hooker::SwitchLangByEmulate(HKL lay) {
 
-	CHotKey altshift = conf_get()->GetHk(hk_CycleLang_win_hotkey).keys.key();
+	CHotKey altshift = conf_get_unsafe()->GetHk(hk_CycleLang_win_hotkey).keys.key();
 
 	if ((int)lay != HKL_NEXT) {
-		auto info = conf_get()->layouts_info.GetLayoutInfo(lay);
+		auto info = conf_get_unsafe()->layouts_info.GetLayoutInfo(lay);
 		if (info == nullptr) {
 			LOG_WARN(L"not found lay info");
 			RETURN_SUCCESS;
@@ -640,7 +640,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 
 	IFS_RET(AnalizeTopWnd());
 
-	auto lay = conf_get()->fixRAlt_lay_;
+	auto lay = conf_get_unsafe()->fixRAlt_lay_;
 	auto curLay = CurLay();
 
 	// сбросим любые нажатые клавиши
@@ -649,7 +649,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 	HKL temp = 0;
 	bool just_send = false;
 
-	if (conf_get()->layouts_info.GetLayoutInfo(lay) == nullptr) {
+	if (conf_get_unsafe()->layouts_info.GetLayoutInfo(lay) == nullptr) {
 		auto str = std::format(L"{:x}", (int)lay);
 		//const TChar* s = L"00000409";
 		LOG_ANY(L"load temp layout {}", str);

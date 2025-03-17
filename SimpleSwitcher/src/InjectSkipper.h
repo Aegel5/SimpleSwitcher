@@ -11,7 +11,7 @@ class InjectSkipper {
 	std::mutex m_mtx;
 public:
     void AddOur(int cnt) {
-		if (conf_get()->AllowRemoteKeys) {
+		if (conf_get_unsafe()->AllowRemoteKeys) {
 			std::unique_lock<std::mutex> _lock(m_mtx);
 			skipdata.emplace_back(GetTickCount64() + 500, cnt);
 			if (skipdata.size() >= 10000) {
@@ -25,7 +25,7 @@ public:
 	}
     bool IsAllowInject() {
 
-		if (conf_get()->AllowRemoteKeys) {
+		if (conf_get_unsafe()->AllowRemoteKeys) {
 			std::unique_lock<std::mutex> _lock(m_mtx);
 			while (1) {
 				if (skipdata.empty()) {

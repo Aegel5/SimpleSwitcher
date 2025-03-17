@@ -64,7 +64,7 @@ public:
 		LOG_INFO_1(L"Try set 0x%x lay", lay);
 
 
-		if (conf_get()->AlternativeLayoutChange)
+		if (conf_get_unsafe()->AlternativeLayoutChange)
 		{
 			IFS_LOG(SwitchLangByEmulate(lay));
 		}
@@ -100,7 +100,7 @@ public:
 
 		if (SettingsGui::IsNeedSavedWords(hk) && !m_cycleList.HasAnySymbol()) {
 			bool found = false;
-			for (const auto& [hk2,key2] : conf_get()->All_hot_keys()) {
+			for (const auto& [hk2,key2] : conf_get_unsafe()->All_hot_keys()) {
 				if (!SettingsGui::IsNeedSavedWords(hk2) && key.Compare(key2)) {
 					// Есть точно такой же хот-кей, не требующий сохраненных слов, используем его.
 					hk = hk2;

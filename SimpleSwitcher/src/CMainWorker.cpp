@@ -56,7 +56,7 @@ TStatus CMainWorker::WorkerInt()
 			}
             else if (timerId == c_timerGetcurlay)
             {
-                if (conf_get()->showFlags) {
+                if (conf_get_unsafe()->showFlags) {
                     hooker.CheckCurLay();
                 }
             }

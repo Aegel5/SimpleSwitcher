@@ -32,7 +32,7 @@ namespace {
         wxMessageBox(ms);
     }
     bool startOk() {
-        return Utils::IsSelfElevated() || !conf_get()->isMonitorAdmin;
+        return Utils::IsSelfElevated() || !conf_get_unsafe()->isMonitorAdmin;
     }
 }
 
@@ -91,24 +91,24 @@ public:
 
             m_notebook2->SetSelection(0);
 
-            BindCheckbox(m_checkDebuglog, []() {return conf_get()->IsNeedDebug(); }, [](bool val) {
-                SetLogLevel_info(val? conf_get()->logLevel : LOG_LEVEL_0);
+            BindCheckbox(m_checkDebuglog, []() {return conf_get_unsafe()->IsNeedDebug(); }, [](bool val) {
+                SetLogLevel_info(val? conf_get_unsafe()->logLevel : LOG_LEVEL_0);
                 });
 
-            BindCheckbox(m_checkBoxFixRAlt, []() {return conf_get()->fixRAlt; }, [](bool val) {
+            BindCheckbox(m_checkBoxFixRAlt, []() {return conf_get_unsafe()->fixRAlt; }, [](bool val) {
                 auto conf = conf_copy();
                 conf->fixRAlt = val;
                 conf_set(conf);
                 });
-            m_checkBoxFixRAlt->SetLabelText(m_checkBoxFixRAlt->GetLabelText() + L" \"" + Utils::GetNameForHKL(conf_get()->fixRAlt_lay_)+"\"");
+            m_checkBoxFixRAlt->SetLabelText(m_checkBoxFixRAlt->GetLabelText() + L" \"" + Utils::GetNameForHKL(conf_get_unsafe()->fixRAlt_lay_)+"\"");
 
-            BindCheckbox(m_checkBoxPrevent, []() {return conf_get()->EnableKeyLoggerDefence; }, [](bool val) {
+            BindCheckbox(m_checkBoxPrevent, []() {return conf_get_unsafe()->EnableKeyLoggerDefence; }, [](bool val) {
                 auto conf = conf_copy();
                 conf->EnableKeyLoggerDefence = val;
                 conf_set(conf);
              });
 
-            BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get()->AlternativeLayoutChange; }, [this](bool val) {
+            BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get_unsafe()->AlternativeLayoutChange; }, [this](bool val) {
                 auto conf = conf_copy();
                 conf->AlternativeLayoutChange = val;
                 conf_set(conf);
@@ -116,19 +116,19 @@ public:
                 FillHotkeysInfo();
                 });
 
-            BindCheckbox(m_checkBoxAllowInjected, []() {return conf_get()->AllowRemoteKeys; }, [](bool val) {
+            BindCheckbox(m_checkBoxAllowInjected, []() {return conf_get_unsafe()->AllowRemoteKeys; }, [](bool val) {
                 auto conf = conf_copy();
                 conf->AllowRemoteKeys = val;
                 conf_set(conf);
                 });
 
-            BindCheckbox(m_checkBoxClearForm, []() {return conf_get()->fClipboardClearFormat; }, [](bool val) {
+            BindCheckbox(m_checkBoxClearForm, []() {return conf_get_unsafe()->fClipboardClearFormat; }, [](bool val) {
                 auto conf = conf_copy();
                 conf->fClipboardClearFormat = val;
                 conf_set(conf);
                 });
 
-            BindCheckbox(m_checkBoxWorkInAdmin, []() {return conf_get()->isMonitorAdmin; }, [this](bool val) {
+            BindCheckbox(m_checkBoxWorkInAdmin, []() {return conf_get_unsafe()->isMonitorAdmin; }, [this](bool val) {
                 auto conf = conf_copy();
                 conf->isMonitorAdmin = val;
                 conf_set(conf);
@@ -140,7 +140,7 @@ public:
                     elem->Clear();
                     elem->AppendString(_("Russian"));
                     elem->AppendString(_("English"));
-                    elem->SetSelection((int)conf_get()->uiLang);
+                    elem->SetSelection((int)conf_get_unsafe()->uiLang);
                 }, [](wxChoice* elem) {
                     auto conf = conf_copy();
                     conf->uiLang = (SettingsGui::UiLang)elem->GetSelection();
@@ -289,7 +289,7 @@ private:
             if (!inited) 
                 return TRUE;
 
-            if (!conf_get()->showFlags)
+            if (!conf_get_unsafe()->showFlags)
                 return TRUE;
 
             SetLay((HKL)wParam);
@@ -301,14 +301,14 @@ private:
    }
 
     void updateBools() {
-        auto conf = conf_get();
+        auto conf = conf_get_unsafe();
         m_checkBoxDisablAcc->SetValue(conf->disableAccessebility);
         m_checkBoxShowFlags->SetValue(conf->showFlags);
     }
 
 
     void handleDisableAccess() {
-        if (conf_get()->disableAccessebility) {
+        if (conf_get_unsafe()->disableAccessebility) {
             AllowAccessibilityShortcutKeys(false);
         }
     }
@@ -317,7 +317,7 @@ private:
         conf->showFlags = event.IsChecked();
         conf_set(conf);
 
-        if (!conf_get()->showFlags) {
+        if (!conf_get_unsafe()->showFlags) {
             myTray.ResetIcon(myTray.standart_icon);
         } else {
             Worker()->PostMsg(HWORKER_Getcurlay);
@@ -337,7 +337,7 @@ private:
         int col = event.GetCol();
         int row = event.GetRow();
 
-        auto& hotlist = conf_get()->hotkeysList;
+        auto& hotlist = conf_get_unsafe()->hotkeysList;
         if (row >= hotlist.size()) return;
         auto& data = hotlist[row];
 
@@ -359,7 +359,7 @@ private:
         int col = event.GetCol();
         int row = event.GetRow();
 
-        auto& lays = conf_get()->layouts_info.info;
+        auto& lays = conf_get_unsafe()->layouts_info.info;
         if (row >= lays.size()) return;
         auto& data = lays[row];
 
@@ -503,9 +503,9 @@ private:
         ClearGrid(m_gridHotKeys);
 
         
-        for (int i = -1; const auto& it : conf_get()->hotkeysList) {
+        for (int i = -1; const auto& it : conf_get_unsafe()->hotkeysList) {
             i++;
-            if (it.hkId == hk_CycleLang_win_hotkey&& !conf_get()->AlternativeLayoutChange) break;
+            if (it.hkId == hk_CycleLang_win_hotkey&& !conf_get_unsafe()->AlternativeLayoutChange) break;
             m_gridHotKeys->AppendRows();
             m_gridHotKeys->SetRowLabelValue(i, it.gui_text);
             m_gridHotKeys->SetCellValue(i, 0, L" " + it.keys.ToString());
@@ -535,7 +535,7 @@ private:
             return false;
             };
 
-        auto info_copy = conf_get()->layouts_info;
+        auto info_copy = conf_get_unsafe()->layouts_info;
         auto& info = info_copy.info;
         bool was_changes = false;
 
@@ -572,13 +572,13 @@ private:
         while (m_gridLayouts->GetNumberCols() >= 3) {
             m_gridLayouts->DeleteCols(2);
         }
-        if (conf_get()->AlternativeLayoutChange) {
+        if (conf_get_unsafe()->AlternativeLayoutChange) {
             m_gridLayouts->AppendCols();
             m_gridLayouts->SetColLabelValue(2, L"Win hotkey");
         }
 
         // отобразим в gui
-        for (int i = -1; const auto& it: conf_get()->layouts_info.info) {
+        for (int i = -1; const auto& it: conf_get_unsafe()->layouts_info.info) {
             i++;
             auto name = Utils::GetNameForHKL(it.layout);
             m_gridLayouts->AppendRows();
@@ -588,7 +588,7 @@ private:
             }
             m_gridLayouts->SetCellValue(i, 1, it.hotkey.ToString());
 
-            if (conf_get()->AlternativeLayoutChange) {
+            if (conf_get_unsafe()->AlternativeLayoutChange) {
                 m_gridLayouts->SetCellValue(i, 2, it.win_hotkey.ToString());
                 m_gridLayouts->SetCellBackgroundColour(i, 2, wxColor(0xE3, 0xF2, 0xFD));
             }
@@ -600,7 +600,7 @@ private:
     }
 
     void ensureAuto(bool enable) {
-        if (conf_get()->isMonitorAdmin) {
+        if (conf_get_unsafe()->isMonitorAdmin) {
 
             IFS_LOG(DelRegRun());
 
@@ -642,7 +642,7 @@ private:
         bool isAdminHasTask = false;
         IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
 
-        m_checkAddToAutoStart->SetValue(conf_get()->isMonitorAdmin ? isAdminAllOk && !isUserHasTask
+        m_checkAddToAutoStart->SetValue(conf_get_unsafe()->isMonitorAdmin ? isAdminAllOk && !isUserHasTask
                                                                : isUserAllOk && !isAdminHasTask);
         UpdateAutostartExplain();
 
@@ -666,7 +666,7 @@ public:
     }
 
     void onAutocheck(wxCommandEvent& event) override {
-        if (conf_get()->isMonitorAdmin && !Utils::IsSelfElevated()) {
+        if (conf_get_unsafe()->isMonitorAdmin && !Utils::IsSelfElevated()) {
             m_checkAddToAutoStart->SetValue(!m_checkAddToAutoStart->GetValue());
             ShowNeedAdmin("");
             return;
