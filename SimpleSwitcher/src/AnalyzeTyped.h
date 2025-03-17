@@ -44,11 +44,13 @@ inline TKeyType AnalizeTyped(CHotKey key, UINT vk, UINT scan, HKL lay){
 	bool is_letter = Str_Utils::isLetter(curSymbol);
 	bool have_changes = false;
 
-	if (conf_get_unsafe()->layouts_info.CntLayoutEnabled() <= 3) {
+	GETCONF;
+
+	if (cfg->layouts_info.CntLayoutEnabled() <= 3) {
 
 		// проверим возможные варианты для символа.
 
-		for (const auto& it : conf_get_unsafe()->layouts_info.EnabledLayouts()) {
+		for (const auto& it : cfg->layouts_info.EnabledLayouts()) {
 			if (it != lay) {
 				auto symb = Utils::TypedToChar(vk, scan, is_shift, it);
 				if (symb != curSymbol) {

@@ -29,8 +29,6 @@ TStatus Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	if (curKeyState != KEY_STATE_DOWN)
 		RETURN_SUCCESS;
 
-	auto conf = conf_get_unsafe();
-
 	if (CHotKey::Normalize(vkCode) == VK_SHIFT) {
 		RETURN_SUCCESS;
 	}
@@ -395,10 +393,11 @@ TStatus Hooker::SendCtrlC(EClipRequest clRequest)
 
 HKL Hooker::getNextLang () {
 	HKL result = (HKL)HKL_NEXT;
-	auto conf = conf_get_unsafe();
+
+	GETCONF;
 
 	// если все enabled - то обычная циклическая смена
-	if (conf->layouts_info.AllLayoutEnabled()) {
+	if (cfg->layouts_info.AllLayoutEnabled()) {
 		return result;
 	}
 
@@ -413,7 +412,7 @@ HKL Hooker::getNextLang () {
     }
 
     HKL toSet = 0;
-	const auto& lst = conf->layouts_info.info;
+	const auto& lst = cfg->layouts_info.info;
 	for(int i = -1; const auto& it : lst){
 		i++;
         if (lay == lst[i].layout) {
@@ -443,7 +442,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
     bool allow_do_revert = true;
 
-	auto conf = conf_get_unsafe();
+	GETCONF;
 
     if (m_sTopProcName == m_sSelfExeName) {
         LOG_INFO_1(L"Skip hotkey in self program");
@@ -466,11 +465,10 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 	if (TestFlag(typeRevert, hk_RunProgram_flag)) {
 		int i = typeRevert;
 		ResetFlag(i, hk_RunProgram_flag);
-		auto conf = conf_get_unsafe();
-		if (i >= conf->run_programs.size()) {
+		if (i >= cfg->run_programs.size()) {
 			return SW_ERR_UNKNOWN;
 		}
-		const auto& it = conf->run_programs[i];
+		const auto& it = cfg->run_programs[i];
 		LOG_ANY(L"run program {} {}", it.path.wc_str(), it.args.wc_str());
 
 		procstart::CreateProcessParm parm;
@@ -510,9 +508,9 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		int i = typeRevert;
 		ResetFlag(i, hk_SetLayout_flag);
 
-		auto conf = conf_get_unsafe();
+		GETCONF;
 
-		auto info = conf->layouts_info.GetLayoutIndex(i);
+		auto info = cfg->layouts_info.GetLayoutIndex(i);
 		if (info == nullptr) {
 			LOG_WARN(L"not found hot key for set layout");
 			RETURN_SUCCESS;
@@ -581,10 +579,12 @@ TStatus Hooker::NeedRevert(HotKeyType typeRevert)
 
 TStatus Hooker::SwitchLangByEmulate(HKL lay) {
 
-	CHotKey altshift = conf_get_unsafe()->GetHk(hk_CycleLang_win_hotkey).keys.key();
+	GETCONF;
+
+	CHotKey altshift = cfg->GetHk(hk_CycleLang_win_hotkey).keys.key();
 
 	if ((int)lay != HKL_NEXT) {
-		auto info = conf_get_unsafe()->layouts_info.GetLayoutInfo(lay);
+		auto info = cfg->layouts_info.GetLayoutInfo(lay);
 		if (info == nullptr) {
 			LOG_WARN(L"not found lay info");
 			RETURN_SUCCESS;
@@ -640,7 +640,9 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 
 	IFS_RET(AnalizeTopWnd());
 
-	auto lay = conf_get_unsafe()->fixRAlt_lay_;
+	GETCONF;
+
+	auto lay = cfg->fixRAlt_lay_;
 	auto curLay = CurLay();
 
 	// сбросим любые нажатые клавиши
@@ -649,7 +651,7 @@ TStatus Hooker::FixCtrlAlt(CHotKey key) {
 	HKL temp = 0;
 	bool just_send = false;
 
-	if (conf_get_unsafe()->layouts_info.GetLayoutInfo(lay) == nullptr) {
+	if (cfg->layouts_info.GetLayoutInfo(lay) == nullptr) {
 		auto str = std::format(L"{:x}", (int)lay);
 		//const TChar* s = L"00000409";
 		LOG_ANY(L"load temp layout {}", str);

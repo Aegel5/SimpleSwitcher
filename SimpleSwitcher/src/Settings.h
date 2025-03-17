@@ -135,6 +135,7 @@ inline auto conf_get_unsafe() {
     return res; 
 }
 inline ConfPtr conf_copy() { return ConfPtr(new SettingsGui(*conf_get_unsafe())); }
+#define GETCONF auto cfg = conf_get_unsafe();
 
 
 inline int g_hotkeyWndOpened = 0;

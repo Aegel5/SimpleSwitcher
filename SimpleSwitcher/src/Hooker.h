@@ -98,9 +98,11 @@ public:
 		auto hk = keyData.data.hk;
 		const auto& key = keyData.data.hotkey;
 
+		GETCONF;
+
 		if (SettingsGui::IsNeedSavedWords(hk) && !m_cycleList.HasAnySymbol()) {
 			bool found = false;
-			for (const auto& [hk2,key2] : conf_get_unsafe()->All_hot_keys()) {
+			for (const auto& [hk2,key2] : cfg->All_hot_keys()) {
 				if (!SettingsGui::IsNeedSavedWords(hk2) && key.Compare(key2)) {
 					// Есть точно такой же хот-кей, не требующий сохраненных слов, используем его.
 					hk = hk2;

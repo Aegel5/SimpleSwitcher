@@ -155,7 +155,7 @@ public: void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code
 		SetFlag(key2.keyFlags, TKeyFlags::SYMB_SEPARATE_REVERT);
 		SetSeparateLast();
 	}
-	else if ((m_symbolList.empty() || m_symbolList.back().type == TKeyType::KEYTYPE_SPACE) && type == KEYTYPE_LEADING_POSSIBLE_LETTER) {
+	else if (type == KEYTYPE_LEADING_POSSIBLE_LETTER && (m_symbolList.empty() || m_symbolList.back().type == TKeyType::KEYTYPE_SPACE)) {
 		SetFlag(key2.keyFlags, TKeyFlags::SYMB_SEPARATE_IF_SEVERAL_REVERT);
 	}
 

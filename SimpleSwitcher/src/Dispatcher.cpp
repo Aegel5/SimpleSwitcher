@@ -220,6 +220,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 	msg_hotkey.data.hk = hk_NULL;
 	bool send_key = false;
 
+	GETCONF;
 
 	auto process = [&]() -> bool
 	{
@@ -280,21 +281,20 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 
 		int check_disabled_status = -1;
 
-		auto check_is_our_key = [&check_disabled_status](const CHotKey& k1, const CHotKey& k2) {
+		auto check_is_our_key = [&check_disabled_status,cfg](const CHotKey& k1, const CHotKey& k2) {
 			if (k1.Compare(k2, CHotKey::COMPARE_IGNORE_KEYUP)) {
 				if (check_disabled_status == -1) {
-					check_disabled_status = conf_get_unsafe()->IsSkipProgramTop() ? 1 : 0;
+					check_disabled_status = cfg->IsSkipProgramTop() ? 1 : 0;
 				}
 				return check_disabled_status == 0;
 			}
 			return false;
 			};
-		auto conf = conf_get_unsafe();
 		if (curKeyState == KeyState::KEY_STATE_DOWN) {
 			if (curk.IsEmpty())
 				return 0;
 			bool need_our_action = false;
-			for (const auto& [hk, key] : conf->All_hot_keys()) {
+			for (const auto& [hk, key] : cfg->All_hot_keys()) {
 				if (!key.GetKeyup() && check_is_our_key(key, curk)) {
 					need_our_action = true;
 					possible_hk_up.Clear(); // очищаем, потому что могли заполнить прямо в этом цикле.
@@ -320,8 +320,8 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 					&& curk.HasKey(VK_CONTROL, false)
 					&& !curk.IsKnownMods(vkCode)
 					&& vkCode == curk.ValueKey()
-					&& conf->fixRAlt
-					&& conf->fixRAlt_lay_ != 0
+					&& cfg->fixRAlt
+					&& cfg->fixRAlt_lay_ != 0
 					) {
 					LOG_INFO_1(L"fix ctrl+alt");
 					MainWorkerMsg msg(HWORKER_FixCtrlAlt);
@@ -347,7 +347,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 				// ищем наш хот-кей.
 				// даже если нашли, up никогда не запрещаем.
 				if (!possible.IsEmpty()) {
-					for (const auto& [hk, key] : conf->All_hot_keys()) {
+					for (const auto& [hk, key] : cfg->All_hot_keys()) {
 						if (key.GetKeyup() && check_is_our_key(key, possible)) {
 							msg_hotkey.data.hotkey = key;
 							msg_hotkey.data.hk = hk;
@@ -378,7 +378,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 	}
 
 
-	if (conf_get_unsafe()->EnableKeyLoggerDefence) {
+	if (cfg->EnableKeyLoggerDefence) {
 		return 0;
 	} else {
 		return CallNextHookEx(0, nCode, wParam, lParam);
