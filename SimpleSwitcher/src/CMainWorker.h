@@ -17,12 +17,6 @@ enum EHWorker
     HWORKER_OurHotKey,
 };
 
-struct KeyMsgData
-{
-	KBDLLHOOKSTRUCT ks;
-	WPARAM wParam;
-};
-
 struct MainWorkerMsg
 {
 	EHWorker mode = HWORKER_NULL;
@@ -30,14 +24,16 @@ struct MainWorkerMsg
 
 	union U
 	{
-		struct 
-		{
-			KeyMsgData keyData;
-		};
+		struct Key_Message {
+			TKeyCode   vkCode;
+			TScanCode   scanCode;
+			DWORD   flags;
+			WPARAM  wParam;
+		} key_message;
 		struct
 		{
 			WPARAM wparm;
-			LPARAM lparm;
+			//LPARAM lparm;
 		};
 		struct {
 			CHotKey hotkey_to_fix;

@@ -38,7 +38,7 @@ TStatus CMainWorker::WorkerInt()
 		}
 		else if (mode == HWORKER_KeyMsg)
 		{
-			hooker.ProcessKeyMsg(msg.data.keyData);
+			hooker.ProcessKeyMsg(msg.data.key_message);
 		}
 		else if (mode == HWORKER_OurHotKey)
 		{

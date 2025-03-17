@@ -43,7 +43,7 @@ public:
 	TStatus ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist);
 
 	void ChangeForeground(HWND hwnd);
-	void ProcessKeyMsg(KeyMsgData& keyData);
+	void ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData);
 	TStatus Init();
 	TStatus SendCtrlC(EClipRequest clRequest);
 	void RequestWaitClip(EClipRequest clRequest)

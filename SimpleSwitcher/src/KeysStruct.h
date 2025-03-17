@@ -15,9 +15,10 @@ enum TKeyType : TUInt8
 	KEYTYPE_COMMAND_NO_CLEAR,
 };
 
+using TScanCode = WORD;
 
 struct TScanCode_Ext { 
-	WORD scan = 0;
+	TScanCode scan = 0;
 	bool is_ext = false;
 };
 

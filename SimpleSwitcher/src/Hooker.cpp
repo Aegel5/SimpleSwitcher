@@ -7,21 +7,20 @@
 
 
 
-void Hooker::ProcessKeyMsg(KeyMsgData& keyData)
+void Hooker::ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData)
 {
-	KBDLLHOOKSTRUCT* k = &keyData.ks;
 	WPARAM wParam = keyData.wParam;
 
-	TKeyCode vkCode = (TKeyCode)k->vkCode;
+	TKeyCode vkCode = keyData.vkCode;
 	KeyState curKeyState = GetKeyState(wParam);
-    bool isInjected      = TestFlag(k->flags, LLKHF_INJECTED);
-    bool isAltDown      = TestFlag(k->flags, LLKHF_ALTDOWN);
+    bool isInjected      = TestFlag(keyData.flags, LLKHF_INJECTED);
+    bool isAltDown      = TestFlag(keyData.flags, LLKHF_ALTDOWN);
 	bool isSysKey = wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP;
-	bool isExtended = TestFlag(k->flags, LLKHF_EXTENDED);
+	bool isExtended = TestFlag(keyData.flags, LLKHF_EXTENDED);
 
-	TScanCode_Ext scan_ext{ (WORD)k->scanCode, isExtended };
+	TScanCode_Ext scan_ext{ keyData.scanCode, isExtended };
 
-	m_curStateWrap.Update(k, curKeyState);
+	m_curStateWrap.Update(vkCode, curKeyState);
 	auto cur_hotkey = m_curStateWrap.state;
 
 	LOG_INFO_3(L"ProcessKeyMsg %s curState=%s", CHotKey::ToString(vkCode).c_str(), cur_hotkey.ToString().c_str());
@@ -33,7 +32,7 @@ void Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 		return; // не очищаем текущий буфер нажатых клавиш так как они могут быть частью наших хот-кеев
 	}
 
-	TKeyType type = AnalizeTyped(cur_hotkey, vkCode, k->scanCode, topWndInfo2.lay);
+	TKeyType type = AnalizeTyped(cur_hotkey, vkCode, scan_ext.scan, topWndInfo2.lay);
 
 	switch (type) {
 	case KEYTYPE_BACKSPACE:
@@ -52,7 +51,20 @@ void Hooker::ProcessKeyMsg(KeyMsgData& keyData)
 	case KEYTYPE_COMMAND_NO_CLEAR:
 		break;
 	default: {
-		ClearAllWords();
+		// Если Up можем случайно очистить все.
+		// https://github.com/Aegel5/SimpleSwitcher/issues/70
+		bool possible_hk = false;
+		GETCONF;
+		for (const auto& [hk,key] : cfg->All_hot_keys()) {
+			if (IsNeedSavedWords(hk)) {
+				if (key.HasKey(vkCode, false)) {
+					possible_hk = true;
+					break;
+				}
+			}
+		}
+		if(!possible_hk)
+			ClearAllWords();
 		break;
 	}
 	}

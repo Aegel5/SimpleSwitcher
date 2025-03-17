@@ -39,17 +39,11 @@ struct CurStateWrapper {
 
 	}
 
-	void Update(KBDLLHOOKSTRUCT* kStruct, KeyState curKeyState) {
+	void Update(TKeyCode vkCode, KeyState curKeyState) {
 
 		CheckOk();
 
-		TKeyCode vkCode = (TKeyCode)kStruct->vkCode;
-		bool isAltDown = TestFlag(kStruct->flags, LLKHF_ALTDOWN);
-
 		if (curKeyState == KEY_STATE_DOWN) {
-			if (isAltDown && vkCode == VK_LCONTROL) {
-				LOG_INFO_1(L"fake LCtrl");
-			}
 			state.Add3(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
 			all_keys[vkCode] = GetTickCount64();
 		}

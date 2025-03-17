@@ -271,12 +271,16 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 
 		CHotKey possible;
 		std::swap(possible, possible_hk_up); // сразу очищаем
-
-		msg_type.data.keyData.ks = *k;
-		msg_type.data.keyData.wParam = wParam;
+		{
+			auto& data = msg_type.data.key_message;
+			data.vkCode = vkCode;
+			data.scanCode = scan_code;
+			data.flags = k->flags;
+			data.wParam = wParam;
+		}
 		send_key = true; // обрабатываем нажатие, если не будет запрета
 
-		curKey.Update(k, curKeyState); // сразу обновляем
+		curKey.Update(vkCode, curKeyState); // сразу обновляем
 		const auto& curk = curKey.state;
 
 		int check_disabled_status = -1;
