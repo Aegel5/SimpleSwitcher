@@ -76,7 +76,9 @@ inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& s
 
 	if (cfg->layouts_info.CntLayoutEnabled() <= 3) {
 
-		bool have_letter = Str_Utils::isLetter(curSymbol);
+		auto is_letter = [](wchar_t c) {return Utils::is_in(c, L'-', L'_') || Str_Utils::isLetter(c); };
+
+		bool have_letter = is_letter(curSymbol);
 		bool have_custom = !have_letter;
 		bool have_changes = false;
 
@@ -96,7 +98,7 @@ inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& s
 				if (symb != curSymbol) {
 					have_changes = true;
 				}
-				if (Str_Utils::isLetter(symb)) {
+				if (is_letter(symb)) {
 					have_letter = true;
 				}
 				else {

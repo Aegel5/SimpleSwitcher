@@ -175,11 +175,14 @@ public:
             updateCapsTab();
             handleDisableAccess();
 
-            myTray.Init();
+            myTray.Init(this);
             myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
             myTray.Bind(wxEVT_MENU, [this](auto& evt) {
                 ForceShow(this);
                 }, Minimal_Show);
+            myTray.Bind(wxEVT_MENU, [this](auto& evt) {
+                m_checkBoxEnable->SetValue(!IsCoreEnabled());
+                }, Minimal_Activate);
             myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, [this](auto& evt) {
                 ForceShow(this);
                 });
@@ -692,8 +695,7 @@ public:
     }
 
     void onEnable(wxCommandEvent& event) override {
-        auto cur = m_checkBoxEnable->IsChecked();
-        if (cur) {
+        if (IsCoreEnabled()) {
             if (startOk()) {
                 coreWork.Start();
             }
@@ -706,11 +708,28 @@ public:
         }
         updateEnable();
     }
+
+    bool IsCoreEnabled() { return m_checkBoxEnable->IsChecked(); }
+
 };
 
-//wxBEGIN_EVENT_TABLE(MainWnd, MyFrame4)
-//EVT_MENU(Minimal_Show, MainWnd::onExit)
-//wxEND_EVENT_TABLE()
+wxMenu* MyTray::CreatePopupMenu()  {
+
+    auto menu = new wxMenu();
+
+    for (int i = -1; const auto & it : conf_get_unsafe()->layouts_info.info) {
+        i++;
+        menu->Append(Minimal_SetLay_1 + i, Utils::GetNameForHKL(it.layout));
+    }
+
+    menu->AppendSeparator();
+    menu->Append(Minimal_Activate, parent->IsCoreEnabled() ? _("Disable") : _("Enable"));
+    menu->Append(Minimal_Show, _("Show"));
+    menu->Append(Minimal_Quit, _("Exit"));
+
+
+    return menu;
+}
 
 
 

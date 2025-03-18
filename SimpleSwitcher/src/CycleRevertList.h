@@ -5,18 +5,16 @@
 class CycleRevertList {
 
 	static const int c_maxWordRevert = 7;
-	static const int c_nMaxLettersSave = 100;
-	struct CycleRevert {
-		int iStartFrom = -1;
-		bool fNeedLanguageChange = false;
-	};
+	static const int c_nMaxLettersSave = 90;
 	std::deque<TKeyHookInfo> m_symbolList; // просто список всего, что сейчас набрано.
-	int m_nCurrentRevertCycle = -1;
+	int iCurrentWord = -1;
+	TScanCode_Ext last_scan;
 
 public:
 	void DeleteLastSymbol() {
 		if (!m_symbolList.empty())
 			m_symbolList.pop_back();
+		last_scan.clear();
 		ClearGenerated();
 	}
 	bool HasAnySymbol() const { return !m_symbolList.empty(); }
@@ -25,121 +23,149 @@ public:
 		ClearGenerated();
 	}
 private: void ClearGenerated() {
-	m_nCurrentRevertCycle = -1;
+	iCurrentWord = -1;
 }
 
-private: std::vector<CycleRevert> GenerateCycleRevertList(HotKeyType typeRevert) {
-	GETCONF;
-	const auto& lst = m_symbolList;
-	std::vector<CycleRevert> res;
-	int countWords = 0;
-	if (!lst.empty()) {
-		for (int i = std::ssize(lst) - 1; i >= 0; --i) {
-			auto is_ending = [&](int i) {
-				if (lst[i].is_end) return true;
-				if (Utils::is_in(KEYTYPE_CUSTOM, lst[i].type, lst[i + 1].type)) return true;
-				auto check_poosible = [&]() {
-					if (lst[i].type == KEYTYPE_LETTER_OR_CUSTOM && (i==0 || lst[i - 1].type == KEYTYPE_SPACE)) return true;
-					if (lst[i+1].type == KEYTYPE_LETTER_OR_CUSTOM && (i+2 >= lst.size() || lst[i + 2].type == KEYTYPE_SPACE)) return true;
+private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
+
+	// сначала объеденим все одинаковые сохраняя индексы старта слов.
+
+	struct ZippData { int i; TKeyType type; };
+	std::vector<ZippData> zipped;
+	{
+		TKeyHookInfo stumb;
+		TKeyHookInfo* prev = &stumb;
+		for (int i = 0; i < m_symbolList.size(); prev = &m_symbolList[i], i++) {
+			const auto& cur = m_symbolList[i];
+			auto type = cur.type;
+
+			auto check = [&]() -> bool {
+
+				if (prev->is_end) { // предыдущий реверт пользователя всегда новое слово.
+					return true;
+				}
+
+				if (cur.as_previous) { // одинаковый клавиши - всегда обрабатываются одинаково.
 					return false;
-					};
-				if (typeRevert == hk_RevertLastWord && cfg->separate_ext_last_word && check_poosible()) return true;
-				if (typeRevert == hk_RevertCycle && cfg->separate_ext_several_words && check_poosible()) return true;
-				return false;
+				}
+
+				if(Utils::is_in(type, KEYTYPE_CUSTOM, KEYTYPE_LETTER_OR_CUSTOM)) return true;
+
+				return type != prev->type;
 				};
-			if (lst[i].type != KEYTYPE_SPACE && (i == 0 || lst[i - 1].type == KEYTYPE_SPACE || is_ending(i - 1))) {
-				res.emplace_back(i, res.empty());
-				if (++countWords >= c_maxWordRevert)
-					break;
+			if (check()) {
+				zipped.emplace_back(i, type);
 			}
 		}
 	}
 
-	if (res.size() > 1) {
-		res.push_back(res.back());
-		res.back().fNeedLanguageChange = true;
+	// по сути, все уже готово, осталось лишь решить вопрос possible letter / letter.
+
+	std::vector<int> words; // индексы старта слов.
+
+	GETCONF;
+	const auto can_separate_posible =
+		(typeRevert == hk_RevertLastWord && cfg->separate_ext_last_word)
+		|| (typeRevert == hk_RevertCycle && cfg->separate_ext_several_words);
+
+
+	for (int i = -1; auto & it : zipped) {
+		i++;
+		auto check = [&]() -> bool {
+			if (it.type == KEYTYPE_SPACE) return false;
+			if (it.type == KEYTYPE_LETTER_OR_CUSTOM) {
+				bool separate = can_separate_posible;
+				if (separate) {
+					// выделаем только если слева или справа space
+					separate = i == 0 || i + 1 >= zipped.size() 
+						|| Utils::is_in(KEYTYPE_SPACE, zipped[i - 1].type, zipped[i + 1].type)
+						|| Utils::is_in(KEYTYPE_CUSTOM, zipped[i - 1].type, zipped[i + 1].type)
+						;
+				}
+
+				it.type = separate ? KEYTYPE_CUSTOM : KEYTYPE_LETTER; // теперь можем определить тип
+			}
+			if (it.type == KEYTYPE_LETTER) {
+				return i == 0 || zipped[i - 1].type != KEYTYPE_LETTER;
+			}
+			return true; // custom
+		};
+		if (check()) {
+			words.push_back(it.i);
+		}
+
 	}
 
-	if (res.empty()) {
-		CycleRevert cycleRevert = { -1, true };
-		res.push_back(cycleRevert);
-	}
+	std::reverse(words.begin(), words.end());
 
-	return res;
+	if (words.size() > c_maxWordRevert) {
+		words.resize(c_maxWordRevert);
+	}
+	return words;
+
 }
+
+
 struct RevertKeysData {
 	TKeyRevert keys;
 	bool needLanguageChange = false;
 };
+
 public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 
 	RevertKeysData keyList;
-	auto& list = keyList.keys;
 
-	CycleRevert curRevertInfo;
+	if (m_symbolList.empty()) {
+		LOG_WARN(L"empty m_symbolList");
+		return keyList;
+	}
 
-	if (typeRevert == hk_RevertAllRecentText) {
-		keyList.needLanguageChange = m_nCurrentRevertCycle <= 0;
-		m_nCurrentRevertCycle = -1;
-		
-		// простой алгоритм от позиции предыдущего реверта
-		for (int i = std::ssize(m_symbolList) - 1; i >= 0; --i) { 
-			if (i != std::ssize(m_symbolList)-1 // самый последний end не считается.
-				&& m_symbolList[i].is_end) break;
-			curRevertInfo.iStartFrom = i;
+	auto words = GenerateWords(typeRevert);
+
+	if (words.empty()) { // например одни пробелы были введены.
+		return keyList;
+	}
+
+	if (iCurrentWord >= std::ssize(words)) {
+		iCurrentWord = words.size() - 1;
+	}
+
+	int iStartFrom = -1;
+
+	keyList.needLanguageChange = iCurrentWord == -1 || iCurrentWord == words.size() - 1;
+
+	if (typeRevert == hk_RevertAllRecentText) { 		// простой алгоритм от позиции предыдущего реверта
+		iStartFrom = std::ssize(m_symbolList) - 1;
+		for (int i = std::ssize(m_symbolList) - 2; i >= 0; --i) { 
+			if (m_symbolList[i].is_end) 
+				break;
+			iStartFrom = i;
 		}
+		iCurrentWord = -1;
 	}
 	else {
 
-		auto separated = GenerateCycleRevertList(typeRevert);
-
-		if (separated.empty()) {
-			LOG_WARN(L"empty separated");
-			return keyList;
-		}
-
-		if (m_symbolList.empty()) {
-			LOG_WARN(L"empty m_symbolList");
-			return keyList;
-		}
-
-		if (m_nCurrentRevertCycle < 0) {
-			m_nCurrentRevertCycle = 0;
-		}
-
-		if (m_nCurrentRevertCycle >= separated.size()) {
-			m_nCurrentRevertCycle = separated.size() - 1;
-		}
-
-		keyList.needLanguageChange = separated[m_nCurrentRevertCycle].fNeedLanguageChange;
-
-		if (typeRevert == hk_RevertLastWord) {
-			if (m_nCurrentRevertCycle > 0) {
-				m_nCurrentRevertCycle -= 1;
-				curRevertInfo = separated[m_nCurrentRevertCycle];
-				m_nCurrentRevertCycle = 0;
-			}
-			else {
-				curRevertInfo = separated[m_nCurrentRevertCycle];
-				m_nCurrentRevertCycle = 1;
-				if (m_nCurrentRevertCycle >= (int)separated.size())
-					m_nCurrentRevertCycle = 0;
-			}
+		if (typeRevert == hk_RevertLastWord || words.size() == 1) {
+			keyList.needLanguageChange = true;
+			iStartFrom = words[0];
+			iCurrentWord = iCurrentWord == -1 ? 0 : -1;
 		}
 		else {
-			curRevertInfo = separated[m_nCurrentRevertCycle];
-			++m_nCurrentRevertCycle;
-			if (m_nCurrentRevertCycle >= (int)separated.size())
-				m_nCurrentRevertCycle = 0;
+			if (iCurrentWord == words.size()-1) {
+				// сделаем последний revert чтобы вернуть исходное состояние
+				iStartFrom = words[iCurrentWord];
+				iCurrentWord = -1;
+			}
+			else {
+				iCurrentWord++;
+				iStartFrom = words[iCurrentWord];
+			}
 		}
 	}
 
 
-	if (curRevertInfo.iStartFrom == -1)
-		return keyList;
-
-	for (int i = curRevertInfo.iStartFrom; i < (int)m_symbolList.size(); ++i) {
-		list.push_back(m_symbolList[i].decrypted().key());
+	for (int i = iStartFrom; i < std::ssize(m_symbolList); ++i) {
+		keyList.keys.push_back(m_symbolList[i].decrypted().key());
 	}
 
 	return keyList;
@@ -148,26 +174,26 @@ public: void SetSeparateLast() {
 	if (!m_symbolList.empty())
 		m_symbolList.back().is_end = true;
 }
-public: void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code) {
+public: void AddKeyToList(TKeyType type, TScanCode_Ext scan_code, bool is_shift) {
 	ClearGenerated();
 
 	while (m_symbolList.size() >= c_nMaxLettersSave) {
 		m_symbolList.pop_front();
 	}
 
-	auto vk = hotkey.ValueKey();
+	TKeyHookInfo key;
+	key.key().scan_code = scan_code;
+	if (is_shift) key.key().shift_key = VK_LSHIFT;
+	key.type = type;
+	key.encrypt();
 
-	TKeyHookInfo key2;
-
-	key2.key().vk_code = vk;
-	key2.key().scan_code = scan_code;
-	if (hotkey.Size() == 2) {
-		key2.key().shift_key = hotkey.At(1); // надеемся это shift, пока так. todo
+	if (!m_symbolList.empty()) {
+		if (last_scan.scan == 0) last_scan = m_symbolList.back().decrypted().key().scan_code;
+		if (last_scan == scan_code) key.as_previous = true;
 	}
-	key2.type = type;
+	last_scan = scan_code;
 
-	key2.encrypt();
-	m_symbolList.push_back(key2);
+	m_symbolList.push_back(key);
 }
 
 };

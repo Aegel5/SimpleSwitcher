@@ -12,12 +12,17 @@ enum
 
     Minimal_Show = wxID_HIGHEST + 1,
 
-    Minimal_SetLay_1 = wxID_HIGHEST + 2,
+    Minimal_Activate,
+
+    Minimal_SetLay_1, // last
 };
+
+class MainWnd;
 
 class MyTray : public wxTaskBarIcon {
 
     wxString trayTooltip;
+    MainWnd* parent = 0;
 
 public:
 
@@ -27,7 +32,9 @@ public:
         SetIcon(newIcon, trayTooltip);
     }
 
-    void Init() {
+    void Init(MainWnd* p) {
+
+        parent = p;
 
         if (!IsAvailable())
             return;
@@ -52,22 +59,6 @@ public:
             }
             });
     }
-
-    virtual wxMenu* CreatePopupMenu() override {
-
-        auto menu = new wxMenu();
-
-        for (int i = -1; const auto & it : conf_get_unsafe()->layouts_info.info) {
-            i++;
-            menu->Append(Minimal_SetLay_1 + i, Utils::GetNameForHKL(it.layout));
-        }
-
-        menu->AppendSeparator();
-        menu->Append(Minimal_Show, _("Show"));
-        menu->Append(Minimal_Quit, _("Exit"));
-
-
-        return menu;
-    }
+    virtual wxMenu* CreatePopupMenu() override;
 };
 

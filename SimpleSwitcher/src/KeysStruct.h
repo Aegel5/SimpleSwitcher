@@ -20,11 +20,13 @@ using TScanCode = WORD;
 struct TScanCode_Ext {
 	TScanCode scan = 0;
 	bool is_ext = false;
+	void clear() { scan = 0; }
 	UINT value() const { return is_ext ? scan | (0xE0 << 8) : scan; }
 	UINT to_vk_or_def(HKL lay, UINT vk_def=0) const {
 		auto res = MapVirtualKeyEx(value(), MAPVK_VSC_TO_VK_EX, lay);
 		return res == 0? vk_def : res;
 	}
+	auto operator<=>(const TScanCode_Ext&) const = default;
 };
 
 // базовая структура для хранения нажатия одной клавиши.
@@ -41,7 +43,6 @@ struct TKeyHookInfo{
 	union U {
 		struct {
 			TKeyBaseInfo key;
-			//wchar_t typed_symbol;
 			TUInt64 _random_data;
 		};
 		struct {
@@ -49,7 +50,6 @@ struct TKeyHookInfo{
 		};
 		U() {
 			key = {};
-			//typed_symbol = 0;
 		}
 	} crypted;
 
@@ -74,6 +74,7 @@ struct TKeyHookInfo{
 
 	TKeyType type = (TKeyType)0;
 	bool is_end = false;
+	bool as_previous = false;
 };
 
 

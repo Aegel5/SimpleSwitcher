@@ -169,7 +169,8 @@ namespace Utils
 		RETURN_SUCCESS;
 	}
 
-    template <typename First, typename... T> bool is_in(First&& first, T&&... t) { return ((first == t) || ...); }
+    bool is_in(auto&& first, auto&&... t) { return ((first == t) || ...); }
+    bool is_all(auto&& first, auto&&... t) { return ((first == t) && ...); }
 }
 
 

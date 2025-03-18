@@ -46,7 +46,7 @@ void Hooker::ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData)
 	case KEYTYPE_LETTER_OR_CUSTOM:
 	case KEYTYPE_CUSTOM:
 	{
-		m_cycleList.AddKeyToList(type, cur_hotkey, scan_ext);
+		m_cycleList.AddKeyToList(type, scan_ext, cur_hotkey.HasMod(VK_SHIFT));
 		break;
 	}
 	case KEYTYPE_COMMAND_NO_CLEAR:
@@ -527,21 +527,16 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 		IFS_RET(SW_ERR_UNKNOWN, L"Unknown typerevert %d", typeRevert);
 	}
 
-	bool isNeedLangChange = true;
-
 	auto to_revert = m_cycleList.FillKeyToRevert(typeRevert);
+	if (to_revert.keys.empty()) {
+		LOG_ANY(L"nothing to revert. skip");
+		RETURN_SUCCESS;
+	}
 	m_cycleList.SetSeparateLast();
-
-	if (typeRevert == hk_RevertLastWord){
-		isNeedLangChange = true;
-	}
-	else{
-		isNeedLangChange = to_revert.needLanguageChange;
-	}
-	
+	bool isNeedLangChange = to_revert.needLanguageChange;
+	data.keylist = std::move(to_revert.keys);
 	data.flags = SW_CLIENT_PUTTEXT | SW_CLIENT_SetLang | SW_CLIENT_BACKSPACE;
 	data.lay = isNeedLangChange ? nextLng : 0;
-	data.keylist = std::move(to_revert.keys);
 	IFS_RET(ProcessRevert(data));
 
 	RETURN_SUCCESS;
