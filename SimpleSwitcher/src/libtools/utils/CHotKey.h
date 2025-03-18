@@ -6,8 +6,8 @@ using TKeyCode = WORD;
 
 enum {
 	VK_E_1 = 0x31,
-	VK_E_2 = 0x31,
-	VK_E_3 = 0x31,
+	VK_E_2 = 0x32,
+	VK_E_3 = 0x33,
 	VK_E_CTX_MENU = 0x5D
 };
 
@@ -124,6 +124,8 @@ public:
 		Set(VK_DELETE, L"Delete");
 		Set(VK_HOME, L"Home");
 		Set(VK_END, L"End");
+		Set(VK_NEXT, L"PageDown");
+		Set(VK_PRIOR, L"PageUp");
 		Set(VK_PAUSE, L"Break");
 		Set(VK_PRINT, L"PrintScreen");
 		Set(VK_SNAPSHOT, vkMap[VK_PRINT]);

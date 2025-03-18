@@ -29,19 +29,21 @@ private: void ClearGenerated() {
 }
 
 private: std::vector<CycleRevert> GenerateCycleRevertList(HotKeyType typeRevert) {
+	GETCONF;
+	const auto& lst = m_symbolList;
 	std::vector<CycleRevert> res;
 	int countWords = 0;
-	if (!m_symbolList.empty()) {
-		for (int i = std::ssize(m_symbolList) - 1; i >= 0; --i) {
+	if (!lst.empty()) {
+		for (int i = std::ssize(lst) - 1; i >= 0; --i) {
 			auto is_ending = [&](int i) {
-				if (m_symbolList[i].is_end) return true;
+				if (lst[i].is_end) return true;
 				auto check_type = [&](auto type) {
-					if (m_symbolList[i].type == type) return true;
-					if (i < std::ssize(m_symbolList) - 1 && m_symbolList[i + 1].type == type) return true;
+					if (lst[i].type == type || lst[i + 1].type == type) return true;
 					return false;
 					};
 				if (check_type(KEYTYPE_CUSTOM)) return true;
-				if (typeRevert == hk_RevertCycle && check_type(KEYTYPE_LETTER_OR_CUSTOM)) return true;
+				if (typeRevert == hk_RevertLastWord && cfg->separate_ext_last_word && check_type(KEYTYPE_LETTER_OR_CUSTOM)) return true;
+				if (typeRevert == hk_RevertCycle && cfg->separate_ext_several_words && check_type(KEYTYPE_LETTER_OR_CUSTOM)) return true;
 				return false;
 				};
 			auto add = [&](int i) {
@@ -50,7 +52,7 @@ private: std::vector<CycleRevert> GenerateCycleRevertList(HotKeyType typeRevert)
 					return true;
 				return false;
 				};
-			if (m_symbolList[i].type != KEYTYPE_SPACE && (i == 0 || m_symbolList[i - 1].type == KEYTYPE_SPACE || is_ending(i - 1))) {
+			if (lst[i].type != KEYTYPE_SPACE && (i == 0 || lst[i - 1].type == KEYTYPE_SPACE || is_ending(i - 1))) {
 				if (add(i))
 					break;
 			}
@@ -165,7 +167,7 @@ public: void AddKeyToList(TKeyType type, CHotKey hotkey, TScanCode_Ext scan_code
 	key2.key().vk_code = vk;
 	key2.key().scan_code = scan_code;
 	if (hotkey.Size() == 2) {
-		key2.key().shift_key = hotkey.At(1); // надеемся это shift, пока так.
+		key2.key().shift_key = hotkey.At(1); // надеемся это shift, пока так. todo
 	}
 	key2.type = type;
 

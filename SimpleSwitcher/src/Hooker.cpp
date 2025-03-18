@@ -32,7 +32,14 @@ void Hooker::ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData)
 		return; // не очищаем текущий буфер нажатых клавиш так как они могут быть частью наших хот-кеев
 	}
 
-	TKeyType type = AnalizeTyped(cur_hotkey, vkCode, scan_ext.scan, topWndInfo2.lay);
+	if (keyData.hk != hk_NULL) { // это событие down для нашей hot key up. https://github.com/Aegel5/SimpleSwitcher/issues/70
+		if (!IsNeedSavedWords(keyData.hk)) {
+			ClearAllWords();
+		}
+		return; // пропуск.
+	}
+
+	TKeyType type = AnalizeTyped(cur_hotkey, vkCode, scan_ext, topWndInfo2.lay);
 
 	switch (type) {
 	case KEYTYPE_BACKSPACE:
@@ -51,20 +58,7 @@ void Hooker::ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData)
 	case KEYTYPE_COMMAND_NO_CLEAR:
 		break;
 	default: {
-		// Если Up можем случайно очистить все.
-		// https://github.com/Aegel5/SimpleSwitcher/issues/70
-		bool possible_hk = false;
-		GETCONF;
-		for (const auto& [hk,key] : cfg->All_hot_keys()) {
-			if (IsNeedSavedWords(hk)) {
-				if (key.HasKey(vkCode, false)) {
-					possible_hk = true;
-					break;
-				}
-			}
-		}
-		if(!possible_hk)
-			ClearAllWords();
+		ClearAllWords();
 		break;
 	}
 	}
@@ -413,34 +407,17 @@ HKL Hooker::getNextLang () {
 
     auto lay = CurLay();
     if (lay == 0) {
-        // к сожалению наш список работать не будет (
-        // TODO возможно будет работать если послать несколь NEXT чтобы пропустить ненужную раскладку (нужен монитор тек
-        // языка)
-
-		LOG_WARN(L"___ NOT FOUND CUR LAY while customLangList.size > 1");
+		LOG_WARN(L"___ NOT FOUND CUR LAY");
         return result;
     }
 
-    HKL toSet = 0;
-	const auto& lst = cfg->layouts_info.info;
-	for(int i = -1; const auto& it : lst){
-		i++;
-        if (lay == lst[i].layout) {
-            if (i == lst.size() - 1) {
-                toSet = lst[0].layout;
-            } else {
-                toSet = lst[i + 1].layout;
-            }
-            break;
-        }
-    }
-    if (toSet == 0) // not found
-    {
-        LOG_WARN(L"not found hwnd lay in our list");
-        toSet = lst[0].layout;
-    }
+	lay = cfg->layouts_info.NextEnabledLayout(lay);
+	if (lay == 0) {
+		LOG_WARN(L"___ NOT FOUND NEXT LAY");
+	}
 
-    return toSet;
+
+    return lay;
 };
 
 

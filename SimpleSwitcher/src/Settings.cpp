@@ -173,7 +173,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     layouts_info, 
     fixRAlt,
     fixRAlt_lay_,
-    run_programs
+    run_programs,
+    separate_ext_last_word,
+    separate_ext_several_words
     )
     
 

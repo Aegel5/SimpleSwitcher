@@ -1,15 +1,7 @@
 ﻿#pragma once
 
 
-#define SW_NAMESPACE(X) namespace X {
-#define SW_NAMESPACE_END }
-
-// Base functions
-
 #define SW_ARRAY_SIZE(V)		(sizeof(V) / sizeof(V[0]))
-#define SW_ARRAY_END(V)		(V + sizeof(V) / sizeof(V[0]))
-#define SW_STRING_LENGTH(V)	(sizeof(V) / sizeof(V[0]) - 1)
-#define SW_ARRAY_ZEROEND(V)	(V[(sizeof(V) / sizeof(V[0])) - 1] = 0)
 
 typedef unsigned __int64 TUInt64;
 typedef signed   __int64 TInt64;
@@ -35,16 +27,11 @@ typedef const TAChar* TAStr;
 typedef std::wstring tstring;
 
 template <typename T1, typename T2>
-inline bool TestMask(T1 V, T2 M)
+inline bool TestFlagAll(T1 V, T2 F)
 {
-	return M == (V & M);
+	return (V & F) == F;
 }
 
-template <typename T1, typename T2>
-inline bool TestMaskAny(T1 V, T2 M)
-{
-	return (V & M) != 0;
-}
 
 template <typename T1, typename T2>
 inline bool TestFlag(T1 V, T2 F)
@@ -97,8 +84,3 @@ inline void SwZeroMemory(T& t)
 	ZeroMemory(&t, sizeof(T));
 }
 
-//inline TUInt32 GetTick()
-//{
-//#pragma warning(suppress: 28159)
-//	return GetTickCount();
-//}

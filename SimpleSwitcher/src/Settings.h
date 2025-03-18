@@ -72,6 +72,9 @@ public:
     bool AllowRemoteKeys = false;
     bool AlternativeLayoutChange = false;
 
+    bool separate_ext_last_word = false;
+    bool separate_ext_several_words = false;
+
     std::vector< CHotKeySet> hotkeysList;
     std::vector< RunProgramInfo> run_programs = { {.path = L"example: calc.exe"} };
 

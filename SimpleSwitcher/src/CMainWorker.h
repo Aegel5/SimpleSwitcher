@@ -29,6 +29,7 @@ struct MainWorkerMsg
 			TScanCode   scanCode;
 			DWORD   flags;
 			WPARAM  wParam;
+			HotKeyType hk;
 		} key_message;
 		struct
 		{

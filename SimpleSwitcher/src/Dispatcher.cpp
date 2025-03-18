@@ -229,20 +229,26 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		TKeyCode vkCode = (TKeyCode)k->vkCode;
 		KeyState curKeyState = GetKeyState(wParam);
 		bool isInjected = TestFlag(k->flags, LLKHF_INJECTED);
+		bool is_low_inject = TestFlag(k->flags, LLKHF_LOWER_IL_INJECTED);
 		bool isAltDown = TestFlag(k->flags, LLKHF_ALTDOWN);
 		bool isSysKey = wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP;
 		bool isExtended = TestFlag(k->flags, LLKHF_EXTENDED);
+		bool is_pressed = !TestFlag(k->flags, LLKHF_UP);
 		auto scan_code = k->scanCode;
 
 		LOG_ANY(
-			L"KEY_MSG: {}({}),scan={},inject={},altdown={},syskey={},extended={}", 
+			L"KEY_MSG: {}({:x}) {},scan=0x{:x},inject={},low_inject={},altdown={},syskey={},extended={},is_pressed={},flags=0x{:b}", 
 			HotKeyNames::Global().GetName(vkCode),
+			vkCode,
 			(curKeyState == KEY_STATE_UP ? L"UP": L"DOWN"),
 			scan_code,
 			isInjected,
+			is_low_inject,
 			isAltDown,
 			isSysKey,
-			isExtended
+			isExtended,
+			is_pressed,
+			k->flags
 		);
 
 		if (k->vkCode > 255)
@@ -277,6 +283,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 			data.scanCode = scan_code;
 			data.flags = k->flags;
 			data.wParam = wParam;
+			data.hk = hk_NULL;
 		}
 		send_key = true; // обрабатываем нажатие, если не будет запрета
 
@@ -310,6 +317,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 				}
 				if (key.GetKeyup() && check_is_our_key(key, curk)) {
 					possible_hk_up = curk; // без break
+					msg_type.data.hk = hk; // уведомим, что это наша клавиша.
 				}
 			}
 			if (need_our_action) {

@@ -88,6 +88,21 @@ struct LayoutInfoList {
         for (const auto& it : EnabledLayouts()) cnt++;
         return cnt;
     }
+    HKL NextEnabledLayout(HKL lay) const {
+        bool found = false;
+        for (int i = 0; i < 2; i++) {
+            for (const auto& it : EnabledLayouts()) {
+                if (it == lay)
+                    found = true;
+                else {
+                    if (found)
+                        return it;
+                }
+            }
+        }
+        // не нашли?
+        return 0;
+    }
 
     bool HasLayout(HKL lay) const {
         return GetLayoutInfo(lay) != nullptr;
