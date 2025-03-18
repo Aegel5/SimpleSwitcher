@@ -9,15 +9,9 @@
 
 void Hooker::ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData)
 {
-	WPARAM wParam = keyData.wParam;
-
 	TKeyCode vkCode = keyData.vkCode;
-	KeyState curKeyState = GetKeyState(wParam);
-    bool isInjected      = TestFlag(keyData.flags, LLKHF_INJECTED);
-    bool isAltDown      = TestFlag(keyData.flags, LLKHF_ALTDOWN);
-	bool isSysKey = wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP;
+	KeyState curKeyState = keyData.keyState;
 	bool isExtended = TestFlag(keyData.flags, LLKHF_EXTENDED);
-
 	TScanCode_Ext scan_ext{ keyData.scanCode, isExtended };
 
 	m_curStateWrap.Update(vkCode, curKeyState);

@@ -282,7 +282,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 			data.vkCode = vkCode;
 			data.scanCode = scan_code;
 			data.flags = k->flags;
-			data.wParam = wParam;
+			data.keyState = curKeyState;
 			data.hk = hk_NULL;
 		}
 		send_key = true; // обрабатываем нажатие, если не будет запрета

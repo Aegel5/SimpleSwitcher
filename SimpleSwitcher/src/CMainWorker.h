@@ -28,8 +28,8 @@ struct MainWorkerMsg
 			TKeyCode   vkCode;
 			TScanCode   scanCode;
 			DWORD   flags;
-			WPARAM  wParam;
 			HotKeyType hk;
+			KeyState keyState;
 		} key_message;
 		struct
 		{
