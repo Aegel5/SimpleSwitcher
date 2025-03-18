@@ -6,7 +6,7 @@
 inline TStatus SetRegRun()
 {
 	std::wstring sPath;
-    IFS_RET(GetPath_exe_noLower(sPath));
+    IFS_RET(Utils::GetPath_exe_noLower(sPath));
 
 	IFS_RET(Startup::AddWindowsRun(c_sRegRunValue, sPath.c_str(), c_sArgAutostart));
 
@@ -20,7 +20,7 @@ inline TStatus DelRegRun()
 inline TStatus CheckRegRun(bool& isAllOk, bool& isHasTask)
 {
 	std::wstring sPath;
-    IFS_RET(GetPath_exe_noLower(sPath));
+    IFS_RET(Utils::GetPath_exe_noLower(sPath));
 
 	IFS_RET(Startup::CheckAutoStartUser(isAllOk, isHasTask, c_sRegRunValue, sPath.c_str(), c_sArgAutostart));
 
@@ -31,7 +31,7 @@ inline TStatus SetSchedule()
 {
 
 	std::wstring sPath;
-    IFS_RET(GetPath_exe_noLower(sPath));
+    IFS_RET(Utils::GetPath_exe_noLower(sPath));
 
 	Startup::CreateTaskSheduleParm parm;
 	parm.fAsAdmin = true;
@@ -56,7 +56,7 @@ inline TStatus DelSchedule()
 inline TStatus CheckSchedule(bool& isAllOk, bool& isHasTask)
 {
 	std::wstring sPath;
-    IFS_RET(GetPath_exe_noLower(sPath));
+    IFS_RET(Utils::GetPath_exe_noLower(sPath));
 
 	Startup::CheckTaskSheduleParm parm;
 	parm.taskName = c_wszTaskName;

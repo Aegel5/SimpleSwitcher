@@ -317,7 +317,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 				}
 				if (key.GetKeyup() && check_is_our_key(key, curk)) {
 					possible_hk_up = curk; // без break
-					msg_type.data.hk = hk; // уведомим, что это наша клавиша.
+					msg_type.data.key_message.hk = hk; // уведомим, что это наша клавиша.
 				}
 			}
 			if (need_our_action) {

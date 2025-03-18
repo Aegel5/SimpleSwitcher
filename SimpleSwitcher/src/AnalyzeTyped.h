@@ -16,32 +16,33 @@ inline TKeyType AnalizeTyped(CHotKey key, UINT vk, TScanCode_Ext scan, HKL lay){
 	}
 
 	switch (vk) {
+
+	case VK_TAB:
+	case VK_SPACE:
+		return KEYTYPE_SPACE;
+
+	case VK_BACK:
+		return KEYTYPE_BACKSPACE;
+
+	case VK_RETURN:
+	case VK_END:
+	case VK_HOME:
+	case VK_NEXT:
+	case VK_PRIOR:
+	case VK_DELETE:
+	case VK_LEFT:
+	case VK_RIGHT:
+	case VK_DOWN:
+	case VK_UP:
+	case VK_ESCAPE:
+		return KEYTYPE_COMMAND_CLEAR;
+
 	case VK_CAPITAL:
 	case VK_SCROLL:
 	case VK_PRINT:
 	case VK_NUMLOCK:
 	case VK_INSERT:
 		return KEYTYPE_COMMAND_NO_CLEAR;
-
-	case VK_RETURN:
-
-	case VK_END:
-	case VK_HOME:
-	case VK_NEXT:
-	case VK_PRIOR:
-
-	case VK_DELETE:
-
-	case VK_LEFT:
-	case VK_RIGHT:
-	case VK_DOWN:
-	case VK_UP:
-		return KEYTYPE_COMMAND_CLEAR;
-	case VK_TAB:
-	case VK_SPACE:
-		return KEYTYPE_SPACE;
-	case VK_BACK:
-		return KEYTYPE_BACKSPACE;
 	}
 
 	GETCONF;
@@ -105,7 +106,7 @@ inline TKeyType AnalizeTyped(CHotKey key, UINT vk, TScanCode_Ext scan, HKL lay){
 			}
 		}
 		if (!have_changes) {
-			return KEYTYPE_SPACE;
+			return have_letter ? KEYTYPE_LETTER : KEYTYPE_SPACE;
 		}
 		if (!have_letter) {
 			return KEYTYPE_CUSTOM;

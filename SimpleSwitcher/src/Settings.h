@@ -4,6 +4,18 @@
 
 #include "ConfigData.h"
 
+inline TStatus GetPath_Conf(std::wstring& path) {
+    IFS_RET(Utils::GetPath_folder_noLower(path));
+    path += L"SimpleSwitcher.json";
+    RETURN_SUCCESS;
+}
+
+inline std::wstring GetPath_Conf() {
+    std::wstring path;
+    IFS_LOG(GetPath_Conf(path));
+    return path;
+}
+
 class SettingsGui {
 public:
     SettingsGui() {
@@ -16,7 +28,7 @@ public:
     void NormalizePaths() {
         for (const auto& it : disableInPrograms) {
             auto cur = it.Lower();
-            std::replace(cur.begin(), cur.end(), L'/', L'\\');
+            Utils::NormalizeDelims(cur);
             disableInPrograms_normalized.insert(cur);
         }
     }

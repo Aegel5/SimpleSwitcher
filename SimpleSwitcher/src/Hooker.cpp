@@ -61,7 +61,7 @@ void Hooker::ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData)
 
 TStatus Hooker::Init() {
 	ClearAllWords();
-    IFS_LOG(GetPath_fileExe_lower(m_sSelfExeName));
+    IFS_LOG(Utils::GetPath_fileExe_lower(m_sSelfExeName));
 	RETURN_SUCCESS;
 
 }
@@ -450,10 +450,12 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 			return SW_ERR_UNKNOWN;
 		}
 		const auto& it = cfg->run_programs[i];
-		LOG_ANY(L"run program {} {}", it.path.wc_str(), it.args.wc_str());
+		auto path = it.path;
+		Utils::NormalizeDelims(path);
+		LOG_ANY(L"run program {} {}", path.wc_str(), it.args.wc_str());
 
 		procstart::CreateProcessParm parm;
-		parm.sExe = it.path.wc_str();
+		parm.sExe = path.wc_str();
 		parm.sCmd = it.args.wc_str();
 
 		// todo - use proxy process for unelevated.

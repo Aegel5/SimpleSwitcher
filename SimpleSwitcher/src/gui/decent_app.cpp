@@ -24,6 +24,15 @@ wxIMPLEMENT_APP(MyApp);
 
 COM::CAutoCOMInitialize autoCom;
 
+namespace {
+    TStatus update_cur_dir() {
+        std::wstring dir;
+        IFS_RET(Utils::GetPath_folder_noLower(dir));
+        IFW_RET(SetCurrentDirectory(dir.c_str()));
+        RETURN_SUCCESS;
+    }
+}
+
 bool MyApp::OnInit() {
     // call the base class initialization method, currently it only parses a
     // few common command-line options but it could be do more in the future
@@ -73,6 +82,8 @@ bool MyApp::OnInit() {
         static CMainWorker mainWorker;
         gdata().mainWorker = &mainWorker;
         //IFS_LOG(Worker()->ReStart());
+
+        IFS_LOG(update_cur_dir());
 
         StartMainGui(!is_autostart, errLoadConf != SW_ERR_SUCCESS);
     }

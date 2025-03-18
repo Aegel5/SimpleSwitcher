@@ -186,7 +186,7 @@ TStatus LoadConfig(SettingsGui& gui) {
 
         std::wstring path_old;
         std::wstring path_new;
-        IFS_RET(GetPath_folder_noLower(path_old));
+        IFS_RET(Utils::GetPath_folder_noLower(path_old));
         path_new = path_old;
         path_old += L"conf.json";
         path_new += L"SimpleSwitcher.json";
