@@ -1,6 +1,6 @@
-#pragma once
+ï»¿#pragma once
 
-inline TKeyType AnalizeTyped(CHotKey key, UINT vk, TScanCode_Ext scan, HKL lay){
+inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& scan, HKL lay){
 
 	bool is_shift = key.HasMod(VK_SHIFT);
 
@@ -70,9 +70,8 @@ inline TKeyType AnalizeTyped(CHotKey key, UINT vk, TScanCode_Ext scan, HKL lay){
 		return KEYTYPE_LETTER; // dead symbol
 
 	LOG_ANY_4(L"char {}", curSymbol);
-
 	if (Str_Utils::isDigit(curSymbol)) {
-		return KEYTYPE_LETTER; // íèêîãäà íå ÿâëÿþòñÿ ðàçäåëèòåëÿìè
+		return KEYTYPE_LETTER; // Ð½Ð¸ÐºÐ¾Ð³Ð´Ð° Ð½Ðµ ÑÐ²Ð»ÑÑŽÑ‚ÑÑ Ñ€Ð°Ð·Ð´ÐµÐ»Ð¸Ñ‚ÐµÐ»ÑÐ¼Ð¸
 	}
 
 	if (cfg->layouts_info.CntLayoutEnabled() <= 3) {
@@ -81,7 +80,7 @@ inline TKeyType AnalizeTyped(CHotKey key, UINT vk, TScanCode_Ext scan, HKL lay){
 		bool have_custom = !have_letter;
 		bool have_changes = false;
 
-		// ïðîâåðèì âîçìîæíûå âàðèàíòû äëÿ ñèìâîëà.
+		// Ð¿Ñ€Ð¾Ð²ÐµÑ€Ð¸Ð¼ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ñ‹Ðµ Ð²Ð°Ñ€Ð¸Ð°Ð½Ñ‚Ñ‹ Ð´Ð»Ñ ÑÐ¸Ð¼Ð²Ð¾Ð»Ð°.
 
 		for (const auto& it : cfg->layouts_info.EnabledLayouts()) {
 			if (it != lay) {

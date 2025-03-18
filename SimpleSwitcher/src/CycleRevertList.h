@@ -37,26 +37,21 @@ private: std::vector<CycleRevert> GenerateCycleRevertList(HotKeyType typeRevert)
 		for (int i = std::ssize(lst) - 1; i >= 0; --i) {
 			auto is_ending = [&](int i) {
 				if (lst[i].is_end) return true;
-				auto check_type = [&](auto type) {
-					if (lst[i].type == type || lst[i + 1].type == type) return true;
+				if (Utils::is_in(KEYTYPE_CUSTOM, lst[i].type, lst[i + 1].type)) return true;
+				auto check_poosible = [&]() {
+					if (lst[i].type == KEYTYPE_LETTER_OR_CUSTOM && (i==0 || lst[i - 1].type == KEYTYPE_SPACE)) return true;
+					if (lst[i+1].type == KEYTYPE_LETTER_OR_CUSTOM && (i+2 >= lst.size() || lst[i + 2].type == KEYTYPE_SPACE)) return true;
 					return false;
 					};
-				if (check_type(KEYTYPE_CUSTOM)) return true;
-				if (typeRevert == hk_RevertLastWord && cfg->separate_ext_last_word && check_type(KEYTYPE_LETTER_OR_CUSTOM)) return true;
-				if (typeRevert == hk_RevertCycle && cfg->separate_ext_several_words && check_type(KEYTYPE_LETTER_OR_CUSTOM)) return true;
-				return false;
-				};
-			auto add = [&](int i) {
-				res.push_back({ i, res.empty() });
-				if (++countWords >= c_maxWordRevert)
-					return true;
+				if (typeRevert == hk_RevertLastWord && cfg->separate_ext_last_word && check_poosible()) return true;
+				if (typeRevert == hk_RevertCycle && cfg->separate_ext_several_words && check_poosible()) return true;
 				return false;
 				};
 			if (lst[i].type != KEYTYPE_SPACE && (i == 0 || lst[i - 1].type == KEYTYPE_SPACE || is_ending(i - 1))) {
-				if (add(i))
+				res.emplace_back(i, res.empty());
+				if (++countWords >= c_maxWordRevert)
 					break;
 			}
-
 		}
 	}
 
@@ -72,10 +67,10 @@ private: std::vector<CycleRevert> GenerateCycleRevertList(HotKeyType typeRevert)
 
 	return res;
 }
-	   struct RevertKeysData {
-		   TKeyRevert keys;
-		   bool needLanguageChange = false;
-	   };
+struct RevertKeysData {
+	TKeyRevert keys;
+	bool needLanguageChange = false;
+};
 public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 
 	RevertKeysData keyList;

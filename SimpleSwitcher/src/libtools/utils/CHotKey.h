@@ -386,7 +386,7 @@ public:
 		return true;
 	}
 	TKeyCode At(int i) {return keys[i];}
-	bool HasMod(TKeyCode k, bool strick_modifier = false)
+	bool HasMod(TKeyCode k, bool strick_modifier = false) const
 	{
 		if(size <= 1)
 			return false;
@@ -615,7 +615,7 @@ public:
 		return false;
 	}
 private:
-	bool CompareIgnoreOrder(const TKeyCode* list1, const TKeyCode* list2, int size, bool checkLeftRight) const
+	bool CompareIgnoreOrder(const TKeyCode* list1, const TKeyCode* list2, int size, bool strick_modifier) const
 	{
 		for(int i = 0; i < size; ++i)
 		{
@@ -623,7 +623,7 @@ private:
 			bool found = false;
 			for (int j = 0; j < size; ++j)
 			{
-				if (CompareKeys(k, list2[j], checkLeftRight))
+				if (CompareKeys(k, list2[j], strick_modifier))
 				{
 					found = true;
 					break;

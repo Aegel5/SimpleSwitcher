@@ -11,7 +11,7 @@ namespace Str_Utils
 		return std::iswalpha(symb);
 	}
 	inline bool isDigit(wchar_t symb) {
-		return std::isdigit(symb);
+		return std::iswdigit(symb);
 	}
 	// trim from start (in place)
 	static inline void trim_int(std::wstring &s, TStr chars, bool fLeft, bool fRight) 

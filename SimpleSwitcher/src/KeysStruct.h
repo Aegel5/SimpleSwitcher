@@ -20,8 +20,8 @@ using TScanCode = WORD;
 struct TScanCode_Ext {
 	TScanCode scan = 0;
 	bool is_ext = false;
-	UINT value() { return is_ext ? scan | (0xE0 << 8) : scan; }
-	UINT to_vk_or_def(HKL lay, UINT vk_def=0) {
+	UINT value() const { return is_ext ? scan | (0xE0 << 8) : scan; }
+	UINT to_vk_or_def(HKL lay, UINT vk_def=0) const {
 		auto res = MapVirtualKeyEx(value(), MAPVK_VSC_TO_VK_EX, lay);
 		return res == 0? vk_def : res;
 	}
