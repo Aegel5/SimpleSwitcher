@@ -30,8 +30,9 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 
 	// сначала объеденим все одинаковые сохраняя индексы старта слов.
 
-	struct ZippData { int i; TKeyType type; };
+	struct ZippData { int i; TKeyType type; bool is_last_revert = false; };
 	std::vector<ZippData> zipped;
+	zipped.reserve(8);
 	{
 		TKeyHookInfo stumb;
 		TKeyHookInfo* prev = &stumb;
@@ -39,11 +40,12 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 			const auto& cur = m_symbolList[i];
 			auto type = cur.type;
 
-			auto check = [&]() -> bool {
+			if (prev->is_last_revert) { 
+				zipped.emplace_back(i, type, true);
+				continue;
+			}
 
-				if (prev->is_end) { // предыдущий реверт пользователя всегда новое слово.
-					return true;
-				}
+			auto check = [&]() -> bool {
 
 				if (cur.as_previous) { // одинаковый клавиши - всегда обрабатываются одинаково.
 					return false;
@@ -90,6 +92,9 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 				}
 
 				it.type = separate ? KEYTYPE_CUSTOM : KEYTYPE_LETTER; // теперь можем определить тип
+			}
+			if (it.is_last_revert) { // форсируем разделение.
+				return true;
 			}
 			if (it.type == KEYTYPE_LETTER) {
 				return i == 0 || zipped[i - 1].type != KEYTYPE_LETTER;
@@ -143,7 +148,7 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 	if (typeRevert == hk_RevertAllRecentText) { 		// простой алгоритм от позиции предыдущего реверта
 		iStartFrom = std::ssize(m_symbolList) - 1;
 		for (int i = std::ssize(m_symbolList) - 2; i >= 0; --i) { 
-			if (m_symbolList[i].is_end) 
+			if (m_symbolList[i].is_last_revert) 
 				break;
 			iStartFrom = i;
 		}
@@ -178,7 +183,7 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 }
 public: void SetSeparateLast() {
 	if (!m_symbolList.empty())
-		m_symbolList.back().is_end = true;
+		m_symbolList.back().is_last_revert = true;
 }
 public: void AddKeyToList(TKeyType type, TScanCode_Ext scan_code, bool is_shift) {
 	ClearGenerated();

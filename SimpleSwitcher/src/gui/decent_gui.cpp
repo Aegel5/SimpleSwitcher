@@ -94,11 +94,7 @@ public:
                 });
 
             BindButtom(m_buttonDelAllPanels, [this]() {
-                std::vector<FloatPanel*> to_del;
-                for (auto p : all_panels()) {
-                    to_del.push_back(p);
-                    p->Destroy();
-                }
+                std::vector to_del{ std::from_range, all_panels() };
                 for (auto p : to_del) {
                     p->Destroy();
                 }

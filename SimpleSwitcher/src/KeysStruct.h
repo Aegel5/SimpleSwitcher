@@ -73,8 +73,8 @@ struct TKeyHookInfo{
 
 	// open part
 
-	TKeyType type = (TKeyType)0;
-	bool is_end = false;
+	TKeyType type = TKeyType::KEYTYPE_NONE;
+	bool is_last_revert = false;
 	bool as_previous = false;
 };
 
