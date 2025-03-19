@@ -163,6 +163,11 @@ inline void conf_set(ConfPtr& conf) {
     IFS_LOG(Save()); // сразу сохраняем в файл.
 }
 
+inline void SaveConfigWith(auto set) {
+    auto conf = conf_copy();
+    set(conf);
+    conf_set(conf);
+}
 
 
 

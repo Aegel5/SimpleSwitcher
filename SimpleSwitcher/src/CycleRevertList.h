@@ -72,6 +72,12 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 	for (int i = -1; auto & it : zipped) {
 		i++;
 		auto check = [&]() -> bool {
+			if (it.type == KEYTYPE_LETTER_OR_SPACE) {
+				// не разделяем слово без надобности.
+				it.type = (i > 0 && i < std::ssize(zipped) - 1 && Utils::is_all(KEYTYPE_LETTER, zipped[i - 1].type, zipped[i + 1].type))
+					? KEYTYPE_LETTER
+					: KEYTYPE_SPACE;
+			}
 			if (it.type == KEYTYPE_SPACE) return false;
 			if (it.type == KEYTYPE_LETTER_OR_CUSTOM) {
 				bool separate = can_separate_posible;

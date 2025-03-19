@@ -59,6 +59,7 @@ class MyFrame4 : public wxFrame
 		wxCheckBox* m_checkBoxDisablAcc;
 		wxCheckBox* m_checkBoxClearForm;
 		wxCheckBox* m_checkBoxAllowInjected;
+		wxCheckBox* m_checkBoxSeparateExt;
 		wxCheckBox* m_checkDebuglog;
 		wxButton* m_buttonReloadConfig;
 		wxHyperlinkCtrl* m_hyperlink11;

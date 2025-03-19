@@ -41,17 +41,15 @@ void Hooker::ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData)
 		m_cycleList.DeleteLastSymbol();
 		break;
 	}
-	case KEYTYPE_LETTER:
-	case KEYTYPE_SPACE:
-	case KEYTYPE_LETTER_OR_CUSTOM:
-	case KEYTYPE_CUSTOM:
+	default:
 	{
 		m_cycleList.AddKeyToList(type, scan_ext, cur_hotkey.HasMod(VK_SHIFT));
 		break;
 	}
 	case KEYTYPE_COMMAND_NO_CLEAR:
 		break;
-	default: {
+	case KEYTYPE_NONE:
+	case KEYTYPE_COMMAND_CLEAR: {
 		ClearAllWords();
 		break;
 	}

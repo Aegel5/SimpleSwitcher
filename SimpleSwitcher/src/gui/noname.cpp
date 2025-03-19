@@ -91,6 +91,9 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBoxAllowInjected = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Allow remote keys"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer8->Add( m_checkBoxAllowInjected, 0, wxALL, 5 );
 
+	m_checkBoxSeparateExt = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Extended word separation"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer8->Add( m_checkBoxSeparateExt, 0, wxALL, 5 );
+
 	m_checkDebuglog = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Enable debug log"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer8->Add( m_checkDebuglog, 0, wxALL, 5 );
 

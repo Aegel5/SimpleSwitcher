@@ -71,7 +71,7 @@ inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& s
 
 	LOG_ANY_4(L"char {}", curSymbol);
 	if (Str_Utils::isDigit(curSymbol)) {
-		return KEYTYPE_LETTER; // никогда не являются разделителями
+		return KEYTYPE_LETTER_OR_SPACE; 
 	}
 
 	if (cfg->layouts_info.CntLayoutEnabled() <= 3) {
@@ -107,7 +107,7 @@ inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& s
 			}
 		}
 		if (!have_changes) {
-			return have_letter ? KEYTYPE_LETTER : KEYTYPE_SPACE;
+			return have_letter ? KEYTYPE_LETTER_OR_SPACE : KEYTYPE_SPACE;
 		}
 		if (!have_letter) {
 			return KEYTYPE_CUSTOM;

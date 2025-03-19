@@ -66,7 +66,7 @@ public:
             );
 
             auto sz = GetSize();
-            sz.x = std::max((double)sz.x, sz.x * 1.15);
+            sz.x = std::max((double)sz.x, sz.x * 1.2);
             SetSize(sz);
 
 
@@ -112,18 +112,24 @@ public:
                 SetLogLevel_info(val? conf_get_unsafe()->logLevel : LOG_LEVEL_0);
                 });
 
-            BindCheckbox(m_checkBoxFixRAlt, []() {return conf_get_unsafe()->fixRAlt; }, [](bool val) {
-                auto conf = conf_copy();
-                conf->fixRAlt = val;
-                conf_set(conf);
+            BindCheckbox(m_checkBoxFixRAlt, 
+                []() {return conf_get_unsafe()->fixRAlt; }, 
+                [](bool val) {
+                    SaveConfigWith([val](ConfPtr& conf) {conf->fixRAlt = val; });
                 });
             m_checkBoxFixRAlt->SetLabelText(m_checkBoxFixRAlt->GetLabelText() + L" \"" + Utils::GetNameForHKL(conf_get_unsafe()->fixRAlt_lay_)+"\"");
 
-            BindCheckbox(m_checkBoxPrevent, []() {return conf_get_unsafe()->EnableKeyLoggerDefence; }, [](bool val) {
-                auto conf = conf_copy();
-                conf->EnableKeyLoggerDefence = val;
-                conf_set(conf);
+            BindCheckbox(m_checkBoxPrevent, 
+                []() {return conf_get_unsafe()->EnableKeyLoggerDefence; }, 
+                [](bool val) {
+                    SaveConfigWith([val](ConfPtr& conf) {conf->EnableKeyLoggerDefence = val; });
              });
+
+            BindCheckbox(m_checkBoxSeparateExt,
+                []() {return conf_get_unsafe()->separate_ext_last_word && conf_get_unsafe()->separate_ext_several_words; },
+                [](bool val) {
+                    SaveConfigWith([val](ConfPtr& conf) {conf->separate_ext_last_word = conf->separate_ext_several_words = val; });
+                });
 
             BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get_unsafe()->AlternativeLayoutChange; }, [this](bool val) {
                 auto conf = conf_copy();
@@ -182,6 +188,7 @@ public:
                 }, Minimal_Show);
             myTray.Bind(wxEVT_MENU, [this](auto& evt) {
                 m_checkBoxEnable->SetValue(!IsCoreEnabled());
+                ApplyEnabled();
                 }, Minimal_Activate);
             myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, [this](auto& evt) {
                 ForceShow(this);
@@ -190,6 +197,9 @@ public:
             if (startOk()) {
                 coreWork.Start();
             }
+
+            BindCheckbox(m_checkBoxEnable, []() {return false; }, [this](auto val) {ApplyEnabled(); });
+
             updateEnable();
 
         }
@@ -694,7 +704,7 @@ public:
         updateAutoStart();
     }
 
-    void onEnable(wxCommandEvent& event) override {
+    void ApplyEnabled() {
         if (IsCoreEnabled()) {
             if (startOk()) {
                 coreWork.Start();
