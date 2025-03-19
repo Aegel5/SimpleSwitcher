@@ -63,7 +63,7 @@ inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& s
 		LOG_ANY(L"bad mapping");
 	}
 
-	auto curSymbol = Utils::VkCodeToChar(isBadMapping ? vk : scan.to_vk_or_def(lay,vk), scan.value(), is_shift, lay);
+	auto curSymbol = Utils::VkCodeToChar(isBadMapping ? vk : scan.to_vk_or_def(lay,vk), scan.scan, is_shift, lay);
 	if (curSymbol == 0)
 		return KEYTYPE_COMMAND_CLEAR;
 	if(curSymbol == -1)
@@ -86,7 +86,7 @@ inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& s
 
 		for (const auto& it : cfg->layouts_info.EnabledLayouts()) {
 			if (it != lay) {
-				auto symb = Utils::VkCodeToChar(isBadMapping ? vk : scan.to_vk_or_def(it,vk), scan.value(), is_shift, it);
+				auto symb = Utils::VkCodeToChar(isBadMapping ? vk : scan.to_vk_or_def(it,vk), scan.scan, is_shift, it);
 				if (symb == -1) {
 					LOG_WARN(L"dead symbol on other layout");
 					return KEYTYPE_LETTER;

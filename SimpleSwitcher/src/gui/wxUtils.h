@@ -33,5 +33,6 @@ namespace WxUtils {
     inline void ForceShow(wxFrame* f) {
         f->Show(true);
         f->Restore();
+        f->Raise();
     }
 }

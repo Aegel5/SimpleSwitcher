@@ -8,13 +8,13 @@ class CycleRevertList {
 	static const int c_nMaxLettersSave = 90;
 	std::deque<TKeyHookInfo> m_symbolList; // просто список всего, что сейчас набрано.
 	int iCurrentWord = -1;
-	TScanCode_Ext last_scan;
+	TKeyBaseInfo last_info;
 
 public:
 	void DeleteLastSymbol() {
 		if (!m_symbolList.empty())
 			m_symbolList.pop_back();
-		last_scan.clear();
+		last_info = {};
 		ClearGenerated();
 	}
 	bool HasAnySymbol() const { return !m_symbolList.empty(); }
@@ -196,14 +196,14 @@ public: void AddKeyToList(TKeyType type, TScanCode_Ext scan_code, bool is_shift)
 	key.key().scan_code = scan_code;
 	if (is_shift) key.key().shift_key = VK_LSHIFT;
 	key.type = type;
-	key.encrypt();
 
 	if (!m_symbolList.empty()) {
-		if (last_scan.scan == 0) last_scan = m_symbolList.back().decrypted().key().scan_code;
-		if (last_scan == scan_code) key.as_previous = true;
+		if (last_info.scan_code.scan == 0) last_info = m_symbolList.back().decrypted().key();
+		if (last_info == key.key()) key.as_previous = true;
 	}
-	last_scan = scan_code;
+	last_info = key.key();
 
+	key.encrypt();
 	m_symbolList.push_back(key);
 }
 
