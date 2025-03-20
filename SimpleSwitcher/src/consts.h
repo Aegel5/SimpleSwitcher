@@ -18,7 +18,6 @@ static const UINT c_timerPrintAlive = 9;
 //static const UINT c_timerWaitClip = 10;
 static const UINT c_timerGetCurLayout = 11;
 static const UINT c_timerKeyloggerDefence = 12;
-static const UINT c_timerGetcurlay = 13;
 
 static const UINT c_msgRevertID = WM_NULL;
 static const WPARAM c_msgWParm = (WPARAM)0x9F899984;

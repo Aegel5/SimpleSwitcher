@@ -71,9 +71,6 @@ class CoreWorker {
 		auto timeId = SetTimer(hWnd, c_timerKeyloggerDefence, 5000, NULL);
 		IFW_LOG(timeId != 0);
 
-		timeId = SetTimer(hWnd, c_timerGetcurlay, 200, NULL);
-		IFW_LOG(timeId != 0);
-
 		Hooker hooker;
 		IFS_LOG(hooker.StartHook());
 
@@ -101,18 +98,10 @@ class CoreWorker {
 			}
 			else if (mesg == WM_TIMER) {
 				UINT_PTR timerId = msg.wParam;
-				if (timerId == 0) {
-					int k = 0;
-				}
-
 				if (timerId == c_timerKeyloggerDefence) {
 					if (conf_get_unsafe()->EnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
 						//IFS_LOG(resethook()); // ???
 					}
-				}
-				else if (timerId == c_timerGetcurlay) {
-					Worker()->PostMsgW(HWORKER_WM_TIMER, timerId);
-
 				}
 				else {
 					IFW_LOG(KillTimer(hWnd, timerId));

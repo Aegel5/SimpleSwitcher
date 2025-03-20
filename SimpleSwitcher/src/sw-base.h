@@ -46,8 +46,10 @@
 // core-worker
 #include "globals.h"
 #include "CClipWorker.h"
-#include "CMainWorker.h"
+#include "CMainWorkerMsg.h"
 #include "WorkerImplement.h"
+#include "CMainWorker.h"
+
 #include "Hooker.h"
 #include "HookerThread.h"
 

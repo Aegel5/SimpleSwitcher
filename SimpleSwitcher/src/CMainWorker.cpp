@@ -49,23 +49,14 @@ TStatus CMainWorker::WorkerInt()
 			{
 				IFS_LOG(workerImpl.ClipboardClearFormat2());
 			}
-            else if (timerId == c_timerGetcurlay)
-            {
-                if (conf_get_unsafe()->showFlags) {
-                    workerImpl.CheckCurLay();
-                }
-            }
-			//else if (timerId == c_timerWaitClip)
-			//{
-			//	IFS_LOG(hooker.TimerProcWaitClip2());
-			//}
+
 			else
 			{
 				LOG_INFO_1(L"[WARN] Unknown timerId=%Iu", timerId);
 			}
 		}
 		else if (mode == HWORKER_Getcurlay) {
-            workerImpl.CheckCurLay(true);
+            workerImpl.CheckCurLay(msg.data.wparm);
         }
 		else if (mode == HWORKER_Setcurlay) {
 			workerImpl.SetNewLay(msg.data.lay);

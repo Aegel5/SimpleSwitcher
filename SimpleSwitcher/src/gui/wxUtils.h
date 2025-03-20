@@ -1,4 +1,5 @@
 namespace WxUtils {
+
     void BindCheckbox(wxCheckBox* elem, auto get, auto set) {
         elem->SetValue(get());
         elem->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED,
@@ -35,4 +36,16 @@ namespace WxUtils {
         f->Restore();
         f->Raise();
     }
+
+    class Timers {
+        wxVector<std::unique_ptr<wxTimer>> lst;
+    public:
+        void StartCycle(int delay, auto trigger) {
+            lst.emplace_back(new wxTimer());
+            lst.back()->Bind(wxEVT_TIMER, [trigger](auto& evt) {
+                trigger();
+                });
+            lst.back()->Start(delay);
+        }
+    };
 }
