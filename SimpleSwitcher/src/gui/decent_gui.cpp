@@ -135,11 +135,11 @@ public:
                 FillHotkeysInfo();
                 });
 
-            BindCheckbox(m_checkBoxAllowInjected, []() {return conf_get_unsafe()->AllowRemoteKeys; }, [](bool val) {
-                auto conf = conf_copy();
-                conf->AllowRemoteKeys = val;
-                conf_set(conf);
-                });
+            //BindCheckbox(m_checkBoxAllowInjected, []() {return conf_get_unsafe()->AllowRemoteKeys_; }, [](bool val) {
+            //    auto conf = conf_copy();
+            //    conf->AllowRemoteKeys_ = val;
+            //    conf_set(conf);
+            //    });
 
             BindCheckbox(m_checkBoxClearForm, []() {return conf_get_unsafe()->fClipboardClearFormat; }, [](bool val) {
                 auto conf = conf_copy();

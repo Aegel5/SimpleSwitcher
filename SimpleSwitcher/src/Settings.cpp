@@ -167,7 +167,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     disableInPrograms,
     logLevel,
     uiLang,
-    AllowRemoteKeys,
+    AllowRemoteKeys_,
     AlternativeLayoutChange,
     config_version,
     layouts_info, 

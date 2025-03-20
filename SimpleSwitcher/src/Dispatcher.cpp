@@ -262,7 +262,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		}
 
 		if (isInjected) {
-			if (!InjectSkipper::Inst().IsAllowInject()) 
+			if (InjectSkipper::Inst().IsInjectOur()) 
 				return 0;
 		}
 

@@ -4,7 +4,7 @@
 
 struct CurStateWrapper {
 
-	CHotKey state;
+	CHotKey state; // todo генерировать на лету 1) full hotkey 2) "one-key-value" hotkey
 
 	int Size() {
 		return all_keys.size();

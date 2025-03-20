@@ -115,6 +115,11 @@ public:
 			}
 		}
 
+		if (key.GetKeyup()) {
+			LOG_ANY(L"pause for #up key"); // дадим событию up время на обработку в ОС, так как для нас, она уже поднята.
+			Sleep(5);
+		}
+
 		IFS_LOG(NeedRevert(hk));
 
 	}

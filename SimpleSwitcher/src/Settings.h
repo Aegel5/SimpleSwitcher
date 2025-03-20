@@ -81,7 +81,7 @@ public:
     bool EnableKeyLoggerDefence = false;
     bool disableAccessebility    = false;
     bool showFlags = IsWindows10OrGreater();
-    bool AllowRemoteKeys = false;
+    bool AllowRemoteKeys_ = true;
     bool AlternativeLayoutChange = false;
 
     bool separate_ext_last_word = false;
@@ -89,8 +89,6 @@ public:
 
     std::vector< CHotKeySet> hotkeysList;
     std::vector< RunProgramInfo> run_programs = { {.path = L"example: calc.exe"} };
-
-
 
     LayoutInfoList layouts_info;
 
