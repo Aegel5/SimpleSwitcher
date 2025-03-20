@@ -63,6 +63,8 @@ bool MyApp::OnInit() {
 
         setlocale(LC_ALL, "en_US.utf8");
 
+        LOG_ANY(L"Start program {}", SW_VERSION);
+
         if (conf->config_version != SW_VERSION) {
             conf->config_version = SW_VERSION;
             IFS_LOG(Save()); // пересохраним конфиг, чтобы туда добавились все последние настройки, которые заполнены по-умолчанию.
