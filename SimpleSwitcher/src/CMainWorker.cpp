@@ -1,9 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include "CMainWorker.h"
-#include "WorkerImplement.h"
-#include "Dispatcher.h"
-
 
 TStatus CMainWorker::WorkerInt()
 {

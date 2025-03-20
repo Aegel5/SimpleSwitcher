@@ -1,9 +1,4 @@
 
-
-
-
-
-
 struct CHotKeyList {
 
     std::vector<CHotKey> keys{ 1 };

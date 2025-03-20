@@ -1,12 +1,5 @@
 ﻿#pragma once
 
-#include "CClipWorker.h"
-#include "CycleRevertList.h"
-
-#include "AnalyzeTyped.h"
-
-
-
 class WorkerImplement
 {
 private:

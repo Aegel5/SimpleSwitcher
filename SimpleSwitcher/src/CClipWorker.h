@@ -1,16 +1,5 @@
 ﻿#pragma once
 
-#include "CMainWorker.h"
-
-//enum ClipMode
-//{
-//	ClipMode_GetClipString,
-//	ClipMode_ClipClearFormat,
-//	ClipMode_SavePrevData,
-//	ClipMode_RestoreClipData,
-//	//ClipMode_InsertData,
-//};
-
 enum EClipRequest
 {
 	CLRMY_NONE = 0,
@@ -21,23 +10,11 @@ enum EClipRequest
     CLRMY_hk_RESTORE,
 };
 
-//struct TClipMessage
-//{
-//	ClipMode mode;
-//
-//	union
-//	{
-//		EClipRequest request;
-//	};
-//};
 
 class CClipWorker
 {
 private:
-	//std::mutex  mtxClipboardData;
-	//std::wstring m_sClipData;
-	//std::wstring m_clipboardSave;
-	//ThreadQueue::CThreadQueue<TClipMessage> m_queueClip;
+
 
 	TStatus GetFromClipBoardOur(std::wstring& data)
 	{
@@ -70,7 +47,7 @@ private:
             RETURN_SUCCESS;
         }
 		CAutoClipBoard clip;
-		IFS_RET(clip.Open(gdata().hWndMonitor));
+		IFS_RET(clip.Open(g_MonitorHandle));
 		IFS_RET(GetFromClipBoardOur(data));
 
 		RETURN_SUCCESS;
@@ -110,7 +87,7 @@ private:
             RETURN_SUCCESS;
 
         CAutoClipBoard clip;
-        IFS_RET(clip.Open(gdata().hWndMonitor));
+        IFS_RET(clip.Open(g_MonitorHandle));
         IFS_RET(PutToClipBoardOur(data));
 
         RETURN_SUCCESS;
@@ -207,7 +184,7 @@ public:
         }
 
         CAutoClipBoard clip;
-        IFS_RET(clip.Open(gdata().hWndMonitor));
+        IFS_RET(clip.Open(g_MonitorHandle));
 
         UINT format = 0;
         bool fFound = false;

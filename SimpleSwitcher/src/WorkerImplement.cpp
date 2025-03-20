@@ -1,12 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include "WorkerImplement.h"
-#include "Dispatcher.h"
-
-#include "gui/decent_gui.h"
-
-
-
 void WorkerImplement::ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData)
 {
 	TKeyCode vkCode = keyData.vkCode;
@@ -70,7 +63,7 @@ TStatus ClipHasTextFormating(bool& fres)
 	fres = false;
 
 	CAutoClipBoard clip;
-	IFS_RET(clip.Open(gdata().hWndMonitor));
+	IFS_RET(clip.Open(g_MonitorHandle));
 
 	UINT format = 0;
 	while (1)
@@ -93,7 +86,7 @@ TStatus ClipHasTextFormating(bool& fres)
 void PrintClipboardFormats()
 {
 	CAutoClipBoard clip;
-	IFS_LOG(clip.Open(gdata().hWndMonitor));
+	IFS_LOG(clip.Open(g_MonitorHandle));
 
 	UINT format = 0;
 	while (1)
@@ -162,7 +155,7 @@ TStatus WorkerImplement::ClipboardClearFormat2()
 
 TStatus RequestClearFormat()
 {
-	auto timeId = SetTimer(gdata().hWndMonitor, c_timerIdClearFormat, 500, NULL);
+	auto timeId = SetTimer(g_MonitorHandle, c_timerIdClearFormat, 500, NULL);
 	IFW_RET(timeId != 0);
 	RETURN_SUCCESS;
 }

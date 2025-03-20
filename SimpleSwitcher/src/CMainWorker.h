@@ -99,5 +99,11 @@ public:
 		PostMsg(msg);
 	}
 
+	static CMainWorker& Inst() {
+		static CMainWorker inst;
+		return inst;
+	}
+
 
 };
+inline CMainWorker* Worker() { return &CMainWorker::Inst(); }

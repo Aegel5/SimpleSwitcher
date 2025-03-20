@@ -6,9 +6,6 @@
 #include <Winuser.h>
 #include <Psapi.h>
 
-
-
-
 #include <stdlib.h>
 #include <assert.h>
 #include <malloc.h>
@@ -23,27 +20,37 @@
 #include <format>
 #include <deque>
 #include <list>
-
 #include <generator>
 #include <ranges>
 
+// утилиты
 #include "inc_basic.h"
 #include "utils/ScanMap.h"
 #include "utils/getpath.h"
 #include "utils/procstart.h"
 #include "utils/layout-utils.h"
-#include "consts.h"
 
+// base
+#include "ver.h"
+#include "consts.h"
 #include "Settings.h"
+
+// core-worker-utils
 #include "InjectSkipper.h"
 #include "KeysStruct.h"
 #include "InputSender.h"
 #include "KeysCurState.h"
+#include "CycleRevertList.h"
+#include "AnalyzeTyped.h"
 
-#include "ver.h"
+// core-worker
+#include "globals.h"
+#include "CClipWorker.h"
+#include "WorkerImplement.h"
+#include "CMainWorker.h"
+#include "Hooker.h"
+#include "HookerThread.h"
 
-#define ___SW_ADD_STR_UT(X) L##X
-#define _SW_ADD_STR_UT(X) ___SW_ADD_STR_UT(X)
 
 
 

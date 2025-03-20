@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "Dispatcher.h"
-
 #include "ConfigData.h"
 
 inline TStatus GetPath_Conf(std::wstring& path) {

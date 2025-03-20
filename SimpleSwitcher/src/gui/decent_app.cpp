@@ -1,9 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include "gui/decent_gui.h"
-
-#include "CMainWorker.h"
-
 extern void StartMainGui(bool show, bool err_msg);
 
 class MyApp : public wxApp
@@ -79,11 +75,6 @@ bool MyApp::OnInit() {
             trans->SetLanguage(wxLANGUAGE_RUSSIAN);
             trans->AddCatalog("lang");
         }
-
-        // Запускаем воркера, теперь он будет работать всегда, даже когда программа выключена, чтобы указатели всегда были валидны.
-        static CMainWorker mainWorker;
-        gdata().mainWorker = &mainWorker;
-        //IFS_LOG(Worker()->ReStart());
 
         IFS_LOG(update_cur_dir());
 

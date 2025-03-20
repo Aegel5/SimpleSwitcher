@@ -1,19 +1,11 @@
 ﻿#include "stdafx.h"
 
 #include "noname.h" 
-#include "Settings.h"
-#include "CoreWorker.h"
 #include "SwAutostart.h"
-#include "decent_gui.h"
-
 #include "FloatPanel.h"
-
 #include "utils/accessibil.h"
-
 #include <wx/taskbar.h>
-
 #include "wxUtils.h"
-
 #include "Tray.h"
 
 using namespace WxUtils;
@@ -70,7 +62,7 @@ public:
             SetSize(sz);
 
 
-            m_staticTextBuildDate->SetLabelText(std::format(L"Built on '{}'", _SW_ADD_STR_UT(__DATE__)));
+            m_staticTextBuildDate->SetLabelText(std::format("Built on '{}'", __DATE__));
 
             m_hyperlink11->SetLabel(GetPath_Conf());
             m_hyperlink11->SetURL(std::format(L"file://{}", GetPath_Conf()));
