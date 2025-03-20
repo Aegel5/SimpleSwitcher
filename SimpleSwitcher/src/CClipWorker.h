@@ -47,7 +47,7 @@ private:
             RETURN_SUCCESS;
         }
 		CAutoClipBoard clip;
-		IFS_RET(clip.Open(g_MonitorHandle));
+		IFS_RET(OpenClipboard(clip));
 		IFS_RET(GetFromClipBoardOur(data));
 
 		RETURN_SUCCESS;
@@ -87,7 +87,7 @@ private:
             RETURN_SUCCESS;
 
         CAutoClipBoard clip;
-        IFS_RET(clip.Open(g_MonitorHandle));
+        IFS_RET(OpenClipboard(clip));
         IFS_RET(PutToClipBoardOur(data));
 
         RETURN_SUCCESS;
@@ -184,7 +184,7 @@ public:
         }
 
         CAutoClipBoard clip;
-        IFS_RET(clip.Open(g_MonitorHandle));
+        IFS_RET(OpenClipboard(clip));
 
         UINT format = 0;
         bool fFound = false;

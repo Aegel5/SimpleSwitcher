@@ -63,7 +63,7 @@ TStatus ClipHasTextFormating(bool& fres)
 	fres = false;
 
 	CAutoClipBoard clip;
-	IFS_RET(clip.Open(g_MonitorHandle));
+	IFS_RET(OpenClipboard(clip));
 
 	UINT format = 0;
 	while (1)
@@ -86,7 +86,7 @@ TStatus ClipHasTextFormating(bool& fres)
 void PrintClipboardFormats()
 {
 	CAutoClipBoard clip;
-	IFS_LOG(clip.Open(g_MonitorHandle));
+	IFS_LOG(OpenClipboard(clip));
 
 	UINT format = 0;
 	while (1)

@@ -55,7 +55,7 @@ class CoreWorker {
 
 		IFW_LOG(RegisterClassEx(&wcex) != 0);
 
-		HWND hWnd = CreateWindow(
+		auto hWnd = CreateWindow(
 			c_sClassNameServer2,
 			L"Title",
 			WS_OVERLAPPEDWINDOW,
@@ -63,11 +63,9 @@ class CoreWorker {
 			0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
 		IFW_RET(hWnd != NULL);
-
 		g_MonitorHandle = hWnd;
 
 		IFW_LOG(AddClipboardFormatListener(hWnd));
-
 		IFW_LOG(ChangeWindowMessageFilterEx(hWnd, WM_LayNotif, MSGFLT_ALLOW, 0));
 
 		auto timeId = SetTimer(hWnd, c_timerKeyloggerDefence, 5000, NULL);
@@ -117,7 +115,7 @@ class CoreWorker {
 
 				}
 				else {
-					IFW_LOG(KillTimer(g_MonitorHandle, timerId));
+					IFW_LOG(KillTimer(hWnd, timerId));
 					Worker()->PostMsgW(HWORKER_WM_TIMER, timerId);
 				}
 
