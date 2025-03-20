@@ -55,6 +55,8 @@ _Также возможно:_
   ![изображение](https://github.com/user-attachments/assets/a6bc2155-ff08-4227-80b2-e2fd64e66aa1)
  </details>
 
+## Разделение текста на слова
+
 ## Отключение Ctrl + LAlt как RAlt на расширенных раскладках
 Подробнее: https://github.com/Aegel5/SimpleSwitcher/issues/54
 
