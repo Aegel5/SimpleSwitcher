@@ -27,7 +27,7 @@ namespace Utils
 		buf[0] = 0;
 
 		int flag = IsWindowsVistaOrGreater() ? LOCALE_SNAME : LOCALE_SLANGUAGE;
-		int len = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, SW_ARRAY_SIZE(buf));
+		int len = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, std::ssize(buf));
 		IFW_LOG(len != 0);
 
 		if (len == 0) {

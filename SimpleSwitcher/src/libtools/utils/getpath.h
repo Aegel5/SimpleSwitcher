@@ -11,7 +11,7 @@ namespace Utils {
 
 	inline TStatus __GetPath(std::wstring& sPath, TPathType type, bool tolower) {
 		TCHAR buf[0x1000];
-		DWORD nSize = GetModuleFileName(NULL, buf, SW_ARRAY_SIZE(buf));
+		DWORD nSize = GetModuleFileName(NULL, buf, std::ssize(buf));
 		IFW_RET(nSize > 0);
 
 		sPath = buf;

@@ -41,7 +41,7 @@ namespace Startup
 			&hg));
 		DWORD type = 0;
 		wchar_t data[0x1000];
-		DWORD size = SW_ARRAY_SIZE(data) - sizeof(wchar_t);
+		DWORD size = std::ssize(data) - sizeof(wchar_t);
 		auto res = RegQueryValueEx(hg, keyName, 0, &type, (PBYTE)data, &size);
 		if (res != ERROR_SUCCESS)
 		{

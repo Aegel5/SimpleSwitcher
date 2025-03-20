@@ -235,7 +235,7 @@ namespace Str_Utils
 			utf8,
 			-1,
 			buf,
-			SW_ARRAY_SIZE(buf)
+			std::ssize(buf)
 			);
 
 		IFW_RET(res != 0);
@@ -261,7 +261,7 @@ namespace Str_Utils
 			wide,
 			-1,
 			buf,
-			SW_ARRAY_SIZE(buf),
+			std::ssize(buf),
 			NULL,
 			NULL);
 

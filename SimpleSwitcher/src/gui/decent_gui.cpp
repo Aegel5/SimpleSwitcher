@@ -279,7 +279,7 @@ private:
         buf[0] = 0;
 
         int flag = LOCALE_SNAME;
-        int len = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, SW_ARRAY_SIZE(buf));
+        int len = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, std::ssize(buf));
         IFW_LOG(len != 0);
 
         wxBitmapBundle bndl;
@@ -551,7 +551,7 @@ private:
     void SyncLayouts() {
 
         HKL all_lays[50] = { 0 };
-        int all_lay_size = GetKeyboardLayoutList(SW_ARRAY_SIZE(all_lays), all_lays);
+        int all_lay_size = GetKeyboardLayoutList(std::ssize(all_lays), all_lays);
         auto has_system_layout = [&](HKL lay) {
             for (int i = 0; i < all_lay_size; i++) {
                 auto cur = all_lays[i];

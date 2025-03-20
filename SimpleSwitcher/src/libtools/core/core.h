@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-
-#define SW_ARRAY_SIZE(V)		(sizeof(V) / sizeof(V[0]))
-
 typedef unsigned __int64 TUInt64;
 typedef signed   __int64 TInt64;
 typedef unsigned __int32 TUInt32;
