@@ -7,7 +7,7 @@
 
 
 
-class Hooker
+class WorkerImplement
 {
 private:
 
@@ -144,8 +144,6 @@ public:
 	CurStateWrapper m_curStateWrap;
 
 };
-
-inline Hooker* g_hooker;
 
 
 

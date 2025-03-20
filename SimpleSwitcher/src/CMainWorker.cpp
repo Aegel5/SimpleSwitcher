@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 
 #include "CMainWorker.h"
-#include "Hooker.h"
+#include "WorkerImplement.h"
 #include "Dispatcher.h"
 
 
@@ -12,9 +12,8 @@ TStatus CMainWorker::WorkerInt()
 	COM::CAutoCOMInitialize autoCom;
 	IFS_LOG(autoCom.Init());
 
-	Hooker hooker;
-	IFS_RET(hooker.Init());
-	g_hooker = &hooker;
+	WorkerImplement workerImpl;
+	IFS_RET(workerImpl.Init());
 
 	MainWorkerMsg msg (HWORKER_NULL);
 	while (true)
@@ -26,38 +25,38 @@ TStatus CMainWorker::WorkerInt()
 		auto mode = msg.mode;
 		if (mode == HWORKER_ClearWords)
 		{
-			hooker.ClearAllWords();
+			workerImpl.ClearAllWords();
 		}
 		else if (mode == HWORKER_ClipNotify)
 		{
-			hooker.CliboardChanged();
+			workerImpl.CliboardChanged();
 		}
 		else if (mode == HWORKER_ChangeForeground)
 		{
-			hooker.ChangeForeground((HWND)msg.data.wparm);
+			workerImpl.ChangeForeground((HWND)msg.data.wparm);
 		}
 		else if (mode == HWORKER_KeyMsg)
 		{
-			hooker.ProcessKeyMsg(msg.data.key_message);
+			workerImpl.ProcessKeyMsg(msg.data.key_message);
 		}
 		else if (mode == HWORKER_OurHotKey)
 		{
-			hooker.ProcessOurHotKey(msg);
+			workerImpl.ProcessOurHotKey(msg);
 		}
 		else if (mode == HWORKER_FixCtrlAlt) {
-			IFS_LOG(hooker.FixCtrlAlt(msg.data.hotkey_to_fix));
+			IFS_LOG(workerImpl.FixCtrlAlt(msg.data.hotkey_to_fix));
 		}
 		else if (mode == HWORKER_WM_TIMER)
 		{
 			UINT_PTR timerId = msg.data.wparm;
 			if (timerId == c_timerIdClearFormat)
 			{
-				IFS_LOG(hooker.ClipboardClearFormat2());
+				IFS_LOG(workerImpl.ClipboardClearFormat2());
 			}
             else if (timerId == c_timerGetcurlay)
             {
                 if (conf_get_unsafe()->showFlags) {
-                    hooker.CheckCurLay();
+                    workerImpl.CheckCurLay();
                 }
             }
 			//else if (timerId == c_timerWaitClip)
@@ -70,10 +69,10 @@ TStatus CMainWorker::WorkerInt()
 			}
 		}
 		else if (mode == HWORKER_Getcurlay) {
-            hooker.CheckCurLay(true);
+            workerImpl.CheckCurLay(true);
         }
 		else if (mode == HWORKER_Setcurlay) {
-			hooker.SetNewLay(msg.data.lay);
+			workerImpl.SetNewLay(msg.data.lay);
 		}
 		else
 		{

@@ -1,13 +1,13 @@
 ﻿#include "stdafx.h"
 
-#include "Hooker.h"
+#include "WorkerImplement.h"
 #include "Dispatcher.h"
 
 #include "gui/decent_gui.h"
 
 
 
-void Hooker::ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData)
+void WorkerImplement::ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData)
 {
 	TKeyCode vkCode = keyData.vkCode;
 	KeyState curKeyState = keyData.keyState;
@@ -57,7 +57,7 @@ void Hooker::ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData)
 }
 
 
-TStatus Hooker::Init() {
+TStatus WorkerImplement::Init() {
 	ClearAllWords();
     IFS_LOG(Utils::GetPath_fileExe_lower(m_sSelfExeName));
 	RETURN_SUCCESS;
@@ -106,7 +106,7 @@ void PrintClipboardFormats()
 		}
 	}
 }
-TStatus Hooker::ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist)
+TStatus WorkerImplement::ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist)
 {
 
 	HKL layouts[10];
@@ -153,7 +153,7 @@ TStatus Hooker::ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist)
 	RETURN_SUCCESS;
 }
 
-TStatus Hooker::ClipboardClearFormat2()
+TStatus WorkerImplement::ClipboardClearFormat2()
 {
 	//m_clipWorker.PostMsg(ClipMode_ClipClearFormat);
 	IFS_LOG(m_clipWorker.ClipboardClearFormat());
@@ -183,7 +183,7 @@ void toUpper(std::wstring& buf) {
 
 }
 
-TStatus Hooker::GetClipStringCallback() {
+TStatus WorkerImplement::GetClipStringCallback() {
 	LOG_INFO_1(L"GetClipStringCallback");
 
 	auto data = m_clipWorker.getCurString();
@@ -237,7 +237,7 @@ TStatus Hooker::GetClipStringCallback() {
 	RETURN_SUCCESS;
 }
 
-TStatus Hooker::ClipboardChangedInt()
+TStatus WorkerImplement::ClipboardChangedInt()
 {
 	LOG_INFO_1(L"ClipboardChangedInt");
 
@@ -306,7 +306,7 @@ TStatus Hooker::ClipboardChangedInt()
 	RETURN_SUCCESS;
 }
 
-void Hooker::ChangeForeground(HWND hwnd)
+void WorkerImplement::ChangeForeground(HWND hwnd)
 {
 	LOG_INFO_2(L"Now foreground hwnd=0x%x", hwnd);
 	DWORD procId = 0;
@@ -321,7 +321,7 @@ void Hooker::ChangeForeground(HWND hwnd)
 	m_dwIdProcoreground = procId; 
 }
 
-TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
+TStatus WorkerImplement::ProcessRevert(ContextRevert& ctxRevert)
 {
 	bool fDels = false;
 
@@ -370,7 +370,7 @@ TStatus Hooker::ProcessRevert(ContextRevert& ctxRevert)
 }
 
 
-TStatus Hooker::SendCtrlC(EClipRequest clRequest)
+TStatus WorkerImplement::SendCtrlC(EClipRequest clRequest)
 {
     m_savedClipData = m_clipWorker.getCurString();
 
@@ -387,7 +387,7 @@ TStatus Hooker::SendCtrlC(EClipRequest clRequest)
 }
 
 
-HKL Hooker::getNextLang () {
+HKL WorkerImplement::getNextLang () {
 	HKL result = (HKL)HKL_NEXT;
 
 	GETCONF;
@@ -413,7 +413,7 @@ HKL Hooker::getNextLang () {
 };
 
 
-TStatus Hooker::NeedRevert2(ContextRevert& data)
+TStatus WorkerImplement::NeedRevert2(ContextRevert& data)
 {
 	HotKeyType typeRevert = data.typeRevert;
 
@@ -539,7 +539,7 @@ TStatus Hooker::NeedRevert2(ContextRevert& data)
 
 	RETURN_SUCCESS;
 }
-TStatus Hooker::NeedRevert(HotKeyType typeRevert)
+TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert)
 {
 	LOG_INFO_1(L"NeedRevert %S(%d)", HotKeyTypeName(typeRevert), typeRevert);
 
@@ -553,7 +553,7 @@ TStatus Hooker::NeedRevert(HotKeyType typeRevert)
 }
 
 
-TStatus Hooker::SwitchLangByEmulate(HKL lay) {
+TStatus WorkerImplement::SwitchLangByEmulate(HKL lay) {
 
 	GETCONF;
 
@@ -578,7 +578,7 @@ TStatus Hooker::SwitchLangByEmulate(HKL lay) {
 	RETURN_SUCCESS;
 }
 
-void Hooker::CheckCurLay(bool forceSend) {
+void WorkerImplement::CheckCurLay(bool forceSend) {
 
 	auto old_lay = topWndInfo2.lay;
 
@@ -595,7 +595,7 @@ void Hooker::CheckCurLay(bool forceSend) {
 	}
 }
 
-TStatus Hooker::AnalizeTopWnd() {
+TStatus WorkerImplement::AnalizeTopWnd() {
 
     CheckCurLay();
 
@@ -612,7 +612,7 @@ TStatus Hooker::AnalizeTopWnd() {
 	RETURN_SUCCESS;
 }
 
-TStatus Hooker::FixCtrlAlt(CHotKey key) {
+TStatus WorkerImplement::FixCtrlAlt(CHotKey key) {
 
 	IFS_RET(AnalizeTopWnd());
 
