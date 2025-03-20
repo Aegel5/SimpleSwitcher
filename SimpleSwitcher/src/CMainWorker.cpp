@@ -47,7 +47,7 @@ TStatus CMainWorker::WorkerInt()
 			UINT_PTR timerId = msg.data.wparm;
 			if (timerId == c_timerIdClearFormat)
 			{
-				IFS_LOG(workerImpl.ClipboardClearFormat2());
+				workerImpl.ClipboardClearFormat2();
 			}
 
 			else

@@ -146,20 +146,6 @@ TStatus WorkerImplement::ClipboardToSendData(std::wstring& clipdata, TKeyRevert&
 	RETURN_SUCCESS;
 }
 
-TStatus WorkerImplement::ClipboardClearFormat2()
-{
-	//m_clipWorker.PostMsg(ClipMode_ClipClearFormat);
-	IFS_LOG(m_clipWorker.ClipboardClearFormat());
-	RETURN_SUCCESS;
-}
-
-TStatus RequestClearFormat()
-{
-	auto timeId = SetTimer(g_MonitorHandle, c_timerIdClearFormat, 500, NULL);
-	IFW_RET(timeId != 0);
-	RETURN_SUCCESS;
-}
-
 void toUpper(std::wstring& buf) {
 
 	wxString str1 = buf;
@@ -291,9 +277,9 @@ TStatus WorkerImplement::ClipboardChangedInt()
 
 	// --- This is user request ----
 
-	if (conf_get_unsafe()->fClipboardClearFormat)
-	{
-		IFS_LOG(RequestClearFormat());
+	if (conf_get_unsafe()->fClipboardClearFormat) {
+		auto timeId = SetTimer(g_MonitorHandle, c_timerIdClearFormat, 500, NULL);
+		IFW_LOG(timeId != 0);
 	}
 
 	RETURN_SUCCESS;

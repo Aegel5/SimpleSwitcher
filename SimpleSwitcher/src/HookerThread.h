@@ -66,7 +66,7 @@ class CoreWorker {
 		g_MonitorHandle = hWnd;
 
 		IFW_LOG(AddClipboardFormatListener(hWnd));
-		IFW_LOG(ChangeWindowMessageFilterEx(hWnd, WM_LayNotif, MSGFLT_ALLOW, 0));
+		//IFW_LOG(ChangeWindowMessageFilterEx(hWnd, WM_LayNotif, MSGFLT_ALLOW, 0));
 
 		auto timeId = SetTimer(hWnd, c_timerKeyloggerDefence, 5000, NULL);
 		IFW_LOG(timeId != 0);

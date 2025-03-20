@@ -32,7 +32,7 @@ public:
 	}
 	TStatus ClipboardChangedInt();
     TStatus GetClipStringCallback();
-	TStatus ClipboardClearFormat2();
+	void ClipboardClearFormat2() { IFS_LOG(m_clipWorker.ClipboardClearFormat()); }
 	TStatus ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist);
 
 	void ChangeForeground(HWND hwnd);
