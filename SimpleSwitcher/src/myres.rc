@@ -1,9 +1,0 @@
-appicon ICON "yy.ico"
-
-#include "flags/flag_res16.rc"
-#include "flags/flag_res32.rc"
-
-lang_ru MOFILE  "../localization/ru_RU.mo"
-
-#define wxUSE_DPI_AWARE_MANIFEST 2
-#include "wx/msw/wx.rc"        

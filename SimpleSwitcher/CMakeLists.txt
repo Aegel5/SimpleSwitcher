@@ -40,7 +40,7 @@ set(wxUSE_RICHTEXT OFF)
 
 file(GLOB_RECURSE all_implement_units  
 src/*.cpp 
-src/myres.rc
+src/res/myres.rc
 src/simpleswitcher.manifest
 )
 
