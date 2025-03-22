@@ -17,6 +17,10 @@ private:
 
 public:
 
+	WorkerImplement() {
+		IFS_LOG(Utils::GetPath_fileExe_lower(m_sSelfExeName));
+	}
+
 	void ClearAllWords() {
 		LOG_INFO_2(L"ClearsKeys");
 		m_cycleList.Clear();
@@ -36,8 +40,8 @@ public:
 	TStatus ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist);
 
 	void ChangeForeground(HWND hwnd);
-	void ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData);
-	TStatus Init();
+	void ProcessKeyMsg(const Message_KeyType& keyData);
+
 	TStatus SendCtrlC(EClipRequest clRequest);
 	void RequestWaitClip(EClipRequest clRequest)
 	{
@@ -85,10 +89,10 @@ public:
 		}
 	}
 
-	void ProcessOurHotKey(MainWorkerMsg& keyData) {
+	void ProcessOurHotKey(const Message_Hotkey& keyData) {
 
-		auto hk = keyData.data.hk;
-		const auto& key = keyData.data.hotkey;
+		auto hk = keyData.hk;
+		const auto& key = keyData.hotkey;
 
 		GETCONF;
 

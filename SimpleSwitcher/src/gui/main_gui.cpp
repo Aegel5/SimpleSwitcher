@@ -45,7 +45,7 @@ public:
 
             g_guiHandle = GetHandle();
 
-            timers.StartCycle(200, []() { Worker()->PostMsgW(HWORKER_Getcurlay, 0); });
+            timers.StartCycle(200, []() { Worker()->PostMsg(Message_GetCurLay{}); });
 
             Bind(wxEVT_CLOSE_WINDOW, &MainWnd::onExitReqest, this);
             SetTitle(std::format(
@@ -338,7 +338,7 @@ private:
         if (!conf_get_unsafe()->showFlags) {
             myTray.ResetIcon(myTray.standart_icon);
         } else {
-            Worker()->PostMsgW(HWORKER_Getcurlay, 1);
+            Worker()->PostMsg(Message_GetCurLay{ true });
         }
 
     }

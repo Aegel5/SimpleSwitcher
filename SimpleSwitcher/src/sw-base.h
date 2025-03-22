@@ -26,6 +26,8 @@
 #include <generator>
 #include <ranges>
 #include <chrono>
+#include <variant>
+#include <queue>
 
 // утилиты
 #include "inc_basic.h"

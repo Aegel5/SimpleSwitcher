@@ -1,7 +1,7 @@
 ﻿#include "sw-base.h"
 
 
-TStatus CMainWorker::WorkerInt()
+void CMainWorker::WorkerInt()
 {
 	IFW_LOG(SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL));
 
@@ -9,47 +9,39 @@ TStatus CMainWorker::WorkerInt()
 	IFS_LOG(autoCom.Init());
 
 	WorkerImplement workerImpl;
-	IFS_RET(workerImpl.Init());
 
-	MainWorkerMsg msg (HWORKER_NULL);
 	while (true) {
 		auto [msg, ok] = m_queue.GetMessage();
 		if (!ok) break;
-		auto mode = msg.mode;
-		if (mode == HWORKER_ClearWords) {
-			workerImpl.ClearAllWords();
-		}
-		else if (mode == HWORKER_ClipNotify) {
-			workerImpl.CliboardChanged();
-		}
-		else if (mode == HWORKER_ChangeForeground) {
-			workerImpl.ChangeForeground((HWND)msg.data.wparm);
-		}
-		else if (mode == HWORKER_KeyMsg) {
-			workerImpl.ProcessKeyMsg(msg.data.key_message);
-		}
-		else if (mode == HWORKER_OurHotKey) {
-			workerImpl.ProcessOurHotKey(msg);
-		}
-		else if (mode == HWORKER_FixCtrlAlt) {
-			IFS_LOG(workerImpl.FixCtrlAlt(msg.data.hotkey));
-		}
-		else if (mode == HWORKER_ClipboardClearFormat2) {
-			workerImpl.ClipboardClearFormat2();
-		}
-		else if (mode == HWORKER_Getcurlay) {
-			workerImpl.CheckCurLay(msg.data.wparm);
-		}
-		else if (mode == HWORKER_Setcurlay) {
-			workerImpl.SetNewLay((HKL)msg.data.wparm);
-		}
-		else {
-			LOG_INFO_1(L"[WARN] Unknown m2=%u", mode);
-		}
+		std::visit([&workerImpl](auto&& arg) {
+			using T = std::decay_t<decltype(arg)>;
+			if constexpr (std::is_same_v<T, Message_KeyType>) {
+				workerImpl.ProcessKeyMsg(arg);
+			}
+			else if constexpr (std::is_same_v<T, Message_Hotkey>) {
+				if (arg.fix_ralt) {
+					workerImpl.FixCtrlAlt(arg.hotkey);
+				}
+				else {
+					workerImpl.ProcessOurHotKey(arg);
+				}
+			}
+			else if constexpr (std::is_same_v<T, Message_ChangeForeg>) {
+				workerImpl.ChangeForeground(arg.hwnd);
+			}
+			else if constexpr (std::is_same_v<T, Message_GetCurLay>) {
+				workerImpl.CheckCurLay(arg.force);
+			}
+			else if constexpr (std::is_same_v<T, Message_ClearWorlds>) {
+				workerImpl.ClearAllWords();
+			}
+			else if constexpr (std::is_same_v<T, Message_Func>) {
+				arg(workerImpl);
+			}
+		}, msg);
 	}
 
 	LOG_INFO_1(L"Exit main worker");
-	RETURN_SUCCESS;
 }
 
 

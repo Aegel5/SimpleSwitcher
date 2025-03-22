@@ -1,6 +1,6 @@
 ﻿#include "sw-base.h"
 
-void WorkerImplement::ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData)
+void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 {
 	TKeyCode vkCode = keyData.vkCode;
 	KeyState curKeyState = keyData.keyState;
@@ -48,15 +48,6 @@ void WorkerImplement::ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData)
 	}
 	}
 }
-
-
-TStatus WorkerImplement::Init() {
-	ClearAllWords();
-    IFS_LOG(Utils::GetPath_fileExe_lower(m_sSelfExeName));
-	RETURN_SUCCESS;
-
-}
-
 
 TStatus ClipHasTextFormating(bool& fres)
 {
@@ -278,7 +269,7 @@ TStatus WorkerImplement::ClipboardChangedInt()
 	// --- This is user request ----
 
 	if (conf_get_unsafe()->fClipboardClearFormat) {
-		Worker()->PostMsg(HWORKER_ClipboardClearFormat2, 500);
+		Worker()->PostMsg([](WorkerImplement& w) {w.ClipboardClearFormat2(); }, 500);
 	}
 
 	RETURN_SUCCESS;

@@ -95,7 +95,7 @@ class CoreWorker {
 				PostQuitMessage(0);
 			}
 			else if (mesg == WM_CLIPBOARDUPDATE) {
-				Worker()->PostMsg(HWORKER_ClipNotify);
+				Worker()->PostMsg([](auto& w) {w.CliboardChanged(); });
 			}
 			else if (mesg == WM_TIMER) {
 				UINT_PTR timerId = msg.wParam;

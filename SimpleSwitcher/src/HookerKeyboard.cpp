@@ -8,9 +8,8 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		return CallNextHookEx(0, nCode, wParam, lParam);
 	}
 
-	MainWorkerMsg msg_type(HWORKER_KeyMsg);
-	MainWorkerMsg msg_hotkey(HWORKER_OurHotKey);
-	msg_hotkey.data.hk = hk_NULL;
+	Message_KeyType msg_type;
+	Message_Hotkey msg_hotkey;
 	bool send_key = false;
 
 	GETCONF;
@@ -68,14 +67,11 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 		CHotKey possible;
 		std::swap(possible, possible_hk_up); // сразу очищаем
-		{
-			auto& data = msg_type.data.key_message;
-			data.vkCode = vkCode;
-			data.scanCode = scan_code;
-			data.flags = k->flags;
-			data.keyState = curKeyState;
-			data.hk = hk_NULL;
-		}
+
+		msg_type.vkCode = vkCode;
+		msg_type.scanCode = scan_code;
+		msg_type.flags = k->flags;
+		msg_type.keyState = curKeyState;
 		send_key = true; // обрабатываем нажатие, если не будет запрета
 
 		curKey.Update(vkCode, curKeyState); // сразу обновляем
@@ -101,14 +97,14 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 					need_our_action = true;
 					possible_hk_up.Clear(); // очищаем, потому что могли заполнить прямо в этом цикле.
 					if (!is_hold) { // но даже если и холд, клавиши нужно запретить.
-						msg_hotkey.data.hotkey = key;
-						msg_hotkey.data.hk = hk;
+						msg_hotkey.hotkey = key;
+						msg_hotkey.hk = hk;
 					}
 					break;
 				}
 				if (key.GetKeyup() && check_is_our_key(key, curk)) {
 					possible_hk_up = curk; // без break
-					msg_type.data.key_message.hk = hk; // уведомим, что это наша клавиша.
+					msg_type.hk = hk; // уведомим, что это наша клавиша.
 				}
 			}
 			if (need_our_action) {
@@ -128,9 +124,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 					) {
 					LOG_INFO_1(L"fix ctrl+alt");
 					if (!is_hold) { // пока просто запрещаем
-						MainWorkerMsg msg(HWORKER_FixCtrlAlt);
-						msg.data.hotkey = curk;
-						Worker()->PostMsg(std::move(msg));
+						Worker()->PostMsg(Message_Hotkey{ .fix_ralt = true, .hotkey = curk });
 					}
 					LOG_INFO_1(L"Key %s was disabled(fix)", CHotKey::GetName(vkCode));
 					disable_up = vkCode;
@@ -152,8 +146,8 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				if (!possible.IsEmpty()) {
 					for (const auto& [hk, key] : cfg->All_hot_keys()) {
 						if (key.GetKeyup() && check_is_our_key(key, possible)) {
-							msg_hotkey.data.hotkey = key;
-							msg_hotkey.data.hk = hk;
+							msg_hotkey.hotkey = key;
+							msg_hotkey.hk = hk;
 							break;
 						}
 					}
@@ -173,7 +167,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			!res && send_key) {
 			Worker()->PostMsg(std::move(msg_type));
 		}
-		if (msg_hotkey.data.hk != hk_NULL) {
+		if (msg_hotkey.hk != hk_NULL) {
 			Worker()->PostMsg(std::move(msg_hotkey));
 		}
 		if (res)

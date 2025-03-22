@@ -40,12 +40,12 @@ private: inline static HookerKeyboard hookerKeyb;
 		DWORD dwEventThread,
 		DWORD dwmsEventTime
 	) {
-		Worker()->PostMsg(HWORKER_ClearWords);
+		Worker()->PostMsg(Message_ClearWorlds{});
 	}
 
 
 	static void CALLBACK WinEventProc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
-		Worker()->PostMsgW(HWORKER_ChangeForeground, (WPARAM)hwnd);
+		Worker()->PostMsg(Message_ChangeForeg{ hwnd });
 	}
 
 	static LRESULT CALLBACK LowLevelMouseProc(
@@ -58,7 +58,7 @@ private: inline static HookerKeyboard hookerKeyb;
 				// nothing
 			}
 			else {
-				Worker()->PostMsg(HWORKER_ClearWords);
+				Worker()->PostMsg(Message_ClearWorlds{});
 			}
 		}
 

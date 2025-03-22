@@ -1,41 +1,30 @@
 ﻿#pragma once
 
 class CMainWorker {
-	ThreadQueue::CThreadQueue<MainWorkerMsg> m_queue;
-	TStatus WorkerInt();
-	void Worker() {
-		IFS_LOG(WorkerInt());
+
+	CMultiThreadQueue<Message_Variant> m_queue;
+	std::thread m_thread;
+
+	void WorkerInt();
+
+	void StopAndWait() {
+		m_queue.QuitRequest();
+		if (m_thread.joinable())
+			m_thread.join();
 	}
+
 public:
+	~CMainWorker() {
+		StopAndWait();
+	}
 	void ReStart() {
-		m_queue.ReStartWorker(std::bind(&CMainWorker::Worker, this));
+		StopAndWait();
+		m_queue.Reinitialize();
+		m_thread = std::thread(std::bind(&CMainWorker::WorkerInt, this));
 	}
-	void PostMsg(MainWorkerMsg&& msg, int delay = 0) {
-#ifdef SW_INT_CHECK
-		auto count = m_queue.CountMsg();
-		if (count >= 100) {
-			LOG_INFO_1(L"[WARN] Too many messages %u", count);
-		}
-		static auto dwLast = GetTickCount64();
-		auto dwCur = GetTickCount64();
-		auto elapsed = dwCur - dwLast;
-		if (elapsed >= 10000) {
-			dwLast = dwCur;
-			if (count > 0) {
-				LOG_INFO_1(L"Now have %u messages", count);
-			}
-		}
-#endif
+
+	void PostMsg(auto&& msg, int delay = 0) {
 		m_queue.PostMsg(std::move(msg), delay);
-	}
-	void PostMsg(EHWorker mode, int delay = 0) {
-		MainWorkerMsg msg(mode);
-		PostMsg(std::move(msg), delay);
-	}
-	void PostMsgW(EHWorker mode, WPARAM wparm) {
-		MainWorkerMsg msg(mode);
-		msg.data.wparm = wparm;
-		PostMsg(std::move(msg));
 	}
 
 	static CMainWorker& Inst() {

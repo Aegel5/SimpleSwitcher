@@ -1,55 +1,34 @@
 ﻿#pragma once
 
-
-
-enum EHWorker
-{
-	HWORKER_NULL,
-
-	HWORKER_ClearWords,
-	HWORKER_ChangeForeground,
-	HWORKER_KeyMsg,
-	HWORKER_ClipNotify,
-	HWORKER_ClipboardClearFormat2,
-    HWORKER_Getcurlay,
-    HWORKER_Setcurlay,
-    HWORKER_FixCtrlAlt,
-    HWORKER_OurHotKey,
+struct Message_KeyType {
+	TKeyCode   vkCode = 0;
+	TScanCode   scanCode = 0;
+	DWORD   flags = 0;
+	HotKeyType hk = hk_NULL;
+	KeyState keyState = KEY_STATE_NONE;
 };
 
-// todo: 1) std::variant, 2)store std::funtion. 3) force std::move
-struct MainWorkerMsg {
-
-	EHWorker mode = HWORKER_NULL;
-
-	MainWorkerMsg(EHWorker m): mode(m)  {}
-	MainWorkerMsg(){}
-
-	MainWorkerMsg(const MainWorkerMsg&) = delete;
-	MainWorkerMsg& operator=(const MainWorkerMsg& temp_obj) = delete;
-
-	MainWorkerMsg(MainWorkerMsg&&) = default;
-
-	union U
-	{
-		struct Key_Message {
-			TKeyCode   vkCode;
-			TScanCode   scanCode;
-			DWORD   flags;
-			HotKeyType hk;
-			KeyState keyState;
-		} key_message;
-		struct
-		{
-			WPARAM wparm;
-		};
-		struct {
-			CHotKey hotkey;
-			HotKeyType hk;
-		};
-		U() {} // ничего не делаем - никаких конструкторов, клиенты должны заполнять сами нужные данные...
-		
-	}data;
+struct Message_Hotkey {
+	bool fix_ralt = false;
+	CHotKey hotkey;
+	HotKeyType hk = hk_NULL;
 };
+
+struct Message_ChangeForeg {
+	HWND hwnd = 0;
+};
+
+struct Message_GetCurLay {
+	bool force = false;
+};
+
+struct Message_ClearWorlds {
+};
+
+class WorkerImplement;
+using Message_Func = std::function<void(WorkerImplement&)>; // все захваченное должно быть копией.
+
+using Message_Variant = std::variant< Message_KeyType, Message_Hotkey, Message_ClearWorlds, Message_Func, Message_ChangeForeg, Message_GetCurLay >;
+
 
 
