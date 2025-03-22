@@ -22,7 +22,7 @@ namespace ThreadQueue {
 		std::deque<TMessage> m_queue;
 		std::multimap<TimePoint, TMessage> delaed_msg;
 
-		std::atomic_bool m_fNeedExit = false;
+		bool m_fNeedExit = false;
 	public:
 		bool GetMessage(TMessage& msg) {
 			std::unique_lock<std::mutex> lock(m_mtxQueue);
@@ -56,9 +56,6 @@ namespace ThreadQueue {
 			}
 			return false;
 		}
-		CThreadQueue() {
-
-		}
 		~CThreadQueue() {
 			StopAndWait();
 			StopAndWait();
@@ -79,25 +76,21 @@ namespace ThreadQueue {
 		}
 
 
-		TStatus ReStartWorker(TWorkerFunc func) {
+		void ReStartWorker(TWorkerFunc func) {
+
 			StopAndWait();
 
 			{
-				std::unique_lock<std::mutex> lock(m_mtxQueue); 
+				std::unique_lock<std::mutex> lock(m_mtxQueue);
+				m_fNeedExit = false;
 				m_queue.clear();
 				delaed_msg.clear();
 			}
 
-			if (m_thread.joinable()) {
-				return SW_ERR_BAD_INTERNAL_STATE;
-			}
-
-			m_fNeedExit = false;
 			m_thread = std::thread(func);
-
-			RETURN_SUCCESS;
 		}
 		void StopAndWait() {
+
 			{
 				std::unique_lock<std::mutex> lock(m_mtxQueue);
 				m_fNeedExit = true;

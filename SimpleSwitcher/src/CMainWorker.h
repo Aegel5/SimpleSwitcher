@@ -8,7 +8,7 @@ class CMainWorker {
 	}
 public:
 	void ReStart() {
-		IFS_LOG(m_queue.ReStartWorker(std::bind(&CMainWorker::Worker, this)));
+		m_queue.ReStartWorker(std::bind(&CMainWorker::Worker, this));
 	}
 	void PostMsg(MainWorkerMsg& msg, int delay = 0) {
 #ifdef SW_INT_CHECK
