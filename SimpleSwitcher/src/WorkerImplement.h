@@ -26,7 +26,6 @@ public:
 		m_cycleList.Clear();
 	}
 	TStatus NeedRevert(HotKeyType typeRevert);
-	TStatus NeedRevert2(ContextRevert& data);
 	TStatus AnalizeTopWnd();
 	TStatus SwitchLangByEmulate(HKL lay);
 	void CliboardChanged() 
@@ -58,7 +57,6 @@ public:
 	void SetNewLay(HKL lay) {
 
 		LOG_INFO_1(L"Try set 0x%x lay", lay);
-
 
 		if (conf_get_unsafe()->AlternativeLayoutChange)
 		{
@@ -118,12 +116,12 @@ public:
 		}
 
 		IFS_LOG(NeedRevert(hk));
-
 	}
 
-	HKL CurLay() { return        topWndInfo2.lay; }
+	HKL CurLay() { return topWndInfo2.lay; }
+	TStatus ProcessRevert(ContextRevert& ctxRevert);
 
-public:
+private:
 
 	ULONGLONG m_dwLastCtrlCReqvest = 0;
 	EClipRequest m_clipRequest = CLRMY_NONE;
@@ -135,7 +133,6 @@ public:
 	CClipWorker m_clipWorker; 
 	tstring m_savedClipData;
 	HotKeyType m_lastRevertRequest = hk_NULL;
-	TStatus ProcessRevert(ContextRevert& ctxRevert);
 	std::wstring m_sSelfExeName;
 	CycleRevertList m_cycleList;
 	CurStateWrapper m_curStateWrap;

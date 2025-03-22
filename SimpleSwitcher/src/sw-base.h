@@ -28,9 +28,17 @@
 #include <chrono>
 #include <variant>
 #include <queue>
+#include <map>
 
 // утилиты
-#include "inc_basic.h"
+#include "core/inc_all.h"
+#include "utils/CAutoCleanupWin.h"
+#include "utils/COM_utils.h"
+#include "utils/str_utils.h"
+#include "utils/utils-func.h"
+#include "utils/MultiThreadQueue.h"
+#include "utils/CHotKey.h"
+#include "utils/file_utils.h"
 #include "utils/ScanMap.h"
 #include "utils/getpath.h"
 #include "utils/procstart.h"

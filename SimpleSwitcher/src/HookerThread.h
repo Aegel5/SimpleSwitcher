@@ -92,7 +92,8 @@ class CoreWorker {
 			if (mesg == WM_HOTKEY) {
 			}
 			else if (mesg == c_MSG_Quit) {
-				PostQuitMessage(0);
+				break;
+				//PostQuitMessage(0);
 			}
 			else if (mesg == WM_CLIPBOARDUPDATE) {
 				Worker()->PostMsg([](auto& w) {w.CliboardChanged(); });
@@ -106,8 +107,8 @@ class CoreWorker {
 				}
 			}
 			else {
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
+				//TranslateMessage(&msg);
+				//DispatchMessage(&msg);
 			}
 		}
 

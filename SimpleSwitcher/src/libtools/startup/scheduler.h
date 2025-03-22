@@ -5,7 +5,6 @@
 
 #include "atlbase.h"
 
-#include "cmn.h"
 #include "../utils/COM_utils.h"
 #include "../utils/procstart.h"
 

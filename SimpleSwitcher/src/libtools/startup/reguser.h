@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "cmn.h"
-
 namespace Startup
 {
 	namespace Int
