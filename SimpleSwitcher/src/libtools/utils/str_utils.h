@@ -126,7 +126,7 @@ namespace Str_Utils
 	}
 
 	template<class T>
-	inline bool StrToUInt64_2(std::string& str, T& res)
+	inline bool StrToUInt64_2(const std::string& str, T& res)
 	{
 		const char* val = str.c_str();
 		int base = 10;

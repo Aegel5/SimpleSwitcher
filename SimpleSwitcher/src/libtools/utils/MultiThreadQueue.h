@@ -8,7 +8,6 @@
 template<class TMessage> class MultiThreadQueue {
 	using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
 	TimePoint Now() { return std::chrono::steady_clock::now(); }
-	using TWorkerFunc = std::function<void(void)>;
 	std::mutex  m_mtxQueue;
 	std::condition_variable m_cvQueue;
 	std::deque<TMessage> m_queue;

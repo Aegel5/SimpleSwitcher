@@ -84,16 +84,14 @@ void SettingsGui::GenerateListHK()
 //namespace ns {
 
 void to_json(json& j, const HKL& p) {
-    char sBuf[30];
+    char sBuf[30] = {0};
     sprintf(sBuf, "0x%I64X", (uint64_t)p);
-    std::string s = sBuf;
-    j = s;
+    j = sBuf;
 }
 
 void from_json(const json& j, HKL& p) {
     if (j.is_string()) {
-        auto s = j.get<std::string>();
-        Str_Utils::StrToUInt64_2(s, p);
+        Str_Utils::StrToUInt64_2(j.get_ref<const std::string&>(), p);
     } else {
         p = 0;
     }
@@ -105,7 +103,7 @@ void to_json(json& j, const CHotKey& p) {
 
 void from_json(const json& j, CHotKey& p) {
     if (j.is_string()) {
-        IFS_LOG(p.FromString(j.get<std::string>()));
+        IFS_LOG(p.FromString(j.get_ref<const std::string&>()));
     }
 }
 void to_json(json& j, const CHotKeyList& p) {
@@ -142,7 +140,7 @@ void to_json(json& j, const wxString& p) {
 void from_json(const json& j, wxString& p) {
     p.Clear();
     if (j.is_string()) {
-        p = j.get<std::string>();
+        p = j.get_ref<const std::string&>();
     }
 }
 

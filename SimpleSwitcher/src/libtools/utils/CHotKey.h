@@ -229,25 +229,14 @@ public:
 
 };
 
-class CHotKey
-{
-	
+class CHotKey {
+
 public:
-	CHotKey() { Clear(); }
-	explicit CHotKey(TKeyCode key)
-	{
-		Clear().Add3(key);
-	}
-	CHotKey(TKeyCode key1, TKeyCode key2)
-	{
-		Clear().Add3(key1).Add3(key2);
-	}
-	CHotKey(TKeyCode key1, TKeyCode key2, TKeyCode key3)
-	{
-		Clear().Add3(key1).Add3(key2).Add3(key3);
-	}
-	enum 
-	{
+	CHotKey() {}
+	explicit CHotKey(TKeyCode key) {		Add3(key);	}
+	CHotKey(TKeyCode key1, TKeyCode key2) {		Add3(key1).Add3(key2);	}
+	CHotKey(TKeyCode key1, TKeyCode key2, TKeyCode key3) {		Add3(key1).Add3(key2).Add3(key3);	}
+	enum {
 		ADDKEY_NORMAL = 0,
 		ADDKEY_CHECK_EXIST = 0b1,
 		ADDKEY_ENSURE_ONE_VALUEKEY = 0b10,
@@ -256,27 +245,22 @@ public:
 	CHotKey& Simple_Append(TKeyCode key) {
 		if (size < c_MAX)
 			++size;
-		for (int i = size - 1; i > 0; i--)
-		{
+		for (int i = size - 1; i > 0; i--) {
 			keys[i] = keys[i - 1];
 		}
 		keys[0] = key;
 		return *this;
 	}
-	CHotKey& Add3(TKeyCode key, int flags = ADDKEY_NORMAL)
-	{
+	CHotKey& Add3(TKeyCode key, int flags = ADDKEY_NORMAL) {
 		if (TestFlag(flags, ADDKEY_CHECK_EXIST)) {
 			for (TKeyCode k : *this) {
-				if (CompareKeys(k, key, true))
-				{
-					if (IsCommonMods(k) && !IsCommonMods(key))
-					{
+				if (CompareKeys(k, key, true)) {
+					if (IsCommonMods(k) && !IsCommonMods(key)) {
 						// rewrite common key
 						Remove(k);
 						break;
 					}
-					else
-					{
+					else {
 						// already exists
 						return *this;
 					}
@@ -284,194 +268,146 @@ public:
 			}
 		}
 
-		if (TestFlag(flags, ADDKEY_ENSURE_ONE_VALUEKEY) && !CHotKey::IsKnownMods(key))
-		{
+		if (TestFlag(flags, ADDKEY_ENSURE_ONE_VALUEKEY) && !CHotKey::IsKnownMods(key)) {
 			RemoveAllNoMods();
 		}
 
-		if (TestFlag(flags, ADDKEY_CHECK_MODS))
-		{
-			if (size == 0)
-			{
+		if (TestFlag(flags, ADDKEY_CHECK_MODS)) {
+			if (size == 0) {
 				keys[size++] = key;
 			}
-			else
-			{
-				if (IsKnownMods(keys[0]))
-				{
+			else {
+				if (IsKnownMods(keys[0])) {
 					InsertMods(keys[0]);
 					keys[0] = key;
 				}
-				else
-				{
+				else {
 					InsertMods(key);
 				}
 			}
 		}
-		else
-		{
+		else {
 			Simple_Append(key);
 		}
 
 		return *this;
 	}
-	bool Remove(TKeyCode key, bool strick_modifier=true)
-	{
-		if(size == 0)
+	bool Remove(TKeyCode key, bool strick_modifier = true) {
+		if (size == 0)
 			return false;
 		bool found = false;
-		for (int i = 0; i < size; i++)
-		{
-			if(CompareKeys(key, keys[i], strick_modifier))
-			{
+		for (int i = 0; i < size; i++) {
+			if (CompareKeys(key, keys[i], strick_modifier)) {
 				found = true;
 				keys[i] = 0;
 				continue;
 			}
-			if(found)
-			{
-				keys[i-1] = keys[i];
+			if (found) {
+				keys[i - 1] = keys[i];
 			}
 		}
-		if(found)
+		if (found)
 			--size;
 		return found;
-		
+
 	}
-	void RemoveAllNoMods()
-	{
+	void RemoveAllNoMods() {
 		TKeyCode k = 0;
-		do
-		{
+		do {
 			k = 0;
-			for(TKeyCode cur: *this)
-			{
-				if(!IsKnownMods(cur))
-				{
+			for (TKeyCode cur : *this) {
+				if (!IsKnownMods(cur)) {
 					k = cur;
 					break;
 				}
 			}
-			if(k)
-			{
+			if (k) {
 				Remove(k);
 			}
-		}while (k);
+		} while (k);
 	}
-	bool HasKey(TKeyCode key, bool strick_modifier) const
-	{
-		for(TKeyCode k : *this)
-		{
-			if(CompareKeys(k, key, strick_modifier))
+	bool HasKey(TKeyCode key, bool strick_modifier) const {
+		for (TKeyCode k : *this) {
+			if (CompareKeys(k, key, strick_modifier))
 				return true;
 		}
 		return false;
 	}
-	bool HasAnyMod()
-	{
-		for (int i = 0; i < size; ++i)
-		{
-			if(IsKnownMods(keys[i]))
+	bool HasAnyMod() {
+		for (int i = 0; i < size; ++i) {
+			if (IsKnownMods(keys[i]))
 				return true;
 		}
 		return false;
 	}
-	bool HasAllMod()
-	{
-		for (int i = 0; i < size; ++i)
-		{
+	bool HasAllMod() {
+		for (int i = 0; i < size; ++i) {
 			if (!IsKnownMods(keys[i]))
 				return false;
 		}
 		return true;
 	}
-	TKeyCode At(int i) {return keys[i];}
-	bool HasMod(TKeyCode k, bool strick_modifier = false) const
-	{
-		if(size <= 1)
+	TKeyCode At(int i) { return keys[i]; }
+	bool HasMod(TKeyCode k, bool strick_modifier = false) const {
+		if (size <= 1)
 			return false;
-		for(int i = 1; i < size; ++i)
-		{
+		for (int i = 1; i < size; ++i) {
 			if (CompareKeys(k, keys[i], strick_modifier))
 				return true;
 		}
 		return false;
 	}
-	enum TCompareFlags
-	{
+	enum TCompareFlags {
 		COMPARE_NORMAL = 0,
 		COMPARE_IGNORE_ORDER_VALUEKEY = 0x1,
-		//COMPARE_IGNORE_HOLD = 0x2,
 		COMPARE_IGNORE_KEYUP = 0x4,
 		COMPARE_STRICK_MODIFIER = 0x8,
 	};
-	bool Compare (const CHotKey& other, int flags = COMPARE_NORMAL) const
-	{
-		if(size != other.size)
+	bool Compare(const CHotKey& other, int flags = COMPARE_NORMAL) const {
+		if (size != other.size)
 			return false;
-		if(size == 0)
+		if (size == 0)
 			return false;
-		//if (!TestFlag(flags, COMPARE_IGNORE_HOLD) && m_hold != other.m_hold)
-		//	return false;
 		if (!TestFlag(flags, COMPARE_IGNORE_KEYUP) && m_keyup != other.m_keyup)
 			return false;
 
 		bool strick_modifier = TestFlag(flags, COMPARE_STRICK_MODIFIER);
 
-		if (TestFlag(flags, COMPARE_IGNORE_ORDER_VALUEKEY) || m_ignoreOrderValueKey || other.m_ignoreOrderValueKey)
-		{
+		if (TestFlag(flags, COMPARE_IGNORE_ORDER_VALUEKEY) || m_ignoreOrderValueKey || other.m_ignoreOrderValueKey) {
 			return CompareIgnoreOrder(keys, other.keys, size, strick_modifier);
 		}
-		else
-		{
+		else {
 			if (!CompareKeys(keys[0], other.keys[0], strick_modifier))
 				return false;
 			return CompareIgnoreOrder(keys + 1, other.keys + 1, size - 1, strick_modifier);
 		}
 	}
-	bool IsEmpty() const {return Size() == 0;}
-	TKeyCode ValueKey() const	{		return keys[0];	}
-	TKeyCode* begin() {return keys;}
-	TKeyCode* end() {return keys+size;}
+	bool IsEmpty() const { return Size() == 0; }
+	TKeyCode ValueKey() const { return keys[0]; }
+	TKeyCode* begin() { return keys; }
+	TKeyCode* end() { return keys + size; }
 	const TKeyCode* begin() const { return keys; }
 	const TKeyCode* end() const { return keys + size; }
-	TKeyCode* ModsBegin() {		return keys + 1;	}
-	TKeyCode* ModsEnd() {		return keys + 1 + (size > 0 ? size-1 : 0);	}
-	TUInt8 Size() const  {return size;}
+	TKeyCode* ModsBegin() { return keys + 1; }
+	TKeyCode* ModsEnd() { return keys + 1 + (size > 0 ? size - 1 : 0); }
+	int Size() const { return size; }
 
-
-	//std::string ToString2() const
-	//{
-	//	auto res = ToString();
-	//	std::string res2;
-	//	IFS_LOG(Str_Utils::WideToUtf8(res.c_str(), res2));
-	//	return res2;
-	//}
-
-	std::wstring ToString() const
-	{
+	std::wstring ToString() const {
 		std::wstring s;
 		if (size == 0)
 			return s;
 
-		for(int i = size - 1; i >= 0; --i)
-		{
+		for (int i = size - 1; i >= 0; --i) {
 			ToString(keys[i], s);
-			if(i != 0)
+			if (i != 0)
 				s += L" + ";
 		}
-		//if (m_hold)
-		//{
-		//	s += L" #hold";
-		//}
-		if (m_keyup)
-		{
+		if (m_keyup) {
 			s += L" #up";
 		}
 		return s;
 	}
-	static std::wstring ToString(TKeyCode key)
-	{
+	static std::wstring ToString(TKeyCode key) {
 		std::wstring s;
 		ToString(key, s);
 		return s;
@@ -479,23 +415,18 @@ public:
 	static TStr GetName(TKeyCode key) {
 		return HotKeyNames::Global().GetName(key);
 	}
-	static void ToString(TKeyCode key, std::wstring& s)
-	{
+	static void ToString(TKeyCode key, std::wstring& s) {
 		const wchar_t* sName = HotKeyNames::Global().GetName(key);
-		if (sName)
-		{
+		if (sName) {
 			s += sName;
 		}
-		else
-		{
+		else {
 			s += L"VK_";
 			s += std::to_wstring(key);
 		}
 	}
-	static bool IsKnownMods(TKeyCode key)
-	{
-		switch (Normalize(key))
-		{
+	static bool IsKnownMods(TKeyCode key) {
+		switch (Normalize(key)) {
 		case VK_SHIFT:
 		case VK_CONTROL:
 		case VK_MENU:
@@ -504,10 +435,8 @@ public:
 		}
 		return false;
 	}
-	static bool IsRightMod(TKeyCode key)
-	{
-		switch (key)
-		{
+	static bool IsRightMod(TKeyCode key) {
+		switch (key) {
 		case VK_RSHIFT:
 		case VK_RCONTROL:
 		case VK_RMENU:
@@ -526,15 +455,12 @@ public:
 	bool operator!= (const CHotKey& other) = delete;
 
 	void NormalizeAll() {
-		for (int i = 0; i < Size(); i++)
-		{
+		for (int i = 0; i < Size(); i++) {
 			keys[i] = Normalize(keys[i]);
 		}
 	}
-	static TKeyCode Normalize(TKeyCode key) 
-	{
-		switch (key)
-		{
+	static TKeyCode Normalize(TKeyCode key) {
+		switch (key) {
 		case VK_RSHIFT:
 		case VK_LSHIFT:
 			return VK_SHIFT;
@@ -550,25 +476,20 @@ public:
 			return key;
 		}
 	}
-	CHotKey& SetKeyup(bool val=true)
-	{
+	CHotKey& SetKeyup(bool val = true) {
 		m_keyup = val;
 		return *this;
 	}
-	bool GetKeyup () const
-	{
+	bool GetKeyup() const {
 		return m_keyup;
 	}
-	TStatus FromString(const std::string& s)
-	{
-
+	TStatus FromString(const std::string& s) {
 		std::wstring s2;
 		IFS_RET(Str_Utils::Utf8ToWide(s.c_str(), s2));
 		IFS_RET(FromString(s2));
 		RETURN_SUCCESS;
 	}
-	TStatus FromString(const std::wstring& s)
-	{
+	TStatus FromString(const std::wstring& s) {
 		Clear();
 
 		if (s.empty())
@@ -586,15 +507,13 @@ public:
 
 		Str_Utils::TVectStr sElems;
 		Str_Utils::Split2(ss, sElems, L"+", true);
-		for (auto& it : sElems)
-		{
+		for (auto& it : sElems) {
 			std::wstring sCur = it;
 			Str_Utils::trim(sCur);
 			Str_Utils::ToLower(sCur);
 
 			TKeyCode kCur = HotKeyNames::Global().GetCode(sCur.c_str());
-			if (kCur == 0)
-			{
+			if (kCur == 0) {
 				Clear();
 				IFS_RET(SW_ERR_INVALID_PARAMETR, L"Not found keycode for %s", sCur.c_str());
 			}
@@ -605,8 +524,7 @@ public:
 		RETURN_SUCCESS;
 	}
 	bool Has_left_right() const {
-		for (size_t i = 0; i < Size(); i++)
-		{
+		for (size_t i = 0; i < Size(); i++) {
 			auto cur = keys[i];
 			if (Utils::is_in(keys[i], VK_LSHIFT, VK_RSHIFT, VK_LCONTROL, VK_RCONTROL, VK_LMENU, VK_RMENU, VK_LWIN, VK_RWIN)) {
 				return true;
@@ -615,34 +533,29 @@ public:
 		return false;
 	}
 private:
-	bool CompareIgnoreOrder(const TKeyCode* list1, const TKeyCode* list2, int size, bool strick_modifier) const
-	{
-		for(int i = 0; i < size; ++i)
-		{
+	bool CompareIgnoreOrder(const TKeyCode* list1, const TKeyCode* list2, int size, bool strick_modifier) const {
+		for (int i = 0; i < size; ++i) {
 			TKeyCode k = list1[i];
 			bool found = false;
-			for (int j = 0; j < size; ++j)
-			{
-				if (CompareKeys(k, list2[j], strick_modifier))
-				{
+			for (int j = 0; j < size; ++j) {
+				if (CompareKeys(k, list2[j], strick_modifier)) {
 					found = true;
 					break;
 				}
 			}
-			if(!found)
+			if (!found)
 				return false;
 		}
 		return true;
 	}
-	void InsertMods(TKeyCode key)
-	{
+	void InsertMods(TKeyCode key) {
 		keys[size++] = key;
-		if(size >= c_MAX)
+		if (size >= c_MAX)
 			size = c_MAX - 1;
 	}
 
 
-	bool CompareKeys (TKeyCode k1, TKeyCode k2, bool strick_modifier) const	{
+	bool CompareKeys(TKeyCode k1, TKeyCode k2, bool strick_modifier) const {
 
 		if (strick_modifier) {
 			return k1 == k2;
@@ -651,7 +564,7 @@ private:
 		TKeyCode k1norm = Normalize(k1);
 		TKeyCode k2norm = Normalize(k2);
 
-		if(k1norm != k2norm)
+		if (k1norm != k2norm)
 			return false;
 
 		if (IsCommonMods(k1) || IsCommonMods(k2))
@@ -659,10 +572,8 @@ private:
 
 		return k1 == k2;
 	}
-	bool IsCommonMods(TKeyCode key) const
-	{
-		switch (key)
-		{
+	bool IsCommonMods(TKeyCode key) const {
+		switch (key) {
 		case VK_SHIFT:
 		case VK_CONTROL:
 		case VK_MENU:
@@ -670,20 +581,13 @@ private:
 		}
 		return false;
 	}
+private:
 	static const int c_MAX = 6;
-	struct
-	{
-		TUInt8 m_ignoreOrderValueKey : 1;
-		TUInt8 m_keyup : 1;
-		//TUInt8 m_hold : 1;
+	struct {
+		TUInt8 m_ignoreOrderValueKey : 1 {};
+		TUInt8 m_keyup : 1 {};
 	};
-	TUInt8 size;
-	TKeyCode keys[c_MAX];
+	TUInt8 size = 0;
+	TKeyCode keys[c_MAX] = { 0 };
 };
 
-inline CHotKey ParseStringHK(std::wstring& s)
-{
-	CHotKey hk;
-	IFS_LOG(hk.FromString(s));
-	return hk;
-}
