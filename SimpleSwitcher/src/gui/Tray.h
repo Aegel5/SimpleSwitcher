@@ -53,9 +53,7 @@ public:
             }
             auto info = conf_get_unsafe()->layouts_info.GetLayoutIndex(id - Minimal_SetLay_1);
             if (info != nullptr) {
-                MainWorkerMsg msg(HWORKER_Setcurlay);
-                msg.data.lay = info->layout;
-                Worker()->PostMsg(msg);
+                Worker()->PostMsgW(HWORKER_Setcurlay, (WPARAM)info->layout);
             }
             });
     }

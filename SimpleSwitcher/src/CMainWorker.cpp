@@ -13,9 +13,8 @@ TStatus CMainWorker::WorkerInt()
 
 	MainWorkerMsg msg (HWORKER_NULL);
 	while (true) {
-		if (!m_queue.GetMessage(msg)) {
-			break;
-		}
+		auto [msg, ok] = m_queue.GetMessage();
+		if (!ok) break;
 		auto mode = msg.mode;
 		if (mode == HWORKER_ClearWords) {
 			workerImpl.ClearAllWords();
@@ -33,7 +32,7 @@ TStatus CMainWorker::WorkerInt()
 			workerImpl.ProcessOurHotKey(msg);
 		}
 		else if (mode == HWORKER_FixCtrlAlt) {
-			IFS_LOG(workerImpl.FixCtrlAlt(msg.data.hotkey_to_fix));
+			IFS_LOG(workerImpl.FixCtrlAlt(msg.data.hotkey));
 		}
 		else if (mode == HWORKER_ClipboardClearFormat2) {
 			workerImpl.ClipboardClearFormat2();
@@ -42,7 +41,7 @@ TStatus CMainWorker::WorkerInt()
 			workerImpl.CheckCurLay(msg.data.wparm);
 		}
 		else if (mode == HWORKER_Setcurlay) {
-			workerImpl.SetNewLay(msg.data.lay);
+			workerImpl.SetNewLay((HKL)msg.data.wparm);
 		}
 		else {
 			LOG_INFO_1(L"[WARN] Unknown m2=%u", mode);

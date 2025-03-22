@@ -19,8 +19,16 @@ enum EHWorker
 
 // todo: 1) std::variant, 2)store std::funtion. 3) force std::move
 struct MainWorkerMsg {
+
 	EHWorker mode = HWORKER_NULL;
-	MainWorkerMsg(EHWorker m): mode(m) {}
+
+	MainWorkerMsg(EHWorker m): mode(m)  {}
+	MainWorkerMsg(){}
+
+	MainWorkerMsg(const MainWorkerMsg&) = delete;
+	MainWorkerMsg& operator=(const MainWorkerMsg& temp_obj) = delete;
+
+	MainWorkerMsg(MainWorkerMsg&&) = default;
 
 	union U
 	{
@@ -34,17 +42,10 @@ struct MainWorkerMsg {
 		struct
 		{
 			WPARAM wparm;
-			//LPARAM lparm;
-		};
-		struct {
-			CHotKey hotkey_to_fix;
 		};
 		struct {
 			CHotKey hotkey;
 			HotKeyType hk;
-		};
-		struct {
-			HKL lay;
 		};
 		U() {} // ничего не делаем - никаких конструкторов, клиенты должны заполнять сами нужные данные...
 		

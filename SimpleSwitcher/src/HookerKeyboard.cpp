@@ -127,10 +127,10 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 					&& cfg->fixRAlt_lay_ != 0
 					) {
 					LOG_INFO_1(L"fix ctrl+alt");
-					MainWorkerMsg msg(HWORKER_FixCtrlAlt);
-					msg.data.hotkey_to_fix = curk;
 					if (!is_hold) { // пока просто запрещаем
-						Worker()->PostMsg(msg);
+						MainWorkerMsg msg(HWORKER_FixCtrlAlt);
+						msg.data.hotkey = curk;
+						Worker()->PostMsg(std::move(msg));
 					}
 					LOG_INFO_1(L"Key %s was disabled(fix)", CHotKey::GetName(vkCode));
 					disable_up = vkCode;
@@ -171,10 +171,10 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		}
 		if (
 			!res && send_key) {
-			Worker()->PostMsg(msg_type);
+			Worker()->PostMsg(std::move(msg_type));
 		}
 		if (msg_hotkey.data.hk != hk_NULL) {
-			Worker()->PostMsg(msg_hotkey);
+			Worker()->PostMsg(std::move(msg_hotkey));
 		}
 		if (res)
 			return 1; // запрет

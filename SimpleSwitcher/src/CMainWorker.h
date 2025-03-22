@@ -10,7 +10,7 @@ public:
 	void ReStart() {
 		m_queue.ReStartWorker(std::bind(&CMainWorker::Worker, this));
 	}
-	void PostMsg(MainWorkerMsg& msg, int delay = 0) {
+	void PostMsg(MainWorkerMsg&& msg, int delay = 0) {
 #ifdef SW_INT_CHECK
 		auto count = m_queue.CountMsg();
 		if (count >= 100) {
@@ -26,16 +26,16 @@ public:
 			}
 		}
 #endif
-		m_queue.PostMsg(msg, delay);
+		m_queue.PostMsg(std::move(msg), delay);
 	}
 	void PostMsg(EHWorker mode, int delay = 0) {
 		MainWorkerMsg msg(mode);
-		PostMsg(msg, delay);
+		PostMsg(std::move(msg), delay);
 	}
 	void PostMsgW(EHWorker mode, WPARAM wparm) {
 		MainWorkerMsg msg(mode);
 		msg.data.wparm = wparm;
-		PostMsg(msg);
+		PostMsg(std::move(msg));
 	}
 
 	static CMainWorker& Inst() {

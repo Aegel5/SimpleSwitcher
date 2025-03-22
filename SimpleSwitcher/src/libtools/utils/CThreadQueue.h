@@ -24,21 +24,20 @@ namespace ThreadQueue {
 
 		bool m_fNeedExit = false;
 	public:
-		bool GetMessage(TMessage& msg) {
+		std::pair<TMessage, bool> GetMessage() {
 			std::unique_lock<std::mutex> lock(m_mtxQueue);
 			while (true) {
 				if (m_fNeedExit) {
-					return false;
+					return { {},false };
 				}
-
 				if (!delaed_msg.empty()) {
 					auto now = Now();
 					auto it = delaed_msg.begin();
 					auto delaedtoStart = it->first;
 					if (now >= delaedtoStart) {
-						msg = std::move(it->second);
+						auto res = std::pair(std::move(it->second), true);
 						delaed_msg.erase(it);
-						return true;
+						return res;
 					}
 					if (m_queue.empty()) {
 						m_cvQueue.wait_for(lock, delaedtoStart - now);
@@ -47,14 +46,12 @@ namespace ThreadQueue {
 				}
 
 				if (!m_queue.empty()) {
-					msg = std::move(m_queue.front());
+					auto res = std::pair(std::move(m_queue.front()), true);
 					m_queue.pop_front();
-					return true;
+					return res;
 				}
 				m_cvQueue.wait(lock);
-
 			}
-			return false;
 		}
 		~CThreadQueue() {
 			StopAndWait();
@@ -64,13 +61,13 @@ namespace ThreadQueue {
 			std::unique_lock<std::mutex> lock(m_mtxQueue);
 			return m_queue.size();
 		}
-		void PostMsg(const TMessage& msg, int delay = 0) {
+		void PostMsg(TMessage&& msg, int delay = 0) {
 			std::unique_lock<std::mutex> lock(m_mtxQueue);
 			if (delay == 0)
-				m_queue.push_back(msg);
+				m_queue.push_back(std::move(msg));
 			else {
 				TimePoint to_start = Now() + std::chrono::milliseconds(delay);
-				delaed_msg.insert({ to_start, msg });
+				delaed_msg.emplace(to_start, std::move(msg));
 			}
 			m_cvQueue.notify_all();
 		}
