@@ -22,7 +22,7 @@ namespace ThreadQueue {
 		std::deque<TMessage> m_queue;
 		std::multimap<TimePoint, TMessage> delaed_msg;
 
-		bool m_fNeedExit = false;
+		std::atomic_bool m_fNeedExit = false;
 	public:
 		bool GetMessage(TMessage& msg) {
 			std::unique_lock<std::mutex> lock(m_mtxQueue);
@@ -83,7 +83,7 @@ namespace ThreadQueue {
 			StopAndWait();
 
 			{
-				std::unique_lock<std::mutex> lock(m_mtxQueue);
+				std::unique_lock<std::mutex> lock(m_mtxQueue); 
 				m_queue.clear();
 				delaed_msg.clear();
 			}
