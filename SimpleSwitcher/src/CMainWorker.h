@@ -2,7 +2,7 @@
 
 class CMainWorker {
 
-	CMultiThreadQueue<Message_Variant> m_queue;
+	MultiThreadQueue<Message_Variant> m_queue;
 	std::thread m_thread;
 
 	void WorkerInt();

@@ -24,7 +24,7 @@
 #include "utils/str_utils.h"
 #include "utils/utils-func.h"
 
-#include "utils/CThreadQueue.h"
+#include "utils/MultiThreadQueue.h"
 
 #include "utils/CHotKey.h"
 
