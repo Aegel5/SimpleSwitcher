@@ -10,15 +10,15 @@ enum EHWorker
 	HWORKER_ChangeForeground,
 	HWORKER_KeyMsg,
 	HWORKER_ClipNotify,
-	HWORKER_WM_TIMER,
+	HWORKER_ClipboardClearFormat2,
     HWORKER_Getcurlay,
     HWORKER_Setcurlay,
     HWORKER_FixCtrlAlt,
     HWORKER_OurHotKey,
 };
 
-struct MainWorkerMsg
-{
+// todo: 1) std::variant, 2)store std::funtion. 3) force std::move
+struct MainWorkerMsg {
 	EHWorker mode = HWORKER_NULL;
 	MainWorkerMsg(EHWorker m): mode(m) {}
 

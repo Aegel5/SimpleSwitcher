@@ -278,8 +278,7 @@ TStatus WorkerImplement::ClipboardChangedInt()
 	// --- This is user request ----
 
 	if (conf_get_unsafe()->fClipboardClearFormat) {
-		auto timeId = SetTimer(g_MonitorHandle, c_timerIdClearFormat, 500, NULL);
-		IFW_LOG(timeId != 0);
+		Worker()->PostMsg(HWORKER_ClipboardClearFormat2, 500);
 	}
 
 	RETURN_SUCCESS;

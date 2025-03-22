@@ -12,57 +12,39 @@ TStatus CMainWorker::WorkerInt()
 	IFS_RET(workerImpl.Init());
 
 	MainWorkerMsg msg (HWORKER_NULL);
-	while (true)
-	{
-		if (!m_queue.GetMessage(msg))
-		{
+	while (true) {
+		if (!m_queue.GetMessage(msg)) {
 			break;
 		}
 		auto mode = msg.mode;
-		if (mode == HWORKER_ClearWords)
-		{
+		if (mode == HWORKER_ClearWords) {
 			workerImpl.ClearAllWords();
 		}
-		else if (mode == HWORKER_ClipNotify)
-		{
+		else if (mode == HWORKER_ClipNotify) {
 			workerImpl.CliboardChanged();
 		}
-		else if (mode == HWORKER_ChangeForeground)
-		{
+		else if (mode == HWORKER_ChangeForeground) {
 			workerImpl.ChangeForeground((HWND)msg.data.wparm);
 		}
-		else if (mode == HWORKER_KeyMsg)
-		{
+		else if (mode == HWORKER_KeyMsg) {
 			workerImpl.ProcessKeyMsg(msg.data.key_message);
 		}
-		else if (mode == HWORKER_OurHotKey)
-		{
+		else if (mode == HWORKER_OurHotKey) {
 			workerImpl.ProcessOurHotKey(msg);
 		}
 		else if (mode == HWORKER_FixCtrlAlt) {
 			IFS_LOG(workerImpl.FixCtrlAlt(msg.data.hotkey_to_fix));
 		}
-		else if (mode == HWORKER_WM_TIMER)
-		{
-			UINT_PTR timerId = msg.data.wparm;
-			if (timerId == c_timerIdClearFormat)
-			{
-				workerImpl.ClipboardClearFormat2();
-			}
-
-			else
-			{
-				LOG_INFO_1(L"[WARN] Unknown timerId=%Iu", timerId);
-			}
+		else if (mode == HWORKER_ClipboardClearFormat2) {
+			workerImpl.ClipboardClearFormat2();
 		}
 		else if (mode == HWORKER_Getcurlay) {
-            workerImpl.CheckCurLay(msg.data.wparm);
-        }
+			workerImpl.CheckCurLay(msg.data.wparm);
+		}
 		else if (mode == HWORKER_Setcurlay) {
 			workerImpl.SetNewLay(msg.data.lay);
 		}
-		else
-		{
+		else {
 			LOG_INFO_1(L"[WARN] Unknown m2=%u", mode);
 		}
 	}

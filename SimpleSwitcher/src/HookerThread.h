@@ -40,12 +40,13 @@ class CoreWorker {
 	inline static const wchar_t* c_sClassNameServer2 = L"SimpleSw_325737FD_Serv";
     std::thread core_work;
     MtxHolder mtx;
+	std::atomic<HWND> m_hWnd = nullptr;
 
 	TStatus StartMonitor(_In_ HINSTANCE hInstance) {
 
 		LOG_INFO_1(L"StartMonitor...");
 		IFW_LOG(SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS));
-		IFS_RET(Worker()->ReStart()); // полностью обнулим рабочий поток
+		Worker()->ReStart(); // полностью обнулим рабочий поток
 
 		WNDCLASSEX wcex{};
 		wcex.cbSize = sizeof(WNDCLASSEX);
@@ -55,6 +56,7 @@ class CoreWorker {
 
 		IFW_LOG(RegisterClassEx(&wcex) != 0);
 
+		m_hWnd = nullptr;
 		auto hWnd = CreateWindow(
 			c_sClassNameServer2,
 			L"Title",
@@ -63,7 +65,7 @@ class CoreWorker {
 			0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
 		IFW_RET(hWnd != NULL);
-		g_MonitorHandle = hWnd;
+		m_hWnd = hWnd;
 
 		IFW_LOG(AddClipboardFormatListener(hWnd));
 		//IFW_LOG(ChangeWindowMessageFilterEx(hWnd, WM_LayNotif, MSGFLT_ALLOW, 0));
@@ -87,7 +89,6 @@ class CoreWorker {
 
 			auto mesg = msg.message;
 
-
 			if (mesg == WM_HOTKEY) {
 			}
 			else if (mesg == c_MSG_Quit) {
@@ -103,11 +104,6 @@ class CoreWorker {
 						//IFS_LOG(resethook()); // ???
 					}
 				}
-				else {
-					IFW_LOG(KillTimer(hWnd, timerId));
-					Worker()->PostMsgW(HWORKER_WM_TIMER, timerId);
-				}
-
 			}
 			else {
 				TranslateMessage(&msg);
@@ -137,8 +133,9 @@ public:
             mtx.clear();
             return;
         }
-        PostMessage(g_MonitorHandle, c_MSG_Quit, 0, 0);
+        PostMessage(m_hWnd, c_MSG_Quit, 0, 0);
         core_work.join();
+		m_hWnd = nullptr;
         mtx.clear();
     }
 
