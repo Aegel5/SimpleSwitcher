@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include "sw-base.h"
 
 void WorkerImplement::ProcessKeyMsg(MainWorkerMsg::U::Key_Message& keyData)
 {

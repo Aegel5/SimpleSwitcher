@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include "sw-base.h"
 
 #include "noname.h" 
 #include "SwAutostart.h"

@@ -5,7 +5,7 @@
 // PLEASE DO *NOT* EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "sw-base.h"
 
 #include "noname.h"
 

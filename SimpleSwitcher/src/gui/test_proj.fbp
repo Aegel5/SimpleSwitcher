@@ -8,7 +8,7 @@
     <property name="cpp_event_generation">connect</property>
     <property name="cpp_help_provider">none</property>
     <property name="cpp_namespace"></property>
-    <property name="cpp_precompiled_header">#include &quot;stdafx.h&quot;</property>
+    <property name="cpp_precompiled_header">#include &quot;sw-base.h&quot;</property>
     <property name="cpp_use_array_enum">0</property>
     <property name="cpp_use_enum">0</property>
     <property name="embedded_files_path">res</property>

@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include "sw-base.h"
 
 extern void StartMainGui(bool show, bool err_msg);
 

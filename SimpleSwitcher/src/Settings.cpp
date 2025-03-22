@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include "sw-base.h"
 #include "Settings.h"
 #include "extern/json.hpp"
 

@@ -65,7 +65,7 @@ target_sources(SimpleSwitcher
 #    FILE_SET all_my_modules TYPE CXX_MODULES FILES
 #    ${all_interface_modules}
 #)
-target_precompile_headers(SimpleSwitcher PRIVATE src/stdafx.h )
+target_precompile_headers(SimpleSwitcher PRIVATE src/sw-base.h )
 target_link_libraries(SimpleSwitcher wx::core wx::base "Crypt32.lib" "Imm32.lib" "Psapi.lib")
 target_include_directories(SimpleSwitcher PRIVATE "src/libtools")
 target_include_directories(SimpleSwitcher PRIVATE "src") 

@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include "sw-base.h"
 
 
 TStatus CMainWorker::WorkerInt()

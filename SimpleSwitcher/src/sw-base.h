@@ -1,17 +1,20 @@
 ﻿#pragma once
 
-#define WIN32_LEAN_AND_MEAN             
+// wx widgets
+#include "wx/wxprec.h"
 
+// windows
+#define WIN32_LEAN_AND_MEAN // убрать лишние header из winapi
 #include <windows.h>
 #include <Winuser.h>
 #include <Psapi.h>
 
+// std
 #include <stdlib.h>
 #include <assert.h>
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
-
 #include <thread>
 #include <mutex>
 #include <vector>
@@ -49,7 +52,6 @@
 #include "CMainWorkerMsg.h"
 #include "WorkerImplement.h"
 #include "CMainWorker.h"
-
 #include "Hooker.h"
 #include "HookerThread.h"
 
