@@ -9,19 +9,9 @@ typedef signed   __int16 TInt16;
 typedef unsigned __int8  TUInt8;
 typedef signed   __int8  TInt8;
 
-enum TSWBit
-{
-	SW_BIT_32,
-	SW_BIT_64,
-};
-
 typedef TCHAR TChar;
 typedef const TChar* TStr;
-
-typedef char TAChar;
-typedef const TAChar* TAStr;
-
-typedef std::wstring tstring;
+using SView = std::wstring_view;
 
 template <typename T1, typename T2>
 inline bool TestFlagAll(T1 V, T2 F)
@@ -67,11 +57,6 @@ inline bool IsSelf64()
 #else
 	!!ERROR!!
 #endif
-}
-
-inline TSWBit GetSelfBit()
-{
-	return IsSelf64() ? SW_BIT_64 : SW_BIT_32;
 }
 
 

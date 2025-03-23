@@ -29,6 +29,7 @@
 #include <variant>
 #include <queue>
 #include <map>
+#include <spanstream>
 
 // утилиты
 #include "core/inc_all.h"

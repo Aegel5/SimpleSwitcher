@@ -366,7 +366,7 @@ private:
         m_check_scrollremap->SetValue(caps == VK_F23);
 
         auto caption = [](DWORD sc, DWORD vc) {
-            return std::format(L"sc: {}, vk: {}, '{}'", sc, vc, HotKeyNames::Global().GetName(vc));
+            return std::format(L"sc: {}, vk: {}, '{}'", sc, vc, CHotKey::ToString(vc));
         };
 
         m_listBoxRemap->Clear();
@@ -501,7 +501,7 @@ private:
             auto cur = all_lays[i];
             if (!info_copy.HasLayout(cur)) {
                 was_changes = true;
-                CHotKey winhk(VK_LMENU, VK_SHIFT, VK_E_1 + info.size());
+                CHotKey winhk(VK_LMENU, VK_SHIFT, VKE_1 + info.size());
                 info.push_back({ .layout = cur, .win_hotkey=winhk });
             }
         }

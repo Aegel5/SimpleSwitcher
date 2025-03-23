@@ -103,27 +103,6 @@ namespace Str_Utils
 		return wcscmp(s1, s2) == 0;
 	}
 
-	template<class T>
-	inline bool StrToUInt64(std::wstring& str, T& res)
-	{
-		const TChar* val = str.c_str();
-		int base = 10;
-		if (Str_Utils::IsStartWith(val, L"0x"))
-		{
-			val += 2;
-			base = 16;
-		}
-
-		try
-		{
-			res = (T)std::stoull(val, 0, base);
-			return true;
-		}
-		catch (std::exception)
-		{
-			return false;
-		}
-	}
 
 	template<class T>
 	inline bool StrToUInt64_2(const std::string& str, T& res)
@@ -147,6 +126,21 @@ namespace Str_Utils
 		}
 	}
 
+	template<class T>
+	inline std::pair<T,bool> ToInt(const TChar* str, int base = 0) {
+		if (Str_Utils::IsStartWith(str, L"0x")) {
+			str += 2;
+			base = 16;
+		}
+		if (base == 0) base = 10;
+		try {
+			return { (T)std::stoull(str, 0, base), true };
+		}
+		catch (std::exception) {
+		}
+		return { 0,false };
+	}
+
 	inline void ToLower(std::wstring& str)
 	{
 		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
@@ -160,9 +154,10 @@ namespace Str_Utils
 		std::transform(str.begin(), str.end(), str.begin(), ::toupper);
 	}
 	typedef std::vector<std::wstring> TVectStr;
-	inline TStatus Split(const TChar* str, TVectStr& res, wchar_t delim, bool skipEmpty = true)
+	inline TVectStr Split(SView str, wchar_t delim, bool skipEmpty = true)
 	{
-		std::wstringstream data(str);
+		TVectStr res;
+		std::wispanstream data(str);
 
 		std::wstring line;
 		while (std::getline(data, line, delim))
@@ -172,14 +167,10 @@ namespace Str_Utils
 			res.push_back(line);
 		}
 
-		RETURN_SUCCESS;
-	}
-	inline TStatus Split(const std::wstring& str, TVectStr& res, wchar_t delim, bool skipEmpty = true)
-	{
-		return Split(str.c_str(), res, delim, skipEmpty);
+		return res;
 	}
 
-	inline bool replaceAll(std::wstring & s, const std::wstring & search, const std::wstring & replace) {
+	inline bool replaceAll(std::wstring & s, SView search, SView replace) {
 		bool found = false;
 		size_t pos = 0;
 		while ((pos = s.find(search, pos)) != std::string::npos) {

@@ -29,7 +29,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 		LOG_ANY(
 			L"KEY_MSG: {}({:x}) {},scan=0x{:x},inject={},low_inject={},altdown={},syskey={},extended={},is_pressed={},flags=0x{:b}",
-			HotKeyNames::Global().GetName(vkCode),
+			CHotKey::ToString(vkCode),
 			vkCode,
 			(curKeyState == KEY_STATE_UP ? L"UP" : L"DOWN"),
 			scan_code,
@@ -110,7 +110,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			if (need_our_action) {
 				// у нас есть такой хот-кей, запрещаем это событие для программы.
 				disable_up = curk.ValueKey(); // up тоже будет в будущем запрещать.
-				LOG_INFO_1(L"Key %s was disabled(down)", CHotKey::GetName(disable_up));
+				LOG_INFO_1(L"Key %s was disabled(down)", CHotKey::ToString(disable_up));
 				return 1;
 			}
 			else {
@@ -126,7 +126,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 					if (!is_hold) { // пока просто запрещаем
 						Worker()->PostMsg(Message_Hotkey{ .fix_ralt = true, .hotkey = curk });
 					}
-					LOG_INFO_1(L"Key %s was disabled(fix)", CHotKey::GetName(vkCode));
+					LOG_INFO_1(L"Key %s was disabled(fix)", CHotKey::ToString(vkCode));
 					disable_up = vkCode;
 					return 1; // пока запрещаем, потом заново отошлем...
 				}
@@ -136,7 +136,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 		if (curKeyState == KeyState::KEY_STATE_UP) {
 			if (disable_up == vkCode) {
-				LOG_INFO_1(L"Key %s was disabled(up)", CHotKey::GetName(disable_up));
+				LOG_INFO_1(L"Key %s was disabled(up)", CHotKey::ToString(disable_up));
 				disable_up = 0;
 				return 1;
 			}

@@ -45,7 +45,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_LWIN, VK_SPACE) };
+        set.def_list = { CHotKey(VKE_WIN, VK_SPACE), CHotKey(VK_LCONTROL,VK_LWIN) };
         set.gui_text = _(L"Cycle change layout").wc_str();
         AddHotKey(hk_CycleCustomLang, set);
     }
@@ -68,7 +68,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_LWIN, VK_F8) };
+        set.def_list = { CHotKey(VKE_WIN, VK_F8) };
         set.fUseDef = true;
         set.gui_text = _(L"Toggle enabled").wc_str();
         AddHotKey(hk_toggleEnabled, set);
@@ -105,13 +105,27 @@ void from_json(const json& j, HKL& p) {
     }
 }
 
+void to_json(json& j, const wxString& p) {
+    j = p.c_str();
+
+}
+
+void from_json(const json& j, wxString& p) {
+    p.Clear();
+    if (j.is_string()) {
+        p = j.get_ref<const std::string&>();
+    }
+}
+
 void to_json(json& j, const CHotKey& p) {
     j             = p.ToString().c_str();
 }
 
+
 void from_json(const json& j, CHotKey& p) {
     if (j.is_string()) {
-        IFS_LOG(p.FromString(j.get_ref<const std::string&>()));
+        wxString str = j;
+        p.FromString(str.wc_str());
     }
 }
 void to_json(json& j, const CHotKeyList& p) {
@@ -140,17 +154,7 @@ void from_json(const json& j, LayoutInfoList& p) {
     j.get_to(p.info);
 }
 
-void to_json(json& j, const wxString& p) {
-    j = p.c_str();
 
-}
-
-void from_json(const json& j, wxString& p) {
-    p.Clear();
-    if (j.is_string()) {
-        p = j.get_ref<const std::string&>();
-    }
-}
 
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(

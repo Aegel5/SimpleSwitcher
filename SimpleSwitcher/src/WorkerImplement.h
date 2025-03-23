@@ -123,7 +123,7 @@ private:
 	std::wstring m_sTopProcName;
 	std::wstring m_sTopProcPath;
 	CClipWorker m_clipWorker; 
-	tstring m_savedClipData;
+	std::wstring m_savedClipData;
 	HotKeyType m_lastRevertRequest = hk_NULL;
 	std::wstring m_sSelfExeName;
 	CycleRevertList m_cycleList;

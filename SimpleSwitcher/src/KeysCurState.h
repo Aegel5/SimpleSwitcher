@@ -51,7 +51,7 @@ struct CurStateWrapper {
 		if (curKeyState == KEY_STATE_UP) {
 			state.Remove(vkCode);
 			if (all_keys.erase(vkCode) == 0) {
-				LOG_WARN(L"Key was already upped {}", CHotKey::GetName(vkCode));
+				LOG_WARN(L"Key was already upped {}", CHotKey::ToString(vkCode));
 			}
 		}
 
