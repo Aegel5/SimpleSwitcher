@@ -207,7 +207,7 @@ TStatus WorkerImplement::GetClipStringCallback() {
 	RETURN_SUCCESS;
 }
 
-TStatus WorkerImplement::ClipboardChangedInt()
+void WorkerImplement::CliboardChanged()
 {
 	LOG_INFO_1(L"ClipboardChangedInt");
 
@@ -222,46 +222,16 @@ TStatus WorkerImplement::ClipboardChangedInt()
             LOG_WARN(L"Request not recent");
         }
         else {
-            // LOG_INFO_1(
-            //	L"dwTime=%u, request=%u, clear=%u, sec=%u",
-            //	dwTime,
-            //	request,
-            //	g_settings_thread.fClipboardClearFormat,
-            //	GetClipboardSequenceNumber());
-
             if (request == CLRMY_GET_FROM_CLIP) {
-                // DWORD deltSec = GetClipboardSequenceNumber() - m_clipCounter;
-                // LOG_INFO_1(L"delt=%u", deltSec);
-
-                Sleep(20); // wait here, no need async
-                
-				//m_clipWorker.PostMsg(ClipMode_GetClipString);
-
-                GetClipStringCallback();
-
-                RETURN_SUCCESS;
+				Worker()->PostMsg([](WorkerImplement& w) {w.GetClipStringCallback(); }, 20);
+				return;
             }
 
             if (request == CLRMY_hk_COPY) {
-                // if (m_lastRevertRequest == hk_EmulCopyNoFormat)
-                //{
-                //	IFS_LOG(RequestClearFormat());
-                //}
-                RETURN_SUCCESS;
+				return;
             }
 
-            // if (request == CLR_hk_INSERT)
-            //{
-            //	if (isRecent)
-            //	{
-
-            //	}
-            //	ContextRevert ctxRev;
-            //	ctxRev.flags = SW_CLIENT_CTRLV;
-            //	IFS_LOG(ProcessRevert(ctxRev));
-            //}
-
-            RETURN_SUCCESS;
+			return;
         }
     }
 
@@ -272,7 +242,7 @@ TStatus WorkerImplement::ClipboardChangedInt()
 		Worker()->PostMsg([](WorkerImplement& w) {w.ClipboardClearFormat2(); }, 500);
 	}
 
-	RETURN_SUCCESS;
+	LOG_INFO_1(L"ClipboardChangedInt complete");
 }
 
 void WorkerImplement::ChangeForeground(HWND hwnd)

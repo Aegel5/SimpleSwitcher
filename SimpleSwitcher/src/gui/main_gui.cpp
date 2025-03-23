@@ -7,6 +7,7 @@
 #include <wx/taskbar.h>
 #include "wxUtils.h"
 #include "Tray.h"
+#include "IconManager.h"
 
 using namespace WxUtils;
 
@@ -30,7 +31,13 @@ namespace {
 
 class MainWnd : public MyFrame4
 {
+    IconManager iconsMan;
     Timers timers;
+    CoreWorker coreWork;
+    MyTray myTray;
+    bool exitRequest = false;
+    bool inited = false;
+
     std::generator<FloatPanel*> all_panels() {
         for (auto* it : this->GetChildren()) {
             auto cur = wxDynamicCast(it, FloatPanel);
@@ -38,7 +45,16 @@ class MainWnd : public MyFrame4
                 co_yield cur;
         }
     }
+    void UpdateIcons() {
+        if (!conf_get_unsafe()->showFlags) {
+            myTray.ResetIcon(iconsMan.standart_icon);
+        }
+        else {
+            Worker()->PostMsg(Message_GetCurLay{ true });
+        }
+    }
 public:
+
     MainWnd() : MyFrame4(nullptr)
     {
         try {
@@ -114,6 +130,23 @@ public:
                     SaveConfigWith([val](ConfPtr& conf) {conf->EnableKeyLoggerDefence = val; });
              });
 
+            BindCheckbox(m_checkBoxShowFlags,
+                [this]() {
+                    return conf_get_unsafe()->showFlags; },
+                [this](bool val) {
+                    SaveConfigWith([val](auto& cfg) {cfg->showFlags = val; });
+                    UpdateIcons();
+                });
+
+            BindCheckbox(m_checkBoxDisablAcc,
+                []() {
+                    AllowAccessibilityShortcutKeys(!conf_get_unsafe()->disableAccessebility);
+                    return conf_get_unsafe()->disableAccessebility; },
+                [](bool val) {
+                    SaveConfigWith([val](auto& cfg) {cfg->disableAccessebility = val; });
+                    AllowAccessibilityShortcutKeys(!conf_get_unsafe()->disableAccessebility);
+                });
+
             BindCheckbox(m_checkBoxSeparateExt,
                 []() {return conf_get_unsafe()->separate_ext_last_word && conf_get_unsafe()->separate_ext_several_words; },
                 [](bool val) {
@@ -121,29 +154,17 @@ public:
                 });
 
             BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get_unsafe()->AlternativeLayoutChange; }, [this](bool val) {
-                auto conf = conf_copy();
-                conf->AlternativeLayoutChange = val;
-                conf_set(conf);
+                SaveConfigWith([val](auto& cfg) {cfg->AlternativeLayoutChange = val; });
                 FillLayoutsInfo();
                 FillHotkeysInfo();
                 });
 
-            //BindCheckbox(m_checkBoxAllowInjected, []() {return conf_get_unsafe()->AllowRemoteKeys_; }, [](bool val) {
-            //    auto conf = conf_copy();
-            //    conf->AllowRemoteKeys_ = val;
-            //    conf_set(conf);
-            //    });
-
             BindCheckbox(m_checkBoxClearForm, []() {return conf_get_unsafe()->fClipboardClearFormat; }, [](bool val) {
-                auto conf = conf_copy();
-                conf->fClipboardClearFormat = val;
-                conf_set(conf);
+                SaveConfigWith([val](auto& cfg) {cfg->fClipboardClearFormat = val; });
                 });
 
             BindCheckbox(m_checkBoxWorkInAdmin, []() {return conf_get_unsafe()->isMonitorAdmin; }, [this](bool val) {
-                auto conf = conf_copy();
-                conf->isMonitorAdmin = val;
-                conf_set(conf);
+                SaveConfigWith([val](auto& cfg) {cfg->isMonitorAdmin = val; });
                 updateAutoStart();
                 updateEnable();
                 });
@@ -154,13 +175,9 @@ public:
                     elem->AppendString(_("English"));
                     elem->SetSelection((int)conf_get_unsafe()->uiLang);
                 }, [](wxChoice* elem) {
-                    auto conf = conf_copy();
-                    conf->uiLang = (SettingsGui::UiLang)elem->GetSelection();
-                    conf_set(conf);
+                    SaveConfigWith([elem](auto& cfg) {cfg->uiLang = (SettingsGui::UiLang)elem->GetSelection(); });
                     wxMessageBox(_("Need restart program"));
                     });
-
-            updateBools();
 
             updateAutoStart();
 
@@ -168,9 +185,9 @@ public:
             FillLayoutsInfo();
 
             updateCapsTab();
-            handleDisableAccess();
 
             myTray.Init(this);
+            myTray.ResetIcon(iconsMan.standart_icon);
             myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
             myTray.Bind(wxEVT_MENU, [this](auto& evt) {
                 ForceShow(this);
@@ -199,13 +216,7 @@ public:
     }
 
 private:
-    //wxDECLARE_EVENT_TABLE();
-    CoreWorker coreWork;
-    //DecentTray tray;
-    MyTray myTray;
-    //wxIcon trayIcon;
-    bool exitRequest = false;
-    bool inited = false;
+
 
     int getChildIndex(wxWindow* obj) {
         auto par = obj->GetParent();
@@ -230,75 +241,7 @@ private:
                    // since the default event handler does call Destroy(), too
     }
 
-    std::map<wxString, wxBitmapBundle> flags_map;
-    std::map<wxString, wxBitmap> flags_for_panel;
 
-    wxBitmapBundle GetFlag2(const wxString& _name) {
-
-        auto name16 = _name + L"16";
-        auto name32 = _name + L"32";
-
-        static bool inited = false;
-
-        if (!inited) {
-            ::wxInitAllImageHandlers();
-            inited = true;
-        }
-
-        auto it = flags_map.find(name16);
-        if (it != flags_map.end()) return it->second;
-
-        wxVector<wxBitmap> bitmaps;
-
-        if (FindResource(0, name16.wc_str(), RT_RCDATA) == nullptr || FindResource(0, name32.wc_str(), RT_RCDATA) == nullptr) {
-        }
-        else {
-            bitmaps.push_back(wxBitmap(name16, wxBITMAP_TYPE_PNG_RESOURCE));
-            bitmaps.push_back(wxBitmap(name32, wxBITMAP_TYPE_PNG_RESOURCE));
-            flags_map.emplace(name16, wxBitmapBundle::FromBitmaps(bitmaps));
-            flags_for_panel.emplace(_name, bitmaps[0]);
-        }
-
-        return flags_map[name16];
-    }
-
-    void SetLay(HKL newLayout) {
-
-        std::wstring name = L"appicon";
-
-        WORD langid = LOWORD(newLayout);
-
-        TCHAR buf[512];
-        buf[0] = 0;
-
-        int flag = LOCALE_SNAME;
-        int len = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, std::ssize(buf));
-        IFW_LOG(len != 0);
-
-        wxBitmapBundle bndl;
-
-        auto len_str = wcslen(buf);
-        wxString wname = L"unknown";
-        if (len_str >= 2) {
-
-            TStr name = buf + len_str - 2;
-            wname = name;
-
-            LOG_INFO_1(L"mainguid new layout: 0x%x, name=%s", newLayout, name);
-
-            bndl = GetFlag2(wname);
-        }
-
-        if (!bndl.IsOk()) {
-            LOG_INFO_1(L"ERR. can't find flag for ");
-            bndl = myTray.standart_icon;
-        }
-
-        myTray.ResetIcon(bndl);
-        for (auto* it : all_panels()) {
-            it->SetFlag(flags_for_panel[wname]);
-        }
-    }
 
    virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override {
 
@@ -310,45 +253,18 @@ private:
             if (!conf_get_unsafe()->showFlags)
                 return TRUE;
 
-            SetLay((HKL)wParam);
+            auto info = iconsMan.Get((HKL)wParam, !IsCoreEnabled());
+            if (!info.bundle.IsOk()) {
+                LOG_INFO_1(L"ERR. can't find flag for ");
+                info.bundle = iconsMan.standart_icon;
+            }
+            myTray.ResetIcon(info.bundle);
 
             return TRUE;
         }
 
         return MyFrame4::MSWWindowProc(nMsg, wParam, lParam);
    }
-
-    void updateBools() {
-        auto conf = conf_get_unsafe();
-        m_checkBoxDisablAcc->SetValue(conf->disableAccessebility);
-        m_checkBoxShowFlags->SetValue(conf->showFlags);
-    }
-
-
-    void handleDisableAccess() {
-        if (conf_get_unsafe()->disableAccessebility) {
-            AllowAccessibilityShortcutKeys(false);
-        }
-    }
-    virtual void onShowFlags(wxCommandEvent& event) override {
-        auto conf = conf_copy();
-        conf->showFlags = event.IsChecked();
-        conf_set(conf);
-
-        if (!conf_get_unsafe()->showFlags) {
-            myTray.ResetIcon(myTray.standart_icon);
-        } else {
-            Worker()->PostMsg(Message_GetCurLay{ true });
-        }
-
-    }
-    virtual void onDisableAccessebl(wxCommandEvent& event) override {
-        auto conf = conf_copy();
-        conf->disableAccessebility = event.IsChecked();
-        conf_set(conf);
-
-        handleDisableAccess();
-    }
 
     virtual void onHotDClick(wxGridEvent& event) override {
 
@@ -487,6 +403,7 @@ private:
             coreWork.Stop();
         }
         m_checkBoxEnable->SetValue(coreWork.IsStarted());
+        UpdateIcons();
     }
     void UpdateAutostartExplain()
     {

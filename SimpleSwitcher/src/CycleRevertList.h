@@ -19,7 +19,10 @@ public:
 	}
 	bool HasAnySymbol() const { return !m_symbolList.empty(); }
 	void Clear() {
-		m_symbolList.clear();
+		if (!m_symbolList.empty()) {
+			LOG_ANY(L"ClearsKeys");
+			m_symbolList.clear();
+		}
 		ClearGenerated();
 	}
 private: void ClearGenerated() {

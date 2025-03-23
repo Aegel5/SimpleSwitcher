@@ -21,19 +21,11 @@ public:
 		IFS_LOG(Utils::GetPath_fileExe_lower(m_sSelfExeName));
 	}
 
-	void ClearAllWords() {
-		LOG_INFO_2(L"ClearsKeys");
-		m_cycleList.Clear();
-	}
+	void ClearAllWords() { m_cycleList.Clear(); }
 	TStatus NeedRevert(HotKeyType typeRevert);
 	TStatus AnalizeTopWnd();
 	TStatus SwitchLangByEmulate(HKL lay);
-	void CliboardChanged() 
-	{ 
-		IFS_LOG(ClipboardChangedInt()); 
-		LOG_INFO_1(L"ClipboardChangedInt complete");
-	}
-	TStatus ClipboardChangedInt();
+	void CliboardChanged();
     TStatus GetClipStringCallback();
 	void ClipboardClearFormat2() { IFS_LOG(m_clipWorker.ClipboardClearFormat()); }
 	TStatus ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist);

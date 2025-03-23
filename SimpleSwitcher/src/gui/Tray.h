@@ -26,8 +26,6 @@ class MyTray : public wxTaskBarIcon {
 
 public:
 
-    wxIcon standart_icon;
-
     void ResetIcon(const auto& newIcon) {
         SetIcon(newIcon, trayTooltip);
     }
@@ -42,8 +40,6 @@ public:
         trayTooltip = L"SimpleSwitcher";
         trayTooltip += L" ";
         trayTooltip += SW_VERSION;
-        standart_icon = wxIcon("appicon");
-        ResetIcon(standart_icon);
 
         Bind(wxEVT_MENU, [this](wxCommandEvent& event) {
             auto id = event.GetId();
