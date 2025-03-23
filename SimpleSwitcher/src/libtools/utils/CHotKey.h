@@ -8,7 +8,6 @@ enum {
 	VK_E_1 = 0x31,
 	VK_E_2 = 0x32,
 	VK_E_3 = 0x33,
-	VK_E_CTX_MENU = 0x5D
 };
 
 class HotKeyNames
@@ -77,6 +76,7 @@ public:
 		Set(VK_RMENU, L"RAlt");
 		Set(VK_LWIN, L"LWin");
 		Set(VK_RWIN, L"RWin");
+		Set(VK_APPS, L"Apps");
 		Set(VK_ESCAPE, L"Esc");
 
 		Set(VK_NUMPAD0, L"NUMPAD0");
@@ -580,6 +580,33 @@ private:
 			return true;
 		}
 		return false;
+	}
+public: TStatus RegisterHk(CAutoHotKeyRegister& registor, HWND hwnd, int id) {
+		registor.Cleanup();
+		if (IsEmpty()) RETURN_SUCCESS;
+		UINT mods = MOD_NOREPEAT;
+		UINT vk = ValueKey();
+		for (TKeyCode* k = ModsBegin(); k != ModsEnd(); ++k) {
+			auto norm = Normalize(*k);
+			auto cur = *k;
+			if (cur == VK_SHIFT) {
+				mods |= MOD_SHIFT;
+			}
+			else if (cur == VK_CONTROL) {
+				mods |= MOD_CONTROL;
+			}
+			else if (cur == VK_MENU) {
+				mods |= MOD_ALT;
+			}
+			else if (cur == VK_LWIN) {
+				mods |= MOD_WIN;
+			}
+			else {
+				return SW_ERR_UNSUPPORTED;
+			}
+		}
+		IFW_RET(registor.Register(hwnd, id, mods, vk));
+		RETURN_SUCCESS;
 	}
 private:
 	static const int c_MAX = 6;

@@ -13,7 +13,7 @@
 
 MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxSize( -1,480 ), wxDefaultSize );
+	this->SetSizeHints( wxSize( -1,530 ), wxDefaultSize );
 	this->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
 
 	wxBoxSizer* bSizer1;
@@ -69,18 +69,6 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	wxStaticBoxSizer* sbSizer8;
 	sbSizer8 = new wxStaticBoxSizer( new wxStaticBox( m_panelMain, wxID_ANY, _("Advanced") ), wxVERTICAL );
-
-	wxBoxSizer* bSizer16;
-	bSizer16 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_buttonAddPanel = new wxButton( sbSizer8->GetStaticBox(), wxID_ANY, _("Add float panel"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer16->Add( m_buttonAddPanel, 0, wxALL, 5 );
-
-	m_buttonDelAllPanels = new wxButton( sbSizer8->GetStaticBox(), wxID_ANY, _("Remove all panels"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer16->Add( m_buttonDelAllPanels, 0, wxALL, 5 );
-
-
-	sbSizer8->Add( bSizer16, 1, wxEXPAND, 5 );
 
 	m_checkBoxDisablAcc = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Disable the accessibility shortcut keys (5 SHIFT and others)"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer8->Add( m_checkBoxDisablAcc, 0, wxALL, 5 );
@@ -144,7 +132,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	// Cell Defaults
 	m_gridHotKeys->SetDefaultCellAlignment( wxALIGN_LEFT, wxALIGN_CENTER );
-	bSizer41->Add( m_gridHotKeys, 10, wxALL|wxEXPAND, 5 );
+	bSizer41->Add( m_gridHotKeys, 12, wxALL|wxEXPAND, 5 );
 
 	m_gridLayouts = new wxGrid( m_panel141, wxID_ANY, wxPoint( -1,-1 ), wxDefaultSize, 0 );
 
@@ -165,7 +153,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	// Rows
 	m_gridLayouts->EnableDragRowSize( true );
 	m_gridLayouts->SetRowLabelSize( 50 );
-	m_gridLayouts->SetRowLabelAlignment( wxALIGN_CENTER, wxALIGN_CENTER );
+	m_gridLayouts->SetRowLabelAlignment( wxALIGN_LEFT, wxALIGN_CENTER );
 
 	// Label Appearance
 
@@ -225,11 +213,23 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBoxFixRAlt->SetValue(true);
 	bSizer1911->Add( m_checkBoxFixRAlt, 0, wxALL|wxEXPAND, 5 );
 
+	wxBoxSizer* bSizer16;
+	bSizer16 = new wxBoxSizer( wxHORIZONTAL );
+
+	m_buttonAddPanel = new wxButton( m_panel61, wxID_ANY, _("Add float panel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer16->Add( m_buttonAddPanel, 0, wxALL, 5 );
+
+	m_buttonDelAllPanels = new wxButton( m_panel61, wxID_ANY, _("Remove all panels"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer16->Add( m_buttonDelAllPanels, 0, wxALL, 5 );
+
+
+	bSizer1911->Add( bSizer16, 0, wxEXPAND, 5 );
+
 
 	m_panel61->SetSizer( bSizer1911 );
 	m_panel61->Layout();
 	bSizer1911->Fit( m_panel61 );
-	m_notebook2->AddPage( m_panel61, _("Custom"), false );
+	m_notebook2->AddPage( m_panel61, _("Experimental"), false );
 	m_panel6 = new wxPanel( m_notebook2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer191;
 	bSizer191 = new wxBoxSizer( wxVERTICAL );

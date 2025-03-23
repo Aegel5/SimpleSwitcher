@@ -37,6 +37,7 @@ class MainWnd : public MyFrame4
     MyTray myTray;
     bool exitRequest = false;
     bool inited = false;
+    CAutoHotKeyRegister enable_hk_register;
 
     std::generator<FloatPanel*> all_panels() {
         for (auto* it : this->GetChildren()) {
@@ -53,6 +54,10 @@ class MainWnd : public MyFrame4
             Worker()->PostMsg(Message_GetCurLay{ true });
         }
     }
+    void RegisterEnabled() {
+        auto hk = conf_get_unsafe()->GetHk(hk_toggleEnabled).keys.key();
+        IFS_LOG(hk.RegisterHk(enable_hk_register, g_guiHandle, 998));
+    }
 public:
 
     MainWnd() : MyFrame4(nullptr)
@@ -60,6 +65,8 @@ public:
         try {
 
             g_guiHandle = GetHandle();
+
+            RegisterEnabled();
 
             timers.StartCycle(200, []() { Worker()->PostMsg(Message_GetCurLay{}); });
 
@@ -120,21 +127,21 @@ public:
             BindCheckbox(m_checkBoxFixRAlt, 
                 []() {return conf_get_unsafe()->fixRAlt; }, 
                 [](bool val) {
-                    SaveConfigWith([val](ConfPtr& conf) {conf->fixRAlt = val; });
+                    SaveConfigWith([val](auto conf) {conf->fixRAlt = val; });
                 });
             m_checkBoxFixRAlt->SetLabelText(m_checkBoxFixRAlt->GetLabelText() + L" \"" + Utils::GetNameForHKL(conf_get_unsafe()->fixRAlt_lay_)+"\"");
 
             BindCheckbox(m_checkBoxPrevent, 
                 []() {return conf_get_unsafe()->EnableKeyLoggerDefence; }, 
                 [](bool val) {
-                    SaveConfigWith([val](ConfPtr& conf) {conf->EnableKeyLoggerDefence = val; });
+                    SaveConfigWith([val](auto conf) {conf->EnableKeyLoggerDefence = val; });
              });
 
             BindCheckbox(m_checkBoxShowFlags,
                 [this]() {
                     return conf_get_unsafe()->showFlags; },
                 [this](bool val) {
-                    SaveConfigWith([val](auto& cfg) {cfg->showFlags = val; });
+                    SaveConfigWith([val](auto cfg) {cfg->showFlags = val; });
                     UpdateIcons();
                 });
 
@@ -143,28 +150,28 @@ public:
                     AllowAccessibilityShortcutKeys(!conf_get_unsafe()->disableAccessebility);
                     return conf_get_unsafe()->disableAccessebility; },
                 [](bool val) {
-                    SaveConfigWith([val](auto& cfg) {cfg->disableAccessebility = val; });
+                    SaveConfigWith([val](auto cfg) {cfg->disableAccessebility = val; });
                     AllowAccessibilityShortcutKeys(!conf_get_unsafe()->disableAccessebility);
                 });
 
             BindCheckbox(m_checkBoxSeparateExt,
                 []() {return conf_get_unsafe()->separate_ext_last_word && conf_get_unsafe()->separate_ext_several_words; },
                 [](bool val) {
-                    SaveConfigWith([val](ConfPtr& conf) {conf->separate_ext_last_word = conf->separate_ext_several_words = val; });
+                    SaveConfigWith([val](auto conf) {conf->separate_ext_last_word = conf->separate_ext_several_words = val; });
                 });
 
             BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get_unsafe()->AlternativeLayoutChange; }, [this](bool val) {
-                SaveConfigWith([val](auto& cfg) {cfg->AlternativeLayoutChange = val; });
+                SaveConfigWith([val](auto cfg) {cfg->AlternativeLayoutChange = val; });
                 FillLayoutsInfo();
                 FillHotkeysInfo();
                 });
 
             BindCheckbox(m_checkBoxClearForm, []() {return conf_get_unsafe()->fClipboardClearFormat; }, [](bool val) {
-                SaveConfigWith([val](auto& cfg) {cfg->fClipboardClearFormat = val; });
+                SaveConfigWith([val](auto cfg) {cfg->fClipboardClearFormat = val; });
                 });
 
             BindCheckbox(m_checkBoxWorkInAdmin, []() {return conf_get_unsafe()->isMonitorAdmin; }, [this](bool val) {
-                SaveConfigWith([val](auto& cfg) {cfg->isMonitorAdmin = val; });
+                SaveConfigWith([val](auto cfg) {cfg->isMonitorAdmin = val; });
                 updateAutoStart();
                 updateEnable();
                 });
@@ -175,7 +182,7 @@ public:
                     elem->AppendString(_("English"));
                     elem->SetSelection((int)conf_get_unsafe()->uiLang);
                 }, [](wxChoice* elem) {
-                    SaveConfigWith([elem](auto& cfg) {cfg->uiLang = (SettingsGui::UiLang)elem->GetSelection(); });
+                    SaveConfigWith([elem](auto cfg) {cfg->uiLang = (SettingsGui::UiLang)elem->GetSelection(); });
                     wxMessageBox(_("Need restart program"));
                     });
 
@@ -193,8 +200,7 @@ public:
                 ForceShow(this);
                 }, Minimal_Show);
             myTray.Bind(wxEVT_MENU, [this](auto& evt) {
-                m_checkBoxEnable->SetValue(!IsCoreEnabled());
-                ApplyEnabled();
+                TryEnable(!IsCoreEnabled());
                 }, Minimal_Activate);
             myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, [this](auto& evt) {
                 ForceShow(this);
@@ -204,7 +210,7 @@ public:
                 coreWork.Start();
             }
 
-            BindCheckbox(m_checkBoxEnable, []() {return false; }, [this](auto val) {ApplyEnabled(); });
+            BindCheckbox(m_checkBoxEnable, []() {return false; }, [this](auto val) {TryEnable(val); });
 
             updateEnable();
 
@@ -262,6 +268,11 @@ private:
 
             return TRUE;
         }
+        else if (nMsg == WM_HOTKEY) {
+            if (wParam == 998) {
+                TryEnable(!IsCoreEnabled());
+            }
+        }
 
         return MyFrame4::MSWWindowProc(nMsg, wParam, lParam);
    }
@@ -271,19 +282,22 @@ private:
         int col = event.GetCol();
         int row = event.GetRow();
 
-        auto& hotlist = conf_get_unsafe()->hotkeysList;
+        GETCONF;
+
+        const auto& hotlist = cfg->hotkeysList;
         if (row >= hotlist.size()) return;
-        auto& data = hotlist[row];
+        const auto& data = hotlist[row];
 
 
         if (col == 0) {
             CHotKey newkey;
             CHotKeySet set;
             if (ChangeHotKey2(this, data, newkey)) {
-                auto conf = conf_copy();
-                conf->hotkeysList[row].keys.key() = newkey;
-                conf_set(conf);
+                SaveConfigWith([&](auto cfg) {cfg->hotkeysList[row].keys.key() = newkey;});
                 FillHotkeysInfo();
+                if (data.hkId == hk_toggleEnabled) {
+                    RegisterEnabled();
+                }
             }
         }
 
@@ -610,7 +624,8 @@ public:
         updateAutoStart();
     }
 
-    void ApplyEnabled() {
+    void TryEnable(bool val) {
+        m_checkBoxEnable->SetValue(val);
         if (IsCoreEnabled()) {
             if (startOk()) {
                 coreWork.Start();

@@ -51,7 +51,7 @@ private:
 	BOOL m_stat = FALSE;
 };
 
-class CAutoHotKey
+class CAutoHotKeyRegister
 {
 public:
 	BOOL Register(HWND hwnd, int id, UINT mods, DWORD key)
@@ -62,7 +62,7 @@ public:
 		m_res = RegisterHotKey(hwnd, id, mods, key);
 		return m_res;
 	}
-	~CAutoHotKey()
+	~CAutoHotKeyRegister()
 	{
 		Cleanup();
 	}

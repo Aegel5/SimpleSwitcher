@@ -54,8 +54,6 @@ class MyFrame4 : public wxFrame
 		wxCheckBox* m_checkBoxAlterantiveLayoutChange;
 		wxStaticText* m_staticText9;
 		wxChoice* m_comboUiLang;
-		wxButton* m_buttonAddPanel;
-		wxButton* m_buttonDelAllPanels;
 		wxCheckBox* m_checkBoxDisablAcc;
 		wxCheckBox* m_checkBoxClearForm;
 		wxCheckBox* m_checkBoxSeparateExt;
@@ -74,6 +72,8 @@ class MyFrame4 : public wxFrame
 		wxPanel* m_panel61;
 		wxCheckBox* m_checkBoxPrevent;
 		wxCheckBox* m_checkBoxFixRAlt;
+		wxButton* m_buttonAddPanel;
+		wxButton* m_buttonDelAllPanels;
 		wxPanel* m_panel6;
 		wxStaticText* m_staticTextBuildDate;
 		wxHyperlinkCtrl* m_hyperlink1;

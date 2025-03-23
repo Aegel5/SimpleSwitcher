@@ -12,6 +12,11 @@ private:
           img.ChangeBrightness(-0.2);
           return img;
       }
+      wxBitmap ToDebug(const wxBitmap& bt) {
+          wxImage img = bt.ConvertToImage();
+          img.ChangeHSV(0.1,0,0);
+          return img;
+      }
 
       wxBitmapBundle GetBundl(const wxString& name, bool isGray) {
           auto name16 = name + L"16";
@@ -38,6 +43,11 @@ private:
               wxVector<wxBitmap> bitmaps;
               bitmaps.push_back(wxBitmap(name16, wxBITMAP_TYPE_PNG_RESOURCE));
               bitmaps.push_back(wxBitmap(name32, wxBITMAP_TYPE_PNG_RESOURCE));
+              if (Utils::IsDebug()) {
+                  for (auto& it : bitmaps) {
+                      it = ToDebug(it);
+                  }
+              }
               if (isGray) {
                   for (auto& it : bitmaps) {
                       it = ToGray(it);
