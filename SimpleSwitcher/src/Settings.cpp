@@ -70,7 +70,7 @@ void SettingsGui::GenerateListHK()
         CHotKeySet set;
         set.def_list = { CHotKey(VKE_WIN, VK_F8) };
         set.fUseDef = true;
-        set.gui_text = _(L"Toggle enable").wc_str();
+        set.gui_text = _(L"Enable/Disable").wc_str();
         AddHotKey(hk_ToggleEnabled, set);
     }
 
