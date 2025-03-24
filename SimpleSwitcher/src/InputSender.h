@@ -12,7 +12,7 @@ public:
 			return;
 		for (auto& i : list)
 		{
-			LOG_INFO_2(L"SEND %s %s", TestFlag(i.ki.dwFlags, KEYEVENTF_KEYUP) ? L"UP" : L"DW", CHotKey::ToString(i.ki.wVk));
+			LOG_ANY(L"SEND {} {}", TestFlag(i.ki.dwFlags, KEYEVENTF_KEYUP) ? L"UP" : L"DW", CHotKey::ToString(i.ki.wVk));
 		}
 
 		bool doPause = false;

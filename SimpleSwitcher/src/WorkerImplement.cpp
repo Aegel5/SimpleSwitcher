@@ -10,7 +10,7 @@ void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 	m_curStateWrap.Update(vkCode, curKeyState);
 	auto cur_hotkey = m_curStateWrap.state;
 
-	LOG_INFO_3(L"ProcessKeyMsg %s curState=%s", CHotKey::ToString(vkCode).c_str(), cur_hotkey.ToString().c_str());
+	LOG_ANY(L"ProcessKeyMsg {} curState={}", CHotKey::ToString(vkCode), cur_hotkey.ToString());
 
 	if (curKeyState != KEY_STATE_DOWN)
 		return;
