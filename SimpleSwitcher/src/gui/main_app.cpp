@@ -50,7 +50,7 @@ bool MyApp::OnInit() {
 
         auto conf = __g_config.get();
 
-        SetLogLevel(Utils::IsDebug() ? LOG_LEVEL_1 : LOG_LEVEL_0);
+        SetLogLevel(Utils::IsDebug() ? LOG_LEVEL_2 : LOG_LEVEL_0);
 
         auto errLoadConf = LoadConfig(*conf);
         IFS_LOG(errLoadConf);

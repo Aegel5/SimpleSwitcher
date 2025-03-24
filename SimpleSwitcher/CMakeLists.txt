@@ -68,6 +68,7 @@ target_sources(SimpleSwitcher
 target_precompile_headers(SimpleSwitcher PRIVATE src/sw-base.h )
 target_link_libraries(SimpleSwitcher wx::core wx::base "Crypt32.lib" "Imm32.lib" "Psapi.lib")
 target_include_directories(SimpleSwitcher PRIVATE "src/libtools")
+target_include_directories(SimpleSwitcher PRIVATE "src/extern")
 target_include_directories(SimpleSwitcher PRIVATE "src") 
 
 

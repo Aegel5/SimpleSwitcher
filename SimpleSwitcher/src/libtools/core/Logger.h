@@ -4,6 +4,7 @@
 #include "Errors.h"
 #include <mutex>
 #include <source_location>
+#include <print>
 
 enum TLogLevel
 {
@@ -46,6 +47,14 @@ namespace _log_int {
 				Format(L"%S", data);
 				//fputs(data, m_fp);
 			}
+		}
+		template<typename... Args>
+		void AppendFormat(const std::wformat_string<Args...>& s, Args&&... v) {
+			Append(std::vformat(s.get(), std::make_wformat_args(v...)).c_str());
+		}
+		template<typename... Args>
+		void AppendFormat(const std::format_string<Args...>& s, Args&&... v) {
+			Append(std::vformat(s.get(), std::make_format_args(v...)).c_str());
 		}
 		void Format(const TChar* Format, ...) {
 			va_list alist;
@@ -156,16 +165,10 @@ namespace _log_int {
 	}
 
 
-	template<typename... Args>
-	void __FORMAT_APPEND(const std::wformat_string<Args...>& s, Args&&... v) {
-		auto res = std::vformat(s.get(), std::make_wformat_args(v...));
-		SwLoggerGlobal().Append(res.c_str());
-	}
-
 	void __LOG_LINE_FORMAT(auto&&... v) {
 		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
 		__SW_LOG_TIME();
-		__FORMAT_APPEND(FORWARD(v)...);
+		SwLoggerGlobal().AppendFormat(FORWARD(v)...);
 		SwLoggerGlobal().EndLineFlash();
 	}
 
@@ -178,7 +181,7 @@ namespace _log_int {
 		WinErrBOOL() {}
 		void SetError(DWORD err) { m_dwErr = err; }
 		void Log() const {
-			__FORMAT_APPEND(L"WinErr={} ", m_dwErr);
+			SwLoggerGlobal().AppendFormat(L"WinErr={} ", m_dwErr);
 
 			CAutoWinMem lpMsgBuf;
 			FormatMessage(
@@ -206,7 +209,7 @@ namespace _log_int {
 		void Log() const {
 			CAutoWinMem lpMsgBuf;
 			DWORD dwErr = GetLastError();
-			__FORMAT_APPEND(L"Wait result={} LastErr={} ", res, dwErr);
+			SwLoggerGlobal().AppendFormat(L"Wait result={} LastErr={} ", res, dwErr);
 			FormatMessage(
 				FORMAT_MESSAGE_ALLOCATE_BUFFER |
 				FORMAT_MESSAGE_FROM_SYSTEM |
@@ -231,7 +234,7 @@ namespace _log_int {
 		TStatus res;
 		SwErrTStatus(TStatus r) : res(r) {}
 		void Log() const {
-			__FORMAT_APPEND(L"TStatus={}({})", res >= std::ssize(c_StatusNames) ? L"NO_INFO" : c_StatusNames[res], (int)res);
+			SwLoggerGlobal().AppendFormat("TStatus={}({})", (int)res, simple_enum::enum_name(res));
 		}
 		operator bool() const { return res != SW_ERR_SUCCESS; }
 		TStatus ToTStatus() { return res; }
@@ -242,7 +245,7 @@ namespace _log_int {
 	struct WinErrLSTATUS {
 		LSTATUS res;
 		WinErrLSTATUS(LSTATUS r) : res(r) {}
-		void Log() const { __FORMAT_APPEND(L"LSTATUS={}", (int)res); }
+		void Log() const { SwLoggerGlobal().AppendFormat(L"LSTATUS={}", (int)res); }
 		bool IsError() const { return res != ERROR_SUCCESS; }
 		operator bool() const { return IsError(); }
 		TStatus ToTStatus() { return SW_ERR_WINAPI; }
@@ -256,7 +259,7 @@ namespace _log_int {
 			TChar sBuf[0x1000];
 			*sBuf = 0;
 			_wcserror_s(sBuf, res);
-			__FORMAT_APPEND(L"errno_t={} msg={}", res, sBuf);
+			SwLoggerGlobal().AppendFormat(L"errno_t={} msg={}", res, sBuf);
 		}
 		bool IsError() const { return res != 0; }
 		operator bool() const { return IsError(); }
@@ -266,7 +269,7 @@ namespace _log_int {
 	struct WinErrHRESULT {
 		HRESULT res;
 		WinErrHRESULT(HRESULT r) : res(r) {}
-		void Log() const { __SW_LOG_FORMAT__(L"HResult=%d(0x%x)", res, res); }
+		void Log() const { SwLoggerGlobal().AppendFormat(L"HResult={}(0x{:x})", res, res); }
 		operator bool() const { return FAILED(res); }
 		TStatus ToTStatus() { return SW_ERR_HRESULT; }
 	};
@@ -283,8 +286,8 @@ namespace _log_int {
 		err.Log();
 		auto file = loc.file_name();
 		auto cur = strrchr(file, '\\');
-		SwLoggerGlobal().Append(std::format("file={}({})", cur ? cur + 1 : file, loc.line()).c_str());
-		__FORMAT_APPEND(s, FORWARD(v)...);
+		SwLoggerGlobal().AppendFormat("file={}({})", cur ? cur + 1 : file, loc.line());
+		SwLoggerGlobal().AppendFormat(s, FORWARD(v)...);
 		SwLoggerGlobal().EndLineFlash();
 	}
 
@@ -321,6 +324,11 @@ inline void LOG_ANY(const std::wformat_string<Args...> s, Args&&... v) 	{
  if (GetLogLevel() >= LOG_LEVEL_2) { _log_int::__LOG_LINE_FORMAT(s, FORWARD(v)...); } }
 
 template<typename... Args>
+inline void LOG_ANY(const std::format_string<Args...> s, Args&&... v) {
+	if (GetLogLevel() >= LOG_LEVEL_2) { _log_int::__LOG_LINE_FORMAT(s, FORWARD(v)...); }
+}
+
+template<typename... Args>
 inline void LOG_ANY_4(const std::wformat_string<Args...> s, Args&&... v) {
 	if (GetLogLevel() >= LOG_LEVEL_4) { _log_int::__LOG_LINE_FORMAT(s, FORWARD(v)...); }
 }
@@ -332,7 +340,7 @@ inline void LOG_WARN(const std::wformat_string<Args...> s, Args&&... v) {
 		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
 		__SW_LOG_TIME();
 		SwLoggerGlobal().Append(L"[WARN] ");
-		__FORMAT_APPEND(s, FORWARD(v)...);
+		SwLoggerGlobal().AppendFormat(s, FORWARD(v)...);
 		SwLoggerGlobal().EndLineFlash();
 	}
 }

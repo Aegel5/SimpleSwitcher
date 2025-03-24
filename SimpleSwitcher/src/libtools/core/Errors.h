@@ -1,6 +1,7 @@
 ﻿#pragma once
+#include <simple_enum/simple_enum.hpp>
 
-enum TStatus
+enum struct TStatus
 {
 	SW_ERR_SUCCESS                          = 0,
 	SW_ERR_UNKNOWN                          ,
@@ -26,37 +27,15 @@ enum TStatus
 	SW_ERR_BAD_INTERNAL_STATE,
 	SW_ERR_NO_MEMORY,
 	SW_ERR_JSON,
+
+	SW_ERR_LAST_ENUM,
 };
+using enum TStatus;
 
+consteval auto adl_enum_bounds(TStatus) -> simple_enum::adl_info<TStatus> {
+	return { TStatus::SW_ERR_SUCCESS, TStatus::SW_ERR_LAST_ENUM }; // Assumes my_enum satisfies enum_concept
+}
 
-
-const static TChar* c_StatusNames[] =
-{
-	L"SW_ERR_SUCCESS", 
-	L"SW_ERR_UNKNOWN", 
-	L"SW_ERR_UNSUPPORTED", 
-	L"SW_ERR_INVALID_PARAMETR", 
-	L"SW_ERR_PROCESS_NOT_STOPPED", 
-	L"SW_ERR_WINAPI", 
-	L"SW_ERR_CRT", 
-	L"SW_ERR_NOT_FOUND", 
-	L"SW_ERR_TIMEOUT", 
-	L"SW_ERR_TOO_MANY_ELEMENTS", 
-	L"SW_ERR_CANT_WAIT_MUTEX", 	
-	L"SW_ERR_GUI_ERROR", 	
-	L"SW_ERR_HRESULT",
-	L"SW_ERR_LSTATUS",
-	L"SW_ERR_WAIT_PROCESS",
-	L"SW_ERR_WND_NOT_FOUND",
-	L"SW_ERR_PROTOCOL_VER",
-	L"SW_ERR_BUFFER_TOO_SMALL",
-	L"SW_ERR_ALREADY_RUN",
-	L"SW_ERR_LUA_ERROR",
-	L"SW_ERR_ERRNO",
-	L"SW_ERR_BAD_INTERNAL_STATE",
-	L"SW_ERR_NO_MEMORY",
-	L"SW_ERR_JSON",
-};
 
 
 

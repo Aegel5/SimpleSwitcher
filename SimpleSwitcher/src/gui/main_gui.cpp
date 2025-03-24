@@ -95,7 +95,7 @@ public:
                 auto conf = ConfPtr(new SettingsGui());
                 auto errLoadConf = LoadConfig(*conf);
                 IFS_LOG(errLoadConf);
-                if (errLoadConf) {
+                if (errLoadConf != SW_ERR_SUCCESS) {
                     wxMessageBox(_("Error reading config"));
                 }
                 else {
