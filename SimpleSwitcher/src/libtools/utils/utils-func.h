@@ -155,8 +155,6 @@ namespace Utils
 			std::wstring sProdName;
 			sProdName = sInfo;
 
-			LOG_INFO_2(L"productName is %s", sInfo);
-
 			Str_Utils::ToLower(sProdName);
 			if (sProdName.find(sStr) != std::wstring::npos)
 			{

@@ -18,12 +18,12 @@ private:
 
 	TStatus GetFromClipBoardOur(std::wstring& data)
 	{
-		LOG_INFO_1(L"1..");
+		LOG_ANY(L"1..");
 
 		HANDLE hData = GetClipboardData(CF_UNICODETEXT);
 		IFW_RET(hData != NULL);
 
-		LOG_INFO_1(L"2..");
+		LOG_ANY(L"2..");
 
 		LPVOID lockSrc = GlobalLock(hData);
 		IFW_RET(lockSrc != NULL);
@@ -34,8 +34,8 @@ private:
 		BOOL res = GlobalUnlock(lockSrc);
 		DWORD dwerr = GetLastError();
 
-		LOG_INFO_1(L"unlock res=%u, err=%u", res, dwerr);
-		LOG_INFO_4(L"getted data. text='%s'", sTextSrc);
+		LOG_ANY(L"unlock res={}, err={}", res, dwerr);
+		LOG_ANY_4(L"getted data. text='{}'", data);
 
 		RETURN_SUCCESS;
 
@@ -43,7 +43,7 @@ private:
 	TStatus OpenAndGetFromClipBoardOur(std::wstring& data)
 	{
         if (!IsClipboardFormatAvailable(CF_UNICODETEXT)) {
-            LOG_INFO_1(L"skip no unicodetext");
+			LOG_ANY(L"skip no unicodetext");
             RETURN_SUCCESS;
         }
 		CAutoClipBoard clip;
@@ -73,8 +73,8 @@ private:
 		BOOL res = GlobalUnlock(lock);
 		DWORD dwerr = GetLastError();
 
-		LOG_INFO_1(L"unlock put res=%u, err=%u", res, dwerr);
-		LOG_INFO_4(L"putted text data='%s'",sTextDst);
+		LOG_ANY(L"unlock put res={}, err={}", res, dwerr);
+		LOG_ANY_4(L"putted text data='{}'",sTextDst);
 
 		//m_clipboardOurPut = true;
 		//LOG_INFO_1(L"put to buf: %s, size: %u", data.c_str(), data.length());
@@ -161,12 +161,12 @@ public:
         std::wstring data;
         IFS_LOG(OpenAndGetFromClipBoardOur(data));
 
-        LOG_INFO_2(L"buf: ????, len: %u", data.length());
+        LOG_ANY(L"buf: ????, len: {}", data.length());
 
         if (data.length() == 0) {
-            LOG_INFO_1(L"Skip empty buffer");
+			LOG_ANY(L"Skip empty buffer");
         } else if (data.length() > 1000) {
-            LOG_INFO_1(L"Skip length > 1000");
+			LOG_ANY(L"Skip length > 1000");
             data.clear();
         } else {
         }
@@ -178,7 +178,7 @@ public:
 	}
 
     TStatus ClipboardClearFormat() {
-        LOG_INFO_1(L"ClipboardClearFormat");
+		LOG_ANY(L"ClipboardClearFormat");
 
         if (!IsClipboardFormatAvailable(CF_UNICODETEXT)) {
             RETURN_SUCCESS;
@@ -192,7 +192,7 @@ public:
 
         while (1) {
             format = EnumClipboardFormats(format);
-            LOG_INFO_1(L"Found format %u", format);
+			LOG_ANY(L"Found format {}", format);
             if (format == 0) {
                 if (GetLastError() != ERROR_SUCCESS) {
                     IFW_LOG(FALSE);
@@ -205,10 +205,10 @@ public:
             }
         }
 
-        LOG_INFO_1(L"fFound=%u", fFound);
+		LOG_ANY(L"fFound={}", fFound);
 
         if (!fFound) {
-            LOG_INFO_1(L"Skip clear format because format not found");
+			LOG_ANY(L"Skip clear format because format not found");
             RETURN_SUCCESS;
         }
 
@@ -216,7 +216,7 @@ public:
         IFS_RET(GetFromClipBoardOur(data));
 
         if (data.length() == 0) {
-            LOG_INFO_1(L"skip empty data");
+			LOG_ANY(L"skip empty data");
             RETURN_SUCCESS;
         }
 

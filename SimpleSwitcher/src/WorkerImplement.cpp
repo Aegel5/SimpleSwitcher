@@ -74,22 +74,7 @@ TStatus ClipHasTextFormating(bool& fres)
 
 	RETURN_SUCCESS;
 }
-void PrintClipboardFormats()
-{
-	CAutoClipBoard clip;
-	IFS_LOG(OpenClipboard(clip));
 
-	UINT format = 0;
-	while (1)
-	{
-		format = EnumClipboardFormats(format);
-		LOG_INFO_1(L"Found format %u", format);
-		if (format == 0)
-		{
-			break;
-		}
-	}
-}
 TStatus WorkerImplement::ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist)
 {
 
@@ -247,7 +232,7 @@ void WorkerImplement::CliboardChanged()
 
 void WorkerImplement::ChangeForeground(HWND hwnd)
 {
-	LOG_INFO_2(L"Now foreground hwnd=0x%x", hwnd);
+	LOG_ANY(L"Now foreground hwnd={}", (void*)hwnd);
 	DWORD procId = 0;
 	DWORD threadid = GetWindowThreadProcessId(hwnd, &procId);
 	if (threadid != m_dwIdThreadForeground && procId != m_dwIdProcoreground)

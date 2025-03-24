@@ -48,7 +48,7 @@ public:
 
 	void SetNewLay(HKL lay) {
 
-		LOG_INFO_1(L"Try set 0x%x lay", lay);
+		LOG_ANY(L"Try set {} lay", (void*)lay);
 
 		if (conf_get_unsafe()->AlternativeLayoutChange)
 		{
@@ -66,7 +66,7 @@ public:
 		{
 			auto curL = GetKeyboardLayout(topWndInfo2.threadid_default);
 			if (curL != lay) {
-				LOG_INFO_2(L"new lay arrived after %u", GetTickCount64() - start);
+				LOG_ANY(L"new lay arrived after {}", GetTickCount64() - start);
 				break;
 			}
 

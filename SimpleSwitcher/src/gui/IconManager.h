@@ -109,7 +109,7 @@ public:
                 return info;
             TStr name = buf + len_str - 2;
             wname = name;
-            LOG_INFO_1(L"mainguid new layout: 0x%x, name=%s", lay, name);
+            LOG_ANY(L"mainguid new layout: {}, name={}", (void*)lay, name);
         }
 
 

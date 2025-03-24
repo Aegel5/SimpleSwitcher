@@ -41,7 +41,7 @@ void CMainWorker::WorkerInt()
 		}, msg);
 	}
 
-	LOG_INFO_1(L"Exit main worker");
+	LOG_ANY(L"Exit main worker");
 }
 
 

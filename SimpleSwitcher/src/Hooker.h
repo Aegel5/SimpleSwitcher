@@ -69,7 +69,7 @@ public:
 
 	TStatus StartHook() {
 
-		LOG_INFO_1(L"HookGlobal...");
+		LOG_ANY(L"HookGlobal...");
 
 		hookerKeyb = {}; // очистка.
 

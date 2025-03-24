@@ -133,7 +133,7 @@ public:
 
 		InputSender inputSender;
 
-		LOG_INFO_1(L"Send %u keys", sendData.size());
+		LOG_ANY(L"Send {} keys", sendData.size());
 
 		for (const auto& key : sendData)
 		{

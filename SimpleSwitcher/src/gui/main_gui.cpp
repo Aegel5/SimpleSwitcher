@@ -602,7 +602,7 @@ public:
 
     void onExit(wxCommandEvent& event) override {
         exitRequest = true;
-        LOG_INFO_1(L"exit request");
+        LOG_ANY(L"exit request");
         Close(true);
     }
 

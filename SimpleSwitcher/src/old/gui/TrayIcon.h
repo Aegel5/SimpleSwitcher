@@ -83,7 +83,7 @@ namespace gui_tools
 
 						if (cancelTry)
 						{
-							LOG_INFO_1(L"Cancel try add to tray");
+							LOG_ANY(L"Cancel try add to tray");
 						}
 
 						fKillTimer = (res || cancelTry);

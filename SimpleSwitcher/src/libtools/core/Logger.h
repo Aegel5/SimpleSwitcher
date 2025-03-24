@@ -352,7 +352,4 @@ inline void SetLogLevel_info(TLogLevel logLevel) {
 
 #define RETURN_SUCCESS {return SW_ERR_SUCCESS; }
 
-#define LOG_INFO_4(...) {if(GetLogLevel() >= LOG_LEVEL_4){_log_int::SW_LOG_INFO(__VA_ARGS__);}}
-#define LOG_INFO_3(...) {if(GetLogLevel() >= LOG_LEVEL_3){_log_int::SW_LOG_INFO(__VA_ARGS__);}}
-#define LOG_INFO_2(...) {if(GetLogLevel() >= LOG_LEVEL_2){_log_int::SW_LOG_INFO(__VA_ARGS__);}}
 #define LOG_INFO_1(...) {if(GetLogLevel() >= LOG_LEVEL_1){_log_int::SW_LOG_INFO(__VA_ARGS__);}}

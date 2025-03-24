@@ -43,11 +43,11 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		);
 
 		if (k->vkCode > 255) {
-			LOG_INFO_1(L"k->vkCode > 255: %d", k->vkCode);
+			LOG_ANY(L"k->vkCode > 255: {}", k->vkCode);
 		}
 
 		if (scan_code == 541) {
-			LOG_INFO_2(L"skip bugged lctrl");
+			LOG_ANY(L"skip bugged lctrl");
 			return 0;
 		}
 
@@ -122,7 +122,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 					&& cfg->fixRAlt
 					&& cfg->fixRAlt_lay_ != 0
 					) {
-					LOG_INFO_1(L"fix ctrl+alt");
+					LOG_ANY(L"fix ctrl+alt");
 					if (!is_hold) { // пока просто запрещаем
 						Worker()->PostMsg(Message_Hotkey{ .fix_ralt = true, .hotkey = curk });
 					}
