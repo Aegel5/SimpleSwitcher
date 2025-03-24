@@ -25,7 +25,7 @@ void SettingsGui::GenerateListHK()
         set.def_list = { CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_PAUSE), CHotKey(VK_SHIFT, VK_F24) };
         set.fUseDef = true;
         set.gui_text = _(L"Change layout for last several words").wc_str();
-        AddHotKey(hk_RevertCycle, set);
+        AddHotKey(hk_RevertSeveralWords, set);
     }
 
     {
@@ -40,14 +40,14 @@ void SettingsGui::GenerateListHK()
         set.def_list = { {VK_LMENU, VK_CAPITAL}, CHotKey(VK_LMENU, VK_PAUSE), CHotKey(VK_PAUSE), CHotKey(VK_LMENU,VK_F24) };
         set.fUseDef = true;
         set.gui_text = _(L"Change layout for selected text").wc_str();
-        AddHotKey(hk_RevertSel, set);
+        AddHotKey(hk_RevertSelelected, set);
     }
 
     {
         CHotKeySet set;
         set.def_list = { CHotKey(VKE_WIN, VK_SPACE), CHotKey(VK_LCONTROL,VK_LWIN) };
         set.gui_text = _(L"Cycle change layout").wc_str();
-        AddHotKey(hk_CycleCustomLang, set);
+        AddHotKey(hk_CycleSwitchLayout, set);
     }
 
 
@@ -56,7 +56,7 @@ void SettingsGui::GenerateListHK()
         set.def_list = { CHotKey(VK_CONTROL, VK_CAPITAL), CHotKey(VK_CONTROL, VK_F24) };
         set.fUseDef = true;
         set.gui_text = _(L"Generate CapsLock").wc_str();
-        AddHotKey(hk_CapsGenerate, set);
+        AddHotKey(hk_EmulateCapsLock, set);
     }
 
     {
@@ -71,7 +71,7 @@ void SettingsGui::GenerateListHK()
         set.def_list = { CHotKey(VKE_WIN, VK_F8) };
         set.fUseDef = true;
         set.gui_text = _(L"Toggle enabled").wc_str();
-        AddHotKey(hk_toggleEnabled, set);
+        AddHotKey(hk_ToggleEnabled, set);
     }
 
     {
@@ -223,6 +223,7 @@ TStatus LoadConfig(SettingsGui& gui) {
         if (arr.is_object()) {
             for (auto& elem : gui.hotkeysList) {
                 auto key = HotKeyTypeName(elem.hkId);
+                if (key.empty()) continue;
                 auto it  = arr.find(key);
                 if (it != arr.end()) {
                     auto& obj = it.value();
@@ -261,6 +262,7 @@ TStatus Save2(const SettingsGui& gui) {
         for (auto& elem : gui.hotkeysList) {
             auto hk = elem.hkId;
             auto key = HotKeyTypeName(hk);
+            if (key.empty()) continue;
             hk_json[key] = elem.keys.keys;
         }
 

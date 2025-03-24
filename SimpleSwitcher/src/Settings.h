@@ -100,7 +100,7 @@ public:
 
     std::generator < std::tuple<HotKeyType, const CHotKey&>> All_hot_keys() const {
         for (const auto& it : hotkeysList) {
-            if (Utils::is_in(it.hkId, hk_CycleLang_win_hotkey, hk_toggleEnabled)) continue;
+            if (Utils::is_in(it.hkId, hk_CycleLang_win_hotkey, hk_ToggleEnabled)) continue;
             for (const auto& key : it.keys.keys) {
                 co_yield{ it.hkId, key };
             }

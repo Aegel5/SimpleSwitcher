@@ -26,45 +26,36 @@ static const int c_nCommonWaitMtx = 30000;
 static const LPCWSTR c_wszTaskName = L"SimpleSwitcherTask";
 const static TChar c_sRegRunValue[] = L"SimpleSwitcher";
 
+
+
 enum HotKeyType : TUInt32
 {
     hk_NULL,
 
     hk_RevertLastWord,
-    hk_RevertCycle,
+    hk_RevertSeveralWords,
     hk_RevertAllRecentText,
-    hk_RevertSel,
-    hk_CapsGenerate,
-    hk_CycleCustomLang,
+    hk_RevertSelelected,
+    hk_EmulateCapsLock,
+    hk_CycleSwitchLayout,
     hk_CycleLang_win_hotkey,
-    hk_ScrollGenerate,
+    hk_EmulateScrollLock,
     hk_toUpperSelected,
-    hk_toggleEnabled,
+    hk_ToggleEnabled,
+
+    hk_hotkeys_end,
 
     hk_SetLayout_flag  = 1<<30,
     hk_RunProgram_flag = 1<<29,
 };
 
+
+consteval auto adl_enum_bounds(HotKeyType) -> simple_enum::adl_info<HotKeyType> {
+    return { HotKeyType::hk_NULL, HotKeyType::hk_hotkeys_end }; // Assumes my_enum satisfies enum_concept
+}
+
 inline bool IsNeedSavedWords(HotKeyType hk_type) {
-    if (Utils::is_in(hk_type, hk_RevertLastWord, hk_RevertCycle, hk_RevertAllRecentText)) return true;
-    return false;
+    return (Utils::is_in(hk_type, hk_RevertLastWord, hk_RevertSeveralWords, hk_RevertAllRecentText));
 }
 
-
-inline const char* HotKeyTypeName(HotKeyType hk_type)
-{
-    switch (hk_type)
-    {
-    case hk_RevertLastWord:	return "hk_RevertLastWord";
-    case hk_RevertCycle: return "hk_RevertSeveralWords";
-    case hk_RevertSel: return "hk_RevertSelelected";
-    case hk_CapsGenerate:return "hk_EmulateCapsLock";
-    case hk_CycleCustomLang:return "hk_CycleSwitchLayout";
-    case hk_CycleLang_win_hotkey:return "hk_CycleLang_win_hotkey";
-    case hk_ScrollGenerate:return "hk_EmulateScrollLock";
-    case hk_toUpperSelected:    return "hk_toUpperSelected";
-    case hk_RevertAllRecentText: return "hk_RevertAllRecentText";
-    case hk_toggleEnabled: return "hk_ToggleEnabled";
-    default: return "hk_Unknown";
-    }
-}
+inline std::string_view HotKeyTypeName(HotKeyType hk_type) { return simple_enum::enum_name(hk_type); }

@@ -55,7 +55,7 @@ class MainWnd : public MyFrame4
         }
     }
     void RegisterEnabled() {
-        auto hk = conf_get_unsafe()->GetHk(hk_toggleEnabled).keys.key();
+        auto hk = conf_get_unsafe()->GetHk(hk_ToggleEnabled).keys.key();
         IFS_LOG(hk.RegisterHk(enable_hk_register, g_guiHandle, 998));
     }
 public:
@@ -295,7 +295,7 @@ private:
             if (ChangeHotKey2(this, data, newkey)) {
                 SaveConfigWith([&](auto cfg) {cfg->hotkeysList[row].keys.key() = newkey;});
                 FillHotkeysInfo();
-                if (data.hkId == hk_toggleEnabled) {
+                if (data.hkId == hk_ToggleEnabled) {
                     RegisterEnabled();
                 }
             }

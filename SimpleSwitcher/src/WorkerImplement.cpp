@@ -169,7 +169,7 @@ TStatus WorkerImplement::GetClipStringCallback() {
 	else {
         ContextRevert ctxRev;
         ctxRev.typeRevert = m_lastRevertRequest;
-		if (m_lastRevertRequest == hk_RevertSel) {
+		if (m_lastRevertRequest == hk_RevertSelelected) {
 
             IFS_LOG(ClipboardToSendData(data, ctxRev.keylist));
 
@@ -356,7 +356,7 @@ HKL WorkerImplement::getNextLang () {
 
 TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 
-	LOG_INFO_1(L"NeedRevert %S(%d)", HotKeyTypeName(typeRevert), typeRevert);
+	LOG_ANY("Hotkey start {}({})", HotKeyTypeName(typeRevert), (int)typeRevert);
 
 	ContextRevert data;
 	data.typeRevert = typeRevert;
@@ -379,7 +379,7 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 	//// https://github.com/Aegel5/SimpleSwitcher/issues/61
 	//// Для клавиши LCtrl событие отсылается дважды, причем второй раз без флага inject (баг windows?)
 	//// в остальных случаях мы эмулируем нажатия каких-то клавиш, поэтому нужно сбросить текущее состояние нажатых клавиш.
-	//bool skipUpKeys = (TestFlag(typeRevert, hk_SetLayout_flag) || typeRevert == hk_CycleCustomLang) && conf_get_unsafe()->AlternativeLayoutChange == false;
+	//bool skipUpKeys = (TestFlag(typeRevert, hk_SetLayout_flag) || typeRevert == hk_CycleSwitchLayout) && conf_get_unsafe()->AlternativeLayoutChange == false;
 	//if (!skipUpKeys) {
 	//	UpAllKeys();
 	//}
@@ -414,15 +414,15 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 
 	// CHANGE LAYOUT WITHOUT REVERT
 
-	if (Utils::is_in(typeRevert, hk_CapsGenerate, hk_ScrollGenerate)) {
-		TKeyCode k = (typeRevert == hk_CapsGenerate) ? VK_CAPITAL : VK_SCROLL;
+	if (Utils::is_in(typeRevert, hk_EmulateCapsLock, hk_EmulateScrollLock)) {
+		TKeyCode k = (typeRevert == hk_EmulateCapsLock) ? VK_CAPITAL : VK_SCROLL;
 		InputSender::SendVkKey(k);
 		RETURN_SUCCESS;
 	}
 
 	IFS_RET(AnalizeTopWnd());
 
-	if (typeRevert == hk_CycleCustomLang) {
+	if (typeRevert == hk_CycleSwitchLayout) {
 		data.flags = SW_CLIENT_SetLang;
 		data.lay = getNextLang();
 		IFS_RET(ProcessRevert(data));
@@ -456,7 +456,7 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 		RETURN_SUCCESS;
 
 
-	if (Utils::is_in(typeRevert, hk_RevertSel, hk_toUpperSelected)) {
+	if (Utils::is_in(typeRevert, hk_RevertSelelected, hk_toUpperSelected)) {
 		IFS_RET(SendCtrlC(CLRMY_GET_FROM_CLIP));
 		RETURN_SUCCESS;
 	}
@@ -465,7 +465,7 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 
 	// ---------------classic revert---------------
 
-	if (!Utils::is_in(typeRevert, hk_RevertLastWord, hk_RevertCycle, hk_RevertAllRecentText)) {
+	if (!Utils::is_in(typeRevert, hk_RevertLastWord, hk_RevertSeveralWords, hk_RevertAllRecentText)) {
 		IFS_RET(SW_ERR_UNKNOWN, L"Unknown typerevert {}", (int)typeRevert);
 	}
 
