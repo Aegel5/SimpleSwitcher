@@ -48,7 +48,7 @@ class MainWnd : public MyFrame4
     }
     void UpdateIcons() {
         if (!conf_get_unsafe()->showFlags) {
-            myTray.ResetIcon(iconsMan.standart_icon);
+            myTray.ResetIcon(iconsMan.Get_Standart(!IsCoreEnabled()).bundle);
         }
         else {
             Worker()->PostMsg(Message_GetCurLay{ true });
@@ -194,7 +194,7 @@ public:
             updateCapsTab();
 
             myTray.Init(this);
-            myTray.ResetIcon(iconsMan.standart_icon);
+            myTray.ResetIcon(iconsMan.Get_Standart().bundle);
             myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
             myTray.Bind(wxEVT_MENU, [this](auto& evt) {
                 ForceShow(this);
@@ -260,10 +260,6 @@ private:
                 return TRUE;
 
             auto info = iconsMan.Get((HKL)wParam, !IsCoreEnabled());
-            if (!info.bundle.IsOk()) {
-                LOG_INFO_1(L"ERR. can't find flag for ");
-                info.bundle = iconsMan.standart_icon;
-            }
             myTray.ResetIcon(info.bundle);
 
             return TRUE;

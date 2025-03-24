@@ -1,11 +1,24 @@
 #pragma once
 
 class IconManager {
-
     std::map<wxString, wxBitmapBundle> flags_map;
+    wxBitmapBundle icon;
+    wxBitmapBundle gray_icon;
+    bool gray_init = false;
+    wxVector<wxBitmap> bitmaps;
+public: 
+    IconManager() {
+        wxIconBundle all_icons(L"appicon", 0);
 
-public: const wxIcon standart_icon{ "appicon" };
-
+        for (int i = 0; i < all_icons.GetIconCount(); i++) {
+            auto cur = all_icons.GetIconByIndex(i);
+            if (cur.GetWidth() > 32) continue;
+            wxBitmap b;
+            b.CopyFromIcon(cur);
+            bitmaps.push_back(std::move(b));
+        }
+        icon = wxBitmapBundle::FromBitmaps(bitmaps);
+    }
 private:
       wxBitmap ToGray(const wxBitmap& bt) {
           wxImage img = bt.ConvertToImage();
@@ -49,9 +62,7 @@ private:
                   }
               }
               if (isGray) {
-                  for (auto& it : bitmaps) {
-                      it = ToGray(it);
-                  }
+                  for (auto& it : bitmaps) { it = ToGray(it); }
               }
               flags_map.emplace(key, wxBitmapBundle::FromBitmaps(bitmaps));
           }
@@ -64,7 +75,19 @@ public:
         wxSize sizeForPanel;
         wxBitmapBundle bundle;
     };
-
+    IconInfo Get_Standart(bool is_gray = false) {
+        IconInfo info;
+        if (is_gray) {
+            if (!gray_init) {
+                gray_init = true;
+                auto btms = bitmaps;
+                for (auto& it : btms) { it = ToGray(it); }
+                gray_icon = wxBitmapBundle::FromBitmaps(btms);
+            }
+        }
+        info.bundle = is_gray ? gray_icon : icon;
+        return info;
+    }
     IconInfo Get(HKL lay, bool is_gray = false) {
 
         IconInfo info;
@@ -89,7 +112,13 @@ public:
             LOG_INFO_1(L"mainguid new layout: 0x%x, name=%s", lay, name);
         }
 
+
         info.bundle = GetBundl(wname, is_gray);
+
+        if (!info.bundle.IsOk()) {
+            LOG_ANY(L"ERR. can't find flag for ");
+            info = Get_Standart(is_gray);
+        }
 
         return info;
     }

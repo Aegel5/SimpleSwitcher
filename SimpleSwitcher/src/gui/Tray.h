@@ -26,7 +26,7 @@ class MyTray : public wxTaskBarIcon {
 
 public:
 
-    void ResetIcon(const auto& newIcon) {
+    void ResetIcon(const wxBitmapBundle& newIcon) {
         SetIcon(newIcon, trayTooltip);
     }
 
