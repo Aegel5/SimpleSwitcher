@@ -250,7 +250,7 @@ void WorkerImplement::ChangeForeground(HWND hwnd)
 	LOG_INFO_2(L"Now foreground hwnd=0x%x", hwnd);
 	DWORD procId = 0;
 	DWORD threadid = GetWindowThreadProcessId(hwnd, &procId);
-	if (threadid != m_dwIdThreadForeground || procId != m_dwIdProcoreground)
+	if (threadid != m_dwIdThreadForeground && procId != m_dwIdProcoreground)
 	{
 		//IFS_LOG(Utils::GetProcLowerNameByPid(procId, m_sTopProcPath, m_sTopProcName));
 		//LOG_INFO_2(L"threadid=%d, procId=%d, sname=%s", threadid, procId, m_sTopProcName.c_str());

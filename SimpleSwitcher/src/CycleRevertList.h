@@ -20,7 +20,7 @@ public:
 	bool HasAnySymbol() const { return !m_symbolList.empty(); }
 	void Clear() {
 		if (!m_symbolList.empty()) {
-			LOG_ANY(L"ClearsKeys");
+			LOG_ANY(L"ClearsKeys {}", m_symbolList.size());
 			m_symbolList.clear();
 		}
 		ClearGenerated();
