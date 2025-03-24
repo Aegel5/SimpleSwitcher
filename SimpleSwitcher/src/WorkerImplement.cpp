@@ -466,7 +466,7 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 	// ---------------classic revert---------------
 
 	if (!Utils::is_in(typeRevert, hk_RevertLastWord, hk_RevertCycle, hk_RevertAllRecentText)) {
-		IFS_RET(SW_ERR_UNKNOWN, L"Unknown typerevert %d", typeRevert);
+		IFS_RET(SW_ERR_UNKNOWN, L"Unknown typerevert {}", (int)typeRevert);
 	}
 
 	auto to_revert = m_cycleList.FillKeyToRevert(typeRevert);

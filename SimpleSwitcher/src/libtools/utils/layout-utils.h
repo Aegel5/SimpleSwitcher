@@ -63,7 +63,7 @@ namespace Utils
 
 		if (hwndFocused == NULL)
 		{
-			RETS(SW_ERR_WND_NOT_FOUND, L"Cant found focused window");
+			IFS_RET(SW_ERR_WND_NOT_FOUND, L"Cant found focused window");
 		}
 
 		RETURN_SUCCESS;

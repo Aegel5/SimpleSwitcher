@@ -16,7 +16,7 @@ namespace Utils
 			RETURN_SUCCESS;
 
 		if (!hProc)
-			RETS(SW_ERR_INVALID_PARAMETR);
+			return SW_ERR_INVALID_PARAMETR;
 
 		CAutoHandle hToken;
 		IFW_RET(OpenProcessToken(hProc, TOKEN_QUERY, &hToken));
@@ -97,7 +97,7 @@ namespace Utils
 		auto last = wcsrchr(sBuff, L'\\');
 		if (last == NULL)
 		{
-			RETS(SW_ERR_INVALID_PARAMETR);
+			return SW_ERR_INVALID_PARAMETR;
 		}
 		sName = last + 1;
 		Str_Utils::ToLower(sName);
@@ -139,9 +139,9 @@ namespace Utils
 			TChar sResPath[0x100];
 			sResPath[0] = 0;
 
-			IFNEG(swprintf_s(sResPath, L"\\StringFileInfo\\%04x%04x\\ProductName",
+			if(swprintf_s(sResPath, L"\\StringFileInfo\\%04x%04x\\ProductName",
 				lpTranslate[i].wLanguage,
-				lpTranslate[i].wCodePage))
+				lpTranslate[i].wCodePage) < 0)
 				RET_ERRNO();
 
 			// Retrieve file description for language and code page "i". 

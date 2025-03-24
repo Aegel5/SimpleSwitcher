@@ -182,7 +182,7 @@ namespace Startup
 	{
 		if (parm.taskName == nullptr || parm.sPath == nullptr)
 		{
-			RETS(SW_ERR_INVALID_PARAMETR);
+			return SW_ERR_INVALID_PARAMETR;
 		}
 
 		CComPtr<ITaskFolder> pRootFolder;

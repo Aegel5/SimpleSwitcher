@@ -109,8 +109,7 @@ namespace procstart
 	{
 		static const size_t nSizeExe = 0x1000;
 		std::unique_ptr<TChar[]> bufExe(new TChar[nSizeExe]);
-		IFNULL(bufExe)
-			RETS(SW_ERR_NO_MEMORY);
+		if(!bufExe.get()) return SW_ERR_NO_MEMORY;
 		bufExe[0] = 0;
 		TChar* sExe = bufExe.get();
 

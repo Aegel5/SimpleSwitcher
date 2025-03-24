@@ -66,3 +66,5 @@ inline void SwZeroMemory(T& t)
 	ZeroMemory(&t, sizeof(T));
 }
 
+#define FORWARD(x) std::forward<decltype(x)>(x)
+

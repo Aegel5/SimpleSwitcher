@@ -84,7 +84,8 @@ class CoreWorker {
 				break;
 
 			if (bRet == -1) {
-				RETW();
+				IFW_RET(FALSE);
+
 			}
 
 			auto mesg = msg.message;

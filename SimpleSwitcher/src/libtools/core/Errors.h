@@ -58,25 +58,7 @@ const static TChar* c_StatusNames[] =
 	L"SW_ERR_JSON",
 };
 
-//#define SAFEENTER try{
-//#define SAFELEAVE 
 
-//inline void ShowError(TStatus stat, HWND hwnd, const TChar* sMessage = nullptr)
-//{
-//	TChar buf[1024];
-//	swprintf_s(
-//		buf,
-//		L"%s\n%s (%d)\nWinapi error: %d",
-//		sMessage,
-//		c_StatusNames[stat],
-//		stat,
-//		GetLastError());
-//	MessageBox(
-//		hwnd, 
-//		buf,
-//		SW_PROGRAM_NAME_L L" Error", 
-//		MB_OK | MB_ICONEXCLAMATION);
-//}
 
 
 

@@ -21,12 +21,12 @@ private:
 		LOG_INFO_1(L"1..");
 
 		HANDLE hData = GetClipboardData(CF_UNICODETEXT);
-		IFNULL(hData) RETW();
+		IFW_RET(hData != NULL);
 
 		LOG_INFO_1(L"2..");
 
 		LPVOID lockSrc = GlobalLock(hData);
-		IFNULL(lockSrc) RETW();
+		IFW_RET(lockSrc != NULL);
 
 		TCHAR* sTextSrc = (TCHAR*)lockSrc;
 		data = sTextSrc;
@@ -61,10 +61,11 @@ private:
 		IFW_RET(EmptyClipboard());
 
 		HGLOBAL hglbCopy = GlobalAlloc(GMEM_MOVEABLE, (data.length() + 1) * sizeof(TCHAR));
-		IFNULL(hglbCopy) RETW();
+		IFW_RET(hglbCopy != NULL);
 
 		LPVOID lock = GlobalLock(hglbCopy);
-		IFNULL(lock) RETW();
+		IFW_RET(lock != NULL);
+
 		TCHAR* sTextDst = (TCHAR*)lock;
 		memcpy(sTextDst, data.c_str(), data.length() * sizeof(TCHAR));
 		sTextDst[data.length()] = 0;
