@@ -94,7 +94,7 @@ public:
         for (auto& it : hotkeysList) {
             if (it.hkId == type) return it;
         }
-        LOG_INFO_1(L"CRITICAL ERR");
+        LOG_ANY(L"CRITICAL ERR");
         abort();
     }
 

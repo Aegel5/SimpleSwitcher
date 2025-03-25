@@ -60,7 +60,7 @@ TStatus ClipHasTextFormating(bool& fres)
 	while (1)
 	{
 		format = EnumClipboardFormats(format);
-		//LOG_INFO_1(L"Found format %u", format);
+		//LOG_ANY(L"Found format %u", format);
 		if (format == 0)
 		{
 			break;
@@ -139,17 +139,17 @@ void toUpper(std::wstring& buf) {
 }
 
 TStatus WorkerImplement::GetClipStringCallback() {
-	LOG_INFO_1(L"GetClipStringCallback");
+	LOG_ANY(L"GetClipStringCallback");
 
 	auto data = m_clipWorker.getCurString();
 
 	bool needResotore = !m_savedClipData.empty();
 
 	if (data.empty()) {
-        LOG_INFO_1(L"data empty");
+        LOG_ANY(L"data empty");
     }
 	else if (data.length() > 100) {
-		LOG_INFO_1(L"TOO MANY TO REVERT. SKIP");
+		LOG_ANY(L"TOO MANY TO REVERT. SKIP");
 	}
 	else {
         ContextRevert ctxRev;
@@ -194,7 +194,7 @@ TStatus WorkerImplement::GetClipStringCallback() {
 
 void WorkerImplement::CliboardChanged()
 {
-	LOG_INFO_1(L"ClipboardChangedInt");
+	LOG_ANY(L"ClipboardChangedInt");
 
 	auto dwTime = GetTickCount64() - m_dwLastCtrlCReqvest;
 	bool isRecent = dwTime <= 500;
@@ -227,7 +227,7 @@ void WorkerImplement::CliboardChanged()
 		Worker()->PostMsg([](WorkerImplement& w) {w.ClipboardClearFormat2(); }, 500);
 	}
 
-	LOG_INFO_1(L"ClipboardChangedInt complete");
+	LOG_ANY(L"ClipboardChangedInt complete");
 }
 
 void WorkerImplement::ChangeForeground(HWND hwnd)
@@ -290,7 +290,7 @@ TStatus WorkerImplement::ProcessRevert(ContextRevert& ctxRevert)
 		InputSender::SendWithPause(ctrlc);
 	}
 
-	LOG_INFO_1(L"Revert complete");
+	LOG_ANY(L"Revert complete");
 
 	RETURN_SUCCESS;
 }
@@ -302,7 +302,7 @@ TStatus WorkerImplement::SendCtrlC(EClipRequest clRequest)
 
 	RequestWaitClip(clRequest);
 
-    LOG_INFO_1(L"Send ctrlc...");
+    LOG_ANY(L"Send ctrlc...");
 
     ContextRevert ctxRev;
     ctxRev.flags = SW_CLIENT_CTRLC;
@@ -354,7 +354,7 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 	GETCONF;
 
 	if (m_sTopProcName == m_sSelfExeName) {
-		LOG_INFO_1(L"Skip hotkey in self program");
+		LOG_ANY(L"Skip hotkey in self program");
 		allow_do_revert = false;
 	}
 

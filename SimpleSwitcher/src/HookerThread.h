@@ -44,7 +44,7 @@ class CoreWorker {
 
 	TStatus StartMonitor(_In_ HINSTANCE hInstance) {
 
-		LOG_INFO_1(L"StartMonitor...");
+		LOG_ANY(L"StartMonitor...");
 		IFW_LOG(SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS));
 		Worker()->ReStart(); // полностью обнулим рабочий поток
 

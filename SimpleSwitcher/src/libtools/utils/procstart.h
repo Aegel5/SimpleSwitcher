@@ -132,7 +132,7 @@ namespace procstart
 		bool selfElevated = Utils::IsSelfElevated();
 		CAutoHandle hToken;
 
-		LOG_INFO_1(L"Try create new process path=%s, args=%s, mode=%u", sExe, args, parm.mode);
+		LOG_ANY(L"Try create new process path={}, args={}, mode={}", sExe, args, (int)parm.mode);
 
 		if (selfElevated && parm.admin == SW_ADMIN_OFF) {
 

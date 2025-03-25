@@ -28,7 +28,7 @@ public:
 
 		if (countTry > 1)
 		{
-			LOG_INFO_1(L"Clip open try %d count. result=%u", countTry, m_stat);
+			LOG_ANY(L"Clip open try {} count. result={}", countTry, m_stat);
 		}
 
 		IFW_RET(m_stat); 
@@ -38,7 +38,7 @@ public:
 	{
 		if (m_stat)
 		{
-			LOG_INFO_1(L"close clip");
+			LOG_ANY(L"close clip");
 			IFW_LOG(CloseClipboard());
 		}
 		m_stat = FALSE;

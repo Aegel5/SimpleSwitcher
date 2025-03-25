@@ -30,11 +30,6 @@ namespace _log_int {
 			static SwLogger logger;
 			return logger;
 		}
-		void VFormat(const TChar* format, va_list args) {
-			if (LazyOpen()) {
-				vfwprintf_s(m_fp, format, args);
-			}
-		}
 		void Append(const TChar* data) {
 			if (!data) return;
 			if (LazyOpen()) {
@@ -44,9 +39,22 @@ namespace _log_int {
 		void Append(const char* data) {
 			if (!data) return;
 			if (LazyOpen()) {
-				Format(L"%S", data);
-				//fputs(data, m_fp);
+				fwprintf_s(m_fp, L"%S", data);
 			}
+		}
+		void AppendPrefix() {
+			if (!LazyOpen()) return;
+			SYSTEMTIME ST;
+			::GetLocalTime(&ST);
+			fwprintf_s(m_fp,
+				L"%02u.%02u|%02u:%02u:%02u.%03u|%05u ",
+				(TUInt32)ST.wDay,
+				(TUInt32)ST.wMonth,
+				(TUInt32)ST.wHour,
+				(TUInt32)ST.wMinute,
+				(TUInt32)ST.wSecond,
+				(TUInt32)ST.wMilliseconds,
+				GetCurrentThreadId());
 		}
 		template<typename... Args>
 		void AppendFormat(const std::wformat_string<Args...>& s, Args&&... v) {
@@ -55,12 +63,6 @@ namespace _log_int {
 		template<typename... Args>
 		void AppendFormat(const std::format_string<Args...>& s, Args&&... v) {
 			Append(std::vformat(s.get(), std::make_format_args(v...)).c_str());
-		}
-		void Format(const TChar* Format, ...) {
-			va_list alist;
-			va_start(alist, Format);
-			VFormat(Format, alist);
-			va_end(alist);
 		}
 		void Flash() {
 			if (m_fp)
@@ -122,52 +124,13 @@ namespace _log_int {
 		FILE* m_fp = NULL;
 		bool m_tryOpen = false;
 		std::wofstream out_file;
-		SwLogger() {}
-
 	};
-
 
 	inline SwLogger& SwLoggerGlobal() { return SwLogger::Get(); }
 
-	inline void __SW_LOG_FORMAT_V__(const TChar* format, va_list alist) {
-		SwLoggerGlobal().VFormat(format, alist);
-	}
-	inline void __SW_LOG_TIME() {
-		SYSTEMTIME ST;
-		::GetLocalTime(&ST);
-		SwLoggerGlobal().Format(
-			L"%02u.%02u|%02u:%02u:%02u.%03u|%05u ",
-			(TUInt32)ST.wDay,
-			(TUInt32)ST.wMonth,
-			(TUInt32)ST.wHour,
-			(TUInt32)ST.wMinute,
-			(TUInt32)ST.wSecond,
-			(TUInt32)ST.wMilliseconds,
-			GetCurrentThreadId());
-	}
-
-	inline void __SW_LOG_FORMAT__(const TChar* Format, ...) {
-		va_list alist;
-		va_start(alist, Format);
-		__SW_LOG_FORMAT_V__(Format, alist);
-		va_end(alist);
-	}
-
-	inline void SW_LOG_INFO(const TChar* Format, ...) {
-		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
-
-		__SW_LOG_TIME();
-		va_list alist;
-		va_start(alist, Format);
-		SwLoggerGlobal().VFormat(Format, alist);
-		va_end(alist);
-		SwLoggerGlobal().EndLineFlash();
-	}
-
-
 	void __LOG_LINE_FORMAT(auto&&... v) {
 		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
-		__SW_LOG_TIME();
+		SwLoggerGlobal().AppendPrefix();
 		SwLoggerGlobal().AppendFormat(FORWARD(v)...);
 		SwLoggerGlobal().EndLineFlash();
 	}
@@ -240,8 +203,6 @@ namespace _log_int {
 		TStatus ToTStatus() { return res; }
 	};
 
-
-
 	struct WinErrLSTATUS {
 		LSTATUS res;
 		WinErrLSTATUS(LSTATUS r) : res(r) {}
@@ -282,7 +243,7 @@ namespace _log_int {
 
 		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
 
-		__SW_LOG_TIME();
+		SwLoggerGlobal().AppendPrefix();
 		err.Log();
 		auto file = loc.file_name();
 		auto cur = strrchr(file, '\\');
@@ -338,7 +299,7 @@ inline void LOG_WARN(const std::wformat_string<Args...> s, Args&&... v) {
 	using namespace _log_int;
 	if (GetLogLevel() >= LOG_LEVEL_1) {
 		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
-		__SW_LOG_TIME();
+		SwLoggerGlobal().AppendPrefix();
 		SwLoggerGlobal().Append(L"[WARN] ");
 		SwLoggerGlobal().AppendFormat(s, FORWARD(v)...);
 		SwLoggerGlobal().EndLineFlash();
@@ -351,5 +312,3 @@ inline void SetLogLevel_info(TLogLevel logLevel) {
 }
 
 #define RETURN_SUCCESS {return SW_ERR_SUCCESS; }
-
-#define LOG_INFO_1(...) {if(GetLogLevel() >= LOG_LEVEL_1){_log_int::SW_LOG_INFO(__VA_ARGS__);}}

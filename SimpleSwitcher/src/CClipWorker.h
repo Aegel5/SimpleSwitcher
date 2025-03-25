@@ -77,7 +77,7 @@ private:
 		LOG_ANY_4(L"putted text data='{}'",sTextDst);
 
 		//m_clipboardOurPut = true;
-		//LOG_INFO_1(L"put to buf: %s, size: %u", data.c_str(), data.length());
+		//LOG_ANY(L"put to buf: %s, size: %u", data.c_str(), data.length());
 		IFW_RET(SetClipboardData(CF_UNICODETEXT, hglbCopy) != NULL);
 
 		RETURN_SUCCESS;
@@ -119,11 +119,11 @@ private:
 
 		//		if (data.length() == 0)
 		//		{
-		//			LOG_INFO_1(L"Skip empty buffer");
+		//			LOG_ANY(L"Skip empty buffer");
 		//		}
 		//		else if (data.length() > 1000)
 		//		{
-		//			LOG_INFO_1(L"Skip length > 1000");
+		//			LOG_ANY(L"Skip length > 1000");
 		//		}
 		//		else
 		//		{
@@ -153,7 +153,7 @@ private:
 		//	//	IFS_LOG(OpenAndPutToClipBoardOur(data));
 		//	//}
 		//}
-		//LOG_INFO_1(L"Exit clip worker");
+		//LOG_ANY(L"Exit clip worker");
 	//}
 public:
 
