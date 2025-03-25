@@ -1,4 +1,4 @@
-appicon ICON "yy.ico"
+appicon ICON "app.ico"
 
 #include "../flags/flag_res16.rc"
 #include "../flags/flag_res32.rc"
@@ -6,4 +6,4 @@ appicon ICON "yy.ico"
 lang_ru MOFILE  "../../localization/ru_RU.mo"
 
 #define wxUSE_DPI_AWARE_MANIFEST 2
-#include "wx/msw/wx.rc"        
+#include "../../../wxWidgets/include/wx/msw/wx.rc"    // relative path for VS editor    
