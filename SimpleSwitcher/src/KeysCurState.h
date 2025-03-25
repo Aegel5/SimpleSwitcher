@@ -2,18 +2,18 @@
 
 // Класс для отслеживания текущего состояния нажатых клавиш
 
-struct CurStateWrapper {
+class CurStateWrapper {
+	std::map<TKeyCode, ULONGLONG> all_keys;
+	CHotKey one_value; 
+	CHotKey multi_value; 
+	TKeyCode vk_last_down = 0;
+	bool is_hold = false;
+public:
 
-	CHotKey state; // todo генерировать на лету 1) full hotkey 2) "one-key-value" hotkey
-
-	int Size() {
-		return all_keys.size();
-	}
-
-	bool IsDownNow(TKeyCode vk) {
-		return all_keys.contains(vk);
-	}
-
+	bool IsHold() {	return is_hold;	}
+	const CHotKey& GetOneValueHotKey() { return one_value; }
+	int Size() { return all_keys.size(); }
+	bool IsDownNow(TKeyCode vk) { return all_keys.contains(vk); }
 	std::generator<TKeyCode> EnumVk() {
 		for (const auto& it : all_keys) {
 			co_yield it.first;
@@ -41,15 +41,24 @@ struct CurStateWrapper {
 
 	void Update(TKeyCode vkCode, KeyState curKeyState) {
 
+		is_hold = false;
+		if (curKeyState != KeyState::KEY_STATE_DOWN) {
+			vk_last_down = 0;
+		}
+		else {
+			is_hold = vk_last_down == vkCode && vkCode != 0;
+			vk_last_down = vkCode;
+		}
+
 		CheckOk();
 
 		if (curKeyState == KEY_STATE_DOWN) {
-			state.Add3(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
+			one_value.Add3(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
 			all_keys[vkCode] = GetTickCount64();
 		}
 
 		if (curKeyState == KEY_STATE_UP) {
-			state.Remove(vkCode);
+			one_value.Remove(vkCode);
 			if (all_keys.erase(vkCode) == 0) {
 				LOG_WARN(L"Key was already upped {}", CHotKey::ToString(vkCode));
 			}
@@ -57,7 +66,7 @@ struct CurStateWrapper {
 
 	}
 private:
-	std::map<TKeyCode, ULONGLONG> all_keys;
+
 	void CheckOk() {
 		std::vector<TKeyCode> to_del;
 		for (const auto& it : all_keys) {
@@ -70,7 +79,7 @@ private:
 		for (auto it : to_del) {
 			LOG_WARN(L"delete key because it not down now {}", CHotKey::ToString(it));
 			all_keys.erase(it);
-			state.Remove(it);
+			one_value.Remove(it);
 		}
 	}
 };

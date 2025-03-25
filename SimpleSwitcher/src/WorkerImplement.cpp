@@ -4,11 +4,10 @@ void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 {
 	TKeyCode vkCode = keyData.vkCode;
 	KeyState curKeyState = keyData.keyState;
-	bool isExtended = TestFlag(keyData.flags, LLKHF_EXTENDED);
-	TScanCode_Ext scan_ext{ keyData.scanCode, isExtended };
+	auto scan_ext = keyData.scan_ext;
 
 	m_curStateWrap.Update(vkCode, curKeyState);
-	auto cur_hotkey = m_curStateWrap.state;
+	const auto& cur_hotkey = m_curStateWrap.GetOneValueHotKey();
 
 	LOG_ANY(L"ProcessKeyMsg {} curState={}", CHotKey::ToString(vkCode), cur_hotkey.ToString());
 

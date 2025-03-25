@@ -123,6 +123,15 @@ public:
         if (IsStarted())
             return;
 
+		if (Utils::IsDebug()) {
+			if (!mtx.take()) {
+				auto hk = conf_get_unsafe()->GetHk(hk_ToggleEnabled).keys.key();
+				for (auto& it : hk) if (it == VKE_WIN) it = VK_LWIN;
+				InputSender::SendHotKey(hk);
+				Sleep(50);
+			}
+		}
+
         if(!mtx.take())
             return;
 

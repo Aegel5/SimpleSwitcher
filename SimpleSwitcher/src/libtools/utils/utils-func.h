@@ -55,7 +55,7 @@ namespace Utils
 		}
 	}
 
-	inline bool IsDebug() {
+	consteval inline bool IsDebug() {
 #ifdef _DEBUG
 		return true;
 #endif

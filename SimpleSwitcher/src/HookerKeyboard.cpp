@@ -56,26 +56,18 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				return 0;
 		}
 
-		bool is_hold = false;
-		if (curKeyState != KeyState::KEY_STATE_DOWN) {
-			vk_last_down = 0;
-		}
-		else {
-			is_hold = vk_last_down == vkCode && vkCode != 0;
-			vk_last_down = vkCode;
-		}
+
 
 		CHotKey possible;
 		std::swap(possible, possible_hk_up); // сразу очищаем
 
 		msg_type.vkCode = vkCode;
-		msg_type.scanCode = scan_code;
-		msg_type.flags = k->flags;
+		msg_type.scan_ext = { (TScanCode)scan_code, isExtended };
 		msg_type.keyState = curKeyState;
 		send_key = true; // обрабатываем нажатие, если не будет запрета
 
-		curKey.Update(vkCode, curKeyState); // сразу обновляем
-		const auto& curk = curKey.state;
+		curKeys.Update(vkCode, curKeyState); // сразу обновляем
+		const auto& curk = curKeys.GetOneValueHotKey();
 
 		int check_disabled_status = -1;
 
@@ -96,7 +88,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				if (!key.GetKeyup() && check_is_our_key(key, curk)) {
 					need_our_action = true;
 					possible_hk_up.Clear(); // очищаем, потому что могли заполнить прямо в этом цикле.
-					if (!is_hold) { // но даже если и холд, клавиши нужно запретить.
+					if (!curKeys.IsHold()) { // но даже если и холд, клавиши нужно запретить.
 						msg_hotkey.hotkey = key;
 						msg_hotkey.hk = hk;
 					}
@@ -123,7 +115,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 					&& cfg->fixRAlt_lay_ != 0
 					) {
 					LOG_ANY(L"fix ctrl+alt");
-					if (!is_hold) { // пока просто запрещаем
+					if (!curKeys.IsHold()) { // пока просто запрещаем
 						Worker()->PostMsg(Message_Hotkey{ .fix_ralt = true, .hotkey = curk });
 					}
 					LOG_ANY(L"Key {} was disabled(fix)", CHotKey::ToString(vkCode));
@@ -160,7 +152,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 	if (nCode == HC_ACTION) {
 		auto res = process();
-		if (curKey.state.IsEmpty()) {
+		if (curKeys.Size() == 0) {
 			disable_up = 0;
 		}
 		if (

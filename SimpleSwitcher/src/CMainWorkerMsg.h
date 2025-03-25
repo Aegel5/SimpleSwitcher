@@ -2,8 +2,7 @@
 
 struct Message_KeyType {
 	TKeyCode   vkCode = 0;
-	TScanCode   scanCode = 0;
-	DWORD   flags = 0;
+	TScanCode_Ext scan_ext;
 	HotKeyType hk = hk_NULL;
 	KeyState keyState = KEY_STATE_NONE;
 };

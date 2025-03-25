@@ -9,10 +9,10 @@ class Hooker {
 	CAutoHWINEVENTHOOK hHookEventGlobalSwitchDesk;
 
 public: class HookerKeyboard {
-		CurStateWrapper curKey;
+		CurStateWrapper curKeys;
 		TKeyCode disable_up = 0;
 		CHotKey possible_hk_up;
-		TKeyCode vk_last_down = 0;
+
 	public:
 		LRESULT CALLBACK LowLevelKeyboardProc(
 			_In_  int nCode,
@@ -76,10 +76,10 @@ public:
 		hHookKeyGlobal = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, 0, 0);
 		IFW_RET(hHookKeyGlobal.IsValid());
 
-#ifndef _DEBUG
-		hHookMouseGlobal = SetWindowsHookEx(WH_MOUSE_LL, LowLevelMouseProc, 0, 0);
-		IFW_RET(hHookMouseGlobal.IsValid());
-#endif
+		if (!Utils::IsDebug()) {
+			hHookMouseGlobal = SetWindowsHookEx(WH_MOUSE_LL, LowLevelMouseProc, 0, 0);
+			IFW_RET(hHookMouseGlobal.IsValid());
+		}
 
 		hHookEventGlobal = SetWinEventHook(
 			EVENT_SYSTEM_FOREGROUND,
