@@ -8,8 +8,11 @@ class CurStateWrapper {
 	CHotKey multi_value; 
 	TKeyCode vk_last_down = 0;
 	bool is_hold = false;
+	int cnt_quick_press = 0;
+	TKeyCode possible_vk_quick = 0;
+	void Clear() {
+	}
 public:
-
 	bool IsHold() {	return is_hold;	}
 	const CHotKey& GetOneValueHotKey() { return one_value; }
 	int Size() { return all_keys.size(); }
@@ -37,27 +40,63 @@ public:
 
 		inputSender.Send();
 
+		// считаем, что для системы теперь все отжато, поэтому просто чистим.
+		Clear();
+
 	}
 
 	void Update(TKeyCode vkCode, KeyState curKeyState) {
 
+		CheckOk();
+
 		is_hold = false;
-		if (curKeyState != KeyState::KEY_STATE_DOWN) {
+		if (curKeyState == KeyState::KEY_STATE_UP) {
+
+			// QUICK PRESS
+			if (vkCode == vk_last_down) {
+				possible_vk_quick = vkCode;
+			}
+			else {
+				possible_vk_quick = 0;
+				cnt_quick_press = 0;
+			}
+
 			vk_last_down = 0;
 		}
 		else {
+
+			// QUICK PRESS
+			{
+				bool ok_quick = false;
+				if (possible_vk_quick == vkCode) {
+					// снова нажали ту же клавишу, теперь проверим время.
+					auto it = all_keys.find(vkCode);
+					if (it != all_keys.end()) {
+						if (GetTickCount64() - it->second <= 300) {
+							// засчитываем за срабатывание
+							ok_quick = true;
+						}
+					}
+				}
+				if (ok_quick) 
+					cnt_quick_press++;
+				else 
+					cnt_quick_press = 0; // что-то пошло не так.
+				possible_vk_quick = 0; // очищаем в любом случае.
+			}
+
+			// HOLD
 			is_hold = vk_last_down == vkCode && vkCode != 0;
 			vk_last_down = vkCode;
 		}
 
-		CheckOk();
 
+		// update stores
 		if (curKeyState == KEY_STATE_DOWN) {
 			one_value.Add3(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
 			all_keys[vkCode] = GetTickCount64();
 		}
-
-		if (curKeyState == KEY_STATE_UP) {
+		else {
 			one_value.Remove(vkCode);
 			if (all_keys.erase(vkCode) == 0) {
 				LOG_WARN(L"Key was already upped {}", CHotKey::ToString(vkCode));

@@ -56,8 +56,6 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				return 0;
 		}
 
-
-
 		CHotKey possible;
 		std::swap(possible, possible_hk_up); // сразу очищаем
 
