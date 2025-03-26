@@ -56,11 +56,7 @@ private:
               wxVector<wxBitmap> bitmaps;
               bitmaps.push_back(wxBitmap(name16, wxBITMAP_TYPE_PNG_RESOURCE));
               bitmaps.push_back(wxBitmap(name32, wxBITMAP_TYPE_PNG_RESOURCE));
-              if (Utils::IsDebug()) {
-                  for (auto& it : bitmaps) {
-                      it = ToDebug(it);
-                  }
-              }
+              //if (Utils::IsDebug()) { for (auto& it : bitmaps) { it = ToDebug(it); } }
               if (isGray) {
                   for (auto& it : bitmaps) { it = ToGray(it); }
               }
