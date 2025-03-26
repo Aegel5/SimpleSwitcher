@@ -78,7 +78,9 @@ public:
     bool fClipboardClearFormat = false;
     bool EnableKeyLoggerDefence = false;
     bool disableAccessebility    = false;
-    bool showFlags = IsWindows10OrGreater();
+    inline static const TStr showOriginalFlags = L"Original Flags";
+    inline static const TStr showAppIcon = L"Application Icon";
+    wxString flagsSet = showOriginalFlags;
     bool AllowRemoteKeys_ = true;
     bool AlternativeLayoutChange = false;
 

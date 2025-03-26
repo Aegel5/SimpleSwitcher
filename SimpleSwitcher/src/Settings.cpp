@@ -173,7 +173,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     fClipboardClearFormat,
     EnableKeyLoggerDefence,
     disableAccessebility,
-    showFlags,
+    flagsSet,
     disableInPrograms,
     logLevel,
     uiLang,

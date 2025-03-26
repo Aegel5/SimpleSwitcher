@@ -1,11 +1,14 @@
 #pragma once
 
 class IconManager {
+
     std::map<wxString, wxBitmapBundle> flags_map;
     wxBitmapBundle icon;
     wxBitmapBundle gray_icon;
     bool gray_init = false;
     wxVector<wxBitmap> bitmaps;
+    std::vector<std::wstring> externFlags;
+    std::wstring flagFold;
 public: 
     IconManager() {
         wxIconBundle all_icons(L"appicon", 0);
@@ -18,25 +21,32 @@ public:
             bitmaps.push_back(std::move(b));
         }
         icon = wxBitmapBundle::FromBitmaps(bitmaps);
+        flagFold = Utils::GetPath_folder_noLower() + L"\\Flags";
     }
 private:
-      wxBitmap ToGray(const wxBitmap& bt) {
+      void ToGray(wxBitmap& bt) {
           wxImage img = bt.ConvertToImage();
           img.ChangeBrightness(-0.2);
-          return img;
-      }
-      wxBitmap ToDebug(const wxBitmap& bt) {
-          wxImage img = bt.ConvertToImage();
-          img.ChangeHSV(0.1,0,0);
-          return img;
+          bt = img;
       }
 
       wxBitmapBundle GetBundl(const wxString& name, bool isGray) {
+
+          auto folder_name = conf_get_unsafe()->flagsSet;
+
           auto name16 = name + L"16";
           auto name32 = name + L"32";
           auto key = name16;
+          bool is_original = true;
+
+          if (folder_name != SettingsGui::showOriginalFlags) {
+              is_original = false;
+              key += L"$$";
+              key += folder_name;
+          }
+
           if (isGray) {
-              key += "g";
+              key += "#g$";
           }
 
           static bool inited = false;
@@ -50,18 +60,56 @@ private:
           if (it != flags_map.end()) 
               return it->second;
 
-          if (FindResource(0, name16.wc_str(), RT_RCDATA) == nullptr || FindResource(0, name32.wc_str(), RT_RCDATA) == nullptr) {
+          wxVector<wxBitmap> bitmaps;
+
+          if (!is_original) {
+              is_original = true;
+              // попытаемся найти флаги из папки
+              namespace fs = std::filesystem;
+              std::wstring dir = flagFold + L"\\" + folder_name;
+              for (const auto& entry : fs::directory_iterator(dir)) {
+                  if (entry.is_regular_file()) {
+                      fs::path p{ entry.path() };
+                      wxString fname = p.filename().wstring();
+                      fname.MakeUpper();
+                      if (fname.starts_with(name)) {
+                          wxString ext = p.extension().wstring();
+                          ext.MakeLower();
+                          auto type = wxBITMAP_TYPE_PNG;
+
+                          if (ext == L".ico") type = wxBITMAP_TYPE_ICO;
+                          else if (ext == L".bmp") type = wxBITMAP_TYPE_BMP;
+                          else if (ext == L".jpg") type = wxBITMAP_TYPE_JPEG;
+
+                          if (ext == L".svg") {
+                              auto b1 = wxBitmapBundle::FromSVGFile(p.wstring(), { 32,32 });
+                              bitmaps.push_back(b1.GetBitmap({ 16,16 }));
+                              if(bitmaps.back().IsOk()) is_original = false;
+                              bitmaps.push_back(b1.GetBitmap({ 32,32 }));
+                          }
+                          else {
+                              wxBitmap bitmap(p.wstring(), type);
+                              if (bitmap.IsOk()) {
+                                  is_original = false;
+                                  bitmaps.push_back(bitmap);
+                              }
+                          }
+                      }
+                  }
+              }
           }
-          else {
-              wxVector<wxBitmap> bitmaps;
+
+          if (is_original && FindResource(0, name16.wc_str(), RT_RCDATA) != nullptr && FindResource(0, name32.wc_str(), RT_RCDATA) != nullptr) {
+              bitmaps.clear();
               bitmaps.push_back(wxBitmap(name16, wxBITMAP_TYPE_PNG_RESOURCE));
               bitmaps.push_back(wxBitmap(name32, wxBITMAP_TYPE_PNG_RESOURCE));
-              //if (Utils::IsDebug()) { for (auto& it : bitmaps) { it = ToDebug(it); } }
-              if (isGray) {
-                  for (auto& it : bitmaps) { it = ToGray(it); }
-              }
-              flags_map.emplace(key, wxBitmapBundle::FromBitmaps(bitmaps));
           }
+
+          if (isGray) {
+              for (auto& it : bitmaps) { ToGray(it); }
+          }
+
+          flags_map.emplace(key, wxBitmapBundle::FromBitmaps(bitmaps));
 
           return flags_map[key];
       }
@@ -77,7 +125,7 @@ public:
             if (!gray_init) {
                 gray_init = true;
                 auto btms = bitmaps;
-                for (auto& it : btms) { it = ToGray(it); }
+                for (auto& it : btms) { ToGray(it); }
                 gray_icon = wxBitmapBundle::FromBitmaps(btms);
             }
         }
@@ -105,6 +153,7 @@ public:
                 return info;
             TStr name = buf + len_str - 2;
             wname = name;
+            wname.MakeUpper();
             LOG_ANY(L"mainguid new layout: {}, name={}", (void*)lay, name);
         }
 
@@ -117,5 +166,19 @@ public:
         }
 
         return info;
+    }
+    const std::vector<std::wstring>& ScanFlags() {
+        externFlags.clear();
+        flags_map.clear(); // почистим кеш, чтобы снова попытаться найти флаг в папке.
+        namespace fs = std::filesystem;
+        if (!fs::is_directory(flagFold)) 
+            return externFlags;
+        for (const auto& entry : fs::directory_iterator(flagFold)) {
+            if (entry.is_directory()) {
+                fs::path p{ entry.path() };
+                externFlags.emplace_back(p.filename());
+            }
+        }
+        return externFlags;
     }
 };

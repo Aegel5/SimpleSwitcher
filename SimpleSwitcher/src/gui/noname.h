@@ -18,12 +18,12 @@
 #include <wx/settings.h>
 #include <wx/stattext.h>
 #include <wx/choice.h>
-#include <wx/sizer.h>
-#include <wx/statbox.h>
 #include <wx/button.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
+#include <wx/sizer.h>
+#include <wx/statbox.h>
 #include <wx/hyperlink.h>
 #include <wx/panel.h>
 #include <wx/grid.h>
@@ -50,8 +50,10 @@ class MyFrame4 : public wxFrame
 		wxCheckBox* m_checkAddToAutoStart;
 		wxStaticText* m_staticTextExplain;
 		wxCheckBox* m_checkBoxWorkInAdmin;
-		wxCheckBox* m_checkBoxShowFlags;
 		wxCheckBox* m_checkBoxAlterantiveLayoutChange;
+		wxStaticText* m_staticText5;
+		wxChoice* m_choiceShowInTray;
+		wxButton* m_buttonUpdateFlags;
 		wxStaticText* m_staticText9;
 		wxChoice* m_comboUiLang;
 		wxCheckBox* m_checkBoxDisablAcc;
@@ -84,7 +86,6 @@ class MyFrame4 : public wxFrame
 		// Virtual event handlers, override them in your derived class
 		virtual void onEnable( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onAutocheck( wxCommandEvent& event ) { event.Skip(); }
-		virtual void onShowFlags( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onDisableAccessebl( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onEnableLog( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onHotDClick( wxGridEvent& event ) { event.Skip(); }

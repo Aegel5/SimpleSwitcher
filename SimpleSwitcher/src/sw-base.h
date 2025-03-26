@@ -30,6 +30,7 @@
 #include <queue>
 #include <map>
 #include <spanstream>
+#include <filesystem>
 
 // утилиты
 #include "core/inc_all.h"

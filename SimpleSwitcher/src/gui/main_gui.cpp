@@ -5,6 +5,7 @@
 #include "FloatPanel.h"
 #include "utils/accessibil.h"
 #include <wx/taskbar.h>
+#include <wx/custombgwin.h>
 #include "wxUtils.h"
 #include "Tray.h"
 #include "IconManager.h"
@@ -47,7 +48,7 @@ class MainWnd : public MyFrame4
         }
     }
     void UpdateIcons() {
-        if (!conf_get_unsafe()->showFlags) {
+        if (conf_get_unsafe()->flagsSet == SettingsGui::showAppIcon) {
             myTray.ResetIcon(iconsMan.Get_Standart(!IsCoreEnabled()).bundle);
         }
         else {
@@ -137,12 +138,17 @@ public:
                     SaveConfigWith([val](auto conf) {conf->EnableKeyLoggerDefence = val; });
              });
 
-            BindCheckbox(m_checkBoxShowFlags,
-                [this]() {
-                    return conf_get_unsafe()->showFlags; },
-                [this](bool val) {
-                    SaveConfigWith([val](auto cfg) {cfg->showFlags = val; });
+            BindChoice(m_choiceShowInTray, [&](wxChoice* elem) {
+                initChoiceFlags();
+                },
+                [&](wxChoice* elem) {
+                    updateShowInTray(elem->GetStringSelection());
                     UpdateIcons();
+                });
+
+            BindButtom(m_buttonUpdateFlags, [this]() {
+                initChoiceFlags();
+                UpdateIcons();
                 });
 
             BindCheckbox(m_checkBoxDisablAcc,
@@ -223,6 +229,36 @@ public:
 
 private:
 
+    void initChoiceFlags() {
+        m_choiceShowInTray->Clear();
+        m_choiceShowInTray->AppendString(SettingsGui::showAppIcon);
+        m_choiceShowInTray->AppendString(SettingsGui::showOriginalFlags);
+        for (const auto& it : iconsMan.ScanFlags()) {
+            m_choiceShowInTray->AppendString(it);
+        }
+        updateShowInTray(conf_get_unsafe()->flagsSet);
+    }
+
+    void updateShowInTray(wxString newVal) {
+
+        bool found = false;
+        for (int i = 0; i < m_choiceShowInTray->GetCount(); i++) {
+            auto cur = m_choiceShowInTray->GetString(i);
+            if (cur == newVal) {
+                m_choiceShowInTray->SetSelection(i);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            newVal = SettingsGui::showOriginalFlags;
+            m_choiceShowInTray->SetSelection(1);
+        }
+        if (conf_get_unsafe()->flagsSet != newVal) {
+            SaveConfigWith([&](auto cfg) {cfg->flagsSet = newVal; });
+        }
+    }
+
 
     int getChildIndex(wxWindow* obj) {
         auto par = obj->GetParent();
@@ -256,7 +292,7 @@ private:
             if (!inited) 
                 return TRUE;
 
-            if (!conf_get_unsafe()->showFlags)
+            if (conf_get_unsafe()->flagsSet == SettingsGui::showAppIcon)
                 return TRUE;
 
             auto info = iconsMan.Get((HKL)wParam, !IsCoreEnabled());

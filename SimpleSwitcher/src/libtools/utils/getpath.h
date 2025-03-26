@@ -39,6 +39,14 @@ namespace Utils {
 		return __GetPath(sPath, PATH_TYPE_SELF_FOLDER, false);
 	}
 
+	inline std::wstring GetPath_folder_noLower() {
+		std::wstring path;
+		IFS_LOG(GetPath_folder_noLower(path));
+		return path;
+	}
+
+
+
 	inline TStatus GetPath_exe_noLower(std::wstring& sPath) {
 		return __GetPath(sPath, PATH_TYPE_EXE_PATH, false);
 	}

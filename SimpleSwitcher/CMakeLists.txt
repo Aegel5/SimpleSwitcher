@@ -23,8 +23,8 @@ set(wxUSE_GL OFF)
 
 set(wxUSE_LIBTIFF OFF)
 
-set(wxUSE_LIBJPEG OFF)
-set(wxUSE_SVG OFF)
+#set(wxUSE_LIBJPEG OFF)
+#set(wxUSE_SVG OFF)
 set(wxUSE_MEDIACTRL OFF)
 set(wxUSE_JOYSTICK OFF)
 set(wxUSE_TGA OFF)
