@@ -99,7 +99,7 @@ public:
                     wxMessageBox(_("Error reading config"));
                 }
                 else {
-                    conf_set(conf);
+                    _conf_set(conf);
                 }
                 });
 
@@ -303,7 +303,9 @@ private:
         int col = event.GetCol();
         int row = event.GetRow();
 
-        auto& lays = conf_get_unsafe()->layouts_info.info;
+        GETCONF;
+
+        auto& lays = cfg->layouts_info.info;
         if (row >= lays.size()) return;
         auto& data = lays[row];
 
@@ -314,17 +316,12 @@ private:
             set.def_list.push_back(CHotKey(VK_RCONTROL).SetKeyup());
             set.keys = data.hotkey;
             if (ChangeHotKey2(this, set, newkey)) {
-                auto conf = conf_copy();
-                conf->layouts_info.info[row].hotkey.key() = newkey;
-                conf_set(conf);
+                SaveConfigWith([&](auto conf) {  conf->layouts_info.info[row].hotkey.key() = newkey; });
                 FillLayoutsInfo();
             }
         }
         if (col == 0) {
-            auto conf = conf_copy();
-            conf->layouts_info.info[row].enabled ^= 1;
-            //conf->Update_hk_from_layouts();
-            conf_set(conf);
+            SaveConfigWith([&](auto conf) {  conf->layouts_info.info[row].enabled ^= 1; });
             FillLayoutsInfo();
         }
         if (col == 2) {
@@ -340,9 +337,7 @@ private:
             };
             set.keys.key() = data.win_hotkey;
             if (ChangeHotKey2(this, set, newkey)) {
-                auto conf = conf_copy();
-                conf->layouts_info.info[row].win_hotkey = newkey;
-                conf_set(conf);
+                SaveConfigWith([&](auto conf) {  conf->layouts_info.info[row].win_hotkey = newkey; });
                 FillLayoutsInfo();
             }
         }
@@ -504,9 +499,7 @@ private:
 
         if (was_changes) {
             // пересохраним если были изменения.
-            auto conf = conf_copy();
-            conf->layouts_info = info_copy;
-            conf_set(conf);
+            SaveConfigWith([&](auto conf) {  conf->layouts_info = info_copy; });
         }
 
     }

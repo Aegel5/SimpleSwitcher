@@ -63,7 +63,7 @@ bool MyApp::OnInit() {
 
         if (conf->config_version != SW_VERSION) {
             conf->config_version = SW_VERSION;
-            IFS_LOG(Save()); // пересохраним конфиг, чтобы туда добавились все последние настройки, которые заполнены по-умолчанию.
+            SaveConfigWith([](auto cfg) {}); // пересохраним конфиг, чтобы туда добавились все последние настройки, которые заполнены по-умолчанию.
         }
 
         // init ui

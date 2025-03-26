@@ -251,7 +251,7 @@ TStatus LoadConfig(SettingsGui& gui) {
 
 
 
-TStatus Save2(const SettingsGui& gui) {
+TStatus _Save_conf(const SettingsGui& gui) {
     try {
         std::wstring path;
         IFS_RET(GetPath_Conf(path));

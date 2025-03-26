@@ -124,18 +124,6 @@ public:
 
 };
 
-/*
-Многопоточный конфиг
-
-Чтение: 
-    GETCONF, далее используем cfg.
-Запись: 
-    1) делаем копию conf_copy 
-    2) меняем новый на старый через conf_set 
-    3) после set не имеем права больше писать в конфиг.
-
-*/
-
 
 using ConfPtr = std::shared_ptr<SettingsGui>;
 inline ConfPtr __g_config(new SettingsGui()); // создаем как можно раньше.
@@ -143,27 +131,34 @@ inline auto conf_get_unsafe() { // Проблемы синтаксиса conf_ge
     auto res = std::const_pointer_cast<const SettingsGui>(__g_config);
     return res; 
 }
-inline ConfPtr conf_copy() { return ConfPtr(new SettingsGui(*conf_get_unsafe())); }
+
 #define GETCONF auto cfg = conf_get_unsafe();
 
 
-
-
 TStatus LoadConfig(SettingsGui& sets);
-TStatus Save2(const SettingsGui& gui);
-inline TStatus Save() { return Save2(*conf_get_unsafe());}
+TStatus _Save_conf(const SettingsGui& gui);
 
-inline void conf_set(ConfPtr& conf) {
+inline void _conf_set(ConfPtr& conf) {
     __g_config.swap(conf);
     conf.reset();
-    IFS_LOG(Save()); // сразу сохраняем в файл.
+    IFS_LOG(_Save_conf(*__g_config)); // сразу сохраняем в файл.
 }
 
 inline void SaveConfigWith(auto set) {
-    auto conf = conf_copy();
+    auto conf = ConfPtr(new SettingsGui(*conf_get_unsafe()));
     set(conf.get());
-    conf_set(conf);
+    _conf_set(conf);
 }
+
+/*
+Многопоточный конфиг
+
+Чтение:
+    GETCONF, далее используем cfg.
+Запись:
+    SaveConfigWith()
+
+*/
 
 
 
