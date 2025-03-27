@@ -73,7 +73,7 @@ _Также возможно:_
 Для добавления пользовательских флагов необходимо создать папку `flags` рядом с `SimpleSwitcher.exe`. Пример.
 ```text
 flags
-  Set1
+  Name_of_Set1
     ru16.png
     ru32.png
     us16.png
