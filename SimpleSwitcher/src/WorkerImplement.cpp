@@ -482,6 +482,7 @@ TStatus WorkerImplement::SwitchLangByEmulate(HKL lay) {
 			RETURN_SUCCESS;
 		}
 		if (info->win_hotkey.IsEmpty()) {
+			// todo - переключаться, пока не найдем нужны, настройка - empty by default, обновить doc.
 			LOG_WARN(L"hot key not setup");
 			RETURN_SUCCESS;
 		}
