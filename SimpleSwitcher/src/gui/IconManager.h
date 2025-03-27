@@ -57,10 +57,11 @@ private:
           }
 
           auto it = flags_map.find(key);
-          if (it != flags_map.end()) 
+          if (it != flags_map.end())
               return it->second;
 
           wxVector<wxBitmap> bitmaps;
+          wxBitmapBundle bundleResult;
 
           if (!is_original) {
               is_original = true;
@@ -75,19 +76,17 @@ private:
                       if (fname.starts_with(name)) {
                           wxString ext = p.extension().wstring();
                           ext.MakeLower();
-                          auto type = wxBITMAP_TYPE_PNG;
+                          auto type = wxBITMAP_TYPE_INVALID;
 
                           if (ext == L".ico") type = wxBITMAP_TYPE_ICO;
+                          if (ext == L".png") type = wxBITMAP_TYPE_PNG;
                           else if (ext == L".bmp") type = wxBITMAP_TYPE_BMP;
                           else if (ext == L".jpg") type = wxBITMAP_TYPE_JPEG;
 
                           if (ext == L".svg") {
-                              auto b1 = wxBitmapBundle::FromSVGFile(p.wstring(), { 32,32 });
-                              bitmaps.push_back(b1.GetBitmap({ 16,16 }));
-                              if(bitmaps.back().IsOk()) is_original = false;
-                              bitmaps.push_back(b1.GetBitmap({ 32,32 }));
+                              bundleResult = wxBitmapBundle::FromSVGFile(p.wstring(), { 32,32 });
                           }
-                          else {
+                          else if (type != wxBITMAP_TYPE_INVALID) { // не понятно что пропускаем.
                               wxBitmap bitmap(p.wstring(), type);
                               if (bitmap.IsOk()) {
                                   is_original = false;
@@ -99,17 +98,29 @@ private:
               }
           }
 
-          if (is_original && FindResource(0, name16.wc_str(), RT_RCDATA) != nullptr && FindResource(0, name32.wc_str(), RT_RCDATA) != nullptr) {
-              bitmaps.clear();
-              bitmaps.push_back(wxBitmap(name16, wxBITMAP_TYPE_PNG_RESOURCE));
-              bitmaps.push_back(wxBitmap(name32, wxBITMAP_TYPE_PNG_RESOURCE));
+          if (bundleResult.IsOk()) { // svg
+              is_original = false;
+              if (isGray) { // для gray пока сделаем хак, но по хорошему нужен отдельный кеш на gray, но для этого нужно знать destination size а для этого нужно патчить widgets
+                  bitmaps.clear();
+                  bitmaps.push_back(bundleResult.GetBitmap({ 16,16 }));
+                  bitmaps.push_back(bundleResult.GetBitmap({ 32,32 }));
+                  bundleResult.Clear();
+              }
           }
 
-          if (isGray) {
-              for (auto& it : bitmaps) { ToGray(it); }
+          if (!bundleResult.IsOk()) {
+              if (is_original && FindResource(0, name16.wc_str(), RT_RCDATA) != nullptr && FindResource(0, name32.wc_str(), RT_RCDATA) != nullptr) {
+                  bitmaps.clear();
+                  bitmaps.push_back(wxBitmap(name16, wxBITMAP_TYPE_PNG_RESOURCE));
+                  bitmaps.push_back(wxBitmap(name32, wxBITMAP_TYPE_PNG_RESOURCE));
+              }
+              if (isGray) {
+                  for (auto& it : bitmaps) { ToGray(it); }
+              }
+              bundleResult = wxBitmapBundle::FromBitmaps(bitmaps);
           }
 
-          flags_map.emplace(key, wxBitmapBundle::FromBitmaps(bitmaps));
+          flags_map.emplace(key, bundleResult);
 
           return flags_map[key];
       }
