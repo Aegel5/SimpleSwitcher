@@ -531,8 +531,8 @@ private:
             auto cur = all_lays[i];
             if (!info_copy.HasLayout(cur)) {
                 was_changes = true;
-                CHotKey winhk(VK_LMENU, VK_SHIFT, VKE_1 + info.size());
-                info.push_back({ .layout = cur, .win_hotkey=winhk });
+                //CHotKey winhk(VK_LMENU, VK_SHIFT, VKE_1 + info.size());
+                info.push_back({ .layout = cur });
             }
         }
 

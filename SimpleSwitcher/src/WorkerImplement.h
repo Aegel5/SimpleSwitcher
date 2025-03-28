@@ -24,7 +24,7 @@ public:
 	void ClearAllWords() { m_cycleList.Clear(); }
 	TStatus NeedRevert(HotKeyType typeRevert);
 	TStatus AnalizeTopWnd();
-	TStatus SwitchLangByEmulate(HKL lay);
+	void SwitchLangByEmulate(HKL lay);
 	void CliboardChanged();
     TStatus GetClipStringCallback();
 	void ClipboardClearFormat2() { IFS_LOG(m_clipWorker.ClipboardClearFormat()); }
@@ -52,7 +52,7 @@ public:
 
 		if (conf_get_unsafe()->AlternativeLayoutChange)
 		{
-			IFS_LOG(SwitchLangByEmulate(lay));
+			SwitchLangByEmulate(lay);
 		}
 		else
 		{

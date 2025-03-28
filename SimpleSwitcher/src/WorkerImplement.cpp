@@ -469,30 +469,41 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 }
 
 
-TStatus WorkerImplement::SwitchLangByEmulate(HKL lay) {
+void WorkerImplement::SwitchLangByEmulate(HKL lay) {
 
 	GETCONF;
 
 	CHotKey altshift = cfg->GetHk(hk_CycleLang_win_hotkey).keys.key();
 
-	if ((int)lay != HKL_NEXT) {
+	if ((int)lay != HKL_NEXT) { 
+
 		auto info = cfg->layouts_info.GetLayoutInfo(lay);
-		if (info == nullptr) {
-			LOG_WARN(L"not found lay info");
-			RETURN_SUCCESS;
+		if (info != nullptr && !info->win_hotkey.IsEmpty()) {
+			altshift = info->win_hotkey;
 		}
-		if (info->win_hotkey.IsEmpty()) {
-			// todo - переключаться, пока не найдем нужны, настройка - empty by default, обновить doc.
-			LOG_WARN(L"hot key not setup");
-			RETURN_SUCCESS;
+		else {
+
+			if (cfg->layouts_info.info.size() == 2) {
+				if (topWndInfo2.lay == lay) { // на верх пока не выносим проверку, так как нет 100% гарантии в корректности определения тек. раскладки, пока тестим.
+					return;
+				}
+				// оставляем как есть.
+			}
+			else {
+				LOG_WARN(L"hot key for lang not setup. skip switch");
+				return;
+			}
 		}
-		altshift = info->win_hotkey;
+	}
+
+	if (altshift.IsEmpty()) {
+		LOG_WARN(L"hot key not setup. skip switch");
+		return;
 	}
 
 	LOG_ANY(L"Emulate with {}", altshift.ToString());
-	InputSender::SendHotKey(altshift);
 
-	RETURN_SUCCESS;
+	InputSender::SendHotKey(altshift);
 }
 
 void WorkerImplement::CheckCurLay(bool forceSend) {
