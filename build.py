@@ -97,9 +97,9 @@ def build(subfold, is64):
 build("SimpleSwitcher", is64=False)
 
 # пока без дополнительных файлов.
-#add_to_bin = "SimpleSwitcher/binfiles"
-#for file in os.listdir(add_to_bin):
-#    shutil.copy(os.path.join(add_to_bin, file), os.path.join(result_dir, file))
+add_to_bin = "SimpleSwitcher/bin_files"
+for file in os.listdir(add_to_bin):
+    shutil.copy(os.path.join(add_to_bin, file), os.path.join(result_dir, file))
     
 zippath = result_dir_root / f"SimpleSwitcher_{curv2_v}"
     
