@@ -1,6 +1,7 @@
 ﻿#include "sw-base.h"
 #include "Settings.h"
 #include "noname.h"
+#include "wxUtils.h"
 
 namespace {
 
@@ -36,6 +37,15 @@ public:
     }
     HotKeyDlg(CHotKeySet info, wxFrame* frame) : MyDialog1(frame), info(info)
     {
+        WxUtils::BindCheckbox(m_checkBoxDouble, 
+            [this]() {
+                return key.IsDouble();
+            }, 
+            [this](bool val) {
+                key.SetDouble(val);
+                updateField();
+            });
+
         g_hotkeyWndOpened++;
         //SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxRESIZE_BORDER);
 
@@ -149,8 +159,8 @@ bool ChangeHotKey2(wxFrame* frame, CHotKeySet set, CHotKey& key) {
     key = dlg.cur_key();
     auto res2 =  res == wxID_OK;
     if (res2) {
-        if (key.Size() == 1 && CHotKey::IsKnownMods(key.ValueKey()) && !key.GetKeyup()) {
-            wxMessageBox(_(L"Modifier must have #up flag"));
+        if (key.Size() == 1 && CHotKey::IsKnownMods(key.ValueKey()) && !key.GetKeyup() && !key.IsDouble()) {
+            wxMessageBox(_(L"Modifier must have #up or #double flag"));
             res2 = false;
         }
     }

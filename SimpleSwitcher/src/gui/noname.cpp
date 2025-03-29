@@ -356,6 +356,10 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_checkBox13 = new wxCheckBox( this, wxID_ANY, _("Triggers on KEYUP"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer16->Add( m_checkBox13, 0, wxALL, 5 );
 
+	m_checkBoxDouble = new wxCheckBox( this, wxID_ANY, _("Triggers on double press"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxDouble->SetValue(true);
+	bSizer16->Add( m_checkBoxDouble, 0, wxALL, 5 );
+
 	wxBoxSizer* bSizer18;
 	bSizer18 = new wxBoxSizer( wxHORIZONTAL );
 
@@ -383,6 +387,7 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_button6->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onclear ), NULL, this );
 	m_checkBox12->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyDialog1::onSetLeftRight ), NULL, this );
 	m_checkBox13->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyDialog1::onSetKeyup ), NULL, this );
+	m_checkBoxDouble->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyDialog1::onSetKeyup ), NULL, this );
 	m_button4->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onOk ), NULL, this );
 	m_button5->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onCancel ), NULL, this );
 }
@@ -394,6 +399,7 @@ MyDialog1::~MyDialog1()
 	m_button6->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onclear ), NULL, this );
 	m_checkBox12->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyDialog1::onSetLeftRight ), NULL, this );
 	m_checkBox13->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyDialog1::onSetKeyup ), NULL, this );
+	m_checkBoxDouble->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyDialog1::onSetKeyup ), NULL, this );
 	m_button4->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onOk ), NULL, this );
 	m_button5->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyDialog1::onCancel ), NULL, this );
 

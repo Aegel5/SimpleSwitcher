@@ -119,6 +119,7 @@ class MyDialog1 : public wxDialog
 		wxButton* m_button6;
 		wxCheckBox* m_checkBox12;
 		wxCheckBox* m_checkBox13;
+		wxCheckBox* m_checkBoxDouble;
 		wxButton* m_button4;
 		wxButton* m_button5;
 

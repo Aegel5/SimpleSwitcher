@@ -83,7 +83,7 @@ public:
     wxString flagsSet = L"Square";
     bool AllowRemoteKeys_ = true;
     bool AlternativeLayoutChange = false;
-
+    TUInt32 quick_press_ms = 350;
     bool separate_ext_last_word = false;
     bool separate_ext_several_words = false;
 

@@ -118,9 +118,8 @@ public:
 	}
 	enum TCompareFlags {
 		COMPARE_NORMAL = 0,
-		COMPARE_IGNORE_ORDER_VALUEKEY = 0x1,
-		COMPARE_IGNORE_KEYUP = 0x4,
-		COMPARE_STRICK_MODIFIER = 0x8,
+		COMPARE_IGNORE_KEYUP = 1<<0,
+		COMPARE_STRICK_MODIFIER = 1<<1,
 	};
 	bool Compare(const CHotKey& other, int flags = COMPARE_NORMAL) const {
 		if (size != other.size)
@@ -129,17 +128,14 @@ public:
 			return false;
 		if (!TestFlag(flags, COMPARE_IGNORE_KEYUP) && m_keyup != other.m_keyup)
 			return false;
+		if (m_double_press != other.m_double_press)
+			return false;
 
 		bool strick_modifier = TestFlag(flags, COMPARE_STRICK_MODIFIER);
 
-		if (TestFlag(flags, COMPARE_IGNORE_ORDER_VALUEKEY) || m_ignoreOrderValueKey || other.m_ignoreOrderValueKey) {
-			return CompareIgnoreOrder(keys, other.keys, size, strick_modifier);
-		}
-		else {
-			if (!CompareKeys(keys[0], other.keys[0], strick_modifier))
-				return false;
-			return CompareIgnoreOrder(keys + 1, other.keys + 1, size - 1, strick_modifier);
-		}
+		if (!CompareKeys(keys[0], other.keys[0], strick_modifier))
+			return false;
+		return CompareIgnoreOrder(keys + 1, other.keys + 1, size - 1, strick_modifier);
 	}
 	bool IsEmpty() const { return Size() == 0; }
 	TKeyCode ValueKey() const { return keys[0]; }
@@ -163,6 +159,9 @@ public:
 		}
 		if (m_keyup) {
 			s += L" #up";
+		}
+		if (m_double_press) {
+			s += L" #double";
 		}
 		return s;
 	}
@@ -216,6 +215,7 @@ public:
 		for (auto& sCur : sElems) {
 			Str_Utils::ToLower(sCur);
 			if (Str_Utils::replaceAll(sCur, L"#up", L"")) { SetKeyup(true); }
+			if (Str_Utils::replaceAll(sCur, L"#double", L"")) { SetDouble(true); }
 			Str_Utils::trim(sCur);
 			TKeyCode kCur = _internal::HotKeyNames::Global().GetCode(sCur.c_str());
 			if (kCur == 0) {
@@ -304,11 +304,13 @@ public: TStatus RegisterHk(CAutoHotKeyRegister& registor, HWND hwnd, int id) {
 		IFW_RET(registor.Register(hwnd, id, mods, vk));
 		RETURN_SUCCESS;
 	}
+public: bool IsDouble() { return m_double_press; }
+public: auto& SetDouble(bool val = true) { m_double_press = val; return *this; }
 private:
 	static const int c_MAX = 6;
 	struct {
-		TUInt8 m_ignoreOrderValueKey : 1 {};
 		TUInt8 m_keyup : 1 {};
+		TUInt8 m_double_press : 1 {};
 	};
 	TUInt8 size = 0;
 	TKeyCode keys[c_MAX] = { 0 };

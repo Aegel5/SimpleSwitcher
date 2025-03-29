@@ -30,7 +30,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_PAUSE) };
+        set.def_list = { CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_PAUSE), CHotKey(VK_LSHIFT).SetDouble() };
         set.gui_text = _(L"Change layout for all recent text").wc_str();
         AddHotKey(hk_RevertAllRecentText, set);
     }
@@ -45,7 +45,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VKE_WIN, VK_SPACE), CHotKey(VK_LCONTROL,VK_LWIN) };
+        set.def_list = { CHotKey(VKE_WIN, VK_SPACE), CHotKey(VK_LCONTROL,VK_LWIN), CHotKey(VK_SHIFT).SetDouble() };
         set.gui_text = _(L"Cycle change layout").wc_str();
         AddHotKey(hk_CycleSwitchLayout, set);
     }
@@ -185,7 +185,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     fixRAlt_lay_,
     run_programs,
     separate_ext_last_word,
-    separate_ext_several_words
+    separate_ext_several_words,
+    quick_press_ms
     )
     
 

@@ -7,12 +7,15 @@ class CurStateWrapper {
 	CHotKey one_value; 
 	CHotKey multi_value; 
 	TKeyCode vk_last_down = 0;
+	ULONGLONG last_down_time = 0;
 	bool is_hold = false;
 	int cnt_quick_press = 0;
 	TKeyCode possible_vk_quick = 0;
 	void Clear() {
 	}
 public:
+
+
 	bool IsHold() {	return is_hold;	}
 	const CHotKey& GetOneValueHotKey() { return one_value; }
 	int Size() { return all_keys.size(); }
@@ -70,12 +73,9 @@ public:
 				bool ok_quick = false;
 				if (possible_vk_quick == vkCode) {
 					// снова нажали ту же клавишу, теперь проверим время.
-					auto it = all_keys.find(vkCode);
-					if (it != all_keys.end()) {
-						if (GetTickCount64() - it->second <= 300) {
-							// засчитываем за срабатывание
-							ok_quick = true;
-						}
+					if (GetTickCount64() - last_down_time <= conf_get_unsafe()->quick_press_ms) {
+						// засчитываем за срабатывание
+						ok_quick = true;
 					}
 				}
 				if (ok_quick) 
@@ -88,6 +88,7 @@ public:
 			// HOLD
 			is_hold = vk_last_down == vkCode && vkCode != 0;
 			vk_last_down = vkCode;
+			last_down_time = GetTickCount64();
 		}
 
 
@@ -102,6 +103,10 @@ public:
 				LOG_WARN(L"Key was already upped {}", CHotKey::ToString(vkCode));
 			}
 		}
+
+		// double press мы устанавливаем в отличии от up.
+		one_value.SetDouble(cnt_quick_press == 1);
+
 
 	}
 private:

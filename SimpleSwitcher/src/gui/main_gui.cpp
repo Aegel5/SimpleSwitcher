@@ -364,8 +364,12 @@ private:
         if (col == 1) {
             CHotKey newkey;
             CHotKeySet set;
-            set.def_list.push_back(CHotKey(VK_LCONTROL).SetKeyup());
-            set.def_list.push_back(CHotKey(VK_RCONTROL).SetKeyup());
+            set.def_list = {
+                (CHotKey)CHotKey(VK_LCONTROL).SetKeyup(),
+                (CHotKey)CHotKey(VK_RCONTROL).SetKeyup(),
+                (CHotKey)CHotKey(VK_LSHIFT).SetDouble(),
+                (CHotKey)CHotKey(VK_RSHIFT).SetDouble()
+            };
             set.keys = data.hotkey;
             if (ChangeHotKey2(this, set, newkey)) {
                 SaveConfigWith([&](auto conf) {  conf->layouts_info.info[row].hotkey.key() = newkey; });
