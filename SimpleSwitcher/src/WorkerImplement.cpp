@@ -474,6 +474,7 @@ void WorkerImplement::SwitchLangByEmulate(HKL lay) {
 	GETCONF;
 
 	CHotKey altshift = cfg->GetHk(hk_CycleLang_win_hotkey).keys.key();
+	bool switch_until = false;
 
 	if ((int)lay != HKL_NEXT) { 
 
@@ -482,17 +483,11 @@ void WorkerImplement::SwitchLangByEmulate(HKL lay) {
 			altshift = info->win_hotkey;
 		}
 		else {
-
-			if (cfg->layouts_info.info.size() == 2) {
-				if (topWndInfo2.lay == lay) { // на верх пока не выносим проверку, так как нет 100% гарантии в корректности определения тек. раскладки, пока тестим.
-					return;
-				}
-				// оставляем как есть.
-			}
-			else {
-				LOG_WARN(L"hot key for lang not setup. skip switch");
+			if (topWndInfo2.lay == lay) { // на верх пока не выносим проверку, так как нет 100% гарантии в корректности определения тек. раскладки, пока тестим.
 				return;
 			}
+			if (cfg->layouts_info.info.size() != 2)
+				switch_until = true;
 		}
 	}
 
@@ -504,6 +499,22 @@ void WorkerImplement::SwitchLangByEmulate(HKL lay) {
 	LOG_ANY(L"Emulate with {}", altshift.ToString());
 
 	InputSender::SendHotKey(altshift);
+
+	if (switch_until) {
+		auto cur = topWndInfo2.lay;
+		for (int i = 0; i < std::ssize(cfg->layouts_info.info) - 2; i++) {
+			auto next = WaitOtherLay(cur);
+			if (next == 0) {
+				LOG_WARN(L"cant't wait in emulate");
+				return;
+			}
+			if (next == lay) {
+				return;
+			}
+			cur = next;
+			InputSender::SendHotKey(altshift);
+		}
+	}
 }
 
 void WorkerImplement::CheckCurLay(bool forceSend) {

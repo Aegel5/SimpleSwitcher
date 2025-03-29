@@ -59,7 +59,7 @@ public:
 			Utils::SetLayPost(topWndInfo2.hwnd_default, lay);
 		}
 	}
-	void WaitOtherLay(HKL lay) {
+	HKL WaitOtherLay(HKL lay) {
 		// Дождемся смены языка. Нет смысла переходить в асинхронный режим. Можем ждать прямо здесь.
 		auto start = GetTickCount64();
 		while (true)
@@ -67,12 +67,12 @@ public:
 			auto curL = GetKeyboardLayout(topWndInfo2.threadid_default);
 			if (curL != lay) {
 				LOG_ANY(L"new lay arrived after {}", GetTickCount64() - start);
-				break;
+				return curL;
 			}
 
 			if ((GetTickCount64() - start) >= 150) {
 				LOG_WARN(L"wait timeout language change for proc {}", m_sTopProcName.c_str());
-				break;
+				return 0;
 			}
 
 			Sleep(5);
