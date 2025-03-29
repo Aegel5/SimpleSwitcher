@@ -192,6 +192,20 @@ public:
                     wxMessageBox(_("Need restart program"));
                     });
 
+                m_gridLayouts->GetGridWindow()->Bind(wxEVT_RIGHT_DOWN, [this](auto& evt) {
+                    // Show popupmenu at position
+                    wxMenu menu;
+                    static const int update_id = 123;
+                    menu.Append(update_id, wxT("&Update"));
+                    menu.Bind(wxEVT_COMMAND_MENU_SELECTED, [this](auto& e) {
+                        if (e.GetId() == update_id) {
+                            SyncLayouts();
+                            FillLayoutsInfo();
+                        }
+                        });
+                    PopupMenu(&menu);
+                    });
+
             updateAutoStart();
 
             FillHotkeysInfo();
