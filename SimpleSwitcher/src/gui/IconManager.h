@@ -65,8 +65,12 @@ private:
           wxVector<wxBitmap> bitmaps;
           wxBitmapBundle bundleResult;
 
-          if (!is_original) {
-              is_original = true;
+          if (is_original) {
+              if (FindResource(0, name16.wc_str(), RT_RCDATA) != nullptr && FindResource(0, name32.wc_str(), RT_RCDATA) != nullptr) {
+                  bitmaps.push_back(wxBitmap(name16, wxBITMAP_TYPE_PNG_RESOURCE));
+                  bitmaps.push_back(wxBitmap(name32, wxBITMAP_TYPE_PNG_RESOURCE));
+              }
+          } else {
               // попытаемся найти флаги из папки
               namespace fs = std::filesystem;
               std::wstring dir = flagFold + L"\\" + folder_name;
@@ -87,11 +91,18 @@ private:
 
                           if (ext == L".svg") {
                               bundleResult = wxBitmapBundle::FromSVGFile(p.wstring(), { 32,32 });
+                              if (bundleResult.IsOk()) { 
+                                  if (isGray) { // для gray пока сделаем хак, но по хорошему нужен отдельный кеш на gray, но для этого нужно знать destination size а для этого нужно патчить widgets
+                                      bitmaps.clear();
+                                      bitmaps.push_back(bundleResult.GetBitmap({ 16,16 }));
+                                      bitmaps.push_back(bundleResult.GetBitmap({ 32,32 }));
+                                      bundleResult.Clear();
+                                  }
+                              }
                           }
                           else if (type != wxBITMAP_TYPE_INVALID) { // не понятно что пропускаем.
                               wxBitmap bitmap(p.wstring(), type);
                               if (bitmap.IsOk()) {
-                                  is_original = false;
                                   bitmaps.push_back(bitmap);
                               }
                           }
@@ -100,25 +111,11 @@ private:
               }
           }
 
-          if (bundleResult.IsOk()) { // svg
-              is_original = false;
-              if (isGray) { // для gray пока сделаем хак, но по хорошему нужен отдельный кеш на gray, но для этого нужно знать destination size а для этого нужно патчить widgets
-                  bitmaps.clear();
-                  bitmaps.push_back(bundleResult.GetBitmap({ 16,16 }));
-                  bitmaps.push_back(bundleResult.GetBitmap({ 32,32 }));
-                  bundleResult.Clear();
-              }
+          if (isGray) { 
+              for (auto& it : bitmaps) { ToGray(it); } 
           }
 
           if (!bundleResult.IsOk()) {
-              if (is_original && FindResource(0, name16.wc_str(), RT_RCDATA) != nullptr && FindResource(0, name32.wc_str(), RT_RCDATA) != nullptr) {
-                  bitmaps.clear();
-                  bitmaps.push_back(wxBitmap(name16, wxBITMAP_TYPE_PNG_RESOURCE));
-                  bitmaps.push_back(wxBitmap(name32, wxBITMAP_TYPE_PNG_RESOURCE));
-              }
-              if (isGray) {
-                  for (auto& it : bitmaps) { ToGray(it); }
-              }
               bundleResult = wxBitmapBundle::FromBitmaps(bitmaps);
           }
 
