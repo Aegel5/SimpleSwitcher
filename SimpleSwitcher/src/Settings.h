@@ -80,7 +80,7 @@ public:
     bool disableAccessebility    = false;
     inline static const TStr showOriginalFlags = L"Original Flags";
     inline static const TStr showAppIcon = L"Application Icon";
-    wxString flagsSet = showOriginalFlags;
+    wxString flagsSet = L"Square";
     bool AllowRemoteKeys_ = true;
     bool AlternativeLayoutChange = false;
 

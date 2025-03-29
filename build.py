@@ -96,11 +96,10 @@ def build(subfold, is64):
 #build("loader_dll", is64=True)    
 build("SimpleSwitcher", is64=False)
 
-# пока без дополнительных файлов.
-add_to_bin = "SimpleSwitcher/bin_files"
-for file in os.listdir(add_to_bin):
-    shutil.copy(os.path.join(add_to_bin, file), os.path.join(result_dir, file))
-    
+
+print("Copy bin files")
+shutil.copytree("SimpleSwitcher/bin_files", result_dir, dirs_exist_ok=True)
+
 zippath = result_dir_root / f"SimpleSwitcher_{curv2_v}"
     
 shutil.make_archive(zippath, 'zip', result_dir) 
