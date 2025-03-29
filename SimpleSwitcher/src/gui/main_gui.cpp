@@ -200,9 +200,8 @@ public:
             updateCapsTab();
 
             myTray.Init(this);
-            auto std_icon = iconsMan.Get_Standart().bundle;
-            myTray.ResetIcon(std_icon);
-            this->SetIcon(std_icon.GetIconFor(this));
+            myTray.ResetIcon(iconsMan.Get_Standart().bundle);
+            this->SetIcons(iconsMan.GetAppIcons());
             myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
             myTray.Bind(wxEVT_MENU, [this](auto& evt) {
                 ForceShow(this);

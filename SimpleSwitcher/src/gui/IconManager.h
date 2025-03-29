@@ -9,12 +9,14 @@ class IconManager {
     wxVector<wxBitmap> bitmaps;
     std::vector<std::wstring> externFlags;
     std::wstring flagFold;
+    wxIconBundle app_icons{ L"appicon", 0 };
 public: 
+    const wxIconBundle& GetAppIcons() { return app_icons; }
     IconManager() {
-        wxIconBundle all_icons(L"appicon", 0);
+        
 
-        for (int i = 0; i < all_icons.GetIconCount(); i++) {
-            auto cur = all_icons.GetIconByIndex(i);
+        for (int i = 0; i < app_icons.GetIconCount(); i++) {
+            auto cur = app_icons.GetIconByIndex(i);
             if (cur.GetWidth() > 32) continue;
             wxBitmap b;
             b.CopyFromIcon(cur);
