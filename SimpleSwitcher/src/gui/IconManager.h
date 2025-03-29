@@ -121,7 +121,7 @@ private:
 
           flags_map.emplace(key, bundleResult);
 
-          return flags_map[key];
+          return bundleResult;
       }
 
 public:
