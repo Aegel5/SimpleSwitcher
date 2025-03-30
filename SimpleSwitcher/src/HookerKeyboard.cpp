@@ -70,7 +70,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		int check_disabled_status = -1;
 
 		auto check_is_our_key = [&check_disabled_status, cfg](const CHotKey& k1, const CHotKey& k2) {
-			if (k1.Compare(k2, CHotKey::COMPARE_IGNORE_KEYUP)) {
+			if (k1.Compare(k2, CHotKey::COMPARE_IGNORE_KEYUP | CHotKey::COMPARE_IGNORE_DOUBLE)) {
 				if (check_disabled_status == -1) {
 					check_disabled_status = cfg->IsSkipProgramTop() ? 1 : 0;
 				}
@@ -83,7 +83,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				return 0;
 			bool need_our_action = false;
 			for (const auto& [hk, key] : cfg->All_hot_keys()) {
-				if (!key.GetKeyup() && check_is_our_key(key, curk)) {
+				if (!key.GetKeyup() && (!key.IsDouble() || curKeys.IsDouble()) && check_is_our_key(key, curk)) {
 					need_our_action = true;
 					possible_hk_up.Clear(); // очищаем, потому что могли заполнить прямо в этом цикле.
 					if (!curKeys.IsHold()) { // но даже если и холд, клавиши нужно запретить.

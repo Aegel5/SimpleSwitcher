@@ -15,7 +15,7 @@ class CurStateWrapper {
 	}
 public:
 
-
+	bool IsDouble() const { return cnt_quick_press == 1; }
 	bool IsHold() {	return is_hold;	}
 	const CHotKey& GetOneValueHotKey() { return one_value; }
 	int Size() { return all_keys.size(); }
@@ -103,11 +103,6 @@ public:
 				LOG_WARN(L"Key was already upped {}", CHotKey::ToString(vkCode));
 			}
 		}
-
-		// double press мы устанавливаем в отличии от up.
-		one_value.SetDouble(cnt_quick_press == 1);
-
-
 	}
 private:
 

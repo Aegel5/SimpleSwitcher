@@ -119,7 +119,8 @@ public:
 	enum TCompareFlags {
 		COMPARE_NORMAL = 0,
 		COMPARE_IGNORE_KEYUP = 1<<0,
-		COMPARE_STRICK_MODIFIER = 1<<1,
+		COMPARE_IGNORE_DOUBLE = 1<<1,
+		COMPARE_STRICK_MODIFIER = 1<<2,
 	};
 	bool Compare(const CHotKey& other, int flags = COMPARE_NORMAL) const {
 		if (size != other.size)
@@ -128,7 +129,7 @@ public:
 			return false;
 		if (!TestFlag(flags, COMPARE_IGNORE_KEYUP) && m_keyup != other.m_keyup)
 			return false;
-		if (m_double_press != other.m_double_press)
+		if (!TestFlag(flags, COMPARE_IGNORE_DOUBLE) && m_double_press != other.m_double_press)
 			return false;
 
 		bool strick_modifier = TestFlag(flags, COMPARE_STRICK_MODIFIER);
@@ -304,7 +305,7 @@ public: TStatus RegisterHk(CAutoHotKeyRegister& registor, HWND hwnd, int id) {
 		IFW_RET(registor.Register(hwnd, id, mods, vk));
 		RETURN_SUCCESS;
 	}
-public: bool IsDouble() { return m_double_press; }
+public: bool IsDouble() const { return m_double_press; }
 public: auto& SetDouble(bool val = true) { m_double_press = val; return *this; }
 private:
 	static const int c_MAX = 6;

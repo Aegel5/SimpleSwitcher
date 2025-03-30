@@ -39,7 +39,7 @@ public:
     {
         WxUtils::BindCheckbox(m_checkBoxDouble, 
             [this]() {
-                return key.IsDouble();
+                return false;
             }, 
             [this](bool val) {
                 key.SetDouble(val).SetKeyup(false);
@@ -81,6 +81,7 @@ private:
     CAutoHHOOK hook;
     void updateField()
     {
+        m_checkBoxDouble->SetValue(key.IsDouble());
         m_textKey->SetValue(cur_key().ToString());
         m_checkBox13->SetValue(key.GetKeyup());
         m_choiceKey->SetSelection(0);
@@ -157,12 +158,12 @@ bool ChangeHotKey2(wxFrame* frame, CHotKeySet set, CHotKey& key) {
     HotKeyDlg dlg(set, frame);
     auto res = dlg.ShowModal();
     key = dlg.cur_key();
-    auto res2 =  res == wxID_OK;
-    if (res2) {
-        if (key.Size() == 1 && CHotKey::IsKnownMods(key.ValueKey()) && !key.GetKeyup() && !key.IsDouble()) {
-            wxMessageBox(_(L"Modifier must have #up or #double flag"));
-            res2 = false;
-        }
+    auto res2 = res == wxID_OK;
+    if (!res2) return false;
+
+    if (key.Size() == 1 && CHotKey::IsKnownMods(key.ValueKey()) && !key.GetKeyup() && !key.IsDouble()) {
+        wxMessageBox(_(L"Modifier must have #up or #double flag"));
+        return false;
     }
     return res2;
 }
