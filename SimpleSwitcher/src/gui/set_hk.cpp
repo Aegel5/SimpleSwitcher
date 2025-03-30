@@ -42,7 +42,7 @@ public:
                 return key.IsDouble();
             }, 
             [this](bool val) {
-                key.SetDouble(val);
+                key.SetDouble(val).SetKeyup(false);
                 updateField();
             });
 
@@ -139,7 +139,7 @@ private:
     }
     virtual void onSetKeyup(wxCommandEvent& event)
     {
-        key.SetKeyup(m_checkBox13->GetValue());
+        key.SetKeyup(m_checkBox13->GetValue()).SetDouble(false);
         updateField();
     }
     virtual void onOk(wxCommandEvent& event)
