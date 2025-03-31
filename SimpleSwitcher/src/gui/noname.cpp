@@ -13,7 +13,7 @@
 
 MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxSize( -1,550 ), wxDefaultSize );
+	this->SetSizeHints( wxSize( -1,-1 ), wxDefaultSize );
 	this->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
 
 	wxBoxSizer* bSizer1;
@@ -141,7 +141,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	// Cell Defaults
 	m_gridHotKeys->SetDefaultCellAlignment( wxALIGN_LEFT, wxALIGN_CENTER );
-	bSizer41->Add( m_gridHotKeys, 12, wxALL|wxEXPAND, 5 );
+	bSizer41->Add( m_gridHotKeys, 0, wxALL|wxEXPAND, 5 );
 
 	m_gridLayouts = new wxGrid( m_panel141, wxID_ANY, wxPoint( -1,-1 ), wxDefaultSize, 0 );
 
@@ -168,7 +168,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	// Cell Defaults
 	m_gridLayouts->SetDefaultCellAlignment( wxALIGN_CENTER, wxALIGN_TOP );
-	bSizer41->Add( m_gridLayouts, 7, wxALL|wxEXPAND, 5 );
+	bSizer41->Add( m_gridLayouts, 1, wxALL|wxEXPAND, 5 );
 
 
 	m_panel141->SetSizer( bSizer41 );

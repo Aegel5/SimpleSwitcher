@@ -37,6 +37,18 @@ namespace WxUtils {
         f->Raise();
     }
 
+    inline void FitHeight(wxWindow* w) {
+        auto sz = w->GetSize();
+        w->Fit();
+        sz.y = w->GetSize().y;
+        w->SetSize(sz);
+        w = w->GetParent();
+        while (w != 0) {
+            w->Fit();
+            w = w->GetParent();
+        }
+    }
+
     class Timers {
         wxVector<std::unique_ptr<wxTimer>> lst;
     public:

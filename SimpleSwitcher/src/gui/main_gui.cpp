@@ -55,9 +55,12 @@ class MainWnd : public MyFrame4
             Worker()->PostMsg(Message_GetCurLay{ true });
         }
     }
-    void RegisterEnabled() {
+    bool RegisterEnabled() {
         auto hk = conf_get_unsafe()->GetHk(hk_ToggleEnabled).keys.key();
-        IFS_LOG(hk.RegisterHk(enable_hk_register, g_guiHandle, 998));
+        auto res = hk.RegisterHk(enable_hk_register, g_guiHandle, 998);
+        IFS_LOG(res);
+        return res == TStatus::SW_ERR_SUCCESS;
+
     }
 public:
 
@@ -83,20 +86,20 @@ public:
             );
 
             auto font = m_gridHotKeys->GetDefaultCellFont();
-            //font.SetPointSize(font.GetPointSize() + 1);
+            font.SetPointSize(font.GetPointSize() + 1);
             m_gridHotKeys->SetDefaultCellFont(font);
             m_gridHotKeys->SetLabelFont(font);
             m_gridLayouts->SetDefaultCellFont(font);
             m_gridLayouts->SetLabelFont(font);
+            //m_gridHotKeys->SetLabelBackgroundColour(m_gridHotKeys->GetDefaultCellBackgroundColour());
 
-            auto sz = GetSize();
-            sz.x = std::max((double)sz.x, sz.x * 1.2);
-            SetSize(sz);
-
+            m_gridHotKeys->Bind(wxEVT_SIZE, [&](auto& evt) {
+                m_gridHotKeys->SetColSize(0, m_gridHotKeys->GetSize().x - m_gridHotKeys->GetRowLabelSize());
+                });
 
             m_staticTextBuildDate->SetLabelText(std::format("Built on '{}'", __DATE__));
 
-            m_hyperlink11->SetLabel(GetPath_Conf());
+            m_hyperlink11->SetLabel(L"SimpleSwitcher.json");
             m_hyperlink11->SetURL(std::format(L"file://{}", GetPath_Conf()));
 
             BindButtom(m_buttonReloadConfig, []() {
@@ -352,9 +355,11 @@ private:
             CHotKeySet set;
             if (ChangeHotKey2(this, data, newkey)) {
                 SaveConfigWith([&](auto cfg) {cfg->hotkeysList[row].keys.key() = newkey;});
-                FillHotkeysInfo();
+                FillHotkeysInfo(false);
                 if (data.hkId == hk_ToggleEnabled) {
-                    RegisterEnabled();
+                    if (!RegisterEnabled()) {
+                        wxMessageBox(_("Can't register key"));
+                    }
                 }
             }
         }
@@ -504,7 +509,7 @@ private:
         }
     }
 
-    void FillHotkeysInfo() {
+    void FillHotkeysInfo(bool refit = true) {
 
         ClearGrid(m_gridHotKeys);
 
@@ -521,12 +526,14 @@ private:
         }
 
         m_gridHotKeys->SetRowLabelSize(wxGRID_AUTOSIZE);
-        m_gridHotKeys->AutoSizeRows();
-        m_gridHotKeys->SetColSize(0, m_gridHotKeys->GetSize().x - m_gridHotKeys->GetRowLabelSize());
-        //m_gridHotKeys->HideColLabels();
 
-
-        //m_gridHotKeys->setcol(5, 5);
+        if (refit) {
+            FitHeight(m_gridHotKeys);
+            FixProportions();
+        }
+        else {
+            m_gridHotKeys->AutoSizeRows();
+        }
 
     }
     void SyncLayouts() {
@@ -569,6 +576,14 @@ private:
         }
 
     }
+    void FixProportions() {
+        auto sz = GetSize();
+        auto sz2 = sz;
+        sz2.x = std::max((double)sz.x, sz.y * 1.16);
+        sz2.y = std::max((double)sz.y, sz.x / 1.16);
+        SetSize(sz2);
+
+    }
     void FillLayoutsInfo() {
 
         ClearGrid(m_gridLayouts);
@@ -600,7 +615,11 @@ private:
         //m_gridLayouts->SetRowLabelSize(wxGRID_AUTOSIZE);
         m_gridLayouts->SetRowLabelSize(m_gridHotKeys->GetRowLabelSize());
         m_gridLayouts->AutoSizeColumns(false);
-        m_gridLayouts->AutoSizeRows();
+        //m_gridLayouts->AutoSizeRows();
+        if (m_gridLayouts->GetNumberRows() <= 15) {
+            FitHeight(m_gridLayouts);
+            FixProportions();
+        }
     }
 
     void ensureAuto(bool enable) {

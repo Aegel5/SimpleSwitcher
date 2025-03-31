@@ -47,7 +47,7 @@
       <property name="hidden">0</property>
       <property name="id">wxID_ANY</property>
       <property name="maximum_size"></property>
-      <property name="minimum_size">-1,550</property>
+      <property name="minimum_size">-1,-1</property>
       <property name="name">MyFrame4</property>
       <property name="pos"></property>
       <property name="size">-1,-1</property>
@@ -1302,7 +1302,7 @@
                   <object class="sizeritem" expanded="false">
                     <property name="border">5</property>
                     <property name="flag">wxALL|wxEXPAND</property>
-                    <property name="proportion">12</property>
+                    <property name="proportion">0</property>
                     <object class="wxGrid" expanded="false">
                       <property name="BottomDockable">1</property>
                       <property name="LeftDockable">1</property>
@@ -1392,7 +1392,7 @@
                   <object class="sizeritem" expanded="false">
                     <property name="border">5</property>
                     <property name="flag">wxALL|wxEXPAND</property>
-                    <property name="proportion">7</property>
+                    <property name="proportion">1</property>
                     <object class="wxGrid" expanded="false">
                       <property name="BottomDockable">1</property>
                       <property name="LeftDockable">1</property>
