@@ -48,7 +48,6 @@ class MyFrame4 : public wxFrame
 		wxPanel* m_panelMain;
 		wxCheckBox* m_checkBoxEnable;
 		wxCheckBox* m_checkAddToAutoStart;
-		wxStaticText* m_staticTextExplain;
 		wxCheckBox* m_checkBoxWorkInAdmin;
 		wxCheckBox* m_checkBoxAlterantiveLayoutChange;
 		wxStaticText* m_staticText5;

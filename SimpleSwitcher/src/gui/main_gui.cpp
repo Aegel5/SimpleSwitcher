@@ -82,6 +82,13 @@ public:
                 | wxRESIZE_BORDER
             );
 
+            auto font = m_gridHotKeys->GetDefaultCellFont();
+            //font.SetPointSize(font.GetPointSize() + 1);
+            m_gridHotKeys->SetDefaultCellFont(font);
+            m_gridHotKeys->SetLabelFont(font);
+            m_gridLayouts->SetDefaultCellFont(font);
+            m_gridLayouts->SetLabelFont(font);
+
             auto sz = GetSize();
             sz.x = std::max((double)sz.x, sz.x * 1.2);
             SetSize(sz);
@@ -490,7 +497,7 @@ private:
                 schedulRes = parm.pathValue;
             }
             std::wstring sLabel = std::format(L"         Registry: {}\r\n         Scheduler: {}", registryRes, schedulRes);
-            m_staticTextExplain->SetLabelText(sLabel);
+            //m_staticTextExplain->SetLabelText(sLabel);
         }
         catch (std::exception& e) {
             wxMessageBox(_("Error while UpdateAutostartExplain: ") + e.what());

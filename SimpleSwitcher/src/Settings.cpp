@@ -76,7 +76,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_CONTROL, VK_SHIFT).SetDouble(), CHotKey(VK_SHIFT).SetDouble() };
+        set.def_list = { CHotKey(VKE_WIN, VK_SHIFT).SetDouble(), CHotKey(VK_SHIFT).SetDouble() };
         set.fUseDef = true;
         set.gui_text = _(L"Show main window").wc_str();
         AddHotKey(hk_ShowMainWindow, set);
