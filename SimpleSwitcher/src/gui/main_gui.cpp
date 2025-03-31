@@ -312,17 +312,20 @@ private:
 
             auto info = iconsMan.Get((HKL)wParam, !IsCoreEnabled());
             myTray.ResetIcon(info.bundle);
-
-
-            return TRUE;
         }
         else if (nMsg == WM_HOTKEY) {
             if (wParam == 998) {
                 TryEnable(!IsCoreEnabled());
             }
         }
+        else if (nMsg == WM_ShowWindow) {
+            ForceShow(this);
+        }
+        else {
+            return MyFrame4::MSWWindowProc(nMsg, wParam, lParam);
+        }
 
-        return MyFrame4::MSWWindowProc(nMsg, wParam, lParam);
+        return TRUE;
    }
 
     virtual void onHotDClick(wxGridEvent& event) override {

@@ -395,6 +395,11 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 		RETURN_SUCCESS;
 	}
 
+	if (typeRevert == hk_ShowMainWindow) {
+		PostMessage(g_guiHandle, WM_ShowWindow, 0, 0);
+		RETURN_SUCCESS;
+	}
+
 
 	// CHANGE LAYOUT WITHOUT REVERT
 

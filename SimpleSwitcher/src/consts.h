@@ -6,6 +6,8 @@
 static const UINT c_MSG_TypeHotKey = 0xBFFF - 37;
 static const UINT c_MSG_Quit = 0xBFFF - 35;
 static const UINT WM_LayNotif = 0xBFFF - 29; 
+static const UINT WM_ShowWindow = 0xBFFF - 30; 
+
 static const UINT c_timerKeyloggerDefence = 12;
 static const TChar c_sArgAutostart[] = L"/autostart";
 
@@ -42,6 +44,7 @@ enum HotKeyType : TUInt32
     hk_EmulateScrollLock,
     hk_toUpperSelected,
     hk_ToggleEnabled,
+    hk_ShowMainWindow,
 
     hk_hotkeys_end,
 

@@ -59,10 +59,10 @@ class CoreWorker {
 		m_hWnd = nullptr;
 		auto hWnd = CreateWindow(
 			c_sClassNameServer2,
-			L"Title",
-			WS_OVERLAPPEDWINDOW,
-			CW_USEDEFAULT,
-			0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+			L"SimpleSwitcher_wnd_class",
+			0,
+			0, 0, 0, 0, 
+			HWND_MESSAGE, NULL, hInstance, NULL);
 
 		IFW_RET(hWnd != NULL);
 		m_hWnd = hWnd;

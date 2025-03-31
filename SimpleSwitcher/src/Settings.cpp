@@ -76,6 +76,14 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
+        set.def_list = { CHotKey(VK_CONTROL, VK_SHIFT).SetDouble(), CHotKey(VK_SHIFT).SetDouble() };
+        set.fUseDef = true;
+        set.gui_text = _(L"Show main window").wc_str();
+        AddHotKey(hk_ShowMainWindow, set);
+    }
+
+    {
+        CHotKeySet set;
         set.def_list = { CHotKey(VK_LMENU, VK_SHIFT), CHotKey(VK_CONTROL, VK_SHIFT) };
         set.gui_text = _(L"Cycle change layout (win hotkey)").wc_str();
         set.fUseDef = true;
