@@ -37,7 +37,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkBoxWorkInAdmin = new wxCheckBox( sbSizer1->GetStaticBox(), wxID_ANY, _("Work in programs running by admin"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_checkBoxWorkInAdmin, 0, wxALL, 5 );
 
-	m_checkBoxAlterantiveLayoutChange = new wxCheckBox( sbSizer1->GetStaticBox(), wxID_ANY, _("Alternative mode layout change (emulate Windows hotkeys)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxAlterantiveLayoutChange = new wxCheckBox( sbSizer1->GetStaticBox(), wxID_ANY, _("Alternative mode layout change (emulate LAlt + Shift)"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_checkBoxAlterantiveLayoutChange, 0, wxALL, 5 );
 
 	wxBoxSizer* bSizer17;

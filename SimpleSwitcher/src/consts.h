@@ -40,7 +40,6 @@ enum HotKeyType : TUInt32
     hk_RevertSelelected,
     hk_EmulateCapsLock,
     hk_CycleSwitchLayout,
-    hk_CycleLang_win_hotkey,
     hk_EmulateScrollLock,
     hk_toUpperSelected,
     hk_ToggleEnabled,

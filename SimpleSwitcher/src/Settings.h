@@ -80,12 +80,13 @@ public:
     bool disableAccessebility    = false;
     inline static const TStr showOriginalFlags = L"Original Flags";
     inline static const TStr showAppIcon = L"Application Icon";
-    wxString flagsSet = L"Square";
+    wxString flagsSet = showOriginalFlags;
     bool AllowRemoteKeys_ = true;
     bool AlternativeLayoutChange = false;
     TUInt32 quick_press_ms = 350;
     bool separate_ext_last_word = false;
     bool separate_ext_several_words = false;
+    CHotKey win_hotkey_cycle_lang { VK_LMENU, VK_SHIFT };
 
     std::vector< CHotKeySet> hotkeysList;
     std::vector< RunProgramInfo> run_programs = { {.path = L"example: calc.exe"} };
@@ -102,7 +103,7 @@ public:
 
     std::generator < std::tuple<HotKeyType, const CHotKey&>> All_hot_keys() const {
         for (const auto& it : hotkeysList) {
-            if (Utils::is_in(it.hkId, hk_CycleLang_win_hotkey, hk_ToggleEnabled)) continue;
+            if (Utils::is_in(it.hkId, hk_ToggleEnabled)) continue;
             for (const auto& key : it.keys.keys) {
                 co_yield{ it.hkId, key };
             }

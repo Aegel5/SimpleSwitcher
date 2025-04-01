@@ -37,7 +37,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey{VK_PAUSE} };
+        set.def_list = { CHotKey{VK_CONTROL, VK_CAPITAL}, CHotKey{VK_CONTROL, VK_CAPITAL}.SetDouble(), CHotKey{VK_CONTROL, VKE_BREAK} };
         set.fUseDef = true;
         set.gui_text = _(L"Change layout for selected text").wc_str();
         AddHotKey(hk_RevertSelelected, set);
@@ -53,8 +53,7 @@ void SettingsGui::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_CONTROL, VK_CAPITAL), CHotKey(VK_CONTROL, VK_F24) };
-        set.fUseDef = true;
+        set.def_list = { CHotKey(VKE_WIN, VK_CAPITAL), CHotKey(VK_CONTROL, VK_F24) };
         set.gui_text = _(L"Generate CapsLock").wc_str();
         AddHotKey(hk_EmulateCapsLock, set);
     }
@@ -81,14 +80,6 @@ void SettingsGui::GenerateListHK()
         set.fUseDef = true;
         set.gui_text = _(L"Show main window").wc_str();
         AddHotKey(hk_ShowMainWindow, set);
-    }
-
-    {
-        CHotKeySet set;
-        set.def_list = { CHotKey(VK_LMENU, VK_SHIFT), CHotKey(VK_CONTROL, VK_SHIFT) };
-        set.gui_text = _(L"Cycle change layout (win hotkey)").wc_str();
-        set.fUseDef = true;
-        AddHotKey(hk_CycleLang_win_hotkey, set);
     }
 
     for (auto& it : hotkeysList) {
@@ -195,7 +186,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     run_programs,
     separate_ext_last_word,
     separate_ext_several_words,
-    quick_press_ms
+    quick_press_ms,
+    win_hotkey_cycle_lang
     )
     
 

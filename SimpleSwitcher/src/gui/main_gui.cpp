@@ -179,7 +179,6 @@ public:
             BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get_unsafe()->AlternativeLayoutChange; }, [this](bool val) {
                 SaveConfigWith([val](auto cfg) {cfg->AlternativeLayoutChange = val; });
                 FillLayoutsInfo();
-                FillHotkeysInfo();
                 });
 
             BindCheckbox(m_checkBoxClearForm, []() {return conf_get_unsafe()->fClipboardClearFormat; }, [](bool val) {
@@ -516,13 +515,9 @@ private:
         
         for (int i = -1; const auto& it : conf_get_unsafe()->hotkeysList) {
             i++;
-            if (it.hkId == hk_CycleLang_win_hotkey&& !conf_get_unsafe()->AlternativeLayoutChange) break;
             m_gridHotKeys->AppendRows();
             m_gridHotKeys->SetRowLabelValue(i, it.gui_text);
             m_gridHotKeys->SetCellValue(i, 0, L" " + it.keys.ToString());
-            if (it.hkId == hk_CycleLang_win_hotkey) {
-                m_gridHotKeys->SetCellBackgroundColour(i, 0, wxColor(0xE3,0xF2,0xFD));
-            }
         }
 
         m_gridHotKeys->SetRowLabelSize(wxGRID_AUTOSIZE);

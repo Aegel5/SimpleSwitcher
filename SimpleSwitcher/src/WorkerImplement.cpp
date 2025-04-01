@@ -478,7 +478,7 @@ void WorkerImplement::SwitchLangByEmulate(HKL lay) {
 
 	GETCONF;
 
-	CHotKey altshift = cfg->GetHk(hk_CycleLang_win_hotkey).keys.key();
+	CHotKey altshift = cfg->win_hotkey_cycle_lang;
 	bool switch_until = false;
 
 	if ((int)lay != HKL_NEXT) { 
