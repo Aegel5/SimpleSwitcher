@@ -275,6 +275,10 @@ TStatus _Save_conf(const SettingsGui& gui) {
         o << std::setw(4) << data << std::endl;
 
         auto json = o.str();
+        std::regex regex("\\[(\\ |\\n|\\r|\\t)*");
+        json = std::regex_replace(json, regex, "[ ");
+        std::regex regex2("(\\ |\\n|\\r|\\t)*\\]");
+        json = std::regex_replace(json, regex2, " ]");
 
         std::ofstream outp(path);
         outp << json;

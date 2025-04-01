@@ -12,6 +12,7 @@ typedef signed   __int8  TInt8;
 typedef TCHAR TChar;
 typedef const TChar* TStr;
 using SView = std::wstring_view;
+using SViewChar = std::string_view;
 
 template <typename T1, typename T2>
 inline bool TestFlagAll(T1 V, T2 F)

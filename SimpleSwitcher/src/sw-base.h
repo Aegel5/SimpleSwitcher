@@ -31,6 +31,7 @@
 #include <map>
 #include <spanstream>
 #include <filesystem>
+#include <regex>
 
 // утилиты
 #include "core/inc_all.h"
