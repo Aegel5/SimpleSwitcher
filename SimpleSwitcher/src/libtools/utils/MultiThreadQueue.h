@@ -15,11 +15,11 @@ template<class TMessage> class MultiThreadQueue {
 	std::priority_queue<TElem, std::vector<TElem>, decltype([](const auto& s1, const auto& s2) {return s1.first > s2.first; }) > m_delayed;
 	bool m_fNeedExit = false;
 public:
-	std::pair<TMessage, bool> GetMessage() {
+	std::optional<TMessage> GetMessage() {
 		std::unique_lock<std::mutex> lock(m_mtxQueue);
 		while (true) {
 			if (m_fNeedExit) {
-				return { {},false };
+				return std::nullopt;
 			}
 			if (!m_delayed.empty()) {
 				auto now = Now();
@@ -28,7 +28,7 @@ public:
 				if (now >= delayedtoStart) {
 					auto msg = std::move(const_cast<TElem&>(m_delayed.top()).second);
 					m_delayed.pop();
-					return { std::move(msg), true };
+					return msg;
 				}
 				if (m_queue.empty()) {
 					m_cvQueue.wait_for(lock, delayedtoStart - now);
@@ -36,7 +36,7 @@ public:
 				}
 			}
 			if (!m_queue.empty()) {
-				auto res = std::pair(std::move(m_queue.front()), true);
+				auto res = std::move(m_queue.front());
 				m_queue.pop_front();
 				return res;
 			}

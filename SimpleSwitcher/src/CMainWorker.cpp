@@ -11,8 +11,8 @@ void CMainWorker::WorkerInt()
 	WorkerImplement workerImpl;
 
 	while (true) {
-		auto [msg, ok] = m_queue.GetMessage();
-		if (!ok) break;
+		auto msg = m_queue.GetMessage();
+		if (!msg.has_value()) break;
 		std::visit([&workerImpl](auto&& arg) {
 			using T = std::decay_t<decltype(arg)>;
 			if constexpr (std::is_same_v<T, Message_KeyType>) {
@@ -38,7 +38,7 @@ void CMainWorker::WorkerInt()
 			else if constexpr (std::is_same_v<T, Message_Func>) {
 				arg(workerImpl);
 			}
-		}, msg);
+		}, msg.value());
 	}
 
 	LOG_ANY(L"Exit main worker");
