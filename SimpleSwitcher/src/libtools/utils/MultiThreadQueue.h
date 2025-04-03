@@ -26,9 +26,9 @@ public:
 				auto& it = m_delayed.top();
 				auto delayedtoStart = it.first;
 				if (now >= delayedtoStart) {
-					auto res = std::pair(std::move(it.second), true);
+					auto msg = std::move(const_cast<TElem&>(m_delayed.top()).second);
 					m_delayed.pop();
-					return res;
+					return { std::move(msg), true };
 				}
 				if (m_queue.empty()) {
 					m_cvQueue.wait_for(lock, delayedtoStart - now);
