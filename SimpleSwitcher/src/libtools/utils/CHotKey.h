@@ -140,10 +140,10 @@ public:
 	}
 	bool IsEmpty() const { return Size() == 0; }
 	TKeyCode ValueKey() const { return keys[0]; }
-	TKeyCode* begin() { return keys; }
-	TKeyCode* end() { return keys + size; }
-	const TKeyCode* begin() const { return keys; }
-	const TKeyCode* end() const { return keys + size; }
+
+	auto* begin(this auto&& self) { return self.keys; }
+	auto* end(this auto&& self) { return self.keys + self.size; }
+
 	TKeyCode* ModsBegin() { return keys + 1; }
 	TKeyCode* ModsEnd() { return keys + 1 + (size > 0 ? size - 1 : 0); }
 	int Size() const { return size; }
