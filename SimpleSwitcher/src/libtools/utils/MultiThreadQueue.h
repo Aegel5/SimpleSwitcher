@@ -11,8 +11,12 @@ template<class TMessage> class MultiThreadQueue {
 	std::mutex  m_mtxQueue;
 	std::condition_variable m_cvQueue;
 	std::deque<TMessage> m_queue;
-	using TElem = std::pair<TimePoint, TMessage>;
-	std::priority_queue<TElem, std::vector<TElem>, decltype([](const auto& s1, const auto& s2) {return s1.first > s2.first; }) > m_delayed;
+	struct QueueElem {
+		TimePoint time;
+		mutable TMessage msg;
+		bool operator< (const QueueElem& other) const { return time > other.time; }
+	};
+	std::priority_queue<QueueElem> m_delayed;
 	bool m_fNeedExit = false;
 public:
 	std::optional<TMessage> GetMessage() {
@@ -24,9 +28,9 @@ public:
 			if (!m_delayed.empty()) {
 				auto now = Now();
 				auto& it = m_delayed.top();
-				auto delayedtoStart = it.first;
+				auto delayedtoStart = it.time;
 				if (now >= delayedtoStart) {
-					auto msg = std::move(const_cast<TElem&>(m_delayed.top()).second);
+					auto msg = std::move(it.msg);
 					m_delayed.pop();
 					return msg;
 				}
