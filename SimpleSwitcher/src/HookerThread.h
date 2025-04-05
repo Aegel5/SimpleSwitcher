@@ -145,7 +145,8 @@ public:
             return;
         }
         PostMessage(m_hWnd, c_MSG_Quit, 0, 0);
-        core_work.join();
+		if(core_work.joinable())
+			core_work.join();
 		m_hWnd = nullptr;
         mtx.clear();
     }

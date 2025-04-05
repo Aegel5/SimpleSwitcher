@@ -98,7 +98,7 @@ public:
             if (it.hkId == type) return it;
         }
         LOG_ANY(L"CRITICAL ERR");
-        abort();
+        std::terminate();
     }
 
     std::generator < std::tuple<HotKeyType, const CHotKey&>> All_hot_keys() const {
