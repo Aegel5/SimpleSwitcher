@@ -30,6 +30,7 @@ namespace {
 }
 
 bool MyApp::OnInit() {
+
     // call the base class initialization method, currently it only parses a
     // few common command-line options but it could be do more in the future
 
@@ -44,16 +45,19 @@ bool MyApp::OnInit() {
             }
         }
 
-        if (is_autostart) {
-            Sleep(1000); // дать системе прогрузиться
-        }
-
-        auto conf = __g_config.get();
-
         SetLogLevel(Utils::IsDebug() ? LOG_LEVEL_2 : LOG_LEVEL_0);
 
-        auto errLoadConf = LoadConfig(*conf);
-        IFS_LOG(errLoadConf);
+        __g_config.reset(new ProgramConfig());
+        auto errLoadConf = LoadConfig(*__g_config);
+        if (errLoadConf != TStatus::SW_ERR_SUCCESS) {
+            IFS_LOG(errLoadConf);
+        }
+        else {
+            if (__g_config->config_version != SW_VERSION) {
+                __g_config->config_version = SW_VERSION;
+                SaveConfigWith([](auto cfg) {}); // пересохраним конфиг, чтобы туда добавились все последние настройки, которые заполнены по-умолчанию.
+            }
+        }
 
         IFS_LOG(autoCom.Init());
 
@@ -61,13 +65,9 @@ bool MyApp::OnInit() {
 
         LOG_ANY(L"Start program {}", SW_VERSION);
 
-        if (conf->config_version != SW_VERSION) {
-            conf->config_version = SW_VERSION;
-            SaveConfigWith([](auto cfg) {}); // пересохраним конфиг, чтобы туда добавились все последние настройки, которые заполнены по-умолчанию.
-        }
 
         // init ui
-        if (conf->uiLang == SettingsGui::UiLang::rus) {
+        if (conf_get_unsafe()->uiLang == ProgramConfig::UiLang::rus) {
 
             wxTranslations* const trans = new wxTranslations();
             wxTranslations::Set(trans);

@@ -14,9 +14,9 @@ inline std::wstring GetPath_Conf() {
     return path;
 }
 
-class SettingsGui {
+class ProgramConfig {
 public:
-    SettingsGui() {
+    ProgramConfig() {
         GenerateListHK();
     }
 
@@ -78,8 +78,8 @@ public:
     bool fClipboardClearFormat = false;
     bool EnableKeyLoggerDefence = false;
     bool disableAccessebility    = false;
-    inline static const TStr showOriginalFlags = L"Original Flags";
-    inline static const TStr showAppIcon = L"Application Icon";
+    static constexpr TStr showOriginalFlags = L"Original Flags";
+    static constexpr TStr showAppIcon = L"Application Icon";
     wxString flagsSet = showOriginalFlags;
     bool AllowRemoteKeys_ = true;
     bool AlternativeLayoutChange = false;
@@ -128,18 +128,18 @@ public:
 };
 
 
-using ConfPtr = std::shared_ptr<SettingsGui>;
-inline ConfPtr __g_config(new SettingsGui()); // создаем как можно раньше.
+using ConfPtr = std::shared_ptr<ProgramConfig>;
+inline constinit ConfPtr __g_config; 
 inline auto conf_get_unsafe() { // Проблемы синтаксиса conf_get_unsafe()->...  1) std::generator не держит temporary 2) множественном вызов даст другую версию.
-    auto res = std::const_pointer_cast<const SettingsGui>(__g_config);
+    auto res = std::const_pointer_cast<const ProgramConfig>(__g_config);
     return res; 
 }
 
 #define GETCONF auto cfg = conf_get_unsafe();
 
 
-TStatus LoadConfig(SettingsGui& sets);
-TStatus _Save_conf(const SettingsGui& gui);
+TStatus LoadConfig(ProgramConfig& sets);
+TStatus _Save_conf(const ProgramConfig& gui);
 
 inline void _conf_set(ConfPtr& conf) {
     __g_config.swap(conf);
@@ -148,7 +148,7 @@ inline void _conf_set(ConfPtr& conf) {
 }
 
 inline void SaveConfigWith(auto set) {
-    auto conf = ConfPtr(new SettingsGui(*conf_get_unsafe()));
+    auto conf = ConfPtr(new ProgramConfig(*conf_get_unsafe()));
     set(conf.get());
     _conf_set(conf);
 }

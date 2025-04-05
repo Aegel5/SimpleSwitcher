@@ -5,7 +5,7 @@
 using json = nlohmann::json;
 
 
-void SettingsGui::GenerateListHK()
+void ProgramConfig::GenerateListHK()
 {
     auto AddHotKey = [&](HotKeyType type, CHotKeySet& set) {
         set.hkId          = type;
@@ -167,7 +167,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    SettingsGui,
+    ProgramConfig,
     isMonitorAdmin,
     force_DbgMode,
     fClipboardClearFormat,
@@ -192,7 +192,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     
 
 
-TStatus LoadConfig(SettingsGui& gui) {
+TStatus LoadConfig(ProgramConfig& config) {
     try {
 
 
@@ -218,12 +218,12 @@ TStatus LoadConfig(SettingsGui& gui) {
 
         json data = json::parse(ifs, nullptr, true, true);
 
-        gui = data.get<SettingsGui>();
+        data.get_to(config);
 
-        auto& arr = data["hotkeys"];
+        const auto& arr = data["hotkeys"];
 
         if (arr.is_object()) {
-            for (auto& elem : gui.hotkeysList) {
+            for (auto& elem : config.hotkeysList) {
                 auto key = HotKeyTypeName(elem.hkId);
                 if (key.empty()) continue;
                 auto it  = arr.find(key);
@@ -239,9 +239,9 @@ TStatus LoadConfig(SettingsGui& gui) {
             }
         }
 
-        gui.NormalizePaths();
+        config.NormalizePaths();
 
-        SetLogLevel_info(gui.IsNeedDebug() ? gui.logLevel : LOG_LEVEL_0);
+        SetLogLevel_info(config.IsNeedDebug() ? config.logLevel : LOG_LEVEL_0);
 
     } catch (std::exception& e) {
         return SW_ERR_JSON;
@@ -253,7 +253,7 @@ TStatus LoadConfig(SettingsGui& gui) {
 
 
 
-TStatus _Save_conf(const SettingsGui& gui) {
+TStatus _Save_conf(const ProgramConfig& gui) {
     try {
         std::wstring path;
         IFS_RET(GetPath_Conf(path));

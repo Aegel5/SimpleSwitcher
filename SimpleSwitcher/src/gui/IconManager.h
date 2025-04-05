@@ -41,7 +41,7 @@ private:
           auto key = name16;
           bool is_original = true;
 
-          if (folder_name != SettingsGui::showOriginalFlags) {
+          if (folder_name != ProgramConfig::showOriginalFlags) {
               is_original = false;
               key += L"$$";
               key += folder_name;

@@ -6,8 +6,7 @@
 #include <source_location>
 #include <print>
 
-enum TLogLevel
-{
+enum TLogLevel {
 	LOG_LEVEL_0 = 0,  // No log
 	LOG_LEVEL_1 = 1,
 	LOG_LEVEL_2 = 2,
@@ -16,7 +15,7 @@ enum TLogLevel
 };
 
 namespace _log_int {
-	inline std::atomic<TLogLevel> log_level;
+	inline constinit std::atomic<TLogLevel> log_level = TLogLevel::LOG_LEVEL_0;
 }
 
 inline TLogLevel GetLogLevel() { return _log_int::log_level;}
@@ -120,7 +119,6 @@ namespace _log_int {
 			return m_fp;
 		}
 		std::mutex m_mtxLog;
-		TLogLevel m_logLevel = LOG_LEVEL_0;
 		FILE* m_fp = NULL;
 		bool m_tryOpen = false;
 		std::wofstream out_file;

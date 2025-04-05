@@ -43,7 +43,7 @@ public:
 			m_cvQueue.wait(lock);
 		}
 	}
-	size_t CountMsg() {
+	size_t Size() {
 		std::unique_lock<std::mutex> lock(m_mtxQueue);
 		return m_queue.size() + m_delayed.size();
 	}

@@ -48,7 +48,7 @@ class MainWnd : public MyFrame4
         }
     }
     void UpdateIcons() {
-        if (conf_get_unsafe()->flagsSet == SettingsGui::showAppIcon) {
+        if (conf_get_unsafe()->flagsSet == ProgramConfig::showAppIcon) {
             myTray.ResetIcon(iconsMan.Get_Standart(!IsCoreEnabled()).bundle);
         }
         else {
@@ -103,7 +103,7 @@ public:
             m_hyperlink11->SetURL(std::format(L"file://{}", GetPath_Conf()));
 
             BindButtom(m_buttonReloadConfig, []() {
-                auto conf = ConfPtr(new SettingsGui());
+                auto conf = ConfPtr(new ProgramConfig());
                 auto errLoadConf = LoadConfig(*conf);
                 IFS_LOG(errLoadConf);
                 if (errLoadConf != SW_ERR_SUCCESS) {
@@ -197,7 +197,7 @@ public:
                     elem->AppendString(_("English"));
                     elem->SetSelection((int)conf_get_unsafe()->uiLang);
                 }, [](wxChoice* elem) {
-                    SaveConfigWith([elem](auto cfg) {cfg->uiLang = (SettingsGui::UiLang)elem->GetSelection(); });
+                    SaveConfigWith([elem](auto cfg) {cfg->uiLang = (ProgramConfig::UiLang)elem->GetSelection(); });
                     wxMessageBox(_("Need restart program"));
                     });
 
@@ -255,8 +255,8 @@ private:
 
     void initChoiceFlags() {
         m_choiceShowInTray->Clear();
-        m_choiceShowInTray->AppendString(SettingsGui::showAppIcon);
-        m_choiceShowInTray->AppendString(SettingsGui::showOriginalFlags);
+        m_choiceShowInTray->AppendString(ProgramConfig::showAppIcon);
+        m_choiceShowInTray->AppendString(ProgramConfig::showOriginalFlags);
         for (const auto& it : iconsMan.ScanFlags()) {
             m_choiceShowInTray->AppendString(it);
         }
@@ -275,7 +275,7 @@ private:
             }
         }
         if (!found) {
-            newVal = SettingsGui::showOriginalFlags;
+            newVal = ProgramConfig::showOriginalFlags;
             m_choiceShowInTray->SetSelection(1);
         }
         if (conf_get_unsafe()->flagsSet != newVal) {
@@ -316,7 +316,7 @@ private:
             if (!inited) 
                 return TRUE;
 
-            if (conf_get_unsafe()->flagsSet == SettingsGui::showAppIcon)
+            if (conf_get_unsafe()->flagsSet == ProgramConfig::showAppIcon)
                 return TRUE;
 
             auto info = iconsMan.Get((HKL)wParam, !IsCoreEnabled());
