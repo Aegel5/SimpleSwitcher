@@ -147,9 +147,9 @@ inline void _conf_set(ConfPtr& conf) {
     IFS_LOG(_Save_conf(*__g_config)); // сразу сохраняем в файл.
 }
 
-inline void SaveConfigWith(auto set) {
-    auto conf = ConfPtr(new ProgramConfig(*conf_get_unsafe()));
-    set(conf.get());
+inline void SaveConfigWith(auto change) {
+    ConfPtr conf{ new ProgramConfig(*conf_get_unsafe()) };
+    change(conf.get());
     _conf_set(conf);
 }
 
