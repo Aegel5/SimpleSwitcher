@@ -222,8 +222,7 @@ public:
 			if (kCur == 0) {
 				auto split = Str_Utils::Split(sCur, L'_');
 				if (split.size() == 2) {
-					auto [val, ok] = Str_Utils::ToInt<TKeyCode>(split[1].c_str(), 16);
-					if (ok) kCur = val;
+					Str_Utils::ToInt(split[1].c_str(), kCur, 16);
 				}
 			}
 			if (kCur == 0) {

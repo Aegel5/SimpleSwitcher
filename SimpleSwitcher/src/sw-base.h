@@ -32,6 +32,7 @@
 #include <spanstream>
 #include <filesystem>
 #include <regex>
+#include <charconv>
 
 // утилиты
 #include "core/inc_all.h"

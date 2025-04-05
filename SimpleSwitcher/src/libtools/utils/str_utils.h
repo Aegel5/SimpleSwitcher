@@ -104,41 +104,41 @@ namespace Str_Utils
 	}
 
 
-	template<class T>
-	inline bool StrToUInt64_2(const std::string& str, T& res)
-	{
+	inline bool ToInt(const std::string& str, auto& res) {
 		const char* val = str.c_str();
 		int base = 10;
-		if (Str_Utils::IsStartWith(val, "0x"))
-		{
+		if (Str_Utils::IsStartWith(val, "0x")) {
 			val += 2;
 			base = 16;
 		}
 
-		try
-		{
-			res = (T)std::stoull(val, 0, base);
+		//if (std::from_chars(str, str + std::wcslen(str), res, base)) {
+		//	return true;
+		//}
+
+		try {
+			res = (DECLTYPE_DECAY(res))std::stoull(val, 0, base);
 			return true;
 		}
-		catch (std::exception)
-		{
-			return false;
+		catch (std::exception) {
 		}
+		return false;
 	}
 
-	template<class T>
-	inline std::pair<T,bool> ToInt(const TChar* str, int base = 0) {
+	inline bool ToInt(const TChar* str, auto& val, int base = 0) {
 		if (Str_Utils::IsStartWith(str, L"0x")) {
 			str += 2;
 			base = 16;
 		}
-		if (base == 0) base = 10;
+		if (base == 0) 
+			base = 10;
 		try {
-			return { (T)std::stoull(str, 0, base), true };
+			val = std::stoull(str, 0, base);
+			return true;
 		}
 		catch (std::exception) {
 		}
-		return { 0,false };
+		return false;
 	}
 
 	inline void ToLower(std::wstring& str)
@@ -208,99 +208,57 @@ namespace Str_Utils
 			lastPos = pos + 1;
 		}
 	}
-	//inline TStatus Trim(std::wstring& str)
+
+	//inline TStatus Utf8ToWide(const char* utf8, std::wstring& wide)
 	//{
+	//	if (*utf8 == 0)
+	//	{
+	//		RETURN_SUCCESS;
+	//	}
+	//	TChar buf[0x1000];
+	//	int res = MultiByteToWideChar(
+	//		CP_UTF8,
+	//		0,
+	//		utf8,
+	//		-1,
+	//		buf,
+	//		std::ssize(buf)
+	//		);
+
+	//	IFW_RET(res != 0);
+
+	//	wide = buf;
+
+	//	RETURN_SUCCESS;
+	//}
+	//inline TStatus Utf8ToWide(const std::string& utf8, std::wstring& wide)
+	//{
+	//	return Utf8ToWide(utf8.c_str(), wide);
+	//}
+	//inline TStatus WideToUtf8(const TChar* wide, std::string& utf)
+	//{
+	//	if (*wide == 0)
+	//	{
+	//		RETURN_SUCCESS;
+	//	}
+	//	char buf[0x1000];
+	//	int res = WideCharToMultiByte(
+	//		CP_UTF8,
+	//		0,
+	//		wide,
+	//		-1,
+	//		buf,
+	//		std::ssize(buf),
+	//		NULL,
+	//		NULL);
+
+	//	IFW_RET(res != 0);
+
+	//	utf = buf;
+
+	//	RETURN_SUCCESS;
 
 	//}
 
-	inline TStatus Utf8ToWide(const char* utf8, std::wstring& wide)
-	{
-		if (*utf8 == 0)
-		{
-			RETURN_SUCCESS;
-		}
-		TChar buf[0x1000];
-		int res = MultiByteToWideChar(
-			CP_UTF8,
-			0,
-			utf8,
-			-1,
-			buf,
-			std::ssize(buf)
-			);
 
-		IFW_RET(res != 0);
-
-		wide = buf;
-
-		RETURN_SUCCESS;
-	}
-	inline TStatus Utf8ToWide(const std::string& utf8, std::wstring& wide)
-	{
-		return Utf8ToWide(utf8.c_str(), wide);
-	}
-	inline TStatus WideToUtf8(const TChar* wide, std::string& utf)
-	{
-		if (*wide == 0)
-		{
-			RETURN_SUCCESS;
-		}
-		char buf[0x1000];
-		int res = WideCharToMultiByte(
-			CP_UTF8,
-			0,
-			wide,
-			-1,
-			buf,
-			std::ssize(buf),
-			NULL,
-			NULL);
-
-		IFW_RET(res != 0);
-
-		utf = buf;
-
-		RETURN_SUCCESS;
-
-	}
-
-	inline void ParseSlashes(std::wstring& str, std::wstring& res)
-	{
-		//std::wstring res;
-		auto it = str.begin();
-		while (it != str.end())
-		{
-			auto c1 = *it++;
-			if (c1 == L'\\' && it != str.end())
-			{
-				auto c2 = *it++;
-				if (c2 == L'\\')
-				{
-					res += L'\\';
-				}
-				else if (c2 == L'n')
-				{
-					res += L'\n';
-				}
-				else if (c2 == L't')
-				{
-					res += L'\t';
-				}
-				else if (c2 == L'b')
-				{
-					res += L'\b';
-				}
-				else
-				{
-					// as is
-					res += c1;
-					res += c2;
-				}
-			}
-			else
-			{
-				res += c1;
-			}
-		}
-	}
 }

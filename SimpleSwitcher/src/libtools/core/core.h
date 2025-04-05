@@ -68,4 +68,5 @@ inline void SwZeroMemory(T& t)
 }
 
 #define FORWARD(x) std::forward<decltype(x)>(x)
+#define DECLTYPE_DECAY(x) std::decay_t<decltype(x)>
 

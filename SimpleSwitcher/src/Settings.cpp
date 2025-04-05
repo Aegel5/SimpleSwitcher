@@ -99,9 +99,7 @@ void to_json(json& j, const HKL& p) {
 
 void from_json(const json& j, HKL& p) {
     if (j.is_string()) {
-        Str_Utils::StrToUInt64_2(j.get_ref<const std::string&>(), p);
-    } else {
-        p = 0;
+        Str_Utils::ToInt(j.get_ref<const std::string&>(), p);
     }
 }
 
