@@ -15,7 +15,7 @@ enum {
 namespace _internal {
 	class HotKeyNames {
 		TStr vkMap[VKE_MAX] = { 0 };
-		std::map <std::wstring, TKeyCode > mapCode;
+		std::map <std::wstring, TKeyCode, std::less<> > mapCode;
 		void Set(TKeyCode k, TStr s) {
 			if (k >= std::ssize(vkMap)) {
 				LOG_WARN(L"can't set code");
