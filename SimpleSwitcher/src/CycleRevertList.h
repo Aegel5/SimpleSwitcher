@@ -140,7 +140,7 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 		return keyList;
 	}
 
-	if (iCurrentWord >= std::ssize(words)) {
+	if (iCurrentWord >= ssize(words)) {
 		iCurrentWord = words.size() - 1;
 	}
 
@@ -149,8 +149,8 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 	keyList.needLanguageChange = iCurrentWord == -1 || iCurrentWord == words.size() - 1;
 
 	if (typeRevert == hk_RevertAllRecentText) { 		// простой алгоритм от позиции предыдущего реверта
-		iStartFrom = std::ssize(m_symbolList) - 1;
-		for (int i = std::ssize(m_symbolList) - 2; i >= 0; --i) { 
+		iStartFrom = ssize(m_symbolList) - 1;
+		for (int i = ssize(m_symbolList) - 2; i >= 0; --i) { 
 			if (m_symbolList[i].is_last_revert) 
 				break;
 			iStartFrom = i;
@@ -178,7 +178,7 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 	}
 
 
-	for (int i = iStartFrom; i < std::ssize(m_symbolList); ++i) {
+	for (int i = iStartFrom; i < ssize(m_symbolList); ++i) {
 		keyList.keys.push_back(m_symbolList[i].decrypted().key());
 	}
 
