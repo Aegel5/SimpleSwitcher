@@ -70,8 +70,8 @@ class CoreWorker {
 		IFW_LOG(AddClipboardFormatListener(hWnd));
 		//IFW_LOG(ChangeWindowMessageFilterEx(hWnd, WM_LayNotif, MSGFLT_ALLOW, 0));
 
-		auto timeId = SetTimer(hWnd, c_timerKeyloggerDefence, 5000, NULL);
-		IFW_LOG(timeId != 0);
+		//auto timeId = SetTimer(hWnd, c_timerKeyloggerDefence, 5000, NULL);
+		//IFW_LOG(timeId != 0);
 
 		Hooker hooker;
 		IFS_LOG(hooker.StartHook());
@@ -98,14 +98,6 @@ class CoreWorker {
 			}
 			else if (mesg == WM_CLIPBOARDUPDATE) {
 				Worker()->PostMsg([](auto& w) {w.CliboardChanged(); });
-			}
-			else if (mesg == WM_TIMER) {
-				UINT_PTR timerId = msg.wParam;
-				if (timerId == c_timerKeyloggerDefence) {
-					if (conf_get_unsafe()->EnableKeyLoggerDefence && g_hotkeyWndOpened == 0) {
-						//IFS_LOG(resethook()); // ???
-					}
-				}
 			}
 			else {
 				//TranslateMessage(&msg);

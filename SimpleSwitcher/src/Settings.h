@@ -80,7 +80,7 @@ public:
     bool disableAccessebility    = false;
     static constexpr TStr showOriginalFlags = L"Original Flags";
     static constexpr TStr showAppIcon = L"Application Icon";
-    wxString flagsSet = showOriginalFlags;
+    wxString flagsSet = L"Square";
     bool AllowRemoteKeys_ = true;
     bool AlternativeLayoutChange = false;
     TUInt32 quick_press_ms = 350;

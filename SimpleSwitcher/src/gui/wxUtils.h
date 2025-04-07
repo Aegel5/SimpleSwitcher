@@ -1,3 +1,4 @@
+#pragma once
 namespace WxUtils {
 
     void BindCheckbox(wxCheckBox* elem, auto get, auto set) {

@@ -9,10 +9,9 @@
 #include "wxUtils.h"
 #include "Tray.h"
 #include "IconManager.h"
+#include "set_hk.h"
 
 using namespace WxUtils;
-
-extern bool ChangeHotKey2(wxFrame* frame, CHotKeySet set, CHotKey& key);
 
 namespace {
     void ShowNeedAdmin(const wxString& expl=L"") {
@@ -39,6 +38,7 @@ class MainWnd : public MyFrame4
     bool exitRequest = false;
     bool inited = false;
     CAutoHotKeyRegister enable_hk_register;
+    HotKeyDlg* setHotKeyWnd = nullptr;
 
     std::generator<FloatPanel*> all_panels() {
         for (auto* it : this->GetChildren()) {
@@ -67,6 +67,8 @@ public:
     MainWnd() : MyFrame4(nullptr)
     {
         try {
+
+            setHotKeyWnd = new HotKeyDlg(this);
 
             g_guiHandle = GetHandle();
 
@@ -339,6 +341,8 @@ private:
 
     virtual void onHotDClick(wxGridEvent& event) override {
 
+        bool isDouble = event.GetEventType() == wxEVT_GRID_CELL_LEFT_DCLICK;
+
         int col = event.GetCol();
         int row = event.GetRow();
 
@@ -347,21 +351,23 @@ private:
         const auto& hotlist = cfg->hotkeysList;
         if (row >= hotlist.size()) return;
         const auto& data = hotlist[row];
+        auto hk = data.hkId;
 
 
         if (col == 0) {
             CHotKey newkey;
-            CHotKeySet set;
-            if (ChangeHotKey2(this, data, newkey)) {
-                SaveConfigWith([&](auto cfg) {cfg->hotkeysList[row].keys.key() = newkey;});
+            ChangeHotKey(data, [row, this, hk](auto key) {
+                SaveConfigWith([&](auto cfg) {cfg->hotkeysList[row].keys.key() = key; });
                 FillHotkeysInfo(false);
-                if (data.hkId == hk_ToggleEnabled) {
+                if (hk == hk_ToggleEnabled) {
                     if (!RegisterEnabled()) {
                         wxMessageBox(_("Can't register key"));
                     }
                 }
-            }
+            }, isDouble);
         }
+
+        event.Skip();
 
     }
 
@@ -385,10 +391,10 @@ private:
                 (CHotKey)CHotKey(VK_RSHIFT).SetDouble()
             };
             set.keys = data.hotkey;
-            if (ChangeHotKey2(this, set, newkey)) {
-                SaveConfigWith([&](auto conf) {  conf->layouts_info.info[row].hotkey.key() = newkey; });
-                FillLayoutsInfo();
-            }
+            //if (ChangeHotKey2(this, set, newkey)) {
+            //    SaveConfigWith([&](auto conf) {  conf->layouts_info.info[row].hotkey.key() = newkey; });
+            //    FillLayoutsInfo();
+            //}
         }
         if (col == 0) {
             SaveConfigWith([&](auto conf) {  conf->layouts_info.info[row].enabled ^= 1; });
@@ -406,10 +412,27 @@ private:
                 ,CHotKey(VK_CONTROL, VK_SHIFT, 0x33)
             };
             set.keys.key() = data.win_hotkey;
-            if (ChangeHotKey2(this, set, newkey)) {
-                SaveConfigWith([&](auto conf) {  conf->layouts_info.info[row].win_hotkey = newkey; });
-                FillLayoutsInfo();
-            }
+            ChangeHotKey(set, [this, row](auto key) {
+                    SaveConfigWith([&](auto conf) {  
+                        if (row >= conf->layouts_info.info.size()) return;
+                        conf->layouts_info.info[row].win_hotkey = key; 
+                        });
+                    FillLayoutsInfo();
+                });
+        }
+    }
+
+    void ChangeHotKey(const CHotKeySet& set, HotKeyDlg::Apply&& apply, bool show = false) {
+
+        setHotKeyWnd->SetToChange(set, std::move(apply));
+
+        if (show) {
+            auto rect = this->GetRect();
+            int x = rect.GetLeft() + rect.GetWidth();
+            //int x = GetScreenPosition().x + GetSize().x - 10;
+            int y = GetScreenPosition().y + GetSize().y / 2 - setHotKeyWnd->GetSize().y/2;
+            setHotKeyWnd->SetPosition({ x-10,y });
+            setHotKeyWnd->Show();
         }
     }
 

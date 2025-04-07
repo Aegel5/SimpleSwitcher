@@ -119,16 +119,13 @@ class MyDialog1 : public wxDialog
 		wxCheckBox* m_checkBox12;
 		wxCheckBox* m_checkBox13;
 		wxCheckBox* m_checkBoxDouble;
-		wxButton* m_button4;
-		wxButton* m_button5;
+		wxButton* m_buttonApply;
 
 		// Virtual event handlers, override them in your derived class
 		virtual void OnChoiceSelect( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onclear( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onSetLeftRight( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onSetKeyup( wxCommandEvent& event ) { event.Skip(); }
-		virtual void onOk( wxCommandEvent& event ) { event.Skip(); }
-		virtual void onCancel( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:
