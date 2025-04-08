@@ -30,7 +30,6 @@
 #include <wx/listbox.h>
 #include <wx/notebook.h>
 #include <wx/frame.h>
-#include <wx/textctrl.h>
 #include <wx/dialog.h>
 #include <wx/statbmp.h>
 
@@ -112,14 +111,12 @@ class MyDialog1 : public wxDialog
 	private:
 
 	protected:
-		wxChoice* m_choiceKey;
 		wxStaticText* m_staticText10;
-		wxTextCtrl* m_textKey;
+		wxChoice* m_choiceKey;
 		wxButton* m_button6;
 		wxCheckBox* m_checkBox12;
 		wxCheckBox* m_checkBox13;
 		wxCheckBox* m_checkBoxDouble;
-		wxButton* m_buttonApply;
 
 		// Virtual event handlers, override them in your derived class
 		virtual void OnChoiceSelect( wxCommandEvent& event ) { event.Skip(); }
@@ -130,7 +127,7 @@ class MyDialog1 : public wxDialog
 
 	public:
 
-		MyDialog1( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Set hotkey"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		MyDialog1( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Set hotkey"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER|wxSTAY_ON_TOP );
 
 		~MyDialog1();
 

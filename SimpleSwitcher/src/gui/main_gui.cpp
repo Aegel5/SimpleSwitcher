@@ -99,6 +99,8 @@ public:
                 m_gridHotKeys->SetColSize(0, m_gridHotKeys->GetSize().x - m_gridHotKeys->GetRowLabelSize());
                 });
 
+            //m_gridHotKeys->SetDefaultEditor(new wxGridCellChoiceEditor({"test", "test"}));
+
             m_staticTextBuildDate->SetLabelText(std::format("Built on '{}'", __DATE__));
 
             m_hyperlink11->SetLabel(L"SimpleSwitcher.json");
@@ -180,7 +182,7 @@ public:
 
             BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get_unsafe()->AlternativeLayoutChange; }, [this](bool val) {
                 SaveConfigWith([val](auto cfg) {cfg->AlternativeLayoutChange = val; });
-                FillLayoutsInfo();
+                FillLayoutsInfo(false);
                 });
 
             BindCheckbox(m_checkBoxClearForm, []() {return conf_get_unsafe()->fClipboardClearFormat; }, [](bool val) {
@@ -358,10 +360,10 @@ private:
             CHotKey newkey;
             ChangeHotKey(data, [row, this, hk](auto key) {
                 SaveConfigWith([&](auto cfg) {cfg->hotkeysList[row].keys.key() = key; });
-                FillHotkeysInfo(false);
+                m_gridHotKeys->SetCellValue(row, 0, L" " + key.ToString());
                 if (hk == hk_ToggleEnabled) {
                     if (!RegisterEnabled()) {
-                        wxMessageBox(_("Can't register key"));
+                        //wxMessageBox(_("Can't register key"));
                     }
                 }
             }, isDouble);
@@ -372,6 +374,11 @@ private:
     }
 
     virtual void on_grid_lay_double(wxGridEvent& event) override {
+
+        event.Skip();
+
+        bool isDouble = event.GetEventType() == wxEVT_GRID_CELL_LEFT_DCLICK;
+
         int col = event.GetCol();
         int row = event.GetRow();
 
@@ -381,9 +388,15 @@ private:
         if (row >= lays.size()) return;
         auto& data = lays[row];
 
+        if (isDouble && col == 0) {
+            SaveConfigWith([&](auto conf) {  conf->layouts_info.info[row].enabled ^= 1; });
+            FillLayoutsInfo(false);
+        }
+
+        CHotKeySet set;
+
         if (col == 1) {
             CHotKey newkey;
-            CHotKeySet set;
             set.def_list = {
                 (CHotKey)CHotKey(VK_LCONTROL).SetKeyup(),
                 (CHotKey)CHotKey(VK_RCONTROL).SetKeyup(),
@@ -391,18 +404,9 @@ private:
                 (CHotKey)CHotKey(VK_RSHIFT).SetDouble()
             };
             set.keys = data.hotkey;
-            //if (ChangeHotKey2(this, set, newkey)) {
-            //    SaveConfigWith([&](auto conf) {  conf->layouts_info.info[row].hotkey.key() = newkey; });
-            //    FillLayoutsInfo();
-            //}
-        }
-        if (col == 0) {
-            SaveConfigWith([&](auto conf) {  conf->layouts_info.info[row].enabled ^= 1; });
-            FillLayoutsInfo();
         }
         if (col == 2) {
             CHotKey newkey;
-            CHotKeySet set;
             set.def_list = {
                 CHotKey(VK_LMENU, VK_SHIFT, 0x31)
                 ,CHotKey(VK_LMENU, VK_SHIFT, 0x32)
@@ -412,13 +416,20 @@ private:
                 ,CHotKey(VK_CONTROL, VK_SHIFT, 0x33)
             };
             set.keys.key() = data.win_hotkey;
-            ChangeHotKey(set, [this, row](auto key) {
-                    SaveConfigWith([&](auto conf) {  
-                        if (row >= conf->layouts_info.info.size()) return;
-                        conf->layouts_info.info[row].win_hotkey = key; 
-                        });
-                    FillLayoutsInfo();
-                });
+        }
+
+        if (Utils::is_in(col, 1,2)) {
+            ChangeHotKey(set, [this, row, col](auto key) {
+                SaveConfigWith([&](auto conf) {
+                    if (row >= conf->layouts_info.info.size()) return;
+                    auto& rec = conf->layouts_info.info[row];
+                    if (col == 2)
+                        rec.win_hotkey = key;
+                    else
+                        rec.hotkey.key() = key;
+                    });
+                m_gridLayouts->SetCellValue(row, col, key.ToString());
+                }, isDouble);
         }
     }
 
@@ -427,11 +438,11 @@ private:
         setHotKeyWnd->SetToChange(set, std::move(apply));
 
         if (show) {
-            auto rect = this->GetRect();
-            int x = rect.GetLeft() + rect.GetWidth();
-            //int x = GetScreenPosition().x + GetSize().x - 10;
-            int y = GetScreenPosition().y + GetSize().y / 2 - setHotKeyWnd->GetSize().y/2;
-            setHotKeyWnd->SetPosition({ x-10,y });
+            //auto rect = this->GetRect();
+            //int x = rect.GetLeft() + rect.GetWidth();
+            ////int x = GetScreenPosition().x + GetSize().x - 10;
+            //int y = GetScreenPosition().y + GetSize().y / 2 - setHotKeyWnd->GetSize().y/2;
+            //setHotKeyWnd->SetPosition({ x-10,y });
             setHotKeyWnd->Show();
         }
     }
@@ -602,7 +613,7 @@ private:
         SetSize(sz2);
 
     }
-    void FillLayoutsInfo() {
+    void FillLayoutsInfo(bool refit = true) {
 
         ClearGrid(m_gridLayouts);
 
@@ -633,10 +644,12 @@ private:
         //m_gridLayouts->SetRowLabelSize(wxGRID_AUTOSIZE);
         m_gridLayouts->SetRowLabelSize(m_gridHotKeys->GetRowLabelSize());
         m_gridLayouts->AutoSizeColumns(false);
-        //m_gridLayouts->AutoSizeRows();
-        if (m_gridLayouts->GetNumberRows() <= 15) {
+        if (refit && m_gridLayouts->GetNumberRows() <= 15) {
             FitHeight(m_gridLayouts);
             FixProportions();
+        }
+        else {
+            m_gridLayouts->AutoSizeRows();
         }
     }
 

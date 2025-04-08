@@ -287,6 +287,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_checkDebuglog->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
 	m_gridHotKeys->Connect( wxEVT_GRID_CELL_LEFT_CLICK, wxGridEventHandler( MyFrame4::onHotDClick ), NULL, this );
 	m_gridHotKeys->Connect( wxEVT_GRID_CELL_LEFT_DCLICK, wxGridEventHandler( MyFrame4::onHotDClick ), NULL, this );
+	m_gridLayouts->Connect( wxEVT_GRID_CELL_LEFT_CLICK, wxGridEventHandler( MyFrame4::on_grid_lay_double ), NULL, this );
 	m_gridLayouts->Connect( wxEVT_GRID_CELL_LEFT_DCLICK, wxGridEventHandler( MyFrame4::on_grid_lay_double ), NULL, this );
 	m_checkcapsrem->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
 	m_check_scrollremap->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
@@ -305,6 +306,7 @@ MyFrame4::~MyFrame4()
 	m_checkDebuglog->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onEnableLog ), NULL, this );
 	m_gridHotKeys->Disconnect( wxEVT_GRID_CELL_LEFT_CLICK, wxGridEventHandler( MyFrame4::onHotDClick ), NULL, this );
 	m_gridHotKeys->Disconnect( wxEVT_GRID_CELL_LEFT_DCLICK, wxGridEventHandler( MyFrame4::onHotDClick ), NULL, this );
+	m_gridLayouts->Disconnect( wxEVT_GRID_CELL_LEFT_CLICK, wxGridEventHandler( MyFrame4::on_grid_lay_double ), NULL, this );
 	m_gridLayouts->Disconnect( wxEVT_GRID_CELL_LEFT_DCLICK, wxGridEventHandler( MyFrame4::on_grid_lay_double ), NULL, this );
 	m_checkcapsrem->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
 	m_check_scrollremap->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( MyFrame4::onRemapCaps ), NULL, this );
@@ -325,11 +327,6 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* bSizer16;
 	bSizer16 = new wxBoxSizer( wxVERTICAL );
 
-	wxArrayString m_choiceKeyChoices;
-	m_choiceKey = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceKeyChoices, 0 );
-	m_choiceKey->SetSelection( 0 );
-	bSizer16->Add( m_choiceKey, 0, wxALL|wxEXPAND, 5 );
-
 	m_staticText10 = new wxStaticText( this, wxID_ANY, _("Press any key..."), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText10->Wrap( -1 );
 	bSizer16->Add( m_staticText10, 0, wxALL, 5 );
@@ -337,8 +334,10 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* bSizer20;
 	bSizer20 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_textKey = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-	bSizer20->Add( m_textKey, 1, wxALL, 5 );
+	wxArrayString m_choiceKeyChoices;
+	m_choiceKey = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceKeyChoices, 0 );
+	m_choiceKey->SetSelection( 0 );
+	bSizer20->Add( m_choiceKey, 1, wxALL|wxEXPAND, 5 );
 
 	m_button6 = new wxButton( this, wxID_ANY, _("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer20->Add( m_button6, 0, wxALL, 5 );
@@ -355,15 +354,6 @@ MyDialog1::MyDialog1( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_checkBoxDouble = new wxCheckBox( this, wxID_ANY, _("Triggers on double press"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxDouble->SetValue(true);
 	bSizer16->Add( m_checkBoxDouble, 0, wxALL, 5 );
-
-	wxBoxSizer* bSizer18;
-	bSizer18 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_buttonApply = new wxButton( this, wxID_ANY, _("Apply"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer18->Add( m_buttonApply, 0, wxALL, 5 );
-
-
-	bSizer16->Add( bSizer18, 0, wxALIGN_RIGHT, 5 );
 
 
 	bSizer21->Add( bSizer16, 1, wxALL|wxEXPAND, 5 );

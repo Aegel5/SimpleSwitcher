@@ -38,10 +38,6 @@ public: HotKeyDlg(wxFrame* frame) : MyDialog1(frame) {
                 updateField();
             });
 
-        WxUtils::BindButtom(m_buttonApply, [this]() {
-            apply(cur_key());
-            });
-
         Bind(wxEVT_CLOSE_WINDOW, [this](auto& evt) {
             hook.Cleanup();
             evt.Skip();
@@ -60,24 +56,29 @@ public: HotKeyDlg(wxFrame* frame) : MyDialog1(frame) {
         curwnd = GetHWND();
 
     }
+      void ApplyKey() {
+          apply(key_normalized());
+      }
+      std::vector<wxString> choices;
     void SetToChange(const CHotKeySet& info, Apply&& apply) {
         this->info = info;
         this->apply = apply;
 
         set_key(info.keys.key());
 
-        std::vector<wxString> choices;
+        choices.clear();
         for (const auto& def : info.def_list) {
             choices.push_back(def.ToString());
         }
         m_choiceKey->Set(choices);
 
-        updateField();
+        updateField(false);
     }
 private:
     CHotKey key;
+    CHotKey last_type_key;
     CHotKey state;
-    CHotKey cur_key() {
+    CHotKey key_normalized() {
         auto k2 = key;
         if (!m_checkBox12->GetValue()) {
             k2.NormalizeAll();
@@ -91,26 +92,52 @@ private:
         m_checkBox12->SetValue(key.Has_left_right());
     }
     CAutoHHOOK hook;
-    void updateField() {
-        m_checkBoxDouble->SetValue(key.IsDouble());
-        m_textKey->SetValue(cur_key().ToString());
-        m_checkBox13->SetValue(key.GetKeyup());
-        m_choiceKey->SetSelection(-1);
+    void updateField(bool apply = true) {
 
-        for (int i = 0; i < info.def_list.size(); i++) {
-            auto& def = info.def_list[i];
-            if (cur_key().Compare(def, CHotKey::COMPARE_STRICK_MODIFIER)) {
-                m_choiceKey->SetSelection(i);
-                break;
+        m_checkBoxDouble->SetValue(key.IsDouble());
+        m_checkBox13->SetValue(key.GetKeyup());
+
+        auto name = key_normalized().ToString();
+
+        if (name.empty()) {
+            if(m_choiceKey->GetCount() > info.def_list.size()) {
+                choices.resize(info.def_list.size());
+                m_choiceKey->Set(choices);
+            }
+            m_choiceKey->SetSelection(-1);
+        }
+        else {
+            bool found = false;
+            for (int i = 0; i < m_choiceKey->GetCount(); i++) {
+                if (m_choiceKey->GetString(i) == name) {
+                    m_choiceKey->SetSelection(i);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                choices.resize(info.def_list.size() + 1);
+                choices[info.def_list.size()] = name;
+                m_choiceKey->Set(choices);
+                m_choiceKey->SetSelection(info.def_list.size());
             }
         }
+
+        if(apply)
+            ApplyKey();
 
     }
     CHotKeySet info;
 
     virtual void OnChoiceSelect(wxCommandEvent& event) {
         auto cur = m_choiceKey->GetSelection();
-        set_key(info.def_list[cur]);
+        if (cur < info.def_list.size()) {
+            set_key(info.def_list[cur]);
+        }
+        else {
+            key = last_type_key;
+        }
         updateField();
     }
 
@@ -124,12 +151,15 @@ private:
             KeyState keyState = GetKeyState(wParam);
             if (keyState == KEY_STATE_DOWN) {
                 state.Add3(cur, CHotKey::ADDKEY_CHECK_EXIST);
-                key = state;
+                if (!state.Compare(key)) {
+                    last_type_key = key = state;
+                    updateField();
+                }
             }
             else {
                 state.Remove(cur);
             }
-            updateField();
+
             return true;
         }
 

@@ -311,6 +311,7 @@ private:
 	struct {
 		TUInt8 m_keyup : 1 {};
 		TUInt8 m_double_press : 1 {};
+		TUInt8 m_custom_flag : 1 {};
 	};
 	TUInt8 size = 0;
 	TKeyCode keys[c_MAX] = { 0 };
