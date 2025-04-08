@@ -83,7 +83,7 @@ public:
     wxString flagsSet = L"Square";
     bool AllowRemoteKeys_ = true;
     bool AlternativeLayoutChange = false;
-    TUInt32 quick_press_ms = 350;
+    TUInt32 quick_press_ms = 280;
     bool separate_ext_last_word = false;
     bool separate_ext_several_words = false;
     CHotKey win_hotkey_cycle_lang { VK_LMENU, VK_SHIFT };

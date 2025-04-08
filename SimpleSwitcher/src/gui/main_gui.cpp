@@ -68,8 +68,6 @@ public:
     {
         try {
 
-            setHotKeyWnd = new HotKeyDlg(this);
-
             g_guiHandle = GetHandle();
 
             RegisterEnabled();
@@ -429,11 +427,16 @@ private:
                         rec.hotkey.key() = key;
                     });
                 m_gridLayouts->SetCellValue(row, col, key.ToString());
+                m_gridLayouts->AutoSizeColumn(col);
                 }, isDouble);
         }
     }
 
     void ChangeHotKey(const CHotKeySet& set, HotKeyDlg::Apply&& apply, bool show = false) {
+
+        if (setHotKeyWnd == nullptr) {
+            setHotKeyWnd = new HotKeyDlg(this);
+        }
 
         setHotKeyWnd->SetToChange(set, std::move(apply));
 

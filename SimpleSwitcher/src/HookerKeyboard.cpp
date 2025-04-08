@@ -10,7 +10,6 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 	Message_KeyType msg_type;
 	Message_Hotkey msg_hotkey;
-	bool send_key = false;
 	bool double_exists = false;
 
 	GETCONF;
@@ -63,7 +62,6 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		msg_type.vkCode = vkCode;
 		msg_type.scan_ext = { (TScanCode)scan_code, isExtended };
 		msg_type.keyState = curKeyState;
-		send_key = true; // обрабатываем нажатие, если не будет запрета
 
 		curKeys.Update(vkCode, curKeyState); // сразу обновляем
 		const auto& curk = curKeys.GetOneValueHotKey();
@@ -171,7 +169,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			disable_up = 0;
 		}
 		if (
-			!res && send_key) {
+			!res && msg_type.vkCode != 0) {
 			Worker()->PostMsg(std::move(msg_type));
 		}
 		if (msg_hotkey.hk != hk_NULL) {
@@ -181,6 +179,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				msg_hotkey.delayed_from = GetTickCount64();
 			}
 
+			LOG_ANY(L"post {}. has_double {}", msg_hotkey.hotkey.ToString(), double_exists);
 			Worker()->PostMsg(std::move(msg_hotkey), delay);
 		}
 		if (res)

@@ -252,9 +252,9 @@ private:
 		return true;
 	}
 	void InsertMods(TKeyCode key) {
-		keys[size++] = key;
-		if (size >= c_MAX)
-			size = c_MAX - 1;
+		if (size < c_MAX)
+			size++;
+		keys[size-1] = key;
 	}
 
 
@@ -307,7 +307,7 @@ public: TStatus RegisterHk(CAutoHotKeyRegister& registor, HWND hwnd, int id) {
 public: bool IsDouble() const { return m_double_press; }
 public: auto& SetDouble(bool val = true) { m_double_press = val; return *this; }
 private:
-	static const int c_MAX = 6;
+	static constexpr int c_MAX = 5;
 	struct {
 		TUInt8 m_keyup : 1 {};
 		TUInt8 m_double_press : 1 {};
@@ -316,4 +316,5 @@ private:
 	TUInt8 size = 0;
 	TKeyCode keys[c_MAX] = { 0 };
 };
+static_assert(sizeof(CHotKey) == 12);
 

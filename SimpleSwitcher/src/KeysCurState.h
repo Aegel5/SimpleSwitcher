@@ -15,7 +15,7 @@ class CurStateWrapper {
 	}
 public:
 
-	bool IsDouble() const { return cnt_quick_press == 1; }
+	bool IsDouble() const { return cnt_quick_press & 1; }
 	bool IsHold() {	return is_hold;	}
 	const CHotKey& GetOneValueHotKey() { return one_value; }
 	int Size() { return all_keys.size(); }
