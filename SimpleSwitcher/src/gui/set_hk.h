@@ -43,8 +43,8 @@ public: HotKeyDlg(wxFrame* frame) : MyDialog1(frame) {
             evt.Skip();
             });
 
-        Bind(wxEVT_SHOW, [this](auto& evt) {
-            if (hook.IsInvalid()) {
+        Bind(wxEVT_SHOW, [this](wxShowEvent& evt) {
+            if (evt.IsShown() && hook.IsInvalid()) {
                 hook = SetWindowsHookEx(WH_KEYBOARD_LL, &LowLevelKeyboardProc, 0, 0);
                 IFW_LOG(hook.IsValid());
             }

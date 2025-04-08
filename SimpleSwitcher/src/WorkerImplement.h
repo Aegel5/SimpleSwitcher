@@ -84,6 +84,12 @@ public:
 		auto hk = keyData.hk;
 		const auto& key = keyData.hotkey;
 
+		if (keyData.delayed_from != 0 && keyData.delayed_from <= m_lastHotKeyTime) {
+			LOG_ANY(L"skip hotkey {} possible was double press", key.ToString());
+			return;
+		}
+		m_lastHotKeyTime = GetTickCount64();
+
 		GETCONF;
 
 		if (IsNeedSavedWords(hk) && !m_cycleList.HasAnySymbol()) {
@@ -115,6 +121,7 @@ public:
 
 private:
 
+	ULONGLONG m_lastHotKeyTime = 0;
 	ULONGLONG m_dwLastCtrlCReqvest = 0;
 	EClipRequest m_clipRequest = CLRMY_NONE;
 	DWORD m_dwIdThreadForeground = -1;

@@ -11,6 +11,7 @@ struct Message_Hotkey {
 	bool fix_ralt = false;
 	CHotKey hotkey;
 	HotKeyType hk = hk_NULL;
+	ULONGLONG delayed_from = 0;
 };
 
 struct Message_ChangeForeg {

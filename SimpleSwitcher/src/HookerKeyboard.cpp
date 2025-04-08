@@ -11,6 +11,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 	Message_KeyType msg_type;
 	Message_Hotkey msg_hotkey;
 	bool send_key = false;
+	bool double_exists = false;
 
 	GETCONF;
 
@@ -81,19 +82,34 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		if (curKeyState == KeyState::KEY_STATE_DOWN) {
 			if (curk.IsEmpty())
 				return 0;
-			bool need_our_action = false;
-			for (const auto& [hk, key] : cfg->All_hot_keys()) {
-				if (!key.GetKeyup() && (!key.IsDouble() || curKeys.IsDouble()) && check_is_our_key(key, curk)) {
-					need_our_action = true;
-					possible_hk_up.Clear(); // очищаем, потому что могли заполнить прямо в этом цикле.
-					if (!curKeys.IsHold()) { // но даже если и холд, клавиши нужно запретить.
-						msg_hotkey.hotkey = key;
-						msg_hotkey.hk = hk;
+			int need_our_action = 0;
+			for (const auto& [hk, key] : cfg->All_hot_keys()) { // всегда полный обход всего цикла
+				if (!check_is_our_key(key, curk)) continue;
+				double_exists |= key.IsDouble();
+				if (!key.GetKeyup()) {
+
+					int prior = 0;
+					if (!key.IsDouble() && curKeys.IsDouble()) prior = 5;
+					if (key.IsDouble() == curKeys.IsDouble()) prior = 10;
+
+					if (prior > need_our_action) {
+						need_our_action = prior;
+
+						// очищаем, возможное нахождение up
+						{
+							possible_hk_up.Clear(); 
+							msg_type.hk = hk_NULL;
+						}
+
+						if (!curKeys.IsHold()) { // но даже если и холд, клавиши нужно запретить.
+							msg_hotkey.hotkey = key;
+							msg_hotkey.hk = hk;
+						}
 					}
-					break;
 				}
-				if (key.GetKeyup() && check_is_our_key(key, curk)) {
-					possible_hk_up = curk; // без break
+
+				if (key.GetKeyup()) {
+					possible_hk_up = curk; 
 					msg_type.hk = hk; // уведомим, что это наша клавиша.
 				}
 			}
@@ -135,10 +151,11 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				// даже если нашли, up никогда не запрещаем.
 				if (!possible.IsEmpty()) {
 					for (const auto& [hk, key] : cfg->All_hot_keys()) {
-						if (key.GetKeyup() && check_is_our_key(key, possible)) {
+						if (!check_is_our_key(key, possible)) continue;
+						double_exists |= key.IsDouble();
+						if (key.GetKeyup()) {
 							msg_hotkey.hotkey = key;
 							msg_hotkey.hk = hk;
-							break;
 						}
 					}
 				}
@@ -158,7 +175,13 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			Worker()->PostMsg(std::move(msg_type));
 		}
 		if (msg_hotkey.hk != hk_NULL) {
-			Worker()->PostMsg(std::move(msg_hotkey));
+			int delay = 0;
+			if (!msg_hotkey.hotkey.IsDouble() && double_exists) {
+				delay = cfg->quick_press_ms; // придется подождать.
+				msg_hotkey.delayed_from = GetTickCount64();
+			}
+
+			Worker()->PostMsg(std::move(msg_hotkey), delay);
 		}
 		if (res)
 			return 1; // запрет
