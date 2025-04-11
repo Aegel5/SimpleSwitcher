@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-11 15:06+0300\n"
+"POT-Creation-Date: 2025-04-11 15:37+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -211,6 +211,10 @@ msgstr ""
 msgid "Selected text to upper/lower"
 msgstr ""
 
+#: ../src/gui/noname.h:130
+msgid "Set hotkey"
+msgstr ""
+
 #: ../src/gui/noname.cpp:113
 msgid "Settings"
 msgstr ""
@@ -221,6 +225,10 @@ msgstr ""
 
 #: ../src/Settings.cpp:81
 msgid "Show main window"
+msgstr ""
+
+#: ../src/gui/noname.h:100
+msgid "SimpleSwitcher"
 msgstr ""
 
 #: ../src/gui/noname.cpp:351
