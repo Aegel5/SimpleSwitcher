@@ -40,6 +40,8 @@ class MainWnd : public MyFrame4
     CAutoHotKeyRegister enable_hk_register;
     HotKeyDlg* setHotKeyWnd = nullptr;
 
+    static constexpr wxLanguage supportTranslations[] = { wxLANGUAGE_ENGLISH , wxLANGUAGE_RUSSIAN };
+
     std::generator<FloatPanel*> all_panels() {
         for (auto* it : this->GetChildren()) {
             auto cur = wxDynamicCast(it, FloatPanel);
@@ -193,13 +195,22 @@ public:
                 updateEnable();
                 });
 
-            BindChoice(m_comboUiLang, [](wxChoice* elem) {
+            BindChoice(m_comboUiLang, [this](wxChoice* elem) {
                     elem->Clear();
-                    elem->AppendString(_("Russian"));
-                    elem->AppendString(_("English"));
-                    elem->SetSelection((int)conf_get_unsafe()->uiLang);
-                }, [](wxChoice* elem) {
-                    SaveConfigWith([elem](auto cfg) {cfg->uiLang = (ProgramConfig::UiLang)elem->GetSelection(); });
+
+                    elem->SetSelection(-1);
+                    for (int i = -1; auto lang : supportTranslations) {
+                        i++;
+                        elem->AppendString(wxLocale::GetLanguageName(lang));
+                        if (conf_get_unsafe()->uiLang_ == lang) {
+                            elem->SetSelection(i);
+                        }
+                    }
+                }, [this](wxChoice* elem) {
+                    SaveConfigWith(
+                        [this, elem](auto cfg) {
+                        cfg->uiLang_ = supportTranslations[elem->GetSelection()];
+                        });
                     wxMessageBox(_("Need restart program"));
                     });
 

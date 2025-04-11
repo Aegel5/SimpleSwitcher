@@ -67,12 +67,12 @@ bool MyApp::OnInit() {
 
 
         // init ui
-        if (conf_get_unsafe()->uiLang == ProgramConfig::UiLang::rus) {
+        if (conf_get_unsafe()->uiLang_ != wxLANGUAGE_ENGLISH) {
 
             wxTranslations* const trans = new wxTranslations();
             wxTranslations::Set(trans);
             trans->SetLoader(new wxResourceTranslationsLoader());
-            trans->SetLanguage(wxLANGUAGE_RUSSIAN);
+            trans->SetLanguage((wxLanguage)conf_get_unsafe()->uiLang_);
             trans->AddCatalog("lang");
         }
 

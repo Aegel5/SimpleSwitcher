@@ -61,14 +61,9 @@ public:
 
     TLogLevel logLevel = LOG_LEVEL_3;
 
-    enum class UiLang {
-        rus,
-        eng,
-    };
-
     wxString config_version;
 
-    UiLang uiLang = UiLang::rus;
+    TUInt32 uiLang_ = wxLANGUAGE_RUSSIAN;
 
     bool fixRAlt = false;
     HKL fixRAlt_lay_ = (HKL)0x4090409;
