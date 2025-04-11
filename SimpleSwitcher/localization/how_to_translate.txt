@@ -6,12 +6,12 @@ gen.cmd
 
 3. Translate mess.pot
 Install poedit https://poedit.net/ or any program you like.
-Generate *.po (text) and *.mo (binary) files for needed language.
+Generate *.po (text) file for needed language.
 The best solution is machine pre-translate and then fix errors.
 
 4. Add language to program (if not already added)
 src\res\myres.rc - add link to mo file.
-src\gui\main_gui.cpp - supportTranslations  - add to list.
+src\gui\main_gui.cpp - supportTranslations  - add to list language.
 
 
 
