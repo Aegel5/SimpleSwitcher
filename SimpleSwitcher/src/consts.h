@@ -51,6 +51,21 @@ enum HotKeyType : TUInt32
     hk_RunProgram_flag = 1<<29,
 };
 
+inline const wxString& GetGuiTextForHk(HotKeyType hk) {
+    switch (hk) {
+    case hk_RevertLastWord: return _(L"Change layout for last word");
+    case hk_RevertSeveralWords: return _(L"Change layout for last several words");
+    case hk_RevertAllRecentText: return _(L"Change layout for all recent text");
+    case hk_RevertSelelected: return _(L"Change layout for selected text");
+    case hk_CycleSwitchLayout: return  _(L"Cycle change layout");
+    case hk_EmulateCapsLock: return _(L"Generate CapsLock");
+    case hk_toUpperSelected: return _(L"Selected text to UPPER/lower case");
+    case hk_ToggleEnabled: return _(L"Enable/Disable");
+    case hk_ShowMainWindow: return _(L"Show main window");
+    }
+    return _("Error");
+}
+
 
 consteval auto adl_enum_bounds(HotKeyType) -> simple_enum::adl_info<HotKeyType> {
     return { HotKeyType::hk_NULL, HotKeyType::hk_hotkeys_end }; // Assumes my_enum satisfies enum_concept

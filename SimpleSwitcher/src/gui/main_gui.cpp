@@ -559,12 +559,11 @@ private:
     void FillHotkeysInfo(bool refit = true) {
 
         ClearGrid(m_gridHotKeys);
-
         
         for (int i = -1; const auto& it : conf_get_unsafe()->hotkeysList) {
             i++;
             m_gridHotKeys->AppendRows();
-            m_gridHotKeys->SetRowLabelValue(i, it.gui_text);
+            m_gridHotKeys->SetRowLabelValue(i, GetGuiTextForHk(it.hkId));
             m_gridHotKeys->SetCellValue(i, 0, L" " + it.keys.ToString());
         }
 

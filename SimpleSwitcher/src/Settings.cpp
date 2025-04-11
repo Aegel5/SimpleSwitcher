@@ -16,7 +16,6 @@ void ProgramConfig::GenerateListHK()
         CHotKeySet set;
         set.def_list = { CHotKey(VK_CAPITAL), CHotKey(VK_PAUSE), CHotKey(VK_F24) };
         set.fUseDef = true;
-        set.gui_text = _(L"Change layout for last word").wc_str();
         AddHotKey(hk_RevertLastWord, set);
     }
 
@@ -24,14 +23,12 @@ void ProgramConfig::GenerateListHK()
         CHotKeySet set;
         set.def_list = { CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_PAUSE), CHotKey(VK_SHIFT, VK_F24) };
         set.fUseDef = true;
-        set.gui_text = _(L"Change layout for last several words").wc_str();
         AddHotKey(hk_RevertSeveralWords, set);
     }
 
     {
         CHotKeySet set;
         set.def_list = { CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_PAUSE), CHotKey(VK_LSHIFT).SetDouble() };
-        set.gui_text = _(L"Change layout for all recent text").wc_str();
         AddHotKey(hk_RevertAllRecentText, set);
     }
 
@@ -39,14 +36,12 @@ void ProgramConfig::GenerateListHK()
         CHotKeySet set;
         set.def_list = { CHotKey{VK_CONTROL, VK_CAPITAL}, CHotKey{VK_CONTROL, VK_CAPITAL}.SetDouble(), CHotKey{VK_CONTROL, VKE_BREAK} };
         set.fUseDef = true;
-        set.gui_text = _(L"Change layout for selected text").wc_str();
         AddHotKey(hk_RevertSelelected, set);
     }
 
     {
         CHotKeySet set;
         set.def_list = { CHotKey(VKE_WIN, VK_SPACE), CHotKey(VK_LCONTROL,VK_LWIN), CHotKey(VK_SHIFT).SetDouble() };
-        set.gui_text = _(L"Cycle change layout").wc_str();
         AddHotKey(hk_CycleSwitchLayout, set);
     }
 
@@ -54,7 +49,6 @@ void ProgramConfig::GenerateListHK()
     {
         CHotKeySet set;
         set.def_list = { CHotKey(VKE_WIN, VK_CAPITAL), CHotKey(VK_CONTROL, VK_F24) };
-        set.gui_text = _(L"Generate CapsLock").wc_str();
         AddHotKey(hk_EmulateCapsLock, set);
     }
 
@@ -62,7 +56,6 @@ void ProgramConfig::GenerateListHK()
         CHotKeySet set;
         set.def_list = { CHotKey(VK_SCROLL), CHotKey(VK_PAUSE), CHotKey(VK_F23) };
         set.fUseDef = true;
-        set.gui_text = _(L"Selected text to UPPER/lower case").wc_str();
         AddHotKey(hk_toUpperSelected, set);
     }
 
@@ -70,7 +63,6 @@ void ProgramConfig::GenerateListHK()
         CHotKeySet set;
         set.def_list = { CHotKey(VKE_WIN, VK_F8) };
         set.fUseDef = true;
-        set.gui_text = _(L"Enable/Disable").wc_str();
         AddHotKey(hk_ToggleEnabled, set);
     }
 
@@ -78,7 +70,6 @@ void ProgramConfig::GenerateListHK()
         CHotKeySet set;
         set.def_list = { CHotKey(VKE_WIN, VK_SHIFT).SetDouble(), CHotKey(VK_SHIFT).SetDouble() };
         set.fUseDef = true;
-        set.gui_text = _(L"Show main window").wc_str();
         AddHotKey(hk_ShowMainWindow, set);
     }
 
