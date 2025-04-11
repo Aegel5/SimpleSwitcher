@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-11 15:37+0300\n"
-"PO-Revision-Date: 2025-04-11 19:46+0300\n"
+"PO-Revision-Date: 2025-04-11 19:52+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -25,7 +25,7 @@ msgstr " для: "
 
 #: ../src/gui/noname.cpp:260
 msgid "About / Help"
-msgstr ""
+msgstr "О / помощь"
 
 #: ../src/gui/noname.cpp:228
 msgid "Add float panel"
@@ -53,29 +53,26 @@ msgstr "Дата билда:"
 
 #: ../src/gui/noname.cpp:183
 msgid "CapsLock / ScrollLock"
-msgstr ""
+msgstr "Capslock / Scrolllock"
 
 #: ../src/Settings.cpp:34
-#, fuzzy
 #| msgid "Change selected text"
 msgid "Change layout for all recent text"
-msgstr "Изменить выделенный текст"
+msgstr ""
 
 #: ../src/Settings.cpp:27
 msgid "Change layout for last several words"
-msgstr ""
+msgstr "Изменить макет на последние несколько слов"
 
 #: ../src/Settings.cpp:19
-#, fuzzy
 #| msgid "Change Layout"
 msgid "Change layout for last word"
-msgstr "Сменить раскладку"
+msgstr ""
 
 #: ../src/Settings.cpp:42
-#, fuzzy
 #| msgid "Change selected text"
 msgid "Change layout for selected text"
-msgstr "Изменить выделенный текст"
+msgstr ""
 
 #: ../src/gui/noname.cpp:342
 msgid "Clear"
@@ -90,8 +87,6 @@ msgid "Close to tray"
 msgstr "Свернуть в трей"
 
 #: ../src/Settings.cpp:49
-#, fuzzy
-#| msgid "Cycle change"
 msgid "Cycle change layout"
 msgstr "Циклическая смена"
 
@@ -100,10 +95,9 @@ msgid "Delete"
 msgstr "Удалить"
 
 #: ../src/gui/main_gui.cpp:776
-#, fuzzy
 #| msgid "Enable"
 msgid "Disable"
-msgstr "Включить"
+msgstr ""
 
 #: ../src/gui/noname.cpp:221
 msgid ""
@@ -129,26 +123,25 @@ msgid "Enable debug log"
 msgstr "Включить debug log"
 
 #: ../src/Settings.cpp:73
-#, fuzzy
 #| msgid "Enable"
 msgid "Enable/Disable"
-msgstr "Включить"
+msgstr ""
 
 #: ../src/gui/main_gui.cpp:114 ../src/gui/main_gui.cpp:795
 msgid "Error reading config"
-msgstr ""
+msgstr "Ошибка чтения конфигурации"
 
 #: ../src/gui/main_gui.cpp:555
 msgid "Error while UpdateAutostartExplain: "
-msgstr ""
+msgstr "Ошибка в то время как UpdateautostartExplain:"
 
 #: ../src/gui/main_app.cpp:84
 msgid "Error while initing app: "
-msgstr ""
+msgstr "Ошибка при приложении с обращением:"
 
 #: ../src/gui/main_gui.cpp:262
 msgid "Error while initing main wnd: "
-msgstr ""
+msgstr "Ошибка при обращении к основному WND:"
 
 #: ../src/gui/main_gui.cpp:778 ../src/gui/noname.cpp:267
 msgid "Exit"
@@ -156,11 +149,11 @@ msgstr "Закрыть"
 
 #: ../src/gui/noname.cpp:241
 msgid "Experimental"
-msgstr ""
+msgstr "Экспериментальный"
 
 #: ../src/gui/noname.cpp:88
 msgid "Extended word separation"
-msgstr ""
+msgstr "Расширенное разделение слов"
 
 #: ../src/gui/noname.cpp:46
 msgid "Flags set"
@@ -176,11 +169,11 @@ msgstr "Генерировать CapsLock"
 
 #: ../src/gui/noname.cpp:131 ../src/gui/noname.cpp:159
 msgid "Hotkey"
-msgstr ""
+msgstr "Горячая клавиша"
 
 #: ../src/gui/noname.cpp:177
 msgid "Hotkeys"
-msgstr ""
+msgstr "Горячие клавиши"
 
 #: ../src/gui/noname.cpp:213
 msgid "Keys Remap"
@@ -196,7 +189,7 @@ msgstr "Необходимо перезапустить программу"
 
 #: ../src/gui/noname.cpp:330
 msgid "Press any key..."
-msgstr ""
+msgstr "Нажмите любую клавишу ..."
 
 #: ../src/gui/noname.cpp:218
 msgid ""
@@ -208,7 +201,7 @@ msgstr ""
 
 #: ../src/gui/noname.cpp:97
 msgid "Reload config"
-msgstr ""
+msgstr "Перезагрузить конфигурация"
 
 #: ../src/gui/noname.cpp:185
 msgid "Remap CapsLock as F24"
@@ -220,17 +213,16 @@ msgstr "Переназначить ScrollLock как F23"
 
 #: ../src/gui/noname.cpp:231
 msgid "Remove all panels"
-msgstr ""
+msgstr "Удалить все панели"
 
 #: ../src/Settings.cpp:65
 msgid "Selected text to UPPER/lower case"
-msgstr ""
+msgstr "Выбранный текст в верхний/нижний чехол"
 
 #: ../src/gui/noname.cpp:137
-#, fuzzy
 #| msgid "Selected text"
 msgid "Selected text to upper/lower"
-msgstr "Выделенный текст"
+msgstr ""
 
 #: ../src/gui/noname.h:130
 msgid "Set hotkey"
@@ -246,11 +238,11 @@ msgstr "Показать"
 
 #: ../src/Settings.cpp:81
 msgid "Show main window"
-msgstr ""
+msgstr "Показать главное окно"
 
 #: ../src/gui/noname.h:100
 msgid "SimpleSwitcher"
-msgstr ""
+msgstr "Simpleswitcher"
 
 #: ../src/gui/noname.cpp:351
 msgid "Triggers on KEYUP"
@@ -266,7 +258,7 @@ msgstr "Обновить"
 
 #: ../src/gui/noname.cpp:158
 msgid "Use in cycle"
-msgstr ""
+msgstr "Используйте в цикле"
 
 #: ../src/gui/main_gui.cpp:521
 msgid "Will be applied after PC reboot"
@@ -278,7 +270,7 @@ msgstr "Работать в программах, запущенных от ад
 
 #: ../src/gui/main_gui.cpp:690
 msgid "delete old task"
-msgstr ""
+msgstr "Удалить старую задачу"
 
 #~ msgid "Cancel"
 #~ msgstr "Отменить"
