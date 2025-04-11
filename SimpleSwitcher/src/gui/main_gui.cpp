@@ -528,33 +528,33 @@ private:
         m_checkBoxEnable->SetValue(coreWork.IsStarted());
         UpdateIcons();
     }
-    void UpdateAutostartExplain()
-    {
-        try {
-            Startup::CheckTaskSheduleParm parm;
-            parm.taskName = c_wszTaskName;
-            IFS_LOG(Startup::CheckTaskShedule(parm));
+    //void UpdateAutostartExplain()
+    //{
+    //    try {
+    //        Startup::CheckTaskSheduleParm parm;
+    //        parm.taskName = c_wszTaskName;
+    //        IFS_LOG(Startup::CheckTaskShedule(parm));
 
-            bool isHasEntry = false;
-            std::wstring value;
-            IFS_LOG(Startup::GetString_AutoStartUser(c_sRegRunValue, isHasEntry, value));
+    //        bool isHasEntry = false;
+    //        std::wstring value;
+    //        IFS_LOG(Startup::GetString_AutoStartUser(c_sRegRunValue, isHasEntry, value));
 
-            std::wstring registryRes = L"none";
-            std::wstring schedulRes = L"none";
+    //        std::wstring registryRes = L"none";
+    //        std::wstring schedulRes = L"none";
 
-            if (isHasEntry) {
-                registryRes = value;
-            }
-            if (parm.isTaskExists) {
-                schedulRes = parm.pathValue;
-            }
-            std::wstring sLabel = std::format(L"         Registry: {}\r\n         Scheduler: {}", registryRes, schedulRes);
-            //m_staticTextExplain->SetLabelText(sLabel);
-        }
-        catch (std::exception& e) {
-            wxMessageBox(_("Error while UpdateAutostartExplain: ") + e.what());
-        }
-    }
+    //        if (isHasEntry) {
+    //            registryRes = value;
+    //        }
+    //        if (parm.isTaskExists) {
+    //            schedulRes = parm.pathValue;
+    //        }
+    //        std::wstring sLabel = std::format(L"         Registry: {}\r\n         Scheduler: {}", registryRes, schedulRes);
+    //        //m_staticTextExplain->SetLabelText(sLabel);
+    //    }
+    //    catch (std::exception& e) {
+    //        wxMessageBox(_("Error while UpdateAutostartExplain: ") + e.what());
+    //    }
+    //}
 
     void FillHotkeysInfo(bool refit = true) {
 
@@ -712,7 +712,7 @@ private:
 
         m_checkAddToAutoStart->SetValue(conf_get_unsafe()->isMonitorAdmin ? isAdminAllOk && !isUserHasTask
                                                                : isUserAllOk && !isAdminHasTask);
-        UpdateAutostartExplain();
+        //UpdateAutostartExplain();
 
     }
 
