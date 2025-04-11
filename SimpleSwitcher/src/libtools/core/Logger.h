@@ -252,9 +252,24 @@ namespace _log_int {
 
 	inline void __Log_Err_Common(const auto& err, std::source_location loc) { __Log_Err_Common(err, loc, L""); }
 
+	template<typename... Args>
+	inline void LOG_ANY_CMN(const std::wformat_string<Args...> s, Args&&... v) { _log_int::__LOG_LINE_FORMAT(s, FORWARD(v)...); }
+
+	template<typename... Args>
+	inline void LOG_ANY_CMN(const std::format_string<Args...> s, Args&&... v) { _log_int::__LOG_LINE_FORMAT(s, FORWARD(v)...); }
+
+	template<typename... Args>
+	inline void LOG_WARN(const std::wformat_string<Args...> s, Args&&... v) {
+		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
+		SwLoggerGlobal().AppendPrefix();
+		SwLoggerGlobal().Append(L"[WARN] ");
+		SwLoggerGlobal().AppendFormat(s, FORWARD(v)...);
+		SwLoggerGlobal().EndLineFlash();
+	}
+
 }
 
-
+// todo: add if(loglevel) OUT of function
 #define __RET_ERR(CLASS, X, ...) {CLASS __res = (X); __Log_Err_Common(__res, std::source_location::current(), __VA_ARGS__); return __res.ToTStatus(); }
 #define  _SW_ERR_RET(ClassName, X, ...) {if (ClassName __res = (X)) { __Log_Err_Common(__res, std::source_location::current(), __VA_ARGS__); return __res.ToTStatus(); } }
 #define  _SW_ERR_LOG(ClassName, X, ...) {if (ClassName __res = (X))   __Log_Err_Common(__res, std::source_location::current(), __VA_ARGS__); }
@@ -278,31 +293,10 @@ namespace _log_int {
 #define IF_WAITDWORD_RET(X, ...) _SW_ERR_RET(_log_int::WinErrDwordWait, X, __VA_ARGS__)
 #define IF_WAITDWORD_LOG(X, ...) _SW_ERR_LOG(_log_int::WinErrDwordWait, X, __VA_ARGS__)
 
-template<typename... Args>
-inline void LOG_ANY(const std::wformat_string<Args...> s, Args&&... v) 	{
- if (GetLogLevel() >= LOG_LEVEL_2) { _log_int::__LOG_LINE_FORMAT(s, FORWARD(v)...); } }
+#define LOG_ANY(...) if (GetLogLevel() >= LOG_LEVEL_2) {_log_int::LOG_ANY_CMN(__VA_ARGS__);}
+#define LOG_ANY_4(...) if (GetLogLevel() >= LOG_LEVEL_4) {_log_int::LOG_ANY_CMN(__VA_ARGS__);}
+#define LOG_WARN(...) if (GetLogLevel() >= LOG_LEVEL_2) {_log_int::LOG_WARN(__VA_ARGS__);}
 
-template<typename... Args>
-inline void LOG_ANY(const std::format_string<Args...> s, Args&&... v) {
-	if (GetLogLevel() >= LOG_LEVEL_2) { _log_int::__LOG_LINE_FORMAT(s, FORWARD(v)...); }
-}
-
-template<typename... Args>
-inline void LOG_ANY_4(const std::wformat_string<Args...> s, Args&&... v) {
-	if (GetLogLevel() >= LOG_LEVEL_4) { _log_int::__LOG_LINE_FORMAT(s, FORWARD(v)...); }
-}
-
-template<typename... Args>
-inline void LOG_WARN(const std::wformat_string<Args...> s, Args&&... v) {
-	using namespace _log_int;
-	if (GetLogLevel() >= LOG_LEVEL_1) {
-		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
-		SwLoggerGlobal().AppendPrefix();
-		SwLoggerGlobal().Append(L"[WARN] ");
-		SwLoggerGlobal().AppendFormat(s, FORWARD(v)...);
-		SwLoggerGlobal().EndLineFlash();
-	}
-}
 
 inline void SetLogLevel_info(TLogLevel logLevel) {
 	SetLogLevel(logLevel);
