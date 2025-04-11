@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-08 09:29+0300\n"
-"PO-Revision-Date: 2025-04-11 14:20+0300\n"
+"POT-Creation-Date: 2025-04-11 15:37+0300\n"
+"PO-Revision-Date: 2025-04-11 19:46+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -19,202 +19,186 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 "X-Generator: Poedit 3.6\n"
 
-#: ../src\gui\noname.cpp:37
-msgid ""
-"          Registry: djkfjdkfjdkjf\n"
-"          Scheduler: fasfdasdf"
-msgstr ""
-
-#: ../src\gui\decent_gui.cpp:82
+#: ../src/gui/main_gui.cpp:20
 msgid " for: "
 msgstr " для: "
 
-#: ../src\gui\noname.cpp:204
-msgid "1"
-msgstr ""
-
-#: ../src\gui\noname.cpp:304
-msgid "123"
-msgstr ""
-
-#: ../src\gui\noname.cpp:204
-msgid "2"
-msgstr ""
-
-#: ../src\gui\noname.cpp:204
-msgid "3"
-msgstr ""
-
-#: ../src\gui\noname.cpp:236
+#: ../src/gui/noname.cpp:260
 msgid "About / Help"
 msgstr ""
 
-#: ../src\gui\noname.cpp:34
+#: ../src/gui/noname.cpp:228
+msgid "Add float panel"
+msgstr ""
+
+#: ../src/gui/noname.cpp:34
 msgid "Add to autostart"
 msgstr "Добавить в автозапуск"
 
-#: ../src\gui\noname.cpp:71
+#: ../src/gui/noname.cpp:80
 msgid "Advanced"
 msgstr ""
 
-#: ../src\gui\noname.cpp:79
-msgid "Allow remote keys"
+#: ../src/gui/noname.cpp:40
+msgid "Alternative mode layout change (emulate LAlt + Shift)"
 msgstr ""
 
-#: ../src\gui\noname.cpp:49
-msgid "Alternative mode layout change (emulate Windows hotkeys)"
-msgstr ""
-
-#: ../src\gui\noname.cpp:28
+#: ../src/gui/noname.cpp:28
 msgid "Base"
 msgstr "Основная информация"
 
-#: ../src\gui\noname.cpp:225
+#: ../src/gui/noname.cpp:246
 msgid "Build date:"
 msgstr "Дата билда:"
 
-#: ../src\gui\noname.cpp:338
-msgid "Cancel"
-msgstr "Отменить"
-
-#: ../src\gui\noname.cpp:162
+#: ../src/gui/noname.cpp:183
 msgid "CapsLock / ScrollLock"
 msgstr ""
 
-#: ../src\Settings.cpp:27
+#: ../src/Settings.cpp:34
+#, fuzzy
+#| msgid "Change selected text"
+msgid "Change layout for all recent text"
+msgstr "Изменить выделенный текст"
+
+#: ../src/Settings.cpp:27
 msgid "Change layout for last several words"
 msgstr ""
 
-#: ../src\Settings.cpp:19
+#: ../src/Settings.cpp:19
 #, fuzzy
 #| msgid "Change Layout"
 msgid "Change layout for last word"
 msgstr "Сменить раскладку"
 
-#: ../src\Settings.cpp:35
+#: ../src/Settings.cpp:42
 #, fuzzy
 #| msgid "Change selected text"
 msgid "Change layout for selected text"
 msgstr "Изменить выделенный текст"
 
-#: ../src\gui\noname.cpp:320
+#: ../src/gui/noname.cpp:342
 msgid "Clear"
 msgstr "Очистить"
 
-#: ../src\gui\noname.cpp:76
+#: ../src/gui/noname.cpp:85
 msgid "Clear text format on Ctrl-C"
 msgstr "Очищать форматирование текста при Ctrl-C"
 
-#: ../src\gui\noname.cpp:246
+#: ../src/gui/noname.cpp:270
 msgid "Close to tray"
 msgstr "Свернуть в трей"
 
-#: ../src\gui\noname.cpp:220 ../src\gui\noname.cpp:304
-msgid "Custom"
-msgstr ""
-
-#: ../src\Settings.cpp:42
+#: ../src/Settings.cpp:49
 #, fuzzy
 #| msgid "Cycle change"
 msgid "Cycle change layout"
 msgstr "Циклическая смена"
 
-#: ../src\Settings.cpp:65
-msgid "Cycle change layout (win hotkey)"
-msgstr ""
-
-#: ../src\gui\noname.cpp:179
+#: ../src/gui/noname.cpp:200
 msgid "Delete"
 msgstr "Удалить"
 
-#: ../src\gui\noname.cpp:200
+#: ../src/gui/main_gui.cpp:776
+#, fuzzy
+#| msgid "Enable"
+msgid "Disable"
+msgstr "Включить"
+
+#: ../src/gui/noname.cpp:221
 msgid ""
-"Disable Ctrl + LAlt as RAlt on extended layouts by switching to this layout"
+"Disable Ctrl + LAlt as RAlt on extended layouts by temporary switching to"
 msgstr ""
 
-#: ../src\gui\noname.cpp:73
+#: ../src/gui/noname.cpp:82
 msgid "Disable the accessibility shortcut keys (5 SHIFT and others)"
 msgstr ""
 "Отключить функции accessibility (залипание после нажатия 5 Shift подряд и "
 "другие)"
 
-#: ../src\gui\noname.cpp:326
+#: ../src/gui/noname.cpp:348
 msgid "Distinguish between left and right modifiers"
 msgstr "Различать левые и правые модификаторы"
 
-#: ../src\gui\noname.cpp:30
+#: ../src/gui/main_gui.cpp:776 ../src/gui/noname.cpp:30
 msgid "Enable"
 msgstr "Включить"
 
-#: ../src\gui\noname.cpp:82
+#: ../src/gui/noname.cpp:91
 msgid "Enable debug log"
 msgstr "Включить debug log"
 
-#: ../src\gui\decent_gui.cpp:170
-msgid "English"
-msgstr ""
+#: ../src/Settings.cpp:73
+#, fuzzy
+#| msgid "Enable"
+msgid "Enable/Disable"
+msgstr "Включить"
 
-#: ../src\gui\decent_gui.cpp:800
+#: ../src/gui/main_gui.cpp:114 ../src/gui/main_gui.cpp:795
 msgid "Error reading config"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:575
+#: ../src/gui/main_gui.cpp:555
 msgid "Error while UpdateAutostartExplain: "
 msgstr ""
 
-#: ../src\gui\decent_app.cpp:88
+#: ../src/gui/main_app.cpp:84
 msgid "Error while initing app: "
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:233
+#: ../src/gui/main_gui.cpp:262
 msgid "Error while initing main wnd: "
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:71 ../src\gui\noname.cpp:243
+#: ../src/gui/main_gui.cpp:778 ../src/gui/noname.cpp:267
 msgid "Exit"
 msgstr "Закрыть"
 
-#: ../src\gui\noname.cpp:55
+#: ../src/gui/noname.cpp:241
+msgid "Experimental"
+msgstr ""
+
+#: ../src/gui/noname.cpp:88
+msgid "Extended word separation"
+msgstr ""
+
+#: ../src/gui/noname.cpp:46
+msgid "Flags set"
+msgstr ""
+
+#: ../src/gui/noname.cpp:64
 msgid "GUI Language"
 msgstr ""
 
-#: ../src\Settings.cpp:51
+#: ../src/Settings.cpp:57
 msgid "Generate CapsLock"
 msgstr "Генерировать CapsLock"
 
-#: ../src\gui\noname.cpp:110 ../src\gui\noname.cpp:138
+#: ../src/gui/noname.cpp:131 ../src/gui/noname.cpp:159
 msgid "Hotkey"
 msgstr ""
 
-#: ../src\gui\noname.cpp:156
+#: ../src/gui/noname.cpp:177
 msgid "Hotkeys"
 msgstr ""
 
-#: ../src\gui\noname.cpp:192
+#: ../src/gui/noname.cpp:213
 msgid "Keys Remap"
 msgstr "Переназначение клавиш"
 
-#: ../src\gui\set_hk.cpp:153
-msgid "Modifier must have #up flag"
-msgstr ""
-
-#: ../src\gui\decent_gui.cpp:80
+#: ../src/gui/main_gui.cpp:18
 msgid "Need admin rights"
 msgstr "Программа должна быть запущена от администратора"
 
-#: ../src\gui\decent_gui.cpp:176
+#: ../src/gui/main_gui.cpp:214
 msgid "Need restart program"
 msgstr "Необходимо перезапустить программу"
 
-#: ../src\gui\noname.cpp:335
-msgid "OK"
-msgstr ""
-
-#: ../src\gui\noname.cpp:310
+#: ../src/gui/noname.cpp:330
 msgid "Press any key..."
 msgstr ""
 
-#: ../src\gui\noname.cpp:213
+#: ../src/gui/noname.cpp:218
 msgid ""
 "Prevent other programs to hook keyboard (may cause problems in games and "
 "other apps)"
@@ -222,75 +206,85 @@ msgstr ""
 "Запретить другим программам перехватывать клавиатуру (может вызывать "
 "проблемы)"
 
-#: ../src\gui\noname.cpp:164
+#: ../src/gui/noname.cpp:97
+msgid "Reload config"
+msgstr ""
+
+#: ../src/gui/noname.cpp:185
 msgid "Remap CapsLock as F24"
 msgstr "Переназначить CapsLock как F24"
 
-#: ../src\gui\noname.cpp:167
+#: ../src/gui/noname.cpp:188
 msgid "Remap ScrollLock as F23"
 msgstr "Переназначить ScrollLock как F23"
 
-#: ../src\gui\decent_gui.cpp:169
-msgid "Russian"
+#: ../src/gui/noname.cpp:231
+msgid "Remove all panels"
 msgstr ""
 
-#: ../src\Settings.cpp:58
+#: ../src/Settings.cpp:65
 msgid "Selected text to UPPER/lower case"
 msgstr ""
 
-#: ../src\gui\noname.cpp:116
+#: ../src/gui/noname.cpp:137
 #, fuzzy
 #| msgid "Selected text"
 msgid "Selected text to upper/lower"
 msgstr "Выделенный текст"
 
-#: ../src\gui\noname.h:130
+#: ../src/gui/noname.h:130
 msgid "Set hotkey"
 msgstr "Изменить горячую клавишу"
 
-#: ../src\gui\noname.cpp:92
+#: ../src/gui/noname.cpp:113
 msgid "Settings"
 msgstr "Настройки"
 
-#: ../src\gui\decent_gui.cpp:70
+#: ../src/gui/main_gui.cpp:777
 msgid "Show"
 msgstr "Показать"
 
-#: ../src\gui\noname.cpp:46
-msgid "Show flags in tray"
-msgstr "Показывать флаги в трее"
+#: ../src/Settings.cpp:81
+msgid "Show main window"
+msgstr ""
 
-#: ../src\gui\noname.h:96
+#: ../src/gui/noname.h:100
 msgid "SimpleSwitcher"
 msgstr ""
 
-#: ../src\gui\noname.cpp:329
+#: ../src/gui/noname.cpp:351
 msgid "Triggers on KEYUP"
 msgstr "Срабатывать на KEYUP"
 
-#: ../src\gui\noname.cpp:176
+#: ../src/gui/noname.cpp:354
+msgid "Triggers on double press"
+msgstr ""
+
+#: ../src/gui/noname.cpp:55 ../src/gui/noname.cpp:197
 msgid "Update"
 msgstr "Обновить"
 
-#: ../src\gui\noname.cpp:137
+#: ../src/gui/noname.cpp:158
 msgid "Use in cycle"
 msgstr ""
 
-#: ../src\gui\decent_gui.cpp:542
+#: ../src/gui/main_gui.cpp:521
 msgid "Will be applied after PC reboot"
 msgstr "Будет применено после перезагрузки ОС"
 
-#: ../src\gui\noname.cpp:43
+#: ../src/gui/noname.cpp:37
 msgid "Work in programs running by admin"
 msgstr "Работать в программах, запущенных от администратора"
 
-#: ../src\gui\decent_gui.cpp:712
+#: ../src/gui/main_gui.cpp:690
 msgid "delete old task"
 msgstr ""
 
-#: ../src\ConfigData.h:54
-msgid "unknown"
-msgstr ""
+#~ msgid "Cancel"
+#~ msgstr "Отменить"
+
+#~ msgid "Show flags in tray"
+#~ msgstr "Показывать флаги в трее"
 
 #~ msgid "About"
 #~ msgstr "О программе"

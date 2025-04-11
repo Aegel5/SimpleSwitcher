@@ -2,12 +2,18 @@
 git pull
 
 2. Actualize english strings (file mess.pot)
-gen.cmd
+collect_messages.cmd
 
 3. Translate mess.pot
-Install poedit https://poedit.net/ or any program you like.
-Generate *.po (text) file for needed language.
-The best solution is machine pre-translate and then fix errors.
+
+	[optional] Initialize *.po. Example 
+	init fr
+	
+	[optional] auto-transalte po
+	auto_translate.py fr
+	
+	Install poedit https://poedit.net/ or any program you like.
+	Generate *.po (text) file for needed language.
 
 4. Add language to program (if not already added)
 src\res\myres.rc - add link to mo file.
