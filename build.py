@@ -41,19 +41,32 @@ package_build_folder = pathlib.Path("package_build")
 result_dir_root = package_build_folder / "OUT"
 result_dir = result_dir_root / "SimpleSwitcher"
 
-def delfold(fold):
-    if os.path.exists(fold): 
-        shutil.rmtree(fold) 
-        
-delfold(result_dir_root)      
-result_dir.mkdir(parents=True, exist_ok=True) 
-
 def run(exe, arg):
     cmd = f'{exe} {arg}'
     print(cmd)
     
     #subprocess.run([exe, arg], capture_output=True, check=True, shell=True)
     os.system(cmd)
+
+def build_localization():
+    loc_folder = curpath / "SimpleSwitcher" / "localization"
+    for root, dirs, files in os.walk(loc_folder):
+        for file in files:
+            if file.endswith(".po"):      
+                path = os.path.join(root, file)
+                path_mo = path.replace(".po", ".mo")
+                run(loc_folder / "gnuwin32" / "msgfmt.exe", f"-o {path_mo} {path}")
+                print(f"build {path}")
+
+    
+build_localization()  
+
+def delfold(fold):
+    if os.path.exists(fold): 
+        shutil.rmtree(fold) 
+        
+delfold(result_dir_root)      
+result_dir.mkdir(parents=True, exist_ok=True) 
 
 def build(subfold, is64):
 
