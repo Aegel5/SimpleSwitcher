@@ -1,10 +1,10 @@
 ﻿1. Get last updates
 git pull
 
-2. Actualize english strings
+2. Actualize english strings (file mess.pot)
 gen.cmd
 
-3. Translate
+3. Translate mess.pot
 Install poedit https://poedit.net/ or any program you like.
 Generate *.po (text) and *.mo (binary) files for needed language.
 The best solution is machine pre-translate and then fix errors.
