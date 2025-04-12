@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version 4.2.1-0-g80c4cb6)
 // http://www.wxformbuilder.org/
 //
@@ -134,7 +134,6 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	// Rows
 	m_gridHotKeys->AutoSizeRows();
 	m_gridHotKeys->EnableDragRowSize( true );
-	m_gridHotKeys->SetRowLabelValue( 0, _("Selected text to upper/lower") );
 	m_gridHotKeys->SetRowLabelAlignment( wxALIGN_LEFT, wxALIGN_CENTER );
 
 	// Label Appearance

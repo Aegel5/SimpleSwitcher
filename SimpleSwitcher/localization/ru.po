@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-11 20:25+0300\n"
-"PO-Revision-Date: 2025-04-11 20:27+0300\n"
+"POT-Creation-Date: 2025-04-12 11:36+0300\n"
+"PO-Revision-Date: 2025-04-12 11:43+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -23,11 +23,11 @@ msgstr ""
 msgid " for: "
 msgstr " для: "
 
-#: ../src/gui/noname.cpp:260
+#: ../src/gui/noname.cpp:259
 msgid "About / Help"
 msgstr "О / помощь"
 
-#: ../src/gui/noname.cpp:228
+#: ../src/gui/noname.cpp:227
 msgid "Add float panel"
 msgstr ""
 
@@ -47,31 +47,31 @@ msgstr ""
 msgid "Base"
 msgstr "Основная информация"
 
-#: ../src/gui/noname.cpp:246
+#: ../src/gui/noname.cpp:245
 msgid "Build date:"
 msgstr "Дата билда:"
 
-#: ../src/gui/noname.cpp:183
+#: ../src/gui/noname.cpp:182
 msgid "CapsLock / ScrollLock"
 msgstr "Capslock / Scrolllock"
 
 #: ../src/consts.h:58
 msgid "Change layout for all recent text"
-msgstr ""
+msgstr "Исправить весь недавно введенный текст"
 
 #: ../src/consts.h:57
 msgid "Change layout for last several words"
-msgstr "Изменить макет на последние несколько слов"
+msgstr "Исправить несколько слов"
 
 #: ../src/consts.h:56
 msgid "Change layout for last word"
-msgstr ""
+msgstr "Исправить последнее слово"
 
 #: ../src/consts.h:59
 msgid "Change layout for selected text"
-msgstr ""
+msgstr "Исправить выделенный текст"
 
-#: ../src/gui/noname.cpp:342
+#: ../src/gui/noname.cpp:341
 msgid "Clear"
 msgstr "Очистить"
 
@@ -79,7 +79,7 @@ msgstr "Очистить"
 msgid "Clear text format on Ctrl-C"
 msgstr "Очищать форматирование текста при Ctrl-C"
 
-#: ../src/gui/noname.cpp:270
+#: ../src/gui/noname.cpp:269
 msgid "Close to tray"
 msgstr "Свернуть в трей"
 
@@ -87,7 +87,7 @@ msgstr "Свернуть в трей"
 msgid "Cycle change layout"
 msgstr "Циклическая смена"
 
-#: ../src/gui/noname.cpp:200
+#: ../src/gui/noname.cpp:199
 msgid "Delete"
 msgstr "Удалить"
 
@@ -95,7 +95,7 @@ msgstr "Удалить"
 msgid "Disable"
 msgstr ""
 
-#: ../src/gui/noname.cpp:221
+#: ../src/gui/noname.cpp:220
 msgid ""
 "Disable Ctrl + LAlt as RAlt on extended layouts by temporary switching to"
 msgstr ""
@@ -106,7 +106,7 @@ msgstr ""
 "Отключить функции accessibility (залипание после нажатия 5 Shift подряд и "
 "другие)"
 
-#: ../src/gui/noname.cpp:348
+#: ../src/gui/noname.cpp:347
 msgid "Distinguish between left and right modifiers"
 msgstr "Различать левые и правые модификаторы"
 
@@ -132,17 +132,17 @@ msgstr "Ошибка чтения конфигурации"
 
 #: ../src/gui/main_app.cpp:84
 msgid "Error while initing app: "
-msgstr "Ошибка при приложении с обращением: "
+msgstr "Ошибка инициализации программы: "
 
 #: ../src/gui/main_gui.cpp:262
 msgid "Error while initing main wnd: "
-msgstr "Ошибка при обращении к основному WND: "
+msgstr ""
 
-#: ../src/gui/main_gui.cpp:777 ../src/gui/noname.cpp:267
+#: ../src/gui/main_gui.cpp:777 ../src/gui/noname.cpp:266
 msgid "Exit"
 msgstr "Закрыть"
 
-#: ../src/gui/noname.cpp:241
+#: ../src/gui/noname.cpp:240
 msgid "Experimental"
 msgstr "Экспериментальный"
 
@@ -152,7 +152,7 @@ msgstr "Расширенное разделение слов"
 
 #: ../src/gui/noname.cpp:46
 msgid "Flags set"
-msgstr "Наборы флагов"
+msgstr "Набор флагов"
 
 #: ../src/gui/noname.cpp:64
 msgid "GUI Language"
@@ -162,15 +162,15 @@ msgstr ""
 msgid "Generate CapsLock"
 msgstr "Генерировать CapsLock"
 
-#: ../src/gui/noname.cpp:131 ../src/gui/noname.cpp:159
+#: ../src/gui/noname.cpp:131 ../src/gui/noname.cpp:158
 msgid "Hotkey"
 msgstr "Горячая клавиша"
 
-#: ../src/gui/noname.cpp:177
+#: ../src/gui/noname.cpp:176
 msgid "Hotkeys"
 msgstr "Горячие клавиши"
 
-#: ../src/gui/noname.cpp:213
+#: ../src/gui/noname.cpp:212
 msgid "Keys Remap"
 msgstr "Переназначение клавиш"
 
@@ -182,11 +182,11 @@ msgstr "Программа должна быть запущена от адми�
 msgid "Need restart program"
 msgstr "Необходимо перезапустить программу"
 
-#: ../src/gui/noname.cpp:330
+#: ../src/gui/noname.cpp:329
 msgid "Press any key..."
 msgstr "Нажмите любую клавишу ..."
 
-#: ../src/gui/noname.cpp:218
+#: ../src/gui/noname.cpp:217
 msgid ""
 "Prevent other programs to hook keyboard (may cause problems in games and "
 "other apps)"
@@ -198,24 +198,20 @@ msgstr ""
 msgid "Reload config"
 msgstr "Перезагрузить конфиг"
 
-#: ../src/gui/noname.cpp:185
+#: ../src/gui/noname.cpp:184
 msgid "Remap CapsLock as F24"
 msgstr "Переназначить CapsLock как F24"
 
-#: ../src/gui/noname.cpp:188
+#: ../src/gui/noname.cpp:187
 msgid "Remap ScrollLock as F23"
 msgstr "Переназначить ScrollLock как F23"
 
-#: ../src/gui/noname.cpp:231
+#: ../src/gui/noname.cpp:230
 msgid "Remove all panels"
 msgstr "Удалить все панели"
 
 #: ../src/consts.h:62
 msgid "Selected text to UPPER/lower case"
-msgstr ""
-
-#: ../src/gui/noname.cpp:137
-msgid "Selected text to upper/lower"
 msgstr ""
 
 #: ../src/gui/noname.h:130
@@ -238,19 +234,19 @@ msgstr "Показать главное окно"
 msgid "SimpleSwitcher"
 msgstr ""
 
-#: ../src/gui/noname.cpp:351
+#: ../src/gui/noname.cpp:350
 msgid "Triggers on KEYUP"
 msgstr "Срабатывать на KEYUP"
 
-#: ../src/gui/noname.cpp:354
+#: ../src/gui/noname.cpp:353
 msgid "Triggers on double press"
-msgstr ""
+msgstr "Двойное нажатие"
 
-#: ../src/gui/noname.cpp:55 ../src/gui/noname.cpp:197
+#: ../src/gui/noname.cpp:55 ../src/gui/noname.cpp:196
 msgid "Update"
 msgstr "Обновить"
 
-#: ../src/gui/noname.cpp:158
+#: ../src/gui/noname.cpp:157
 msgid "Use in cycle"
 msgstr "Использовать в цикле"
 
