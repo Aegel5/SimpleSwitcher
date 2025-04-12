@@ -1,4 +1,4 @@
-﻿
+
 struct CHotKeyList {
 
     std::vector<CHotKey> keys{ 1 };
@@ -86,12 +86,12 @@ struct LayoutInfoList {
     HKL NextEnabledLayout(HKL lay) const {
         bool found = false;
         for (int i = 0; i < 2; i++) {
-            for (const auto& it : EnabledLayouts()) {
-                if (it == lay)
+            for (const auto& it : info) {
+                if (it.layout == lay)
                     found = true;
                 else {
-                    if (found)
-                        return it;
+                    if (found && it.enabled)
+                        return it.layout;
                 }
             }
         }
