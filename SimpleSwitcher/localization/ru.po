@@ -45,7 +45,7 @@ msgstr ""
 
 #: ../src/gui/noname.cpp:28
 msgid "Base"
-msgstr "Основная информация"
+msgstr "Базовые"
 
 #: ../src/gui/noname.cpp:245
 msgid "Build date:"
@@ -144,7 +144,7 @@ msgstr "Закрыть"
 
 #: ../src/gui/noname.cpp:240
 msgid "Experimental"
-msgstr "Экспериментальный"
+msgstr ""
 
 #: ../src/gui/noname.cpp:88
 msgid "Extended word separation"
@@ -172,7 +172,7 @@ msgstr "Горячие клавиши"
 
 #: ../src/gui/noname.cpp:212
 msgid "Keys Remap"
-msgstr "Переназначение клавиш"
+msgstr ""
 
 #: ../src/gui/main_gui.cpp:18
 msgid "Need admin rights"

@@ -60,16 +60,16 @@
       <property name="window_name"></property>
       <property name="window_style">wxTAB_TRAVERSAL</property>
       <property name="xrc_skip_sizer">1</property>
-      <object class="wxBoxSizer" expanded="true">
+      <object class="wxBoxSizer" expanded="false">
         <property name="minimum_size"></property>
         <property name="name">bSizer1</property>
         <property name="orient">wxVERTICAL</property>
         <property name="permission">none</property>
-        <object class="sizeritem" expanded="true">
+        <object class="sizeritem" expanded="false">
           <property name="border">0</property>
           <property name="flag">wxEXPAND | wxALL</property>
           <property name="proportion">1</property>
-          <object class="wxNotebook" expanded="true">
+          <object class="wxNotebook" expanded="false">
             <property name="BottomDockable">1</property>
             <property name="LeftDockable">1</property>
             <property name="RightDockable">1</property>
@@ -123,11 +123,11 @@
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
             <property name="window_style"></property>
-            <object class="notebookpage" expanded="true">
+            <object class="notebookpage" expanded="false">
               <property name="bitmap"></property>
               <property name="label">Settings</property>
               <property name="select">0</property>
-              <object class="wxPanel" expanded="true">
+              <object class="wxPanel" expanded="false">
                 <property name="BottomDockable">1</property>
                 <property name="LeftDockable">1</property>
                 <property name="RightDockable">1</property>
@@ -179,16 +179,16 @@
                 <property name="window_extra_style"></property>
                 <property name="window_name"></property>
                 <property name="window_style">wxTAB_TRAVERSAL</property>
-                <object class="wxBoxSizer" expanded="true">
+                <object class="wxBoxSizer" expanded="false">
                   <property name="minimum_size"></property>
                   <property name="name">bSizer3</property>
                   <property name="orient">wxVERTICAL</property>
                   <property name="permission">none</property>
-                  <object class="sizeritem" expanded="true">
+                  <object class="sizeritem" expanded="false">
                     <property name="border">5</property>
                     <property name="flag">wxALL|wxEXPAND</property>
                     <property name="proportion">0</property>
-                    <object class="wxStaticBoxSizer" expanded="true">
+                    <object class="wxStaticBoxSizer" expanded="false">
                       <property name="id">wxID_ANY</property>
                       <property name="label">Base</property>
                       <property name="minimum_size"></property>
@@ -1238,11 +1238,11 @@
                 </object>
               </object>
             </object>
-            <object class="notebookpage" expanded="true">
+            <object class="notebookpage" expanded="false">
               <property name="bitmap"></property>
               <property name="label">Hotkeys</property>
               <property name="select">1</property>
-              <object class="wxPanel" expanded="true">
+              <object class="wxPanel" expanded="false">
                 <property name="BottomDockable">1</property>
                 <property name="LeftDockable">1</property>
                 <property name="RightDockable">1</property>
@@ -1418,7 +1418,7 @@
                       <property name="close_button">1</property>
                       <property name="col_label_horiz_alignment">wxALIGN_CENTER</property>
                       <property name="col_label_size"></property>
-                      <property name="col_label_values">&quot;Use in cycle&quot; &quot;Hotkey&quot;</property>
+                      <property name="col_label_values">&quot;Enabled&quot; &quot;Hotkey&quot;</property>
                       <property name="col_label_vert_alignment">wxALIGN_CENTER</property>
                       <property name="cols">2</property>
                       <property name="column_sizes"></property>
@@ -1919,11 +1919,11 @@
                 </object>
               </object>
             </object>
-            <object class="notebookpage" expanded="true">
+            <object class="notebookpage" expanded="false">
               <property name="bitmap"></property>
               <property name="label">Experimental</property>
               <property name="select">0</property>
-              <object class="wxPanel" expanded="true">
+              <object class="wxPanel" expanded="false">
                 <property name="BottomDockable">1</property>
                 <property name="LeftDockable">1</property>
                 <property name="RightDockable">1</property>
@@ -2110,20 +2110,20 @@
                       <property name="window_style"></property>
                     </object>
                   </object>
-                  <object class="sizeritem" expanded="true">
+                  <object class="sizeritem" expanded="false">
                     <property name="border">5</property>
                     <property name="flag">wxEXPAND</property>
                     <property name="proportion">0</property>
-                    <object class="wxBoxSizer" expanded="true">
+                    <object class="wxBoxSizer" expanded="false">
                       <property name="minimum_size"></property>
                       <property name="name">bSizer16</property>
                       <property name="orient">wxHORIZONTAL</property>
                       <property name="permission">none</property>
-                      <object class="sizeritem" expanded="true">
+                      <object class="sizeritem" expanded="false">
                         <property name="border">5</property>
                         <property name="flag">wxALL</property>
                         <property name="proportion">0</property>
-                        <object class="wxButton" expanded="true">
+                        <object class="wxButton" expanded="false">
                           <property name="BottomDockable">1</property>
                           <property name="LeftDockable">1</property>
                           <property name="RightDockable">1</property>
@@ -2193,11 +2193,11 @@
                           <property name="window_style"></property>
                         </object>
                       </object>
-                      <object class="sizeritem" expanded="true">
+                      <object class="sizeritem" expanded="false">
                         <property name="border">5</property>
                         <property name="flag">wxALL</property>
                         <property name="proportion">0</property>
-                        <object class="wxButton" expanded="true">
+                        <object class="wxButton" expanded="false">
                           <property name="BottomDockable">1</property>
                           <property name="LeftDockable">1</property>
                           <property name="RightDockable">1</property>
@@ -2459,11 +2459,11 @@
                       <property name="window_style"></property>
                     </object>
                   </object>
-                  <object class="sizeritem" expanded="true">
+                  <object class="sizeritem" expanded="false">
                     <property name="border">5</property>
                     <property name="flag">wxALL</property>
                     <property name="proportion">0</property>
-                    <object class="wxHyperlinkCtrl" expanded="true">
+                    <object class="wxHyperlinkCtrl" expanded="false">
                       <property name="BottomDockable">1</property>
                       <property name="LeftDockable">1</property>
                       <property name="RightDockable">1</property>
@@ -2528,11 +2528,11 @@
             </object>
           </object>
         </object>
-        <object class="sizeritem" expanded="true">
+        <object class="sizeritem" expanded="false">
           <property name="border">5</property>
           <property name="flag">wxALIGN_RIGHT</property>
           <property name="proportion">0</property>
-          <object class="wxBoxSizer" expanded="true">
+          <object class="wxBoxSizer" expanded="false">
             <property name="minimum_size"></property>
             <property name="name">bSizer15</property>
             <property name="orient">wxHORIZONTAL</property>

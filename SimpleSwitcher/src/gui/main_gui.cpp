@@ -1,4 +1,4 @@
-﻿#include "sw-base.h"
+#include "sw-base.h"
 
 #include "noname.h" 
 #include "SwAutostart.h"
@@ -88,10 +88,11 @@ public:
             );
 
             auto font = m_gridHotKeys->GetDefaultCellFont();
-            font.SetPointSize(font.GetPointSize() + 1);
-            m_gridHotKeys->SetDefaultCellFont(font);
+			auto font2 = font;
+            font2.SetPointSize(font2.GetPointSize() + 1);
+            m_gridHotKeys->SetDefaultCellFont(font2);
             m_gridHotKeys->SetLabelFont(font);
-            m_gridLayouts->SetDefaultCellFont(font);
+            m_gridLayouts->SetDefaultCellFont(font2);
             m_gridLayouts->SetLabelFont(font);
             //m_gridHotKeys->SetLabelBackgroundColour(m_gridHotKeys->GetDefaultCellBackgroundColour());
 
@@ -182,7 +183,7 @@ public:
 
             BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get_unsafe()->AlternativeLayoutChange; }, [this](bool val) {
                 SaveConfigWith([val](auto cfg) {cfg->AlternativeLayoutChange = val; });
-                FillLayoutsInfo(false);
+                FillLayoutsInfo();
                 });
 
             BindCheckbox(m_checkBoxClearForm, []() {return conf_get_unsafe()->fClipboardClearFormat; }, [](bool val) {

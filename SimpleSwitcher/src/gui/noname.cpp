@@ -154,7 +154,7 @@ MyFrame4::MyFrame4( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	// Columns
 	m_gridLayouts->EnableDragColMove( false );
 	m_gridLayouts->EnableDragColSize( true );
-	m_gridLayouts->SetColLabelValue( 0, _("Use in cycle") );
+	m_gridLayouts->SetColLabelValue( 0, _("Enabled") );
 	m_gridLayouts->SetColLabelValue( 1, _("Hotkey") );
 	m_gridLayouts->SetColLabelAlignment( wxALIGN_CENTER, wxALIGN_CENTER );
 

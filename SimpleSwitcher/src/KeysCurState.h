@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 // Класс для отслеживания текущего состояния нажатых клавиш
 
@@ -94,7 +94,7 @@ public:
 
 		// update stores
 		if (curKeyState == KEY_STATE_DOWN) {
-			one_value.Add3(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
+			one_value.Add(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
 			all_keys[vkCode] = GetTickCount64();
 		}
 		else {

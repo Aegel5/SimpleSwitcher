@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "noname.h"
 #include "wxUtils.h"
@@ -150,7 +150,7 @@ private:
             auto cur = (TKeyCode)lParam;
             KeyState keyState = GetKeyState(wParam);
             if (keyState == KEY_STATE_DOWN) {
-                state.Add3(cur, CHotKey::ADDKEY_CHECK_EXIST);
+                state.Add(cur, CHotKey::ADDKEY_CHECK_EXIST);
                 if (!state.Compare(key)) {
                     last_type_key = key = state;
                     updateField();

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "VkNames.h"
 
@@ -6,9 +6,9 @@ class CHotKey {
 
 public:
 	CHotKey() {}
-	explicit CHotKey(TKeyCode key) {Add3(key);}
-	CHotKey(TKeyCode key1, TKeyCode key2) {	Add3(key1).Add3(key2);}
-	CHotKey(TKeyCode key1, TKeyCode key2, TKeyCode key3) { Add3(key1).Add3(key2).Add3(key3);}
+	explicit CHotKey(TKeyCode key) {Add(key);}
+	CHotKey(TKeyCode key1, TKeyCode key2) {	Add(key1).Add(key2);}
+	CHotKey(TKeyCode key1, TKeyCode key2, TKeyCode key3) { Add(key1).Add(key2).Add(key3);}
 	enum {
 		ADDKEY_NORMAL = 0,
 		ADDKEY_CHECK_EXIST = 0b1,
@@ -24,7 +24,7 @@ public:
 		keys[0] = key;
 		return *this;
 	}
-	CHotKey& Add3(TKeyCode key, int flags = ADDKEY_NORMAL) {
+	CHotKey& Add(TKeyCode key, int flags = ADDKEY_NORMAL) {
 		if (TestFlag(flags, ADDKEY_CHECK_EXIST)) {
 			for (TKeyCode k : *this) {
 				if (CompareKeys(k, key, true)) {
@@ -258,7 +258,7 @@ private:
 	}
 
 
-	bool CompareKeys(TKeyCode k1, TKeyCode k2, bool strick_modifier) const {
+	static bool CompareKeys(TKeyCode k1, TKeyCode k2, bool strick_modifier) {
 
 		if (strick_modifier) {
 			return k1 == k2;
