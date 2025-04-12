@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 
 class Hooker {
@@ -71,7 +71,7 @@ public:
 
 		LOG_ANY(L"HookGlobal...");
 
-		hookerKeyb = {}; // очистка.
+		hookerKeyb = {}; // РѕС‡РёСЃС‚РєР°.
 
 		hHookKeyGlobal = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, 0, 0);
 		IFW_RET(hHookKeyGlobal.IsValid());

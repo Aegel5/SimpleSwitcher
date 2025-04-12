@@ -1,4 +1,4 @@
-
+п»ї
 LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 	_In_  int nCode,
 	_In_  WPARAM wParam,
@@ -57,13 +57,13 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		}
 
 		CHotKey possible;
-		std::swap(possible, possible_hk_up); // сразу очищаем
+		std::swap(possible, possible_hk_up); // СЃСЂР°Р·Сѓ РѕС‡РёС‰Р°РµРј
 
 		msg_type.vkCode = vkCode;
 		msg_type.scan_ext = { (TScanCode)scan_code, isExtended };
 		msg_type.keyState = curKeyState;
 
-		curKeys.Update(vkCode, curKeyState); // сразу обновляем
+		curKeys.Update(vkCode, curKeyState); // СЃСЂР°Р·Сѓ РѕР±РЅРѕРІР»СЏРµРј
 		const auto& curk = curKeys.GetOneValueHotKey();
 
 		int check_disabled_status = -1;
@@ -81,7 +81,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			if (curk.IsEmpty())
 				return 0;
 			int need_our_action = 0;
-			for (const auto& [hk, key] : cfg->All_hot_keys()) { // всегда полный обход всего цикла
+			for (const auto& [hk, key] : cfg->All_hot_keys()) { // РІСЃРµРіРґР° РїРѕР»РЅС‹Р№ РѕР±С…РѕРґ РІСЃРµРіРѕ С†РёРєР»Р°
 				if (!check_is_our_key(key, curk)) continue;
 				double_exists |= key.IsDouble();
 				if (!key.GetKeyup()) {
@@ -93,13 +93,13 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 					if (prior > need_our_action) {
 						need_our_action = prior;
 
-						// очищаем, возможное нахождение up
+						// РѕС‡РёС‰Р°РµРј, РІРѕР·РјРѕР¶РЅРѕРµ РЅР°С…РѕР¶РґРµРЅРёРµ up
 						{
 							possible_hk_up.Clear(); 
 							msg_type.hk = hk_NULL;
 						}
 
-						if (!curKeys.IsHold()) { // но даже если и холд, клавиши нужно запретить.
+						if (!curKeys.IsHold()) { // РЅРѕ РґР°Р¶Рµ РµСЃР»Рё Рё С…РѕР»Рґ, РєР»Р°РІРёС€Рё РЅСѓР¶РЅРѕ Р·Р°РїСЂРµС‚РёС‚СЊ.
 							msg_hotkey.hotkey = key;
 							msg_hotkey.hk = hk;
 						}
@@ -108,12 +108,12 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 				if (key.GetKeyup()) {
 					possible_hk_up = curk; 
-					msg_type.hk = hk; // уведомим, что это наша клавиша.
+					msg_type.hk = hk; // СѓРІРµРґРѕРјРёРј, С‡С‚Рѕ СЌС‚Рѕ РЅР°С€Р° РєР»Р°РІРёС€Р°.
 				}
 			}
 			if (need_our_action) {
-				// у нас есть такой хот-кей, запрещаем это событие для программы.
-				disable_up = curk.ValueKey(); // up тоже будет в будущем запрещать.
+				// Сѓ РЅР°СЃ РµСЃС‚СЊ С‚Р°РєРѕР№ С…РѕС‚-РєРµР№, Р·Р°РїСЂРµС‰Р°РµРј СЌС‚Рѕ СЃРѕР±С‹С‚РёРµ РґР»СЏ РїСЂРѕРіСЂР°РјРјС‹.
+				disable_up = curk.ValueKey(); // up С‚РѕР¶Рµ Р±СѓРґРµС‚ РІ Р±СѓРґСѓС‰РµРј Р·Р°РїСЂРµС‰Р°С‚СЊ.
 				LOG_ANY(L"Key {} was disabled(down)", CHotKey::ToString(disable_up));
 				return 1;
 			}
@@ -127,12 +127,12 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 					&& cfg->fixRAlt_lay_ != 0
 					) {
 					LOG_ANY(L"fix ctrl+alt");
-					if (!curKeys.IsHold()) { // пока просто запрещаем
+					if (!curKeys.IsHold()) { // РїРѕРєР° РїСЂРѕСЃС‚Рѕ Р·Р°РїСЂРµС‰Р°РµРј
 						Worker()->PostMsg(Message_Hotkey{ .fix_ralt = true, .hotkey = curk });
 					}
 					LOG_ANY(L"Key {} was disabled(fix)", CHotKey::ToString(vkCode));
 					disable_up = vkCode;
-					return 1; // пока запрещаем, потом заново отошлем...
+					return 1; // РїРѕРєР° Р·Р°РїСЂРµС‰Р°РµРј, РїРѕС‚РѕРј Р·Р°РЅРѕРІРѕ РѕС‚РѕС€Р»РµРј...
 				}
 			}
 			return 0;
@@ -145,8 +145,8 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				return 1;
 			}
 			else {
-				// ищем наш хот-кей.
-				// даже если нашли, up никогда не запрещаем.
+				// РёС‰РµРј РЅР°С€ С…РѕС‚-РєРµР№.
+				// РґР°Р¶Рµ РµСЃР»Рё РЅР°С€Р»Рё, up РЅРёРєРѕРіРґР° РЅРµ Р·Р°РїСЂРµС‰Р°РµРј.
 				if (!possible.IsEmpty()) {
 					for (const auto& [hk, key] : cfg->All_hot_keys()) {
 						if (!check_is_our_key(key, possible)) continue;
@@ -175,7 +175,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		if (msg_hotkey.hk != hk_NULL) {
 			int delay = 0;
 			if (!msg_hotkey.hotkey.IsDouble() && double_exists) {
-				delay = cfg->quick_press_ms; // придется подождать.
+				delay = cfg->quick_press_ms; // РїСЂРёРґРµС‚СЃСЏ РїРѕРґРѕР¶РґР°С‚СЊ.
 				msg_hotkey.delayed_from = GetTickCount64();
 			}
 
@@ -183,7 +183,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			Worker()->PostMsg(std::move(msg_hotkey), delay);
 		}
 		if (res)
-			return 1; // запрет
+			return 1; // Р·Р°РїСЂРµС‚
 	}
 
 

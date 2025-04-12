@@ -1,4 +1,4 @@
-
+п»ї
 struct CHotKeyList {
 
     std::vector<CHotKey> keys{ 1 };
@@ -95,7 +95,7 @@ struct LayoutInfoList {
                 }
             }
         }
-        // не нашли?
+        // РЅРµ РЅР°С€Р»Рё?
         return 0;
     }
 

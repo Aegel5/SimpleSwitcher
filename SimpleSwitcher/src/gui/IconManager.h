@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 class IconManager {
 
@@ -71,7 +71,7 @@ private:
                   bitmaps.push_back(wxBitmap(name32, wxBITMAP_TYPE_PNG_RESOURCE));
               }
           } else {
-              // попытаемся найти флаги из папки
+              // РїРѕРїС‹С‚Р°РµРјСЃСЏ РЅР°Р№С‚Рё С„Р»Р°РіРё РёР· РїР°РїРєРё
               namespace fs = std::filesystem;
               std::wstring dir = flagFold + L"\\" + folder_name;
               for (const auto& entry : fs::directory_iterator(dir)) {
@@ -92,7 +92,7 @@ private:
                           if (ext == L".svg") {
                               bundleResult = wxBitmapBundle::FromSVGFile(p.wstring(), { 32,32 });
                               if (bundleResult.IsOk()) { 
-                                  if (isGray) { // для gray пока сделаем хак, но по хорошему нужен отдельный кеш на gray, но для этого нужно знать destination size а для этого нужно патчить widgets
+                                  if (isGray) { // РґР»СЏ gray РїРѕРєР° СЃРґРµР»Р°РµРј С…Р°Рє, РЅРѕ РїРѕ С…РѕСЂРѕС€РµРјСѓ РЅСѓР¶РµРЅ РѕС‚РґРµР»СЊРЅС‹Р№ РєРµС€ РЅР° gray, РЅРѕ РґР»СЏ СЌС‚РѕРіРѕ РЅСѓР¶РЅРѕ Р·РЅР°С‚СЊ destination size Р° РґР»СЏ СЌС‚РѕРіРѕ РЅСѓР¶РЅРѕ РїР°С‚С‡РёС‚СЊ widgets
                                       bitmaps.clear();
                                       bitmaps.push_back(bundleResult.GetBitmap({ 16,16 }));
                                       bitmaps.push_back(bundleResult.GetBitmap({ 32,32 }));
@@ -100,7 +100,7 @@ private:
                                   }
                               }
                           }
-                          else if (type != wxBITMAP_TYPE_INVALID) { // не понятно что пропускаем.
+                          else if (type != wxBITMAP_TYPE_INVALID) { // РЅРµ РїРѕРЅСЏС‚РЅРѕ С‡С‚Рѕ РїСЂРѕРїСѓСЃРєР°РµРј.
                               wxBitmap bitmap(p.wstring(), type);
                               if (bitmap.IsOk()) {
                                   bitmaps.push_back(bitmap);
@@ -179,7 +179,7 @@ public:
     }
     const std::vector<std::wstring>& ScanFlags() {
         externFlags.clear();
-        flags_map.clear(); // почистим кеш, чтобы снова попытаться найти флаг в папке.
+        flags_map.clear(); // РїРѕС‡РёСЃС‚РёРј РєРµС€, С‡С‚РѕР±С‹ СЃРЅРѕРІР° РїРѕРїС‹С‚Р°С‚СЊСЃСЏ РЅР°Р№С‚Рё С„Р»Р°Рі РІ РїР°РїРєРµ.
         namespace fs = std::filesystem;
         if (!fs::is_directory(flagFold)) 
             return externFlags;

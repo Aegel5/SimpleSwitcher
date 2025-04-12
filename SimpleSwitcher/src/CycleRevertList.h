@@ -1,12 +1,12 @@
-#pragma once
+п»ї#pragma once
 
-// Класс текущих набранных символов, разбивает буквы на слова.
+// РљР»Р°СЃСЃ С‚РµРєСѓС‰РёС… РЅР°Р±СЂР°РЅРЅС‹С… СЃРёРјРІРѕР»РѕРІ, СЂР°Р·Р±РёРІР°РµС‚ Р±СѓРєРІС‹ РЅР° СЃР»РѕРІР°.
 
 class CycleRevertList {
 
 	static const int c_maxWordRevert = 7;
 	static const int c_nMaxLettersSave = 90;
-	std::deque<TKeyHookInfo> m_symbolList; // просто список всего, что сейчас набрано.
+	std::deque<TKeyHookInfo> m_symbolList; // РїСЂРѕСЃС‚Рѕ СЃРїРёСЃРѕРє РІСЃРµРіРѕ, С‡С‚Рѕ СЃРµР№С‡Р°СЃ РЅР°Р±СЂР°РЅРѕ.
 	int iCurrentWord = -1;
 	TKeyBaseInfo last_info;
 
@@ -31,7 +31,7 @@ private: void ClearGenerated() {
 
 private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 
-	// сначала объеденим все одинаковые сохраняя индексы старта слов.
+	// СЃРЅР°С‡Р°Р»Р° РѕР±СЉРµРґРµРЅРёРј РІСЃРµ РѕРґРёРЅР°РєРѕРІС‹Рµ СЃРѕС…СЂР°РЅСЏСЏ РёРЅРґРµРєСЃС‹ СЃС‚Р°СЂС‚Р° СЃР»РѕРІ.
 
 	struct ZippData { int i; TKeyType type; bool is_last_revert = false; };
 	std::vector<ZippData> zipped;
@@ -50,7 +50,7 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 
 			auto check = [&]() -> bool {
 
-				if (cur.as_previous) { // одинаковый клавиши - всегда обрабатываются одинаково.
+				if (cur.as_previous) { // РѕРґРёРЅР°РєРѕРІС‹Р№ РєР»Р°РІРёС€Рё - РІСЃРµРіРґР° РѕР±СЂР°Р±Р°С‚С‹РІР°СЋС‚СЃСЏ РѕРґРёРЅР°РєРѕРІРѕ.
 					return false;
 				}
 
@@ -64,9 +64,9 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 		}
 	}
 
-	// по сути, все уже готово, осталось лишь решить вопрос possible letter / letter.
+	// РїРѕ СЃСѓС‚Рё, РІСЃРµ СѓР¶Рµ РіРѕС‚РѕРІРѕ, РѕСЃС‚Р°Р»РѕСЃСЊ Р»РёС€СЊ СЂРµС€РёС‚СЊ РІРѕРїСЂРѕСЃ possible letter / letter.
 
-	std::vector<int> words; // индексы старта слов.
+	std::vector<int> words; // РёРЅРґРµРєСЃС‹ СЃС‚Р°СЂС‚Р° СЃР»РѕРІ.
 
 	GETCONF;
 	const auto can_separate_posible =
@@ -78,7 +78,7 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 		i++;
 		auto check = [&]() -> bool {
 			if (it.type == KEYTYPE_LETTER_OR_SPACE) {
-				// не разделяем слово без надобности.
+				// РЅРµ СЂР°Р·РґРµР»СЏРµРј СЃР»РѕРІРѕ Р±РµР· РЅР°РґРѕР±РЅРѕСЃС‚Рё.
 				it.type = (i > 0 && i < std::ssize(zipped) - 1 && Utils::is_all(KEYTYPE_LETTER, zipped[i - 1].type, zipped[i + 1].type))
 					? KEYTYPE_LETTER
 					: KEYTYPE_SPACE;
@@ -87,16 +87,16 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 			if (it.type == KEYTYPE_LETTER_OR_CUSTOM) {
 				bool separate = can_separate_posible;
 				if (separate) {
-					// выделаем только если слева или справа space
+					// РІС‹РґРµР»Р°РµРј С‚РѕР»СЊРєРѕ РµСЃР»Рё СЃР»РµРІР° РёР»Рё СЃРїСЂР°РІР° space
 					separate = i == 0 || i + 1 >= zipped.size() 
 						|| Utils::is_in(KEYTYPE_SPACE, zipped[i - 1].type, zipped[i + 1].type)
 						|| Utils::is_in(KEYTYPE_CUSTOM, zipped[i - 1].type, zipped[i + 1].type)
 						;
 				}
 
-				it.type = separate ? KEYTYPE_CUSTOM : KEYTYPE_LETTER; // теперь можем определить тип
+				it.type = separate ? KEYTYPE_CUSTOM : KEYTYPE_LETTER; // С‚РµРїРµСЂСЊ РјРѕР¶РµРј РѕРїСЂРµРґРµР»РёС‚СЊ С‚РёРї
 			}
-			if (it.is_last_revert) { // форсируем разделение.
+			if (it.is_last_revert) { // С„РѕСЂСЃРёСЂСѓРµРј СЂР°Р·РґРµР»РµРЅРёРµ.
 				return true;
 			}
 			if (it.type == KEYTYPE_LETTER) {
@@ -136,7 +136,7 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 
 	auto words = GenerateWords(typeRevert);
 
-	if (words.empty()) { // например одни пробелы были введены.
+	if (words.empty()) { // РЅР°РїСЂРёРјРµСЂ РѕРґРЅРё РїСЂРѕР±РµР»С‹ Р±С‹Р»Рё РІРІРµРґРµРЅС‹.
 		return keyList;
 	}
 
@@ -148,7 +148,7 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 
 	keyList.needLanguageChange = iCurrentWord == -1 || iCurrentWord == words.size() - 1;
 
-	if (typeRevert == hk_RevertAllRecentText) { 		// простой алгоритм от позиции предыдущего реверта
+	if (typeRevert == hk_RevertAllRecentText) { 		// РїСЂРѕСЃС‚РѕР№ Р°Р»РіРѕСЂРёС‚Рј РѕС‚ РїРѕР·РёС†РёРё РїСЂРµРґС‹РґСѓС‰РµРіРѕ СЂРµРІРµСЂС‚Р°
 		iStartFrom = ssize(m_symbolList) - 1;
 		for (int i = ssize(m_symbolList) - 2; i >= 0; --i) { 
 			if (m_symbolList[i].is_last_revert) 
@@ -166,7 +166,7 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 		}
 		else {
 			if (iCurrentWord == words.size()-1) {
-				// сделаем последний revert чтобы вернуть исходное состояние
+				// СЃРґРµР»Р°РµРј РїРѕСЃР»РµРґРЅРёР№ revert С‡С‚РѕР±С‹ РІРµСЂРЅСѓС‚СЊ РёСЃС…РѕРґРЅРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ
 				iStartFrom = words[iCurrentWord];
 				iCurrentWord = -1;
 			}

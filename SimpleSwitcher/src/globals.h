@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // one-time write...
 inline HWND g_guiHandle = nullptr;

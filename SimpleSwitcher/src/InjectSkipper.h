@@ -1,6 +1,6 @@
-
+п»ї
 #pragma once
-// многопоточный класс для реализации настройки Allow Remote Keys
+// РјРЅРѕРіРѕРїРѕС‚РѕС‡РЅС‹Р№ РєР»Р°СЃСЃ РґР»СЏ СЂРµР°Р»РёР·Р°С†РёРё РЅР°СЃС‚СЂРѕР№РєРё Allow Remote Keys
 
 class InjectSkipper {
  //   struct SkipInjectEntry {
@@ -52,13 +52,13 @@ public:
 		//	std::unique_lock<std::mutex> _lock(m_mtx);
 		//	while (1) {
 		//		if (skipdata.empty()) {
-		//			break; // нечего пропускать.
+		//			break; // РЅРµС‡РµРіРѕ РїСЂРѕРїСѓСЃРєР°С‚СЊ.
 		//		}
 		//		if (GetTickCount64() > skipdata.front().actualUNTIL || skipdata.front().skipCnt <= 0) {
-		//			skipdata.pop_front(); // истек срок годности данный ноды...
+		//			skipdata.pop_front(); // РёСЃС‚РµРє СЃСЂРѕРє РіРѕРґРЅРѕСЃС‚Рё РґР°РЅРЅС‹Р№ РЅРѕРґС‹...
 		//			continue;
 		//		}
-		//		// все хорошо, нода актуальна, пропускаем inject
+		//		// РІСЃРµ С…РѕСЂРѕС€Рѕ, РЅРѕРґР° Р°РєС‚СѓР°Р»СЊРЅР°, РїСЂРѕРїСѓСЃРєР°РµРј inject
 		//		skipdata.front().skipCnt--;
 		//		LOG_INFO_3(L"skip enjected by evristics");
 		//		return false;

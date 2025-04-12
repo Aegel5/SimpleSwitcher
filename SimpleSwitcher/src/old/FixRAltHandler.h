@@ -1,6 +1,6 @@
-//#pragma once
+п»ї//#pragma once
 //
-//// Пока без поддержки Alternative Mode
+//// РџРѕРєР° Р±РµР· РїРѕРґРґРµСЂР¶РєРё Alternative Mode
 //
 //class FixRAltHandler {
 //

@@ -1,6 +1,6 @@
-#pragma once
+п»ї#pragma once
 
-// Класс для отслеживания текущего состояния нажатых клавиш
+// РљР»Р°СЃСЃ РґР»СЏ РѕС‚СЃР»РµР¶РёРІР°РЅРёСЏ С‚РµРєСѓС‰РµРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ РЅР°Р¶Р°С‚С‹С… РєР»Р°РІРёС€
 
 class CurStateWrapper {
 	std::map<TKeyCode, ULONGLONG> all_keys;
@@ -32,7 +32,7 @@ public:
 
 		InputSender inputSender;
 		if (IsDownNow(VK_LMENU) || IsDownNow(VK_LWIN)) {
-			// если нажата только клавиша alt - то ее простое отжатие даст хрень - нужно отжать ее еще раз
+			// РµСЃР»Рё РЅР°Р¶Р°С‚Р° С‚РѕР»СЊРєРѕ РєР»Р°РІРёС€Р° alt - С‚Рѕ РµРµ РїСЂРѕСЃС‚РѕРµ РѕС‚Р¶Р°С‚РёРµ РґР°СЃС‚ С…СЂРµРЅСЊ - РЅСѓР¶РЅРѕ РѕС‚Р¶Р°С‚СЊ РµРµ РµС‰Рµ СЂР°Р·
 			//inputSender.Add(VK_LMENU, KEY_STATE_DOWN);
 			//inputSender.Add(VK_LMENU, KEY_STATE_UP); 	
 			inputSender.Add(VK_CAPITAL, KEY_STATE_UP);
@@ -43,7 +43,7 @@ public:
 
 		inputSender.Send();
 
-		// считаем, что для системы теперь все отжато, поэтому просто чистим.
+		// СЃС‡РёС‚Р°РµРј, С‡С‚Рѕ РґР»СЏ СЃРёСЃС‚РµРјС‹ С‚РµРїРµСЂСЊ РІСЃРµ РѕС‚Р¶Р°С‚Рѕ, РїРѕСЌС‚РѕРјСѓ РїСЂРѕСЃС‚Рѕ С‡РёСЃС‚РёРј.
 		Clear();
 
 	}
@@ -72,17 +72,17 @@ public:
 			{
 				bool ok_quick = false;
 				if (possible_vk_quick == vkCode) {
-					// снова нажали ту же клавишу, теперь проверим время.
+					// СЃРЅРѕРІР° РЅР°Р¶Р°Р»Рё С‚Сѓ Р¶Рµ РєР»Р°РІРёС€Сѓ, С‚РµРїРµСЂСЊ РїСЂРѕРІРµСЂРёРј РІСЂРµРјСЏ.
 					if (GetTickCount64() - last_down_time <= conf_get_unsafe()->quick_press_ms) {
-						// засчитываем за срабатывание
+						// Р·Р°СЃС‡РёС‚С‹РІР°РµРј Р·Р° СЃСЂР°Р±Р°С‚С‹РІР°РЅРёРµ
 						ok_quick = true;
 					}
 				}
 				if (ok_quick) 
 					cnt_quick_press++;
 				else 
-					cnt_quick_press = 0; // что-то пошло не так.
-				possible_vk_quick = 0; // очищаем в любом случае.
+					cnt_quick_press = 0; // С‡С‚Рѕ-С‚Рѕ РїРѕС€Р»Рѕ РЅРµ С‚Р°Рє.
+				possible_vk_quick = 0; // РѕС‡РёС‰Р°РµРј РІ Р»СЋР±РѕРј СЃР»СѓС‡Р°Рµ.
 			}
 
 			// HOLD
@@ -110,7 +110,7 @@ private:
 		std::vector<TKeyCode> to_del;
 		for (const auto& it : all_keys) {
 			if (GetTickCount64() > (it.second + 10000)) {
-				if (!(GetAsyncKeyState(it.first) & 0x8000)) { // TODO: не понятно как это работает в remote сценарии....
+				if (!(GetAsyncKeyState(it.first) & 0x8000)) { // TODO: РЅРµ РїРѕРЅСЏС‚РЅРѕ РєР°Рє СЌС‚Рѕ СЂР°Р±РѕС‚Р°РµС‚ РІ remote СЃС†РµРЅР°СЂРёРё....
 					to_del.push_back(it.first);
 				}
 			}
