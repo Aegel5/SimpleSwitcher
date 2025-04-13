@@ -1,4 +1,4 @@
-﻿#include "sw-base.h"
+#include "sw-base.h"
 
 extern void StartMainGui(bool show, bool err_msg);
 
@@ -15,7 +15,7 @@ public:
 
 };
 
-
+extern void StartGui2();
 wxIMPLEMENT_APP(MyApp);
 
 COM::CAutoCOMInitialize autoCom;
@@ -77,6 +77,9 @@ bool MyApp::OnInit() {
         }
 
         IFS_LOG(update_cur_dir());
+
+		StartGui2();
+		return false;
 
         StartMainGui(!is_autostart, errLoadConf != SW_ERR_SUCCESS);
     }

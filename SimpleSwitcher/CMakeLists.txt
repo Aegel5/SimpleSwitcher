@@ -1,4 +1,4 @@
-﻿# CMakeList.txt : CMake project for cpp_test_test2, include source and define
+# CMakeList.txt : CMake project for cpp_test_test2, include source and define
 # project specific logic here.
 #
 cmake_minimum_required (VERSION 3.28)
@@ -69,6 +69,8 @@ target_precompile_headers(SimpleSwitcher PRIVATE src/sw-base.h )
 target_link_libraries(SimpleSwitcher wx::core wx::base "Crypt32.lib" "Imm32.lib" "Psapi.lib")
 target_include_directories(SimpleSwitcher PRIVATE "src/libtools")
 target_include_directories(SimpleSwitcher PRIVATE "src/extern")
+target_include_directories(SimpleSwitcher PRIVATE "src/extern/iamgui")
+target_include_directories(SimpleSwitcher PRIVATE "src/extern/iamgui/backends")
 target_include_directories(SimpleSwitcher PRIVATE "src") 
 
 
