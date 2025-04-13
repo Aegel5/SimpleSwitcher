@@ -1,0 +1,260 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-13 23:40+0300\n"
+"PO-Revision-Date: 2025-04-14 01:16+0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: he\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.6\n"
+
+#: ../src/gui/main_gui.cpp:20
+msgid " for: "
+msgstr " עבור: "
+
+#: ../src/gui/noname.cpp:259
+msgid "About / Help"
+msgstr "אודות ועזרה"
+
+#: ../src/gui/noname.cpp:227
+msgid "Add float panel"
+msgstr "הוסף פאנל צף"
+
+#: ../src/gui/noname.cpp:34
+msgid "Add to autostart"
+msgstr "הוסף להפעלה אוטומטית"
+
+#: ../src/gui/noname.cpp:80
+msgid "Advanced"
+msgstr "מתקדם"
+
+#: ../src/gui/noname.cpp:40
+msgid "Alternative mode layout change (emulate LAlt + Shift)"
+msgstr "שינוי פריסת מצב חלופי (חיקוי LAlt + Shift)"
+
+#: ../src/gui/noname.cpp:28
+msgid "Base"
+msgstr "בסיס"
+
+#: ../src/gui/noname.cpp:245
+msgid "Build date:"
+msgstr "תאריך יצירה:"
+
+#: ../src/gui/noname.cpp:182
+msgid "CapsLock / ScrollLock"
+msgstr "CapsLock / ScrollLock"
+
+#: ../src/consts.h:58
+msgid "Change layout for all recent text"
+msgstr "שנה פריסה עבור הטקסט האחרון שהוקלד"
+
+#: ../src/consts.h:57
+msgid "Change layout for last several words"
+msgstr "שנה פריסה עבור המילים האחרונות"
+
+#: ../src/consts.h:56
+msgid "Change layout for last word"
+msgstr "שנה פריסה עבור המילה האחרונה"
+
+#: ../src/consts.h:59
+msgid "Change layout for selected text"
+msgstr "שנה פריסה עבור הטקסט שנבחר"
+
+#: ../src/gui/noname.cpp:341
+msgid "Clear"
+msgstr "נקה"
+
+#: ../src/gui/noname.cpp:85
+msgid "Clear text format on Ctrl-C"
+msgstr "נקה עיצוב טקסט בעת לחיצה על Ctrl+C"
+
+#: ../src/gui/noname.cpp:269
+msgid "Close to tray"
+msgstr "מזער למגש המערכת"
+
+#: ../src/consts.h:60
+msgid "Cycle change layout"
+msgstr "החלף פריסה במחזוריות"
+
+#: ../src/gui/noname.cpp:199
+msgid "Delete"
+msgstr "מחק"
+
+#: ../src/gui/main_gui.cpp:776
+msgid "Disable"
+msgstr "כבה"
+
+#: ../src/gui/noname.cpp:220
+msgid ""
+"Disable Ctrl + LAlt as RAlt on extended layouts by temporary switching to"
+msgstr "השבת את Ctrl + LAlt כ-RAlt בפריסות מורחבות על ידי מעבר זמני אל"
+
+#: ../src/gui/noname.cpp:82
+msgid "Disable the accessibility shortcut keys (5 SHIFT and others)"
+msgstr "השבת מקשי קיצור נגישות (למשל 5 לחיצות על Shift)"
+
+#: ../src/gui/noname.cpp:347
+msgid "Distinguish between left and right modifiers"
+msgstr "הבחנה בין מקשי שליטה שמאליים וימניים"
+
+#: ../src/gui/main_gui.cpp:776 ../src/gui/noname.cpp:30
+msgid "Enable"
+msgstr "הפעל"
+
+#: ../src/gui/noname.cpp:91
+msgid "Enable debug log"
+msgstr "הפעל רישום לניפוי באגים"
+
+#: ../src/consts.h:63
+msgid "Enable/Disable"
+msgstr "הפעלה/כיבוי"
+
+#: ../src/gui/noname.cpp:157
+msgid "Enabled"
+msgstr "פעיל"
+
+#: ../src/consts.h:66
+msgid "Error"
+msgstr "שגיאה"
+
+#: ../src/gui/main_gui.cpp:115 ../src/gui/main_gui.cpp:795
+msgid "Error reading config"
+msgstr "שגיאה בקריאת התצורה"
+
+#: ../src/gui/main_app.cpp:87
+msgid "Error while initing app: "
+msgstr "שגיאה בעת הפעלת האפליקציה: "
+
+#: ../src/gui/main_gui.cpp:263
+msgid "Error while initing main wnd: "
+msgstr "שגיאה בעת הפעלת wnd הראשי: "
+
+#: ../src/gui/main_gui.cpp:778 ../src/gui/noname.cpp:266
+msgid "Exit"
+msgstr "צא"
+
+#: ../src/gui/noname.cpp:240
+msgid "Experimental"
+msgstr "ניסיוני"
+
+#: ../src/gui/noname.cpp:88
+msgid "Extended word separation"
+msgstr "זיהוי מורחב של גבולות מילים"
+
+#: ../src/gui/noname.cpp:46
+msgid "Flags set"
+msgstr "סט דגלים"
+
+#: ../src/gui/noname.cpp:64
+msgid "GUI Language"
+msgstr "שפת הממשק"
+
+#: ../src/consts.h:61
+msgid "Generate CapsLock"
+msgstr "שדר לחיצת CapsLock"
+
+#: ../src/gui/noname.cpp:131 ../src/gui/noname.cpp:158
+msgid "Hotkey"
+msgstr "מקש קיצור"
+
+#: ../src/gui/noname.cpp:176
+msgid "Hotkeys"
+msgstr "מקשי קיצור"
+
+#: ../src/gui/noname.cpp:212
+msgid "Keys Remap"
+msgstr "מיפוי מקשים"
+
+#: ../src/gui/main_gui.cpp:18
+msgid "Need admin rights"
+msgstr "נדרשות הרשאות מנהל"
+
+#: ../src/gui/main_gui.cpp:215
+msgid "Need restart program"
+msgstr "נדרשת הפעלת התוכנה מחדש"
+
+#: ../src/gui/noname.cpp:329
+msgid "Press any key..."
+msgstr "לחץ על מקש כלשהו..."
+
+#: ../src/gui/noname.cpp:217
+msgid ""
+"Prevent other programs to hook keyboard (may cause problems in games and "
+"other apps)"
+msgstr ""
+"מנע מתוכניות אחרות להתחבר למקלדת (עלול לגרום לבעיות במשחקים ובאפליקציות "
+"אחרות)"
+
+#: ../src/gui/noname.cpp:97
+msgid "Reload config"
+msgstr "טען מחדש את התצורה"
+
+#: ../src/gui/noname.cpp:184
+msgid "Remap CapsLock as F24"
+msgstr "השתמש ב-CapsLock כ־F24"
+
+#: ../src/gui/noname.cpp:187
+msgid "Remap ScrollLock as F23"
+msgstr "השתמש ב-ScrollLock כ-F23"
+
+#: ../src/gui/noname.cpp:230
+msgid "Remove all panels"
+msgstr "הסר את כל הפאנלים"
+
+#: ../src/consts.h:62
+msgid "Selected text to UPPER/lower case"
+msgstr "טקסט נבחר לאותיות גדולות/קטנות"
+
+#: ../src/gui/noname.h:130
+msgid "Set hotkey"
+msgstr "קבע מקש קיצור"
+
+#: ../src/gui/noname.cpp:113
+msgid "Settings"
+msgstr "הגדרות"
+
+#: ../src/gui/main_gui.cpp:777
+msgid "Show"
+msgstr "הצג"
+
+#: ../src/consts.h:64
+msgid "Show main window"
+msgstr "הצג את החלון הראשי"
+
+#: ../src/gui/noname.h:100
+msgid "SimpleSwitcher"
+msgstr "SimpleSwitcher"
+
+#: ../src/gui/noname.cpp:350
+msgid "Triggers on KEYUP"
+msgstr "מופעל בעת שחרור מקש"
+
+#: ../src/gui/noname.cpp:353
+msgid "Triggers on double press"
+msgstr "הפעל בלחיצה כפולה"
+
+#: ../src/gui/noname.cpp:55 ../src/gui/noname.cpp:196
+msgid "Update"
+msgstr "עדכן"
+
+#: ../src/gui/main_gui.cpp:522
+msgid "Will be applied after PC reboot"
+msgstr "יחול לאחר אתחול המחשב"
+
+#: ../src/gui/noname.cpp:37
+msgid "Work in programs running by admin"
+msgstr "הפעלה גם בתוכניות בעלות הרשאת מנהל"
+
+#: ../src/gui/main_gui.cpp:690
+msgid "delete old task"
+msgstr "מחק משימה ישנה"
