@@ -78,8 +78,8 @@ bool MyApp::OnInit() {
 
         IFS_LOG(update_cur_dir());
 
-		StartGui2();
-		return false;
+		//StartGui2();
+		//return false;
 
         StartMainGui(!is_autostart, errLoadConf != SW_ERR_SUCCESS);
     }

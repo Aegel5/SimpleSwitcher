@@ -9,11 +9,14 @@ import requests
 
 is_debug = False
 is_publ = False
-for arg in sys.argv:
-    if arg == "/publish":
-        is_publ = True
-    if arg == "/debug":
-        is_debug = True
+is_notel = False
+for arg in sys.argv[1:]:
+    if arg == "/publish":        is_publ = True
+    elif arg == "/debug":        is_debug = True
+    elif arg == "/notel":        is_notel = True
+    else :
+        print(f"unknown arg {arg}")
+        exit(1)
 
 
 curpath = pathlib.Path(__file__).parent.resolve()
@@ -143,20 +146,21 @@ def publish():
     print(last_com)
     newrel = repo.create_git_tag_and_release(curv2, curv2, release_name=f"SimpleSwitcher {curv2_v}", release_message=rel_message, object=last_com.sha, type="commit")
     newrel.upload_asset(str(zippath) + ".zip")
-    
-    bot_token = Path("D:/yy/tok.txt").read_text() 
-    msg = f"Новая версия! {curv2_v} [Скачать](https://github.com/Aegel5/SimpleSwitcher/releases)"
-    url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
-    params = {
-        'chat_id': '-1002391595712',
-        'text': msg,
-        'parse_mode': 'Markdown'  # или 'HTML', если хотите использовать HTML-разметку
-    }
-    response = requests.post(url, params=params)
-    if response.status_code == 200:
-        print("Сообщение успешно отправлено!")
-    else:
-        print(f"Ошибка при отправке сообщения: {response.status_code} - {response.text}")
+
+    if not is_notel:
+        bot_token = Path("D:/yy/tok.txt").read_text() 
+        msg = f"Новая версия! {curv2_v} [Скачать](https://github.com/Aegel5/SimpleSwitcher/releases)"
+        url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+        params = {
+            'chat_id': '-1002391595712',
+            'text': msg,
+            'parse_mode': 'Markdown'  # или 'HTML', если хотите использовать HTML-разметку
+        }
+        response = requests.post(url, params=params)
+        if response.status_code == 200:
+            print("Сообщение успешно отправлено!")
+        else:
+            print(f"Ошибка при отправке сообщения: {response.status_code} - {response.text}")
     
 if is_publ:  
     publish()    
