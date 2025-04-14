@@ -1,4 +1,4 @@
-# CMakeList.txt : CMake project for cpp_test_test2, include source and define
+﻿# CMakeList.txt : CMake project for cpp_test_test2, include source and define
 # project specific logic here.
 #
 cmake_minimum_required (VERSION 3.28)
@@ -36,6 +36,27 @@ set(wxUSE_XPM OFF)
 set(wxUSE_RICHTEXT OFF)
 
  set(wxUSE_STL ON)
+ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+function(my_target_set_folder target_name folder_name)
+	set_target_properties(${target_name} PROPERTIES FOLDER ${folder_name})
+endfunction()
+
+#add_subdirectory("D:\\github2\\SimpleSwitcher\\SimpleSwitcher\\out\\build\\x32-Debug\\_deps\\freetype-src" )
+
+if (NOT TARGET freetype)
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+	set(SKIP_INSTALL_ALL ON CACHE INTERNAL "" FORCE) # disable Freetype install
+	set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "" FORCE)
+    set(FT_DISABLE_BROTLI ON CACHE BOOL "" FORCE)
+    set(FT_DISABLE_PNG ON CACHE BOOL "" FORCE)
+    message(STATUS "Fetching freetype")
+    include(FetchContent)
+    FetchContent_Declare(freetype GIT_REPOSITORY https://github.com/freetype/freetype GIT_TAG master)
+    FetchContent_MakeAvailable(freetype)
+	#my_target_set_folder(freetype "d:/temp")
+	
+endif()
+
 
 
 file(GLOB_RECURSE all_implement_units  
@@ -49,7 +70,7 @@ src/simpleswitcher.manifest
 #)
 
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 
 add_subdirectory(../wxWidgets wxWidgets)
 
@@ -66,11 +87,14 @@ target_sources(SimpleSwitcher
 #    ${all_interface_modules}
 #)
 target_precompile_headers(SimpleSwitcher PRIVATE src/sw-base.h )
-target_link_libraries(SimpleSwitcher wx::core wx::base "Crypt32.lib" "Imm32.lib" "Psapi.lib")
+
+target_link_libraries(SimpleSwitcher wx::core wx::base "Crypt32.lib" "Imm32.lib" "Psapi.lib" freetype)
+
 target_include_directories(SimpleSwitcher PRIVATE "src/libtools")
 target_include_directories(SimpleSwitcher PRIVATE "src/extern")
 target_include_directories(SimpleSwitcher PRIVATE "src/extern/iamgui")
 target_include_directories(SimpleSwitcher PRIVATE "src/extern/iamgui/backends")
+target_include_directories(SimpleSwitcher PRIVATE "${freetype_SOURCE_DIR}/include")
 target_include_directories(SimpleSwitcher PRIVATE "src") 
 
 
