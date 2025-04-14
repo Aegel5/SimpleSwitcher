@@ -13,7 +13,7 @@ public:
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 		if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 			if (ImGui::BeginTabItem("Settings")) {
-
+				ImGui::Text((const char*)u8"Привет");
 				ImGui::Checkbox("Enable", &check_enabled);
 				ImGui::Checkbox("Add to autostart", &check_add_to_auto);      // Edit bools storing our window open/close state
 				ImGui::Checkbox("Work in programs running by admin", &check_admin);      // Edit bools storing our window open/close state
