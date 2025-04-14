@@ -20,12 +20,13 @@ public:
         GenerateListHK();
     }
 
-    std::set <wxString> disableInPrograms;
-    std::set <wxString> disableInPrograms_normalized;
+    std::set <std::wstring> disableInPrograms;
+    std::set <std::wstring> disableInPrograms_normalized;
 
     void NormalizePaths() {
         for (const auto& it : disableInPrograms) {
-            auto cur = it.Lower();
+			auto cur = it;
+			Str_Utils::ToLower(cur);
             Utils::NormalizeDelims(cur);
             disableInPrograms_normalized.insert(cur);
         }
@@ -61,7 +62,7 @@ public:
 
     TLogLevel logLevel = LOG_LEVEL_3;
 
-    wxString config_version;
+    wstring config_version;
 
     TUInt32 uiLang_ = wxLANGUAGE_RUSSIAN;
 
@@ -75,7 +76,7 @@ public:
     bool disableAccessebility    = false;
     static constexpr TStr showOriginalFlags = L"Original Flags";
     static constexpr TStr showAppIcon = L"Application Icon";
-    wxString flagsSet = L"Square";
+    wstring flagsSet = L"Square";
     bool AllowRemoteKeys_ = true;
     bool AlternativeLayoutChange = false;
     TUInt32 quick_press_ms = 280;

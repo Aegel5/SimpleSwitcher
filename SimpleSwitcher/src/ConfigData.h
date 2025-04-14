@@ -1,4 +1,4 @@
-
+﻿
 struct CHotKeyList {
 
     std::vector<CHotKey> keys{ 1 };
@@ -59,8 +59,8 @@ struct LayoutInfo {
 };
 
 struct RunProgramInfo {
-    wxString path;
-    wxString args;
+    wstring path;
+    wstring args;
     CHotKeyList hotkey;
     bool elevated = false;
 };

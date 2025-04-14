@@ -379,11 +379,11 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 		const auto& it = cfg->run_programs[i];
 		auto path = it.path;
 		Utils::NormalizeDelims(path);
-		LOG_ANY(L"run program {} {}", path.wc_str(), it.args.wc_str());
+		LOG_ANY(L"run program {} {}", path.c_str(), it.args.c_str());
 
 		procstart::CreateProcessParm parm;
-		parm.sExe = path.wc_str();
-		parm.sCmd = it.args.wc_str();
+		parm.sExe = path.c_str();
+		parm.sCmd = it.args.c_str();
 
 		// todo - use proxy process for unelevated.
 		//parm.admin = it.elevated ? TSWAdmin::SW_ADMIN_ON : TSWAdmin::SW_ADMIN_OFF;

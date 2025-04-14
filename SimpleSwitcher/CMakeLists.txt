@@ -94,6 +94,7 @@ target_link_libraries(SimpleSwitcher wx::core wx::base "Crypt32.lib" "Imm32.lib"
 target_include_directories(SimpleSwitcher PRIVATE "src/libtools")
 target_include_directories(SimpleSwitcher PRIVATE "src/extern")
 target_include_directories(SimpleSwitcher PRIVATE "src/extern/iamgui")
+target_include_directories(SimpleSwitcher PRIVATE "src/extern/iamgui/misc/cpp")
 target_include_directories(SimpleSwitcher PRIVATE "src/extern/iamgui/backends")
 target_include_directories(SimpleSwitcher PRIVATE "${freetype_SOURCE_DIR}/include")
 target_include_directories(SimpleSwitcher PRIVATE "src") 

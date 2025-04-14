@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include "imgui.h"
+#include "imgui_sugar.hpp"
+#include "imgui_stdlib.h"
 
 class MainImpl {
 	bool check_enabled = false;
@@ -10,6 +12,8 @@ class MainImpl {
 	bool exit;
 public:
 	void DrawFrame() {
+
+		GETCONF;
 
 		if (!ImGui::Begin("SimpleSwitcher", &exit, ImGuiWindowFlags_NoCollapse)) {
 			int k = 0;
@@ -45,12 +49,18 @@ public:
 
 				ImGui::EndTabItem();
 			}
-			if (ImGui::BeginTabItem("Hotkeys")) {
+			with_TabItem("Hotkeys") {
 
+				for (const auto& it: cfg->hotkeysList) {
+					//auto str = Str_Utils::Convert(it.keys.key().ToString());
+					//static std::string a;
+					//static std::string b;
+					//ImGui::InputText(b.c_str(), &a, ImGuiInputTextFlags_ReadOnly);
+					//ImGui::Text(, row, 0);
+				}
 
-
-				ImGui::EndTabItem();
 			}
+
 			if (ImGui::BeginTabItem("Experimental")) {
 				ImGui::EndTabItem();
 			}

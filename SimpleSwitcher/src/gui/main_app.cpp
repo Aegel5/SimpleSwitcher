@@ -1,4 +1,4 @@
-#include "sw-base.h"
+﻿#include "sw-base.h"
 
 extern void StartMainGui(bool show, bool err_msg);
 

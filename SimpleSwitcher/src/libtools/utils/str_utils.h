@@ -209,56 +209,16 @@ namespace Str_Utils
 		}
 	}
 
-	//inline TStatus Utf8ToWide(const char* utf8, std::wstring& wide)
-	//{
-	//	if (*utf8 == 0)
-	//	{
-	//		RETURN_SUCCESS;
-	//	}
-	//	TChar buf[0x1000];
-	//	int res = MultiByteToWideChar(
-	//		CP_UTF8,
-	//		0,
-	//		utf8,
-	//		-1,
-	//		buf,
-	//		std::ssize(buf)
-	//		);
+	inline std::string Convert(const std::wstring& wstr) {
+		using convert_typeX = std::codecvt_utf8<wchar_t>;
+		std::wstring_convert<convert_typeX, wchar_t> converterX;
+		return converterX.to_bytes(wstr);
+	}
 
-	//	IFW_RET(res != 0);
-
-	//	wide = buf;
-
-	//	RETURN_SUCCESS;
-	//}
-	//inline TStatus Utf8ToWide(const std::string& utf8, std::wstring& wide)
-	//{
-	//	return Utf8ToWide(utf8.c_str(), wide);
-	//}
-	//inline TStatus WideToUtf8(const TChar* wide, std::string& utf)
-	//{
-	//	if (*wide == 0)
-	//	{
-	//		RETURN_SUCCESS;
-	//	}
-	//	char buf[0x1000];
-	//	int res = WideCharToMultiByte(
-	//		CP_UTF8,
-	//		0,
-	//		wide,
-	//		-1,
-	//		buf,
-	//		std::ssize(buf),
-	//		NULL,
-	//		NULL);
-
-	//	IFW_RET(res != 0);
-
-	//	utf = buf;
-
-	//	RETURN_SUCCESS;
-
-	//}
-
+	inline std::wstring Convert(const std::string& str) {
+		using convert_typeX = std::codecvt_utf8<wchar_t>;
+		std::wstring_convert<convert_typeX, wchar_t> converterX;
+		return converterX.from_bytes(str);
+	}
 
 }

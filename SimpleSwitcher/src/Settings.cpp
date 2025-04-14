@@ -94,17 +94,19 @@ void from_json(const json& j, HKL& p) {
     }
 }
 
-void to_json(json& j, const wxString& p) {
-    j = p.c_str();
+namespace nlohmann {
+	template <>
+	struct adl_serializer<std::wstring> {
+		static void to_json(json& j, const std::wstring& str) {
+			j = Str_Utils::Convert(str);
+		}
 
+		static void from_json(const json& j, std::wstring& str) {
+			str = Str_Utils::Convert(j.get_ref<const std::string&>());
+		}
+	};
 }
 
-void from_json(const json& j, wxString& p) {
-    p.Clear();
-    if (j.is_string()) {
-        p = j.get_ref<const std::string&>();
-    }
-}
 
 void to_json(json& j, const CHotKey& p) {
     j             = p.ToString().c_str();
@@ -113,8 +115,7 @@ void to_json(json& j, const CHotKey& p) {
 
 void from_json(const json& j, CHotKey& p) {
     if (j.is_string()) {
-        wxString str = j;
-        p.FromString(str.wc_str());
+        p.FromString(Str_Utils::Convert(j.get_ref<const std::string&>()));
     }
 }
 void to_json(json& j, const CHotKeyList& p) {

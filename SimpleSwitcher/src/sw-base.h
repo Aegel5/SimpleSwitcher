@@ -33,6 +33,7 @@
 #include <filesystem>
 #include <regex>
 #include <charconv>
+#include <codecvt>
 
 // утилиты
 #include "core/inc_all.h"
