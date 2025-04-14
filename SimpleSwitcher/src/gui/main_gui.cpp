@@ -40,7 +40,7 @@ class MainWnd : public MyFrame4
     CAutoHotKeyRegister enable_hk_register;
     HotKeyDlg* setHotKeyWnd = nullptr;
 
-    static constexpr wxLanguage supportTranslations[] = { wxLANGUAGE_ENGLISH , wxLANGUAGE_RUSSIAN };
+    static constexpr wxLanguage supportTranslations[] = { wxLANGUAGE_ENGLISH , wxLANGUAGE_RUSSIAN, wxLANGUAGE_HEBREW };
 
     std::generator<FloatPanel*> all_panels() {
         for (auto* it : this->GetChildren()) {
