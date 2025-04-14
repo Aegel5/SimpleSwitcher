@@ -36,12 +36,10 @@ set(wxUSE_XPM OFF)
 set(wxUSE_RICHTEXT OFF)
 
  set(wxUSE_STL ON)
- set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-function(my_target_set_folder target_name folder_name)
-	set_target_properties(${target_name} PROPERTIES FOLDER ${folder_name})
-endfunction()
 
-#add_subdirectory("D:\\github2\\SimpleSwitcher\\SimpleSwitcher\\out\\build\\x32-Debug\\_deps\\freetype-src" )
+ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+
 
 if (NOT TARGET freetype)
     set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
@@ -86,6 +84,9 @@ target_sources(SimpleSwitcher
 #    FILE_SET all_my_modules TYPE CXX_MODULES FILES
 #    ${all_interface_modules}
 #)
+
+target_compile_definitions(SimpleSwitcher PUBLIC IMGUI_ENABLE_FREETYPE)
+
 target_precompile_headers(SimpleSwitcher PRIVATE src/sw-base.h )
 
 target_link_libraries(SimpleSwitcher wx::core wx::base "Crypt32.lib" "Imm32.lib" "Psapi.lib" freetype)

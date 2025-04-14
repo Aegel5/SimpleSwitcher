@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "imgui.h"
 
@@ -7,13 +7,18 @@ class MainImpl {
 	bool check_add_to_auto = false;
 	bool check_admin = false;
 	bool check_altmode = false;
+	bool exit;
 public:
 	void DrawFrame() {
+
+		if (!ImGui::Begin("SimpleSwitcher", &exit, ImGuiWindowFlags_NoCollapse)) {
+			int k = 0;
+		}
 
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 		if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 			if (ImGui::BeginTabItem("Settings")) {
-				ImGui::Text((const char*)u8"Ïðèâåò");
+				ImGui::Text((const char*)u8"ÐŸÑ€Ð¸Ð²ÐµÑ‚");
 				ImGui::Checkbox("Enable", &check_enabled);
 				ImGui::Checkbox("Add to autostart", &check_add_to_auto);      // Edit bools storing our window open/close state
 				ImGui::Checkbox("Work in programs running by admin", &check_admin);      // Edit bools storing our window open/close state
@@ -51,6 +56,8 @@ public:
 			}
 			ImGui::EndTabBar();
 		}
+
+		ImGui::End();
 
 
 	}

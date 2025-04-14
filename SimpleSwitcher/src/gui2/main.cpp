@@ -37,7 +37,7 @@ void StartGui2()
     //ImGui_ImplWin32_EnableDpiAwareness();
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
     ::RegisterClassExW(&wc);
-    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"SimpleSwitcher", WS_POPUP , 100, 100, 800, 800/1.3, nullptr, nullptr, wc.hInstance, nullptr);
+    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"SimpleSwitcher", WS_OVERLAPPEDWINDOW, 100, 100, 800, 800/1.3, nullptr, nullptr, wc.hInstance, nullptr);
 
     // Initialize Direct3D
     if (!CreateDeviceD3D(hwnd))
@@ -48,19 +48,35 @@ void StartGui2()
     }
 
     // Show the window
-    ::ShowWindow(hwnd, SW_SHOWDEFAULT);
+    ::ShowWindow(hwnd, SW_HIDE);
     ::UpdateWindow(hwnd);
 
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+	io.ConfigViewportsNoAutoMerge = true;
+	//io.ConfigViewportsNoTaskBarIcon = true;
+	//io.ConfigViewportsNoDefaultParent = true;
+	//io.ConfigDockingAlwaysTabBar = true;
+	//io.ConfigDockingTransparentPayload = true;
+	//io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleFonts;     // FIXME-DPI: Experimental. THIS CURRENTLY DOESN'T WORK AS EXPECTED. DON'T USE IN USER APP!
+	//io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleViewports; // FIXME-DPI: Experimental.
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
     //ImGui::StyleColorsLight();
+
+	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+	ImGuiStyle& style = ImGui::GetStyle();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	}
 
     // Setup Platform/Renderer backends
     ImGui_ImplWin32_Init(hwnd);
@@ -77,7 +93,7 @@ void StartGui2()
     //io.Fonts->AddFontDefault();
     //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 18.0f, 0, io.Fonts->GetGlyphRangesCyrillic());
     //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\tahoma.ttf", 18.0f, 0, io.Fonts->GetGlyphRangesCyrillic());
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
+    io.Fonts->AddFontFromFileTTF("D:/github/sss4/SimpleSwitcher/src/extern/iamgui/misc/fonts/DroidSans.ttf", 16.0f, 0, io.Fonts->GetGlyphRangesCyrillic());
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesCyrillic());
@@ -136,13 +152,10 @@ void StartGui2()
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
 
-			ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f)); // place the next window in the top left corner (0,0)
-			ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize); // make the next window fullscreen
-            ImGui::Begin("SimpleSwitcher", 0, ImGuiWindowFlags_NoResize| ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);                          // Create a window called "Hello, world!" and append into it.
-
+			//ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f)); // place the next window in the top left corner (0,0)
+			//ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize); // make the next window fullscreen
 			mainImpl.DrawFrame();
 
-            ImGui::End();
         }
 
         // 3. Show another simple window.
@@ -161,6 +174,13 @@ void StartGui2()
         g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
         g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
         ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+
+		// Update and Render additional Platform Windows
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
 
         // Present
         HRESULT hr = g_pSwapChain->Present(1, 0);   // Present with vsync
@@ -234,6 +254,10 @@ void CleanupRenderTarget()
     if (g_mainRenderTargetView) { g_mainRenderTargetView->Release(); g_mainRenderTargetView = nullptr; }
 }
 
+#ifndef WM_DPICHANGED
+#define WM_DPICHANGED 0x02E0 // From Windows SDK 8.1+ headers
+#endif
+
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -244,34 +268,34 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	static bool isDragging = false;
-	static POINT lastLocation;
+	//static bool isDragging = false;
+	//static POINT lastLocation;
 
-	switch (msg) {
-	case WM_LBUTTONDOWN:
+	//switch (msg) {
+	//case WM_LBUTTONDOWN:
 
-		GetCursorPos(&lastLocation);
-		ScreenToClient(hWnd, &lastLocation);
-		if (lastLocation.y <= 20) {
-			isDragging = true;
-		}
-		break;
+	//	GetCursorPos(&lastLocation);
+	//	ScreenToClient(hWnd, &lastLocation);
+	//	if (lastLocation.y <= 20) {
+	//		isDragging = true;
+	//	}
+	//	break;
 
-	case WM_LBUTTONUP:
-		isDragging = false;
-		break;
+	//case WM_LBUTTONUP:
+	//	isDragging = false;
+	//	break;
 
-	case WM_MOUSEMOVE:
-		if (isDragging) {
-			POINT currentPos;
-			GetCursorPos(&currentPos);
-			int dx = currentPos.x - lastLocation.x;
-			int dy = currentPos.y - lastLocation.y;
-			//MoveWindow(hWnd, dx, dy, 0, 0, true);
-			SetWindowPos(hWnd, NULL, dx, dy, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-		}
-		break;
-	}
+	//case WM_MOUSEMOVE:
+	//	if (isDragging) {
+	//		POINT currentPos;
+	//		GetCursorPos(&currentPos);
+	//		int dx = currentPos.x - lastLocation.x;
+	//		int dy = currentPos.y - lastLocation.y;
+	//		//MoveWindow(hWnd, dx, dy, 0, 0, true);
+	//		SetWindowPos(hWnd, NULL, dx, dy, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	//	}
+	//	break;
+	//}
 
     if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
         return true;
@@ -291,6 +315,14 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
         ::PostQuitMessage(0);
         return 0;
+	case WM_DPICHANGED:
+		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DpiEnableScaleViewports) {
+			//const int dpi = HIWORD(wParam);
+			//printf("WM_DPICHANGED to %d (%.0f%%)\n", dpi, (float)dpi / 96.0f * 100.0f);
+			const RECT* suggested_rect = (RECT*)lParam;
+			::SetWindowPos(hWnd, nullptr, suggested_rect->left, suggested_rect->top, suggested_rect->right - suggested_rect->left, suggested_rect->bottom - suggested_rect->top, SWP_NOZORDER | SWP_NOACTIVATE);
+		}
+		break;
     }
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
