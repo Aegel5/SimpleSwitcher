@@ -49,7 +49,7 @@ if (NOT TARGET freetype)
     set(FT_DISABLE_PNG ON CACHE BOOL "" FORCE)
     message(STATUS "Fetching freetype")
     include(FetchContent)
-    FetchContent_Declare(freetype GIT_REPOSITORY https://github.com/freetype/freetype GIT_TAG master)
+    FetchContent_Declare(freetype GIT_REPOSITORY https://github.com/freetype/freetype GIT_TAG VER-2-13-3)
     FetchContent_MakeAvailable(freetype)
 	#my_target_set_folder(freetype "d:/temp")
 	
@@ -61,6 +61,7 @@ file(GLOB_RECURSE all_implement_units
 src/*.cpp 
 src/res/myres.rc
 src/simpleswitcher.manifest
+EXCLUDE PATTERN  "binary_to_compressed_c.cpp"
 )
 
 #file(GLOB_RECURSE all_interface_modules  

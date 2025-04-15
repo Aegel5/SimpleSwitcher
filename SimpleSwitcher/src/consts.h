@@ -51,19 +51,21 @@ enum HotKeyType : TUInt32
     hk_RunProgram_flag = 1<<29,
 };
 
-inline const wxString& GetGuiTextForHk(HotKeyType hk) {
+inline const char* LOC(const char* s) { return s; }
+
+inline const char* GetGuiTextForHk(HotKeyType hk) {
     switch (hk) {
-    case hk_RevertLastWord: return _(L"Change layout for last word");
-    case hk_RevertSeveralWords: return _(L"Change layout for last several words");
-    case hk_RevertAllRecentText: return _(L"Change layout for all recent text");
-    case hk_RevertSelelected: return _(L"Change layout for selected text");
-    case hk_CycleSwitchLayout: return  _(L"Cycle change layout");
-    case hk_EmulateCapsLock: return _(L"Generate CapsLock");
-    case hk_toUpperSelected: return _(L"Selected text to UPPER/lower case");
-    case hk_ToggleEnabled: return _(L"Enable/Disable");
-    case hk_ShowMainWindow: return _(L"Show main window");
+    case hk_RevertLastWord: return LOC("Change layout for last word");
+    case hk_RevertSeveralWords: return LOC("Change layout for last several words");
+    case hk_RevertAllRecentText: return LOC("Change layout for all recent text");
+    case hk_RevertSelelected: return LOC("Change layout for selected text");
+    case hk_CycleSwitchLayout: return  LOC("Cycle change layout");
+    case hk_EmulateCapsLock: return LOC("Generate CapsLock");
+    case hk_toUpperSelected: return LOC("Selected text to UPPER/lower case");
+    case hk_ToggleEnabled: return LOC("Enable/Disable");
+    case hk_ShowMainWindow: return LOC("Show main window");
     }
-    return _("Error");
+    return "Error";
 }
 
 

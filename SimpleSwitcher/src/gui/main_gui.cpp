@@ -1,4 +1,4 @@
-#include "sw-base.h"
+﻿#include "sw-base.h"
 
 #include "noname.h" 
 #include "SwAutostart.h"
@@ -28,9 +28,24 @@ namespace {
         return Utils::IsSelfElevated() || !conf_get_unsafe()->isMonitorAdmin;
     }
 }
+extern void StartGui2();
+class TemporGuiHolder {
+	std::thread thr;
+public:
+	void Start() {
+		thr = std::thread(StartGui2);
+	}
+	~TemporGuiHolder() {
+		g_exit = true;
+		if (thr.joinable())
+			thr.join();
+	}
+};
 
 class MainWnd : public MyFrame4
 {
+public:TemporGuiHolder gui2;
+private:
     IconManager iconsMan;
     Timers timers;
     CoreWorker coreWork;
@@ -241,13 +256,13 @@ public:
             this->SetIcons(iconsMan.GetAppIcons());
             myTray.Bind(wxEVT_MENU, &MainWnd::onExit, this, Minimal_Quit);
             myTray.Bind(wxEVT_MENU, [this](auto& evt) {
-                ForceShow(this);
+				show_wnd();
                 }, Minimal_Show);
             myTray.Bind(wxEVT_MENU, [this](auto& evt) {
                 TryEnable(!IsCoreEnabled());
                 }, Minimal_Activate);
             myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, [this](auto& evt) {
-                ForceShow(this);
+				show_wnd();
                 });
 
             if (startOk()) {
@@ -266,6 +281,15 @@ public:
     }
 
 private:
+
+	void show_wnd() {
+		if (g_usenewgui) {
+			g_show_gui = true;
+		}
+		else {
+			ForceShow(this);
+		}
+	}
 
     void initChoiceFlags() {
         m_choiceShowInTray->Clear();
@@ -342,7 +366,7 @@ private:
             }
         }
         else if (nMsg == WM_ShowWindow) {
-            ForceShow(this);
+			show_wnd();
         }
         else {
             return MyFrame4::MSWWindowProc(nMsg, wParam, lParam);
@@ -564,7 +588,7 @@ private:
         for (int i = -1; const auto& it : conf_get_unsafe()->hotkeysList) {
             i++;
             m_gridHotKeys->AppendRows();
-            m_gridHotKeys->SetRowLabelValue(i, GetGuiTextForHk(it.hkId));
+            m_gridHotKeys->SetRowLabelValue(i, wxGetTranslation(GetGuiTextForHk(it.hkId)));
             m_gridHotKeys->SetCellValue(i, 0, L" " + it.keys.ToString());
         }
 
@@ -789,7 +813,12 @@ void StartMainGui(bool show, bool conf_err_msg) {
 
     // and show it (the frames, unlike simple controls, are not shown when
     // created initially)
-    frame->Show(show);
+    frame->Show(show && !g_usenewgui);
+
+	if (g_usenewgui) {
+		g_show_gui = show;
+		frame->gui2.Start();
+	}
 
     if (conf_err_msg) {
         wxMessageBox(_("Error reading config"));

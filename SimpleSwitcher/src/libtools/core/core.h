@@ -11,6 +11,7 @@ typedef signed   __int8  TInt8;
 
 typedef TCHAR TChar;
 typedef const TChar* TStr;
+using UStr = const char*;
 using SView = std::wstring_view;
 using SViewChar = std::string_view;
 using std::wstring;

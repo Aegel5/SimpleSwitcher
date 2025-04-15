@@ -15,7 +15,7 @@ public:
 
 };
 
-extern void StartGui2();
+
 wxIMPLEMENT_APP(MyApp);
 
 COM::CAutoCOMInitialize autoCom;
@@ -77,9 +77,6 @@ bool MyApp::OnInit() {
         }
 
         IFS_LOG(update_cur_dir());
-
-		//StartGui2();
-		//return false;
 
         StartMainGui(!is_autostart, errLoadConf != SW_ERR_SUCCESS);
     }

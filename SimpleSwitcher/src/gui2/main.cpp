@@ -13,7 +13,9 @@
 #include "imgui_impl_dx11.h"
 #include <d3d11.h>
 #include <tchar.h>
-#include "main_impl.h"
+#include "main_wnd.h"
+
+#include "misc/fonts/Play-Regular.cpp"
 
 // Data
 static ID3D11Device*            g_pd3dDevice = nullptr;
@@ -61,15 +63,17 @@ void StartGui2()
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 	io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;
-	//io.ConfigViewportsNoDefaultParent = true;
+	io.ConfigViewportsNoDefaultParent = true;
 	//io.ConfigDockingAlwaysTabBar = true;
 	//io.ConfigDockingTransparentPayload = true;
 	//io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleFonts;     // FIXME-DPI: Experimental. THIS CURRENTLY DOESN'T WORK AS EXPECTED. DON'T USE IN USER APP!
 	//io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleViewports; // FIXME-DPI: Experimental.
 
     // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsLight();
+    //ImGui::StyleColorsDark();
+    //ImGui::StyleColorsClassic();
+    ImGui::StyleColorsLight();
+
 
 	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 	ImGuiStyle& style = ImGui::GetStyle();
@@ -77,6 +81,8 @@ void StartGui2()
 		style.WindowRounding = 0.0f;
 		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 	}
+	style.FrameRounding = 3;
+	style.FrameBorderSize = 1;
 
     // Setup Platform/Renderer backends
     ImGui_ImplWin32_Init(hwnd);
@@ -92,23 +98,35 @@ void StartGui2()
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
     //io.Fonts->AddFontDefault();
     //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 18.0f, 0, io.Fonts->GetGlyphRangesCyrillic());
-    //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\tahoma.ttf", 18.0f, 0, io.Fonts->GetGlyphRangesCyrillic());
-    io.Fonts->AddFontFromFileTTF("D:/github/sss4/SimpleSwitcher/src/extern/iamgui/misc/fonts/DroidSans.ttf", 16.0f, 0, io.Fonts->GetGlyphRangesCyrillic());
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-    //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesCyrillic());
-    //IM_ASSERT(font != nullptr);
+    //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\tahoma.ttf", 18.0f, 0, io.Fonts->GetGlyphRangesCyrillic());{
+	
+	ImVector<ImWchar> ranges; 
+	{
+		ImFontGlyphRangesBuilder builder;
+		builder.AddRanges(io.Fonts->GetGlyphRangesCyrillic()); // Add one of the default ranges
+		static const ImWchar ranges_additional[] =
+		{
+			//0x1, 0xFFFF,
+			0x0590, 0x05FF, 0xFB1D, 0xFB4F, // hebrew
+			0,
+		};
+		builder.AddRanges(ranges_additional);
+		builder.BuildRanges(&ranges);
+		//io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 20.0f, 0, ranges.Data);
+		io.Fonts->AddFontFromMemoryCompressedTTF(DefaultFont_compressed_data, std::ssize(DefaultFont_compressed_data), 16.0f, 0, ranges.Data);
+	}
+	
 
     // Our state
     //bool show_demo_window = true;
-    //bool show_another_window = false;
+    //bool show_another_window = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-	MainImpl mainImpl;
+	MainWindow mainWindow;
 
     // Main loop
     bool done = false;
-    while (!done)
+    while (!done && !g_exit)
     {
         // Poll and handle messages (inputs, window resize, etc.)
         // See the WndProc() function below for our to dispatch events to the Win32 backend.
@@ -154,7 +172,7 @@ void StartGui2()
 
 			//ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f)); // place the next window in the top left corner (0,0)
 			//ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize); // make the next window fullscreen
-			mainImpl.DrawFrame();
+			mainWindow.DrawFrame();
 
         }
 

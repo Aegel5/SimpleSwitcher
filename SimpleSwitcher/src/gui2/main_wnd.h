@@ -4,25 +4,40 @@
 #include "imgui_sugar.hpp"
 #include "imgui_stdlib.h"
 
-class MainImpl {
+#include "SetHotKeyCombo.h"
+
+class MainWindow {
 	bool check_enabled = false;
 	bool check_add_to_auto = false;
 	bool check_admin = false;
 	bool check_altmode = false;
-	bool exit;
+	bool show_demo_window = false;
+	std::vector<SetHotKeyCombo> hotbox;
 public:
+	MainWindow()  {
+		GETCONF
+		for (const auto& it : cfg->hotkeysList) {
+			hotbox.emplace_back(GetGuiTextForHk(it.hkId), it.keys.key(), 1);
+		}
+	}
 	void DrawFrame() {
+
+		if (show_demo_window)
+			ImGui::ShowDemoWindow(&show_demo_window);
+
+		if (!g_show_gui) return;
 
 		GETCONF;
 
-		if (!ImGui::Begin("SimpleSwitcher", &exit, ImGuiWindowFlags_NoCollapse)) {
-			int k = 0;
+		{
+			bool show = g_show_gui;
+			ImGui::Begin("SimpleSwitcher", &show, ImGuiWindowFlags_NoCollapse);
+			g_show_gui = show;
 		}
 
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 		if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 			if (ImGui::BeginTabItem("Settings")) {
-				ImGui::Text((const char*)u8"Привет");
 				ImGui::Checkbox("Enable", &check_enabled);
 				ImGui::Checkbox("Add to autostart", &check_add_to_auto);      // Edit bools storing our window open/close state
 				ImGui::Checkbox("Work in programs running by admin", &check_admin);      // Edit bools storing our window open/close state
@@ -51,24 +66,24 @@ public:
 			}
 			with_TabItem("Hotkeys") {
 
-				for (const auto& it: cfg->hotkeysList) {
-					//auto str = Str_Utils::Convert(it.keys.key().ToString());
-					//static std::string a;
-					//static std::string b;
-					//ImGui::InputText(b.c_str(), &a, ImGuiInputTextFlags_ReadOnly);
-					//ImGui::Text(, row, 0);
+				for (auto& it : hotbox) {
+					it.Draw();
 				}
 
 			}
 
-			if (ImGui::BeginTabItem("Experimental")) {
-				ImGui::EndTabItem();
+			with_TabItem("Experimental") {
+
+				if (ImGui::Button("Show demo"))
+					show_demo_window = true;
+
 			}
+
+
 			ImGui::EndTabBar();
 		}
 
 		ImGui::End();
-
 
 	}
 };

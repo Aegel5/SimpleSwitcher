@@ -1,0 +1,1 @@
+binary_to_compressed_c.exe Play-Regular.ttf DefaultFont > Play-Regular.cpp
