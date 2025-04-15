@@ -195,6 +195,10 @@ void WorkerImplement::CliboardChanged()
 {
 	LOG_ANY(L"ClipboardChangedInt");
 
+	if (!g_enabled.IsEnabled()) {
+		LOG_ANY(L"skip because disabled");
+	}
+
 	auto dwTime = GetTickCount64() - m_dwLastCtrlCReqvest;
 	bool isRecent = dwTime <= 500;
 
@@ -341,6 +345,11 @@ HKL WorkerImplement::getNextLang () {
 TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 
 	LOG_ANY("Hotkey start {}({})", HotKeyTypeName(typeRevert), (int)typeRevert);
+
+	if (!g_enabled.IsEnabled() && typeRevert != hk_ToggleEnabled) {
+		LOG_ANY("Skip hk because disabled");
+		RETURN_SUCCESS;
+	}
 
 	ContextRevert data;
 	data.typeRevert = typeRevert;

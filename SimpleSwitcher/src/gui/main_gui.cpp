@@ -72,13 +72,6 @@ private:
             Worker()->PostMsg(Message_GetCurLay{ true });
         }
     }
-    bool RegisterEnabled() {
-        auto hk = conf_get_unsafe()->GetHk(hk_ToggleEnabled).keys.key();
-        auto res = hk.RegisterHk(enable_hk_register, g_guiHandle, 998);
-        IFS_LOG(res);
-        return res == TStatus::SW_ERR_SUCCESS;
-
-    }
 public:
 
     MainWnd() : MyFrame4(nullptr)
@@ -87,7 +80,7 @@ public:
 
             g_guiHandle = GetHandle();
 
-            RegisterEnabled();
+			coreWork.Start();
 
             timers.StartCycle(200, []() { Worker()->PostMsg(Message_GetCurLay{}); });
 
@@ -102,154 +95,154 @@ public:
                 | wxRESIZE_BORDER
             );
 
-            auto font = m_gridHotKeys->GetDefaultCellFont();
-			auto font2 = font;
-            font2.SetPointSize(font2.GetPointSize() + 1);
-            m_gridHotKeys->SetDefaultCellFont(font2);
-            m_gridHotKeys->SetLabelFont(font);
-            m_gridLayouts->SetDefaultCellFont(font2);
-            m_gridLayouts->SetLabelFont(font);
+   //         auto font = m_gridHotKeys->GetDefaultCellFont();
+			//auto font2 = font;
+   //         font2.SetPointSize(font2.GetPointSize() + 1);
+   //         m_gridHotKeys->SetDefaultCellFont(font2);
+   //         m_gridHotKeys->SetLabelFont(font);
+   //         m_gridLayouts->SetDefaultCellFont(font2);
+   //         m_gridLayouts->SetLabelFont(font);
             //m_gridHotKeys->SetLabelBackgroundColour(m_gridHotKeys->GetDefaultCellBackgroundColour());
 
-            m_gridHotKeys->Bind(wxEVT_SIZE, [&](auto& evt) {
-                m_gridHotKeys->SetColSize(0, m_gridHotKeys->GetSize().x - m_gridHotKeys->GetRowLabelSize());
-                });
+            //m_gridHotKeys->Bind(wxEVT_SIZE, [&](auto& evt) {
+            //    m_gridHotKeys->SetColSize(0, m_gridHotKeys->GetSize().x - m_gridHotKeys->GetRowLabelSize());
+            //    });
 
             //m_gridHotKeys->SetDefaultEditor(new wxGridCellChoiceEditor({"test", "test"}));
 
-            m_staticTextBuildDate->SetLabelText(std::format("Built on '{}'", __DATE__));
+            /*m_staticTextBuildDate->SetLabelText(std::format("Built on '{}'", __DATE__));*/
 
-            m_hyperlink11->SetLabel(L"SimpleSwitcher.json");
-            m_hyperlink11->SetURL(std::format(L"file://{}", GetPath_Conf()));
+            //m_hyperlink11->SetLabel(L"SimpleSwitcher.json");
+            //m_hyperlink11->SetURL(std::format(L"file://{}", GetPath_Conf()));
 
-            BindButtom(m_buttonReloadConfig, []() {
-                auto conf = ConfPtr(new ProgramConfig());
-                auto errLoadConf = LoadConfig(*conf);
-                IFS_LOG(errLoadConf);
-                if (errLoadConf != SW_ERR_SUCCESS) {
-                    wxMessageBox(_("Error reading config"));
-                }
-                else {
-                    _conf_set(conf);
-                }
-                });
+            //BindButtom(m_buttonReloadConfig, []() {
+            //    auto conf = ConfPtr(new ProgramConfig());
+            //    auto errLoadConf = LoadConfig(*conf);
+            //    IFS_LOG(errLoadConf);
+            //    if (errLoadConf != SW_ERR_SUCCESS) {
+            //        wxMessageBox(_("Error reading config"));
+            //    }
+            //    else {
+            //        _conf_set(conf);
+            //    }
+            //    });
 
-            BindButtom(m_buttonAddPanel, [this]() {
-                return;
-                auto wnd = new FloatPanel(this);
-                wnd->Show(true);
-                });
+            //BindButtom(m_buttonAddPanel, [this]() {
+            //    return;
+            //    auto wnd = new FloatPanel(this);
+            //    wnd->Show(true);
+            //    });
 
-            BindButtom(m_buttonDelAllPanels, [this]() {
-                std::vector to_del{ std::from_range, all_panels() };
-                for (auto p : to_del) {
-                    p->Destroy();
-                }
-                });
+            //BindButtom(m_buttonDelAllPanels, [this]() {
+            //    std::vector to_del{ std::from_range, all_panels() };
+            //    for (auto p : to_del) {
+            //        p->Destroy();
+            //    }
+            //    });
 
-            SyncLayouts();
+            //SyncLayouts();
 
-            m_notebook2->SetSelection(0);
+            //m_notebook2->SetSelection(0);
 
-            BindCheckbox(m_checkDebuglog, []() {return conf_get_unsafe()->IsNeedDebug(); }, [](bool val) {
-                SetLogLevel_info(val? conf_get_unsafe()->logLevel : LOG_LEVEL_0);
-                });
+            //BindCheckbox(m_checkDebuglog, []() {return conf_get_unsafe()->IsNeedDebug(); }, [](bool val) {
+            //    SetLogLevel_info(val? conf_get_unsafe()->logLevel : LOG_LEVEL_0);
+            //    });
 
-            BindCheckbox(m_checkBoxFixRAlt, 
-                []() {return conf_get_unsafe()->fixRAlt; }, 
-                [](bool val) {
-                    SaveConfigWith([val](auto conf) {conf->fixRAlt = val; });
-                });
-            m_checkBoxFixRAlt->SetLabelText(m_checkBoxFixRAlt->GetLabelText() + L" \"" + Utils::GetNameForHKL(conf_get_unsafe()->fixRAlt_lay_)+"\"");
+            //BindCheckbox(m_checkBoxFixRAlt, 
+            //    []() {return conf_get_unsafe()->fixRAlt; }, 
+            //    [](bool val) {
+            //        SaveConfigWith([val](auto conf) {conf->fixRAlt = val; });
+            //    });
+            //m_checkBoxFixRAlt->SetLabelText(m_checkBoxFixRAlt->GetLabelText() + L" \"" + Utils::GetNameForHKL(conf_get_unsafe()->fixRAlt_lay_)+"\"");
 
-            BindCheckbox(m_checkBoxPrevent, 
-                []() {return conf_get_unsafe()->EnableKeyLoggerDefence; }, 
-                [](bool val) {
-                    SaveConfigWith([val](auto conf) {conf->EnableKeyLoggerDefence = val; });
-             });
+            //BindCheckbox(m_checkBoxPrevent, 
+            //    []() {return conf_get_unsafe()->EnableKeyLoggerDefence; }, 
+            //    [](bool val) {
+            //        SaveConfigWith([val](auto conf) {conf->EnableKeyLoggerDefence = val; });
+            // });
 
-            BindChoice(m_choiceShowInTray, [&](wxChoice* elem) {
-                initChoiceFlags();
-                },
-                [&](wxChoice* elem) {
-                    updateShowInTray(elem->GetStringSelection());
-                    UpdateIcons();
-                });
+            //BindChoice(m_choiceShowInTray, [&](wxChoice* elem) {
+            //    initChoiceFlags();
+            //    },
+            //    [&](wxChoice* elem) {
+            //        updateShowInTray(elem->GetStringSelection());
+            //        UpdateIcons();
+            //    });
 
-            BindButtom(m_buttonUpdateFlags, [this]() {
-                initChoiceFlags();
-                UpdateIcons();
-                });
+            //BindButtom(m_buttonUpdateFlags, [this]() {
+            //    initChoiceFlags();
+            //    UpdateIcons();
+            //    });
 
-            BindCheckbox(m_checkBoxDisablAcc,
-                []() {
-                    AllowAccessibilityShortcutKeys(!conf_get_unsafe()->disableAccessebility);
-                    return conf_get_unsafe()->disableAccessebility; },
-                [](bool val) {
-                    SaveConfigWith([val](auto cfg) {cfg->disableAccessebility = val; });
-                    AllowAccessibilityShortcutKeys(!conf_get_unsafe()->disableAccessebility);
-                });
+            //BindCheckbox(m_checkBoxDisablAcc,
+            //    []() {
+            //        AllowAccessibilityShortcutKeys(!conf_get_unsafe()->disableAccessebility);
+            //        return conf_get_unsafe()->disableAccessebility; },
+            //    [](bool val) {
+            //        SaveConfigWith([val](auto cfg) {cfg->disableAccessebility = val; });
+            //        AllowAccessibilityShortcutKeys(!conf_get_unsafe()->disableAccessebility);
+            //    });
 
-            BindCheckbox(m_checkBoxSeparateExt,
-                []() {return conf_get_unsafe()->separate_ext_last_word && conf_get_unsafe()->separate_ext_several_words; },
-                [](bool val) {
-                    SaveConfigWith([val](auto conf) {conf->separate_ext_last_word = conf->separate_ext_several_words = val; });
-                });
+            //BindCheckbox(m_checkBoxSeparateExt,
+            //    []() {return conf_get_unsafe()->separate_ext_last_word && conf_get_unsafe()->separate_ext_several_words; },
+            //    [](bool val) {
+            //        SaveConfigWith([val](auto conf) {conf->separate_ext_last_word = conf->separate_ext_several_words = val; });
+            //    });
 
-            BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get_unsafe()->AlternativeLayoutChange; }, [this](bool val) {
-                SaveConfigWith([val](auto cfg) {cfg->AlternativeLayoutChange = val; });
-                FillLayoutsInfo();
-                });
+            //BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get_unsafe()->AlternativeLayoutChange; }, [this](bool val) {
+            //    SaveConfigWith([val](auto cfg) {cfg->AlternativeLayoutChange = val; });
+            //    FillLayoutsInfo();
+            //    });
 
-            BindCheckbox(m_checkBoxClearForm, []() {return conf_get_unsafe()->fClipboardClearFormat; }, [](bool val) {
-                SaveConfigWith([val](auto cfg) {cfg->fClipboardClearFormat = val; });
-                });
+            //BindCheckbox(m_checkBoxClearForm, []() {return conf_get_unsafe()->fClipboardClearFormat; }, [](bool val) {
+            //    SaveConfigWith([val](auto cfg) {cfg->fClipboardClearFormat = val; });
+            //    });
 
-            BindCheckbox(m_checkBoxWorkInAdmin, []() {return conf_get_unsafe()->isMonitorAdmin; }, [this](bool val) {
-                SaveConfigWith([val](auto cfg) {cfg->isMonitorAdmin = val; });
-                updateAutoStart();
-                updateEnable();
-                });
+            //BindCheckbox(m_checkBoxWorkInAdmin, []() {return conf_get_unsafe()->isMonitorAdmin; }, [this](bool val) {
+            //    SaveConfigWith([val](auto cfg) {cfg->isMonitorAdmin = val; });
+            //    updateAutoStart();
+            //    updateEnable();
+            //    });
 
-            BindChoice(m_comboUiLang, [this](wxChoice* elem) {
-                    elem->Clear();
+            //BindChoice(m_comboUiLang, [this](wxChoice* elem) {
+            //        elem->Clear();
 
-                    elem->SetSelection(-1);
-                    for (int i = -1; auto lang : supportTranslations) {
-                        i++;
-                        elem->AppendString(wxLocale::GetLanguageName(lang));
-                        if (conf_get_unsafe()->uiLang_ == lang) {
-                            elem->SetSelection(i);
-                        }
-                    }
-                }, [this](wxChoice* elem) {
-                    SaveConfigWith(
-                        [this, elem](auto cfg) {
-                        cfg->uiLang_ = supportTranslations[elem->GetSelection()];
-                        });
-                    wxMessageBox(_("Need restart program"));
-                    });
+            //        elem->SetSelection(-1);
+            //        for (int i = -1; auto lang : supportTranslations) {
+            //            i++;
+            //            elem->AppendString(wxLocale::GetLanguageName(lang));
+            //            if (conf_get_unsafe()->uiLang_ == lang) {
+            //                elem->SetSelection(i);
+            //            }
+            //        }
+            //    }, [this](wxChoice* elem) {
+            //        SaveConfigWith(
+            //            [this, elem](auto cfg) {
+            //            cfg->uiLang_ = supportTranslations[elem->GetSelection()];
+            //            });
+            //        wxMessageBox(_("Need restart program"));
+            //        });
 
-                m_gridLayouts->GetGridWindow()->Bind(wxEVT_RIGHT_DOWN, [this](auto& evt) {
-                    // Show popupmenu at position
-                    wxMenu menu;
-                    static const int update_id = 123;
-                    menu.Append(update_id, wxT("&Update"));
-                    menu.Bind(wxEVT_COMMAND_MENU_SELECTED, [this](auto& e) {
-                        if (e.GetId() == update_id) {
-                            SyncLayouts();
-                            FillLayoutsInfo();
-                        }
-                        });
-                    PopupMenu(&menu);
-                    });
+            //    m_gridLayouts->GetGridWindow()->Bind(wxEVT_RIGHT_DOWN, [this](auto& evt) {
+            //        // Show popupmenu at position
+            //        wxMenu menu;
+            //        static const int update_id = 123;
+            //        menu.Append(update_id, wxT("&Update"));
+            //        menu.Bind(wxEVT_COMMAND_MENU_SELECTED, [this](auto& e) {
+            //            if (e.GetId() == update_id) {
+            //                SyncLayouts();
+            //                FillLayoutsInfo();
+            //            }
+            //            });
+            //        PopupMenu(&menu);
+            //        });
 
-            updateAutoStart();
+            //updateAutoStart();
 
-            FillHotkeysInfo();
-            FillLayoutsInfo();
+            //FillHotkeysInfo();
+            //FillLayoutsInfo();
 
-            updateCapsTab();
+            //updateCapsTab();
 
             myTray.Init(this);
             myTray.ResetIcon(iconsMan.Get_Standart().bundle);
@@ -265,13 +258,13 @@ public:
 				show_wnd();
                 });
 
-            if (startOk()) {
-                coreWork.Start();
-            }
+    //        if (startOk()) {
+				//g_enabled.TryEnable();
+    //        }
 
-            BindCheckbox(m_checkBoxEnable, []() {return false; }, [this](auto val) {TryEnable(val); });
+            //BindCheckbox(m_checkBoxEnable, []() {return false; }, [this](auto val) {TryEnable(val); });
 
-            updateEnable();
+            //updateEnable();
 
         }
         catch (std::exception& e) {
@@ -395,11 +388,6 @@ private:
             ChangeHotKey(data, [row, this, hk](auto key) {
                 SaveConfigWith([&](auto cfg) {cfg->hotkeysList[row].keys.key() = key; });
                 m_gridHotKeys->SetCellValue(row, 0, L" " + key.ToString());
-                if (hk == hk_ToggleEnabled) {
-                    if (!RegisterEnabled()) {
-                        //wxMessageBox(_("Can't register key"));
-                    }
-                }
             }, isDouble);
         }
 
@@ -548,9 +536,9 @@ private:
 
     void updateEnable() {
         if (!startOk()) {
-            coreWork.Stop();
+			g_enabled.TryEnable(false);
         }
-        m_checkBoxEnable->SetValue(coreWork.IsStarted());
+        m_checkBoxEnable->SetValue(g_enabled.IsEnabled());
         UpdateIcons();
     }
     //void UpdateAutostartExplain()
@@ -771,14 +759,14 @@ public:
         m_checkBoxEnable->SetValue(val);
         if (IsCoreEnabled()) {
             if (startOk()) {
-                coreWork.Start();
+				g_enabled.TryEnable();
             }
             else {
                 ShowNeedAdmin("");
             }
         }
         else {
-            coreWork.Stop();
+			g_enabled.TryEnable(false);
         }
         updateEnable();
     }

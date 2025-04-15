@@ -7,46 +7,16 @@
 #include "wx/msw/private.h"
 #endif
 
-class MtxHolder {
-
-    HANDLE mtxGui = NULL;
-
-public:
-    bool take() {
-        if (mtxGui != NULL)
-            return true;
-        mtxGui = CreateMutex(NULL, FALSE, L"E629E6ED27B64671");
-        if (GetLastError() != ERROR_SUCCESS) {
-            if (mtxGui != NULL && mtxGui != INVALID_HANDLE_VALUE) {
-                CloseHandle(mtxGui);
-                mtxGui = NULL;
-            }
-        }
-        return mtxGui != NULL;
-    }
-    void clear(){
-        if (mtxGui != NULL) {
-            CloseHandle(mtxGui);
-            mtxGui = NULL;
-        }
-    }
-    ~MtxHolder() {
-        clear();
-    }
-};
-
 class CoreWorker {
 
 	inline static const wchar_t* c_sClassNameServer2 = L"SimpleSw_325737FD_Serv";
     std::thread core_work;
-    MtxHolder mtx;
 	std::atomic<HWND> m_hWnd = nullptr;
 
 	TStatus StartMonitor(_In_ HINSTANCE hInstance) {
 
 		LOG_ANY(L"StartMonitor...");
 		IFW_LOG(SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS));
-		Worker()->ReStart(); // полностью обнулим рабочий поток
 
 		WNDCLASSEX wcex{};
 		wcex.cbSize = sizeof(WNDCLASSEX);
@@ -109,45 +79,16 @@ class CoreWorker {
 	}
 
 public:
-    CoreWorker() {}
 
     void Start() {
-        if (IsStarted())
-            return;
-
-		if (Utils::IsDebug()) {
-			if (!mtx.take()) {
-				auto hk = conf_get_unsafe()->GetHk(hk_ToggleEnabled).keys.key();
-				for (auto& it : hk) if (it == VKE_WIN) it = VK_LWIN;
-				InputSender::SendHotKey(hk);
-				Sleep(50);
-			}
-		}
-
-        if(!mtx.take())
-            return;
-
         HINSTANCE hInstance = wxGetInstance();
         core_work = std::thread(std::bind(&CoreWorker::StartMonitor, this, hInstance));
     }
 
-    void Stop() {
-        if (!IsStarted()) {
-            mtx.clear();
-            return;
-        }
-        PostMessage(m_hWnd, c_MSG_Quit, 0, 0);
-		if(core_work.joinable())
+    ~CoreWorker() {
+		PostMessage(m_hWnd, c_MSG_Quit, 0, 0);
+		if (core_work.joinable())
 			core_work.join();
 		m_hWnd = nullptr;
-        mtx.clear();
-    }
-
-    bool IsStarted() {
-        return core_work.joinable();
-    }
-
-    ~CoreWorker() {
-        Stop();
     }
 };

@@ -13,15 +13,20 @@ class CMainWorker {
 			m_thread.join();
 	}
 
-public:
-	~CMainWorker() {
-		StopAndWait();
-	}
 	void ReStart() {
 		StopAndWait();
 		m_queue.Reinitialize();
 		m_thread = std::thread(std::bind(&CMainWorker::WorkerInt, this));
 	}
+
+public:
+	CMainWorker() {
+		ReStart();
+	}
+	~CMainWorker() {
+		StopAndWait();
+	}
+
 
 	void PostMsg(auto&& msg, int delay = 0) {
 		m_queue.PostMsg(std::move(msg), delay);
