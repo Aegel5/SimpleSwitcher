@@ -46,7 +46,6 @@ struct CHotKeySet
     bool fUseDef = false;
     HotKeyType hkId = hk_NULL;
     CHotKeyList keys;
-    const TChar* gui_text = L"unknown";
 
 };
 

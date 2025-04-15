@@ -679,54 +679,54 @@ private:
         }
     }
 
-    void ensureAuto(bool enable) {
-        if (conf_get_unsafe()->isMonitorAdmin) {
+    //void ensureAuto(bool enable) {
+    //    if (conf_get_unsafe()->isMonitorAdmin) {
 
-            IFS_LOG(DelRegRun());
+    //        IFS_LOG(DelRegRun());
 
-            if (enable) {
-                IFS_LOG(SetSchedule());
-            } else {
-                IFS_LOG(DelSchedule());
-            }
+    //        if (enable) {
+    //            IFS_LOG(SetSchedule());
+    //        } else {
+    //            IFS_LOG(DelSchedule());
+    //        }
 
-        } else {
+    //    } else {
 
-            bool isAdminAllOk   = false;
-            bool isAdminHasTask = false;
-            IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
-            if (isAdminHasTask) {
-                if (Utils::IsSelfElevated()) {
-                    IFS_LOG(DelSchedule());
-                } else {
-                    ShowNeedAdmin(_("delete old task"));
-                    return; // exit because can't delete old
-                }
-            }
+    //        bool isAdminAllOk   = false;
+    //        bool isAdminHasTask = false;
+    //        IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
+    //        if (isAdminHasTask) {
+    //            if (Utils::IsSelfElevated()) {
+    //                IFS_LOG(DelSchedule());
+    //            } else {
+    //                ShowNeedAdmin(_("delete old task"));
+    //                return; // exit because can't delete old
+    //            }
+    //        }
 
-            if (enable) {
-                IFS_LOG(SetRegRun());
-            } else {
-                IFS_LOG(DelRegRun());
-            }
-        }
-    }
+    //        if (enable) {
+    //            IFS_LOG(SetRegRun());
+    //        } else {
+    //            IFS_LOG(DelRegRun());
+    //        }
+    //    }
+    //}
 
-    void updateAutoStart() {
+    //void updateAutoStart() {
 
-        bool isUserAllOk = false;
-        bool isUserHasTask = false;
-        IFS_LOG(CheckRegRun(isUserAllOk, isUserHasTask));
+    //    bool isUserAllOk = false;
+    //    bool isUserHasTask = false;
+    //    IFS_LOG(CheckRegRun(isUserAllOk, isUserHasTask));
 
-        bool isAdminAllOk = false;
-        bool isAdminHasTask = false;
-        IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
+    //    bool isAdminAllOk = false;
+    //    bool isAdminHasTask = false;
+    //    IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
 
-        m_checkAddToAutoStart->SetValue(conf_get_unsafe()->isMonitorAdmin ? isAdminAllOk && !isUserHasTask
-                                                               : isUserAllOk && !isAdminHasTask);
-        //UpdateAutostartExplain();
+    //    m_checkAddToAutoStart->SetValue(conf_get_unsafe()->isMonitorAdmin ? isAdminAllOk && !isUserHasTask
+    //                                                           : isUserAllOk && !isAdminHasTask);
+    //    //UpdateAutostartExplain();
 
-    }
+    //}
 
     //virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override
     //{
@@ -745,15 +745,15 @@ public:
         Hide();
     }
 
-    void onAutocheck(wxCommandEvent& event) override {
-        if (conf_get_unsafe()->isMonitorAdmin && !Utils::IsSelfElevated()) {
-            m_checkAddToAutoStart->SetValue(!m_checkAddToAutoStart->GetValue());
-            ShowNeedAdmin("");
-            return;
-        }
-        ensureAuto(m_checkAddToAutoStart->GetValue());
-        updateAutoStart();
-    }
+    //void onAutocheck(wxCommandEvent& event) override {
+    //    if (conf_get_unsafe()->isMonitorAdmin && !Utils::IsSelfElevated()) {
+    //        m_checkAddToAutoStart->SetValue(!m_checkAddToAutoStart->GetValue());
+    //        ShowNeedAdmin("");
+    //        return;
+    //    }
+    //    ensureAuto(m_checkAddToAutoStart->GetValue());
+    //    updateAutoStart();
+    //}
 
     void TryEnable(bool val) {
         m_checkBoxEnable->SetValue(val);
@@ -808,13 +808,13 @@ void StartMainGui(bool show, bool conf_err_msg) {
 		frame->gui2.Start();
 	}
 
-    if (conf_err_msg) {
-        wxMessageBox(_("Error reading config"));
-    }
+    //if (conf_err_msg) {
+    //    wxMessageBox(_("Error reading config"));
+    //}
 
-    if(!startOk()) {
-        ShowNeedAdmin();
-    }
+    //if(!startOk()) {
+    //    ShowNeedAdmin();
+    //}
 
 
 }

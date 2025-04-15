@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "VkNames.h"
 
@@ -13,7 +13,7 @@ public:
 		ADDKEY_NORMAL = 0,
 		ADDKEY_CHECK_EXIST = 0b1,
 		ADDKEY_ENSURE_ONE_VALUEKEY = 0b10,
-		ADDKEY_CHECK_MODS = 0b100,
+		ADDKEY_NO_STRICK_MODS_CHECK = 0b100,
 	};
 	CHotKey& Simple_Append(TKeyCode key) {
 		if (size < c_MAX)
@@ -27,7 +27,7 @@ public:
 	CHotKey& Add(TKeyCode key, int flags = ADDKEY_NORMAL) {
 		if (TestFlag(flags, ADDKEY_CHECK_EXIST)) {
 			for (TKeyCode k : *this) {
-				if (CompareKeys(k, key, true)) {
+				if (CompareKeys(k, key, !TestFlag(flags, ADDKEY_NO_STRICK_MODS_CHECK))) {
 					if (IsCommonMods(k) && !IsCommonMods(key)) {
 						// rewrite common key
 						Remove(k);
@@ -45,24 +45,7 @@ public:
 			RemoveAllNoMods();
 		}
 
-		if (TestFlag(flags, ADDKEY_CHECK_MODS)) {
-			if (size == 0) {
-				keys[size++] = key;
-			}
-			else {
-				if (IsKnownMods(keys[0])) {
-					InsertMods(keys[0]);
-					keys[0] = key;
-				}
-				else {
-					InsertMods(key);
-				}
-			}
-		}
-		else {
-			Simple_Append(key);
-		}
-
+		Simple_Append(key);
 		return *this;
 	}
 	bool Remove(TKeyCode key, bool strick_modifier = true) {
@@ -208,15 +191,15 @@ public:
 	}
 	CHotKey& SetKeyup(bool val = true) { m_keyup = val;	return *this; }
 	bool GetKeyup() const { return m_keyup; }
-	void FromString(SView s) {
-		Clear();
+	static CHotKey FromString(SView s) {
+		CHotKey key;
 		if (s.empty()) 
-			return;
+			return key;
 		auto sElems = Str_Utils::Split(s, L'+');
 		for (auto& sCur : sElems) {
 			Str_Utils::ToLower(sCur);
-			if (Str_Utils::replaceAll(sCur, L"#up", L"")) { SetKeyup(true); }
-			if (Str_Utils::replaceAll(sCur, L"#double", L"")) { SetDouble(true); }
+			if (Str_Utils::replaceAll(sCur, L"#up", L"")) { key.SetKeyup(true); }
+			if (Str_Utils::replaceAll(sCur, L"#double", L"")) { key.SetDouble(true); }
 			Str_Utils::trim(sCur);
 			TKeyCode kCur = _internal::HotKeyNames::Global().GetCode(sCur.c_str());
 			if (kCur == 0) {
@@ -226,12 +209,13 @@ public:
 				}
 			}
 			if (kCur == 0) {
-				Clear();
+				key.Clear();
 				LOG_WARN(L"Not found keycode for {}", sCur);
-				return;
+				return key;
 			}
-			Simple_Append(kCur);
+			key.Simple_Append(kCur);
 		}
+		return key;
 	}
 	bool Has_left_right() const { return std::any_of(begin(), end(), [](auto v) {return v != Normalize(v); });}
 

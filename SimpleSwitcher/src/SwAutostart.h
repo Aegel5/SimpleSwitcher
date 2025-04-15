@@ -47,11 +47,7 @@ inline TStatus SetSchedule()
 
 }
 
-inline TStatus DelSchedule()
-{
-	IFS_RET(Startup::RemoveTaskShedule(c_wszTaskName));
-	RETURN_SUCCESS;
-}
+
 
 inline TStatus CheckSchedule(bool& isAllOk, bool& isHasTask)
 {
@@ -66,6 +62,53 @@ inline TStatus CheckSchedule(bool& isAllOk, bool& isHasTask)
 	isHasTask = parm.isTaskExists;
 	isAllOk = parm.isPathEqual && parm.isSettingsCorrect;
 	RETURN_SUCCESS;
+}
+
+inline TStatus DelSchedule() {
+	bool isAdminAllOk = false;
+	bool isAdminHasTask = false;
+	IFS_RET(CheckSchedule(isAdminAllOk, isAdminHasTask));
+	if (isAdminHasTask)
+		IFS_RET(Startup::RemoveTaskShedule(c_wszTaskName));
+	RETURN_SUCCESS;
+}
+
+inline bool autostart_get() {
+	bool isUserAllOk = false;
+	bool isUserHasTask = false;
+	IFS_LOG(CheckRegRun(isUserAllOk, isUserHasTask));
+
+	bool isAdminAllOk = false;
+	bool isAdminHasTask = false;
+	IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
+
+	return conf_get_unsafe()->isMonitorAdmin ? isAdminAllOk && !isUserHasTask
+		: isUserAllOk && !isAdminHasTask;
+
+}
+inline bool autostart_set(bool enable) {
+	auto func = [enable]() -> TStatus {
+		if (conf_get_unsafe()->isMonitorAdmin) {
+			IFS_RET(DelRegRun());
+			if (enable) {
+				IFS_RET(SetSchedule());
+			}
+			else {
+				IFS_RET(DelSchedule());
+			}
+		}
+		else {
+			IFS_RET(DelSchedule());
+			if (enable) {
+				IFS_RET(SetRegRun());
+			}
+			else {
+				IFS_RET(DelRegRun());
+			}
+		}
+		RETURN_SUCCESS;
+	};
+	return func() == TStatus::SW_ERR_SUCCESS;
 }
 
 

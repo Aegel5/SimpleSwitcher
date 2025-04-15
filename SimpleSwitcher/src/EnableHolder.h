@@ -41,14 +41,7 @@ public:
 			mtx.clear();
 			return false;
 		}
-		if (Utils::IsDebug()) {
-			if (!mtx.take()) {
-				auto hk = conf_get_unsafe()->GetHk(hk_ToggleEnabled).keys.key();
-				for (auto& it : hk) if (it == VKE_WIN) it = VK_LWIN;
-				InputSender::SendHotKey(hk);
-				Sleep(50);
-			}
-		}
+
 		return mtx.take();
 	}
 };
