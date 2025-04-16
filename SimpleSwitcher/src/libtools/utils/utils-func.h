@@ -93,14 +93,14 @@ namespace Utils
 		TCHAR sBuff[0x1000];
 		IFW_RET(GetProcessImageFileName(hProc, sBuff, ARRAYSIZE(sBuff)) > 0);
 		sPath = sBuff;
-		Str_Utils::ToLower(sPath);
+		StrUtils::ToLower(sPath);
 		auto last = wcsrchr(sBuff, L'\\');
 		if (last == NULL)
 		{
 			return SW_ERR_INVALID_PARAMETR;
 		}
 		sName = last + 1;
-		Str_Utils::ToLower(sName);
+		StrUtils::ToLower(sName);
 
 		RETURN_SUCCESS;
 	}
@@ -155,7 +155,7 @@ namespace Utils
 			std::wstring sProdName;
 			sProdName = sInfo;
 
-			Str_Utils::ToLower(sProdName);
+			StrUtils::ToLower(sProdName);
 			if (sProdName.find(sStr) != std::wstring::npos)
 			{
 				fRes = true;

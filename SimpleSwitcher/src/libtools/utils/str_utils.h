@@ -5,7 +5,7 @@
 #include <functional>
 #include <cwctype>
 
-namespace Str_Utils
+namespace StrUtils
 {
 	inline bool isLetter(wchar_t symb) {
 		return std::iswalpha(symb);
@@ -107,7 +107,7 @@ namespace Str_Utils
 	inline bool ToInt(const std::string& str, auto& res) {
 		const char* val = str.c_str();
 		int base = 10;
-		if (Str_Utils::IsStartWith(val, "0x")) {
+		if (StrUtils::IsStartWith(val, "0x")) {
 			val += 2;
 			base = 16;
 		}
@@ -126,7 +126,7 @@ namespace Str_Utils
 	}
 
 	inline bool ToInt(const TChar* str, auto& val, int base = 0) {
-		if (Str_Utils::IsStartWith(str, L"0x")) {
+		if (StrUtils::IsStartWith(str, L"0x")) {
 			str += 2;
 			base = 16;
 		}

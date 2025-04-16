@@ -195,17 +195,17 @@ public:
 		CHotKey key;
 		if (s.empty()) 
 			return key;
-		auto sElems = Str_Utils::Split(s, L'+');
+		auto sElems = StrUtils::Split(s, L'+');
 		for (auto& sCur : sElems) {
-			Str_Utils::ToLower(sCur);
-			if (Str_Utils::replaceAll(sCur, L"#up", L"")) { key.SetKeyup(true); }
-			if (Str_Utils::replaceAll(sCur, L"#double", L"")) { key.SetDouble(true); }
-			Str_Utils::trim(sCur);
+			StrUtils::ToLower(sCur);
+			if (StrUtils::replaceAll(sCur, L"#up", L"")) { key.SetKeyup(true); }
+			if (StrUtils::replaceAll(sCur, L"#double", L"")) { key.SetDouble(true); }
+			StrUtils::trim(sCur);
 			TKeyCode kCur = _internal::HotKeyNames::Global().GetCode(sCur.c_str());
 			if (kCur == 0) {
-				auto split = Str_Utils::Split(sCur, L'_');
+				auto split = StrUtils::Split(sCur, L'_');
 				if (split.size() == 2) {
-					Str_Utils::ToInt(split[1].c_str(), kCur, 16);
+					StrUtils::ToInt(split[1].c_str(), kCur, 16);
 				}
 			}
 			if (kCur == 0) {

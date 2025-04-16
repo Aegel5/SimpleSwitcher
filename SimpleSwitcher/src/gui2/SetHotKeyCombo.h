@@ -27,7 +27,7 @@ class SetHotKeyCombo {
 	void SetKey(CHotKey k, bool apl = true) {
 		if (key.Compare(k, CHotKey::COMPARE_STRICK_MODIFIER)) return;
 		key = k;
-		key_str = Str_Utils::Convert(key.ToString());
+		key_str = StrUtils::Convert(key.ToString());
 		if(apl)
 			apply(key);
 	}
@@ -40,7 +40,7 @@ class SetHotKeyCombo {
 public:
 	SetHotKeyCombo(std::string title, CHotKey key, const std::vector<CHotKey>& def, auto&& apply) : title(std::move(title)), apply(apply) {
 		for (const auto& it : def) {
-			defaults.push_back(Str_Utils::Convert(it.ToString()));
+			defaults.push_back(StrUtils::Convert(it.ToString()));
 		}
 		SetKey(key,false);
 	}
@@ -81,7 +81,7 @@ public:
 				if (is_current)
 					found = true;
 				if (ImGui::Selectable(it.c_str(), is_current)) {
-					SetKey(CHotKey::FromString(Str_Utils::Convert(it)));
+					SetKey(CHotKey::FromString(StrUtils::Convert(it)));
 				}
 
 			}

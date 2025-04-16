@@ -70,13 +70,13 @@ inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& s
 		return KEYTYPE_LETTER; // dead symbol
 
 	LOG_ANY_4(L"char {}", curSymbol);
-	if (Str_Utils::isDigit(curSymbol)) {
+	if (StrUtils::isDigit(curSymbol)) {
 		return KEYTYPE_LETTER_OR_SPACE; 
 	}
 
 	if (cfg->layouts_info.CntLayoutEnabled() <= 3) {
 
-		auto is_letter = [](wchar_t c) {return Utils::is_in(c, L'-', L'_') || Str_Utils::isLetter(c); };
+		auto is_letter = [](wchar_t c) {return Utils::is_in(c, L'-', L'_') || StrUtils::isLetter(c); };
 
 		bool have_letter = is_letter(curSymbol);
 		bool have_custom = !have_letter;

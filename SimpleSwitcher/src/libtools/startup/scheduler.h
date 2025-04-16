@@ -92,7 +92,7 @@ namespace Startup
 			IFH_RET(actExec->get_Arguments(&bsArgs));
 
 			std::wstring actPath(bsPath.get(), SysStringLen(bsPath.get()));
-			Str_Utils::trim(actPath, L" \"");
+			StrUtils::trim(actPath, L" \"");
 
 			parm.pathValue = actPath;
 
@@ -136,7 +136,7 @@ namespace Startup
 				priority == 6
 				&& fDisallowStartIfOnBatteries == VARIANT_FALSE
 				&& fStopIfGoingOnBatteries == VARIANT_FALSE
-				&& Str_Utils::IsEqualCI(bsTimeLimit, L"PT0S"))
+				&& StrUtils::IsEqualCI(bsTimeLimit, L"PT0S"))
 			{
 				parm.isSettingsCorrect = true;
 			}

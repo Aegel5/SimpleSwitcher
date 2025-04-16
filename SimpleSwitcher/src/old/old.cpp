@@ -24,3 +24,11 @@
 
 				//	ImGui::EndTable();
 				//}
+
+
+
+		std::stringstream o;
+		// std::ofstream o(res);
+		o << std::setw(4) << data << std::endl;
+
+		auto json = o.str();

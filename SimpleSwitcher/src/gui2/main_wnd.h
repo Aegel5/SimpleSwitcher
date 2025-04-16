@@ -9,6 +9,7 @@
 #include "SetHotKeyCombo.h"
 
 class MainWindow {
+	string config_path;
 	std::string title;
 	bool check_add_to_auto = false;
 	bool check_altmode = false;
@@ -47,7 +48,7 @@ private:
 		layout_win_hotkeys.clear();
 		for (int i = -1; const auto & it : cfg->layouts_info.info) {
 			i++;
-			layout_hotkeys.emplace_back( Str_Utils::Convert(Utils::GetNameForHKL(it.layout)), it.hotkey.key(), def_list,
+			layout_hotkeys.emplace_back( StrUtils::Convert(Utils::GetNameForHKL(it.layout)), it.hotkey.key(), def_list,
 				[i](auto key) {
 				SaveConfigWith([&](auto conf) {
 					if (i >= conf->layouts_info.info.size()) return;
@@ -88,6 +89,7 @@ public:
 		check_add_to_auto = autostart_get();
 		SyncLays();
 		ApplyAcessebil();
+		config_path = StrUtils::Convert(std::format(L"file://{}", GetPath_Conf()));
 	}
 	void SafeUpdate() {
 	}
@@ -189,6 +191,21 @@ public:
 					}
 				}
 
+				ImGui::AlignTextToFramePadding();
+				ImGui::TextLinkOpenURL("SimpleSwitcher.json", config_path.c_str());
+				ImGui::SameLine();
+				if (ImGui::Button("Reload")) {
+					auto conf = ConfPtr(new ProgramConfig());
+					auto errLoadConf = LoadConfig(*conf);
+					IFS_LOG(errLoadConf);
+					if (errLoadConf != SW_ERR_SUCCESS) {
+						ShowMessage(LOC("Error reading config"));
+					}
+					else {
+						_conf_set(conf);
+					}
+				}
+
 			}
 
 			with_TabItem(LOC("Hotkeys")) {
@@ -227,6 +244,13 @@ public:
 
 
 			ImGui::EndTabBar();
+		}
+
+		{
+			float widthNeeded = 100 + ImGui::GetStyle().ItemSpacing.x;
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - widthNeeded);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetContentRegionAvail().y - ImGui::GetFrameHeightWithSpacing()); // todo use child_wnd
+			if (ImGui::Button("Close to tray", { 100,0 })) { g_show_gui = false; }
 		}
 
 		ImGui::End();

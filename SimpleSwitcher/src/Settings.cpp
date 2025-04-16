@@ -90,7 +90,7 @@ void to_json(json& j, const HKL& p) {
 
 void from_json(const json& j, HKL& p) {
     if (j.is_string()) {
-        Str_Utils::ToInt(j.get_ref<const std::string&>(), p);
+        StrUtils::ToInt(j.get_ref<const std::string&>(), p);
     }
 }
 
@@ -98,11 +98,11 @@ namespace nlohmann {
 	template <>
 	struct adl_serializer<std::wstring> {
 		static void to_json(json& j, const std::wstring& str) {
-			j = Str_Utils::Convert(str);
+			j = StrUtils::Convert(str);
 		}
 
 		static void from_json(const json& j, std::wstring& str) {
-			str = Str_Utils::Convert(j.get_ref<const std::string&>());
+			str = StrUtils::Convert(j.get_ref<const std::string&>());
 		}
 	};
 }
@@ -115,7 +115,7 @@ void to_json(json& j, const CHotKey& p) {
 
 void from_json(const json& j, CHotKey& p) {
     if (j.is_string()) {
-        p = CHotKey::FromString(Str_Utils::Convert(j.get_ref<const std::string&>()));
+        p = CHotKey::FromString(StrUtils::Convert(j.get_ref<const std::string&>()));
     }
 }
 void to_json(json& j, const CHotKeyList& p) {
@@ -269,14 +269,8 @@ TStatus _Save_conf(const ProgramConfig& gui) {
 
         data["hotkeys"] = hk_json;
 
-        std::stringstream o;
-        // std::ofstream o(res);
-        o << std::setw(4) << data << std::endl;
-
-		auto json = o.str();
-
         std::ofstream outp(path);
-        outp << json;
+        outp << std::setw(4) << data << std::endl;
 
     } catch (std::exception& e) {
         return SW_ERR_JSON;

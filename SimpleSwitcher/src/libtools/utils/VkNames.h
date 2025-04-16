@@ -23,7 +23,7 @@ namespace _internal {
 			}
 			vkMap[k] = s;
 			std::wstring sNameLower = s;
-			Str_Utils::ToLower(sNameLower);
+			StrUtils::ToLower(sNameLower);
 			mapCode[std::move(sNameLower)] = k;
 		}
 	public:

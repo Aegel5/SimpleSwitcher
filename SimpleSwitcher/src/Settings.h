@@ -26,7 +26,7 @@ public:
     void NormalizePaths() {
         for (const auto& it : disableInPrograms) {
 			auto cur = it;
-			Str_Utils::ToLower(cur);
+			StrUtils::ToLower(cur);
             Utils::NormalizeDelims(cur);
             disableInPrograms_normalized.insert(cur);
         }

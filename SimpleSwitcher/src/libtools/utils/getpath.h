@@ -16,7 +16,7 @@ namespace Utils {
 
 		sPath = buf;
 		if (tolower)
-			Str_Utils::ToLower(sPath);
+			StrUtils::ToLower(sPath);
 
 		if (type == PATH_TYPE_SELF_FOLDER) {
 			size_t index = sPath.find_last_of(L"\\");

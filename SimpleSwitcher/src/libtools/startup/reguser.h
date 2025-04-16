@@ -74,7 +74,7 @@ namespace Startup
 		std::wstring cmdLine;
 		IFS_RET(Int::BuildCmdLine(sPath, sArgs, cmdLine));
 
-		isPathEquals = Str_Utils::IsEqualCI(cmdLine.c_str(), value.c_str());
+		isPathEquals = StrUtils::IsEqualCI(cmdLine.c_str(), value.c_str());
 
 		RETURN_SUCCESS;
 	}
