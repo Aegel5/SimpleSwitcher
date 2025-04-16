@@ -182,7 +182,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			LOG_ANY(L"post {}. has_double {}", msg_hotkey.hotkey.ToString(), double_exists);
 			Worker()->PostMsg(std::move(msg_hotkey), delay);
 		}
-		if (res)
+		if (res && g_enabled.IsEnabled())
 			return 1; // запрет
 	}
 

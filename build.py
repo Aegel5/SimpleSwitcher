@@ -10,10 +10,12 @@ import requests
 is_debug = False
 is_publ = False
 is_notel = False
+ver_suff = ''
 for arg in sys.argv[1:]:
     if arg == "/publish":        is_publ = True
     elif arg == "/debug":        is_debug = True
     elif arg == "/notel":        is_notel = True
+    elif arg == "/alpha":        ver_suff = ' ALPHA'
     else :
         print(f"unknown arg {arg}")
         exit(1)
@@ -33,10 +35,9 @@ ver_num+=1
 Path(ver_path_1).write_text(str(ver_num))
 
 ver_custom = ''
-if not is_publ: ver_custom = ' CUSTOM'
-curv2 = '5.{}{}'.format(ver_num, ver_custom)
-ver_cont = 'static const wchar_t* SW_VERSION = L"{}";'.format(curv2)
-Path(ver_path_2).write_text(ver_cont)
+if not is_publ: ver_custom = ' USER BUILD'
+curv2 = f'6.{ver_num:03}{ver_suff}{ver_custom}'
+Path(ver_path_2).write_text(f'static const char* SW_VERSION = "{curv2}";')
 
 curv2_v = "v" + curv2
 print(curv2_v)

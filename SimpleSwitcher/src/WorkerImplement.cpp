@@ -346,7 +346,12 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 
 	LOG_ANY("Hotkey start {}({})", HotKeyTypeName(typeRevert), (int)typeRevert);
 
-	if (!g_enabled.IsEnabled() && typeRevert != hk_ToggleEnabled) {
+	if (typeRevert == hk_ToggleEnabled) {
+		g_enabled.TryToggle();
+		RETURN_SUCCESS;
+	}
+
+	if (!g_enabled.IsEnabled()) {
 		LOG_ANY("Skip hk because disabled");
 		RETURN_SUCCESS;
 	}

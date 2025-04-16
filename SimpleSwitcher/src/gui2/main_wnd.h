@@ -4,15 +4,19 @@
 #include "imgui_sugar.hpp"
 #include "imgui_stdlib.h"
 
+#include "gui_utils.h"
 #include "SwAutostart.h"
 #include "SetHotKeyCombo.h"
 
 class MainWindow {
+	std::string title;
 	bool check_add_to_auto = false;
 	bool check_altmode = false;
 	bool show_demo_window = false;
 	UStr show_message = 0;
 	std::vector<SetHotKeyCombo> hotbox;
+	std::vector<SetHotKeyCombo> layout_hotkeys;
+	std::vector<SetHotKeyCombo> layout_win_hotkeys;
 private:
 	bool IsAdminOk() { return Utils::IsSelfElevated() || !conf_get_unsafe()->isMonitorAdmin; }
 	void ShowMessage(UStr msg) {
@@ -30,9 +34,38 @@ private:
 			ImGui::EndPopup();
 		}
 	}
+	void SyncLays() {
+		SyncLayouts();
+		GETCONF;
+		std::vector<CHotKey> def_list = {
+			CHotKey(VK_LCONTROL).SetKeyup(),
+			CHotKey(VK_RCONTROL).SetKeyup(),
+			CHotKey(VK_LSHIFT).SetDouble(),
+			CHotKey(VK_RSHIFT).SetDouble()
+		};
+		layout_hotkeys.clear();
+		layout_win_hotkeys.clear();
+		for (int i = -1; const auto & it : cfg->layouts_info.info) {
+			i++;
+			layout_hotkeys.emplace_back( Str_Utils::Convert(Utils::GetNameForHKL(it.layout)), it.hotkey.key(), def_list,
+				[i](auto key) {
+				SaveConfigWith([&](auto conf) {
+					if (i >= conf->layouts_info.info.size()) return;
+					auto& rec = conf->layouts_info.info[i];
+					rec.hotkey.key() = key;
+					});
+				}
+			);
+
+		}
+	}
 
 public:
 	MainWindow()  {
+		title = std::format(
+			"SimpleSwitcher {}{}{}", SW_VERSION,
+			Utils::IsSelfElevated() ? " Administrator" : "",
+			Utils::IsDebug() ? " DEBUG" : "");
 		GETCONF;
 		for (int i = -1; const auto & it : cfg->hotkeysList) {
 			i++;
@@ -53,6 +86,9 @@ public:
 			g_enabled.TryEnable();
 		}
 		check_add_to_auto = autostart_get();
+		SyncLays();
+	}
+	void SafeUpdate() {
 	}
 	void DrawFrame() {
 
@@ -61,11 +97,15 @@ public:
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
 
+		int next_id = 5;
+
 		GETCONF;
+
+		ImGui::SetNextWindowSize({514,455}, ImGuiCond_FirstUseEver);
 
 		{
 			bool val = g_show_gui;
-			ImGui::Begin("SimpleSwitcher", &val, ImGuiWindowFlags_NoCollapse);
+			ImGui::Begin(title.c_str(), &val, ImGuiWindowFlags_NoCollapse);
 			g_show_gui = val;
 		}
 
@@ -110,34 +150,65 @@ public:
 					}
 				}
 
-				if (ImGui::BeginCombo(LOC("Set of flags"), 0, 0)) {
-					//for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
-					//	const bool is_selected = (item_selected_idx == n);
-					//	if (ImGui::Selectable(items[n], is_selected))
-					//		item_selected_idx = n;
+				//if (ImGui::BeginCombo(LOC("Set of flags"), 0, 0)) {
+				//	ImGui::EndCombo();
+				//}
 
-					//	// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-					//	if (is_selected)
-					//		ImGui::SetItemDefaultFocus();
-					//}
-					ImGui::EndCombo();
+				{
+					bool val = cfg->disableAccessebility;
+					if (ImGui::Checkbox(LOC("Disable the accessibility shortcut keys (5 SHIFT and others)"), &val)) {
+						SaveConfigWith([val](auto p) {p->disableAccessebility = val; });
+					}
+				}
+
+				{
+					bool val = cfg->fClipboardClearFormat;
+					if (ImGui::Checkbox(LOC("Clear text format on Ctrl-C"), &val)) {
+						SaveConfigWith([val](auto p) {p->fClipboardClearFormat = val; });
+					}
+				}
+
+				{
+					bool val = conf_get_unsafe()->IsNeedDebug();
+					if (ImGui::Checkbox(LOC("Enable debug log"), &val)) {
+						SetLogLevel_info(val ? conf_get_unsafe()->logLevel : LOG_LEVEL_DISABLE);
+					}
 				}
 
 			}
 
 			with_TabItem(LOC("Hotkeys")) {
 
-				for (auto& it : hotbox) {
+				for (int i = -1;  auto & it : hotbox) {
 					it.Draw();
+				}
+				ImGui::SeparatorText("Language layouts");
+				for (int i = -1; const auto & it : cfg->layouts_info.info) {
+					i++;
+					with_ID(next_id++) {
+						bool val = it.enabled;
+						if (ImGui::Checkbox("", &val)) {
+							SaveConfigWith([&](auto p) {p->layouts_info.info[i].enabled ^= 1; });
+						}
+					}
+					ImGui::SameLine();
+					layout_hotkeys[i].Draw();
 				}
 
 			}
 
 			with_TabItem(LOC("Experimental")) {
 
-				if (ImGui::Button("Show demo"))
-					show_demo_window = true;
+				if (Utils::IsDebug()) {
+					if (ImGui::Button("Show demo"))
+						show_demo_window = true;
+				}
 
+			}
+
+			with_TabItem(LOC("About")) {
+				ImGui::TextLinkOpenURL("Github", "https://github.com/Aegel5/SimpleSwitcher");
+				ImGui::TextLinkOpenURL("Telegram", "https://t.me/simple_switcher");
 			}
 
 

@@ -45,7 +45,7 @@ bool MyApp::OnInit() {
             }
         }
 
-        SetLogLevel(Utils::IsDebug() ? LOG_LEVEL_2 : LOG_LEVEL_0);
+        SetLogLevel(Utils::IsDebug() ? LOG_LEVEL_2 : LOG_LEVEL_DISABLE);
 
         __g_config.reset(new ProgramConfig());
         auto errLoadConf = LoadConfig(*__g_config);
@@ -63,7 +63,7 @@ bool MyApp::OnInit() {
 
         setlocale(LC_ALL, "en_US.utf8");
 
-        LOG_ANY(L"Start program {}", SW_VERSION);
+        LOG_ANY("Start program {}", SW_VERSION);
 
 
         // init ui

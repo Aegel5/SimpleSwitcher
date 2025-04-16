@@ -1,7 +1,7 @@
 ﻿
 class SetHotKeyCombo {
 
-	UStr title;
+	std::string title;
 	std::vector<std::string> defaults;
 	CHotKey key;
 	std::string key_str; // cache
@@ -39,7 +39,7 @@ class SetHotKeyCombo {
 		state.Clear();
 	}
 public:
-	SetHotKeyCombo(UStr title, CHotKey key, const std::vector<CHotKey>& def, auto&& apply) : title(title), apply(apply) {
+	SetHotKeyCombo(std::string title, CHotKey key, const std::vector<CHotKey>& def, auto&& apply) : title(std::move(title)), apply(apply) {
 		for (const auto& it : def) {
 			defaults.push_back(Str_Utils::Convert(it.ToString()));
 		}
@@ -49,7 +49,7 @@ public:
 
 		ImGui::SetNextItemWidth(180);
 
-		if (ImGui::BeginCombo(title, key_str.c_str(), ImGuiComboFlags_HeightLarge)) {
+		if (ImGui::BeginCombo(title.c_str(), key_str.c_str(), ImGuiComboFlags_HeightLarge)) {
 
 			popup_open = true;
 

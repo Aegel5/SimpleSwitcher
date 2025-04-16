@@ -59,9 +59,9 @@ inline const char* GetGuiTextForHk(HotKeyType hk) {
     case hk_RevertSeveralWords: return LOC("Change layout for last several words");
     case hk_RevertAllRecentText: return LOC("Change layout for all recent text");
     case hk_RevertSelelected: return LOC("Change layout for selected text");
-    case hk_CycleSwitchLayout: return  LOC("Cycle change layout");
+    case hk_CycleSwitchLayout: return  LOC("Cyclic layout change");
     case hk_EmulateCapsLock: return LOC("Generate CapsLock");
-    case hk_toUpperSelected: return LOC("Selected text to UPPER/lower case");
+    case hk_toUpperSelected: return LOC("Selected text to UPPER/lower");
     case hk_ToggleEnabled: return LOC("Enable/Disable");
     case hk_ShowMainWindow: return LOC("Show main window");
     }

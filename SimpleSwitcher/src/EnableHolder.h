@@ -36,6 +36,7 @@ public:
 	bool IsEnabled() {
 		return mtx.is_taked();
 	}
+	void TryToggle() { TryEnable(!IsEnabled()); }
 	bool TryEnable(bool val=true) {
 		if (!val) {
 			mtx.clear();

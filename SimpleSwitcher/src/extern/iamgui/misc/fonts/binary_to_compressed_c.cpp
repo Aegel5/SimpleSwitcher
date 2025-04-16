@@ -1,4 +1,4 @@
-// dear imgui
+﻿// dear imgui
 // (binary_to_compressed_c.cpp)
 // Helper tool to turn a file into a C array, if you want to embed font data in your source code.
 

@@ -290,12 +290,14 @@ public: TStatus RegisterHk(CAutoHotKeyRegister& registor, HWND hwnd, int id) {
 	}
 public: bool IsDouble() const { return m_double_press; }
 public: auto& SetDouble(bool val = true) { m_double_press = val; return *this; }
+public: bool IsEnabled() const { return !m_disabled; }
+public: void SetEnabled(bool val = true) { m_disabled = !val; }
 private:
 	static constexpr int c_MAX = 5;
 	struct {
 		TUInt8 m_keyup : 1 {};
 		TUInt8 m_double_press : 1 {};
-		TUInt8 m_custom_flag : 1 {};
+		TUInt8 m_disabled : 1 {};
 	};
 	TUInt8 size = 0;
 	TKeyCode keys[c_MAX] = { 0 };

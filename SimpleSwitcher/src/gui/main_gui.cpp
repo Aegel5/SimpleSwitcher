@@ -9,25 +9,10 @@
 #include "wxUtils.h"
 #include "Tray.h"
 #include "IconManager.h"
-#include "set_hk.h"
 
 using namespace WxUtils;
 
-namespace {
-    void ShowNeedAdmin(const wxString& expl=L"") {
-        wxString ms(_("Need admin rights"));
-        if (expl != "") {
-            ms += _(" for: ");
-            ms += "\"";
-            ms += expl;
-            ms += "\"";
-        }
-        wxMessageBox(ms);
-    }
-    bool startOk() {
-        return Utils::IsSelfElevated() || !conf_get_unsafe()->isMonitorAdmin;
-    }
-}
+
 extern void StartGui2();
 class TemporGuiHolder {
 	std::thread thr;
@@ -52,21 +37,13 @@ private:
     MyTray myTray;
     bool exitRequest = false;
     bool inited = false;
-    CAutoHotKeyRegister enable_hk_register;
-    HotKeyDlg* setHotKeyWnd = nullptr;
 
     static constexpr wxLanguage supportTranslations[] = { wxLANGUAGE_ENGLISH , wxLANGUAGE_RUSSIAN, wxLANGUAGE_HEBREW };
 
-    std::generator<FloatPanel*> all_panels() {
-        for (auto* it : this->GetChildren()) {
-            auto cur = wxDynamicCast(it, FloatPanel);
-            if (cur != 0)
-                co_yield cur;
-        }
-    }
+
     void UpdateIcons() {
         if (conf_get_unsafe()->flagsSet == ProgramConfig::showAppIcon) {
-            myTray.ResetIcon(iconsMan.Get_Standart(!IsCoreEnabled()).bundle);
+            myTray.ResetIcon(iconsMan.Get_Standart(!g_enabled.IsEnabled()).bundle);
         }
         else {
             Worker()->PostMsg(Message_GetCurLay{ true });
@@ -85,164 +62,6 @@ public:
             timers.StartCycle(200, []() { Worker()->PostMsg(Message_GetCurLay{}); });
 
             Bind(wxEVT_CLOSE_WINDOW, &MainWnd::onExitReqest, this);
-            SetTitle(std::format(
-                L"{} {}{}{}", 
-                GetTitle().t_str(), 
-                SW_VERSION, 
-                Utils::IsSelfElevated() ? L" Administrator" : L"",
-                Utils::IsDebug()?L" DEBUG": L""));
-            SetWindowStyleFlag(wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION 
-                | wxRESIZE_BORDER
-            );
-
-   //         auto font = m_gridHotKeys->GetDefaultCellFont();
-			//auto font2 = font;
-   //         font2.SetPointSize(font2.GetPointSize() + 1);
-   //         m_gridHotKeys->SetDefaultCellFont(font2);
-   //         m_gridHotKeys->SetLabelFont(font);
-   //         m_gridLayouts->SetDefaultCellFont(font2);
-   //         m_gridLayouts->SetLabelFont(font);
-            //m_gridHotKeys->SetLabelBackgroundColour(m_gridHotKeys->GetDefaultCellBackgroundColour());
-
-            //m_gridHotKeys->Bind(wxEVT_SIZE, [&](auto& evt) {
-            //    m_gridHotKeys->SetColSize(0, m_gridHotKeys->GetSize().x - m_gridHotKeys->GetRowLabelSize());
-            //    });
-
-            //m_gridHotKeys->SetDefaultEditor(new wxGridCellChoiceEditor({"test", "test"}));
-
-            /*m_staticTextBuildDate->SetLabelText(std::format("Built on '{}'", __DATE__));*/
-
-            //m_hyperlink11->SetLabel(L"SimpleSwitcher.json");
-            //m_hyperlink11->SetURL(std::format(L"file://{}", GetPath_Conf()));
-
-            //BindButtom(m_buttonReloadConfig, []() {
-            //    auto conf = ConfPtr(new ProgramConfig());
-            //    auto errLoadConf = LoadConfig(*conf);
-            //    IFS_LOG(errLoadConf);
-            //    if (errLoadConf != SW_ERR_SUCCESS) {
-            //        wxMessageBox(_("Error reading config"));
-            //    }
-            //    else {
-            //        _conf_set(conf);
-            //    }
-            //    });
-
-            //BindButtom(m_buttonAddPanel, [this]() {
-            //    return;
-            //    auto wnd = new FloatPanel(this);
-            //    wnd->Show(true);
-            //    });
-
-            //BindButtom(m_buttonDelAllPanels, [this]() {
-            //    std::vector to_del{ std::from_range, all_panels() };
-            //    for (auto p : to_del) {
-            //        p->Destroy();
-            //    }
-            //    });
-
-            //SyncLayouts();
-
-            //m_notebook2->SetSelection(0);
-
-            //BindCheckbox(m_checkDebuglog, []() {return conf_get_unsafe()->IsNeedDebug(); }, [](bool val) {
-            //    SetLogLevel_info(val? conf_get_unsafe()->logLevel : LOG_LEVEL_0);
-            //    });
-
-            //BindCheckbox(m_checkBoxFixRAlt, 
-            //    []() {return conf_get_unsafe()->fixRAlt; }, 
-            //    [](bool val) {
-            //        SaveConfigWith([val](auto conf) {conf->fixRAlt = val; });
-            //    });
-            //m_checkBoxFixRAlt->SetLabelText(m_checkBoxFixRAlt->GetLabelText() + L" \"" + Utils::GetNameForHKL(conf_get_unsafe()->fixRAlt_lay_)+"\"");
-
-            //BindCheckbox(m_checkBoxPrevent, 
-            //    []() {return conf_get_unsafe()->EnableKeyLoggerDefence; }, 
-            //    [](bool val) {
-            //        SaveConfigWith([val](auto conf) {conf->EnableKeyLoggerDefence = val; });
-            // });
-
-            //BindChoice(m_choiceShowInTray, [&](wxChoice* elem) {
-            //    initChoiceFlags();
-            //    },
-            //    [&](wxChoice* elem) {
-            //        updateShowInTray(elem->GetStringSelection());
-            //        UpdateIcons();
-            //    });
-
-            //BindButtom(m_buttonUpdateFlags, [this]() {
-            //    initChoiceFlags();
-            //    UpdateIcons();
-            //    });
-
-            //BindCheckbox(m_checkBoxDisablAcc,
-            //    []() {
-            //        AllowAccessibilityShortcutKeys(!conf_get_unsafe()->disableAccessebility);
-            //        return conf_get_unsafe()->disableAccessebility; },
-            //    [](bool val) {
-            //        SaveConfigWith([val](auto cfg) {cfg->disableAccessebility = val; });
-            //        AllowAccessibilityShortcutKeys(!conf_get_unsafe()->disableAccessebility);
-            //    });
-
-            //BindCheckbox(m_checkBoxSeparateExt,
-            //    []() {return conf_get_unsafe()->separate_ext_last_word && conf_get_unsafe()->separate_ext_several_words; },
-            //    [](bool val) {
-            //        SaveConfigWith([val](auto conf) {conf->separate_ext_last_word = conf->separate_ext_several_words = val; });
-            //    });
-
-            //BindCheckbox(m_checkBoxAlterantiveLayoutChange, []() {return conf_get_unsafe()->AlternativeLayoutChange; }, [this](bool val) {
-            //    SaveConfigWith([val](auto cfg) {cfg->AlternativeLayoutChange = val; });
-            //    FillLayoutsInfo();
-            //    });
-
-            //BindCheckbox(m_checkBoxClearForm, []() {return conf_get_unsafe()->fClipboardClearFormat; }, [](bool val) {
-            //    SaveConfigWith([val](auto cfg) {cfg->fClipboardClearFormat = val; });
-            //    });
-
-            //BindCheckbox(m_checkBoxWorkInAdmin, []() {return conf_get_unsafe()->isMonitorAdmin; }, [this](bool val) {
-            //    SaveConfigWith([val](auto cfg) {cfg->isMonitorAdmin = val; });
-            //    updateAutoStart();
-            //    updateEnable();
-            //    });
-
-            //BindChoice(m_comboUiLang, [this](wxChoice* elem) {
-            //        elem->Clear();
-
-            //        elem->SetSelection(-1);
-            //        for (int i = -1; auto lang : supportTranslations) {
-            //            i++;
-            //            elem->AppendString(wxLocale::GetLanguageName(lang));
-            //            if (conf_get_unsafe()->uiLang_ == lang) {
-            //                elem->SetSelection(i);
-            //            }
-            //        }
-            //    }, [this](wxChoice* elem) {
-            //        SaveConfigWith(
-            //            [this, elem](auto cfg) {
-            //            cfg->uiLang_ = supportTranslations[elem->GetSelection()];
-            //            });
-            //        wxMessageBox(_("Need restart program"));
-            //        });
-
-            //    m_gridLayouts->GetGridWindow()->Bind(wxEVT_RIGHT_DOWN, [this](auto& evt) {
-            //        // Show popupmenu at position
-            //        wxMenu menu;
-            //        static const int update_id = 123;
-            //        menu.Append(update_id, wxT("&Update"));
-            //        menu.Bind(wxEVT_COMMAND_MENU_SELECTED, [this](auto& e) {
-            //            if (e.GetId() == update_id) {
-            //                SyncLayouts();
-            //                FillLayoutsInfo();
-            //            }
-            //            });
-            //        PopupMenu(&menu);
-            //        });
-
-            //updateAutoStart();
-
-            //FillHotkeysInfo();
-            //FillLayoutsInfo();
-
-            //updateCapsTab();
 
             myTray.Init(this);
             myTray.ResetIcon(iconsMan.Get_Standart().bundle);
@@ -252,19 +71,13 @@ public:
 				show_wnd();
                 }, Minimal_Show);
             myTray.Bind(wxEVT_MENU, [this](auto& evt) {
-                TryEnable(!IsCoreEnabled());
+				g_enabled.TryToggle();
                 }, Minimal_Activate);
             myTray.Bind(wxEVT_TASKBAR_LEFT_DCLICK, [this](auto& evt) {
 				show_wnd();
                 });
 
-    //        if (startOk()) {
-				//g_enabled.TryEnable();
-    //        }
-
-            //BindCheckbox(m_checkBoxEnable, []() {return false; }, [this](auto val) {TryEnable(val); });
-
-            //updateEnable();
+			UpdateIcons();
 
         }
         catch (std::exception& e) {
@@ -315,15 +128,6 @@ private:
     }
 
 
-    int getChildIndex(wxWindow* obj) {
-        auto par = obj->GetParent();
-        for (int i = 0; i < par->GetChildren().size(); i++) {
-            if (par->GetChildren()[i] == obj)
-                return i;
-        }
-        return -1;
-    }
-
 
     void onExitReqest(wxCloseEvent& event) {
 
@@ -350,13 +154,8 @@ private:
             if (conf_get_unsafe()->flagsSet == ProgramConfig::showAppIcon)
                 return TRUE;
 
-            auto info = iconsMan.Get((HKL)wParam, !IsCoreEnabled());
+            auto info = iconsMan.Get((HKL)wParam, !g_enabled.IsEnabled());
             myTray.ResetIcon(info.bundle);
-        }
-        else if (nMsg == WM_HOTKEY) {
-            if (wParam == 998) {
-                TryEnable(!IsCoreEnabled());
-            }
         }
         else if (nMsg == WM_ShowWindow) {
 			show_wnd();
@@ -367,112 +166,6 @@ private:
 
         return TRUE;
    }
-
-    virtual void onHotDClick(wxGridEvent& event) override {
-
-        bool isDouble = event.GetEventType() == wxEVT_GRID_CELL_LEFT_DCLICK;
-
-        int col = event.GetCol();
-        int row = event.GetRow();
-
-        GETCONF;
-
-        const auto& hotlist = cfg->hotkeysList;
-        if (row >= hotlist.size()) return;
-        const auto& data = hotlist[row];
-        auto hk = data.hkId;
-
-
-        if (col == 0) {
-            CHotKey newkey;
-            ChangeHotKey(data, [row, this, hk](auto key) {
-                SaveConfigWith([&](auto cfg) {cfg->hotkeysList[row].keys.key() = key; });
-                m_gridHotKeys->SetCellValue(row, 0, L" " + key.ToString());
-            }, isDouble);
-        }
-
-        event.Skip();
-
-    }
-
-    virtual void on_grid_lay_double(wxGridEvent& event) override {
-
-        event.Skip();
-
-        bool isDouble = event.GetEventType() == wxEVT_GRID_CELL_LEFT_DCLICK;
-
-        int col = event.GetCol();
-        int row = event.GetRow();
-
-        GETCONF;
-
-        auto& lays = cfg->layouts_info.info;
-        if (row >= lays.size()) return;
-        auto& data = lays[row];
-
-        if (isDouble && col == 0) {
-            SaveConfigWith([&](auto conf) {  conf->layouts_info.info[row].enabled ^= 1; });
-            FillLayoutsInfo(false);
-        }
-
-        CHotKeySet set;
-
-        if (col == 1) {
-            CHotKey newkey;
-            set.def_list = {
-                (CHotKey)CHotKey(VK_LCONTROL).SetKeyup(),
-                (CHotKey)CHotKey(VK_RCONTROL).SetKeyup(),
-                (CHotKey)CHotKey(VK_LSHIFT).SetDouble(),
-                (CHotKey)CHotKey(VK_RSHIFT).SetDouble()
-            };
-            set.keys = data.hotkey;
-        }
-        if (col == 2) {
-            CHotKey newkey;
-            set.def_list = {
-                CHotKey(VK_LMENU, VK_SHIFT, 0x31)
-                ,CHotKey(VK_LMENU, VK_SHIFT, 0x32)
-                ,CHotKey(VK_LMENU, VK_SHIFT, 0x33)
-                ,CHotKey(VK_CONTROL, VK_SHIFT, 0x31)
-                ,CHotKey(VK_CONTROL, VK_SHIFT, 0x32)
-                ,CHotKey(VK_CONTROL, VK_SHIFT, 0x33)
-            };
-            set.keys.key() = data.win_hotkey;
-        }
-
-        if (Utils::is_in(col, 1,2)) {
-            ChangeHotKey(set, [this, row, col](auto key) {
-                SaveConfigWith([&](auto conf) {
-                    if (row >= conf->layouts_info.info.size()) return;
-                    auto& rec = conf->layouts_info.info[row];
-                    if (col == 2)
-                        rec.win_hotkey = key;
-                    else
-                        rec.hotkey.key() = key;
-                    });
-                m_gridLayouts->SetCellValue(row, col, key.ToString());
-                m_gridLayouts->AutoSizeColumn(col);
-                }, isDouble);
-        }
-    }
-
-    void ChangeHotKey(const CHotKeySet& set, HotKeyDlg::Apply&& apply, bool show = false) {
-
-        if (setHotKeyWnd == nullptr) {
-            setHotKeyWnd = new HotKeyDlg(this);
-        }
-
-        setHotKeyWnd->SetToChange(set, std::move(apply));
-
-        if (show) {
-            //auto rect = this->GetRect();
-            //int x = rect.GetLeft() + rect.GetWidth();
-            ////int x = GetScreenPosition().x + GetSize().x - 10;
-            //int y = GetScreenPosition().y + GetSize().y / 2 - setHotKeyWnd->GetSize().y/2;
-            //setHotKeyWnd->SetPosition({ x-10,y });
-            setHotKeyWnd->Show();
-        }
-    }
 
     void updateCapsTab()
     {
@@ -498,6 +191,7 @@ private:
             m_listBoxRemap->Append(std::format(L"{} -> {}", caption(sc, vc), caption(sc2, vc2)));
         }
     }
+
     virtual void onRemapCaps(wxCommandEvent& event)
     {
         auto obj = event.GetEventObject();
@@ -507,7 +201,7 @@ private:
 
         if (!Utils::IsSelfElevated()) {
             check->SetValue(!check->GetValue());
-            ShowNeedAdmin("");
+            //ShowNeedAdmin("");
             return;
         }
 
@@ -534,205 +228,6 @@ private:
             wxMessageBox(_("Will be applied after PC reboot"));
     }
 
-    void updateEnable() {
-        if (!startOk()) {
-			g_enabled.TryEnable(false);
-        }
-        m_checkBoxEnable->SetValue(g_enabled.IsEnabled());
-        UpdateIcons();
-    }
-    //void UpdateAutostartExplain()
-    //{
-    //    try {
-    //        Startup::CheckTaskSheduleParm parm;
-    //        parm.taskName = c_wszTaskName;
-    //        IFS_LOG(Startup::CheckTaskShedule(parm));
-
-    //        bool isHasEntry = false;
-    //        std::wstring value;
-    //        IFS_LOG(Startup::GetString_AutoStartUser(c_sRegRunValue, isHasEntry, value));
-
-    //        std::wstring registryRes = L"none";
-    //        std::wstring schedulRes = L"none";
-
-    //        if (isHasEntry) {
-    //            registryRes = value;
-    //        }
-    //        if (parm.isTaskExists) {
-    //            schedulRes = parm.pathValue;
-    //        }
-    //        std::wstring sLabel = std::format(L"         Registry: {}\r\n         Scheduler: {}", registryRes, schedulRes);
-    //        //m_staticTextExplain->SetLabelText(sLabel);
-    //    }
-    //    catch (std::exception& e) {
-    //        wxMessageBox(_("Error while UpdateAutostartExplain: ") + e.what());
-    //    }
-    //}
-
-    void FillHotkeysInfo(bool refit = true) {
-
-        ClearGrid(m_gridHotKeys);
-        
-        for (int i = -1; const auto& it : conf_get_unsafe()->hotkeysList) {
-            i++;
-            m_gridHotKeys->AppendRows();
-            m_gridHotKeys->SetRowLabelValue(i, wxGetTranslation(GetGuiTextForHk(it.hkId)));
-            m_gridHotKeys->SetCellValue(i, 0, L" " + it.keys.ToString());
-        }
-
-        m_gridHotKeys->SetRowLabelSize(wxGRID_AUTOSIZE);
-
-        if (refit) {
-            FitHeight(m_gridHotKeys);
-            FixProportions();
-        }
-        else {
-            m_gridHotKeys->AutoSizeRows();
-        }
-
-    }
-    void SyncLayouts() {
-
-        HKL all_lays[50] = { 0 };
-        int all_lay_size = GetKeyboardLayoutList(std::ssize(all_lays), all_lays);
-        auto has_system_layout = [&](HKL lay) {
-            for (int i = 0; i < all_lay_size; i++) {
-                auto cur = all_lays[i];
-                if (cur == lay) return true;
-            }
-            return false;
-            };
-
-        auto info_copy = conf_get_unsafe()->layouts_info;
-        auto& info = info_copy.info;
-        bool was_changes = false;
-
-        // удалим те, которых сейчас нет в системе
-        for (int i = (int)info.size() - 1; i >= 0; i--) {
-            if (!has_system_layout(info[i].layout)) {
-                Utils::RemoveAt(info, i);
-                was_changes = true;
-            }
-        }
-
-        // добавим все новые
-        for (int i = 0; i < all_lay_size; i++) {
-            auto cur = all_lays[i];
-            if (!info_copy.HasLayout(cur)) {
-                was_changes = true;
-                //CHotKey winhk(VK_LMENU, VK_SHIFT, VKE_1 + info.size());
-                info.push_back({ .layout = cur });
-            }
-        }
-
-        if (was_changes) {
-            // пересохраним если были изменения.
-            SaveConfigWith([&](auto conf) {  conf->layouts_info = info_copy; });
-        }
-
-    }
-    void FixProportions() {
-        auto sz = GetSize();
-        auto sz2 = sz;
-        sz2.x = std::max((double)sz.x, sz.y * 1.16);
-        sz2.y = std::max((double)sz.y, sz.x / 1.16);
-        SetSize(sz2);
-
-    }
-    void FillLayoutsInfo(bool refit = true) {
-
-        ClearGrid(m_gridLayouts);
-
-        while (m_gridLayouts->GetNumberCols() >= 3) {
-            m_gridLayouts->DeleteCols(2);
-        }
-        if (conf_get_unsafe()->AlternativeLayoutChange) {
-            m_gridLayouts->AppendCols();
-            m_gridLayouts->SetColLabelValue(2, L"Win hotkey");
-        }
-
-        // отобразим в gui
-        for (int i = -1; const auto& it: conf_get_unsafe()->layouts_info.info) {
-            i++;
-            auto name = Utils::GetNameForHKL(it.layout);
-            m_gridLayouts->AppendRows();
-            m_gridLayouts->SetRowLabelValue(i, name);
-            if (it.enabled) {
-                m_gridLayouts->SetCellValue(i, 0, "X");
-            }
-            m_gridLayouts->SetCellValue(i, 1, it.hotkey.ToString());
-
-            if (conf_get_unsafe()->AlternativeLayoutChange) {
-                m_gridLayouts->SetCellValue(i, 2, it.win_hotkey.ToString());
-                m_gridLayouts->SetCellBackgroundColour(i, 2, wxColor(0xE3, 0xF2, 0xFD));
-            }
-        }
-        //m_gridLayouts->SetRowLabelSize(wxGRID_AUTOSIZE);
-        m_gridLayouts->SetRowLabelSize(m_gridHotKeys->GetRowLabelSize());
-        m_gridLayouts->AutoSizeColumns(false);
-        if (refit && m_gridLayouts->GetNumberRows() <= 15) {
-            FitHeight(m_gridLayouts);
-            FixProportions();
-        }
-        else {
-            m_gridLayouts->AutoSizeRows();
-        }
-    }
-
-    //void ensureAuto(bool enable) {
-    //    if (conf_get_unsafe()->isMonitorAdmin) {
-
-    //        IFS_LOG(DelRegRun());
-
-    //        if (enable) {
-    //            IFS_LOG(SetSchedule());
-    //        } else {
-    //            IFS_LOG(DelSchedule());
-    //        }
-
-    //    } else {
-
-    //        bool isAdminAllOk   = false;
-    //        bool isAdminHasTask = false;
-    //        IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
-    //        if (isAdminHasTask) {
-    //            if (Utils::IsSelfElevated()) {
-    //                IFS_LOG(DelSchedule());
-    //            } else {
-    //                ShowNeedAdmin(_("delete old task"));
-    //                return; // exit because can't delete old
-    //            }
-    //        }
-
-    //        if (enable) {
-    //            IFS_LOG(SetRegRun());
-    //        } else {
-    //            IFS_LOG(DelRegRun());
-    //        }
-    //    }
-    //}
-
-    //void updateAutoStart() {
-
-    //    bool isUserAllOk = false;
-    //    bool isUserHasTask = false;
-    //    IFS_LOG(CheckRegRun(isUserAllOk, isUserHasTask));
-
-    //    bool isAdminAllOk = false;
-    //    bool isAdminHasTask = false;
-    //    IFS_LOG(CheckSchedule(isAdminAllOk, isAdminHasTask));
-
-    //    m_checkAddToAutoStart->SetValue(conf_get_unsafe()->isMonitorAdmin ? isAdminAllOk && !isUserHasTask
-    //                                                           : isUserAllOk && !isAdminHasTask);
-    //    //UpdateAutostartExplain();
-
-    //}
-
-    //virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) override
-    //{
-    //    // Pass the messages to the original WinAPI window procedure
-    //    return MyFrame4::MSWWindowProc(nMsg, wParam, lParam);
-    //}
 public:
 
     void onExit(wxCommandEvent& event) override {
@@ -744,34 +239,6 @@ public:
     void onCloseToTray(wxCommandEvent& event)     { 
         Hide();
     }
-
-    //void onAutocheck(wxCommandEvent& event) override {
-    //    if (conf_get_unsafe()->isMonitorAdmin && !Utils::IsSelfElevated()) {
-    //        m_checkAddToAutoStart->SetValue(!m_checkAddToAutoStart->GetValue());
-    //        ShowNeedAdmin("");
-    //        return;
-    //    }
-    //    ensureAuto(m_checkAddToAutoStart->GetValue());
-    //    updateAutoStart();
-    //}
-
-    void TryEnable(bool val) {
-        m_checkBoxEnable->SetValue(val);
-        if (IsCoreEnabled()) {
-            if (startOk()) {
-				g_enabled.TryEnable();
-            }
-            else {
-                ShowNeedAdmin("");
-            }
-        }
-        else {
-			g_enabled.TryEnable(false);
-        }
-        updateEnable();
-    }
-
-    bool IsCoreEnabled() { return m_checkBoxEnable->IsChecked(); }
 
 };
 
@@ -785,7 +252,7 @@ wxMenu* MyTray::CreatePopupMenu()  {
     }
 
     menu->AppendSeparator();
-    menu->Append(Minimal_Activate, parent->IsCoreEnabled() ? _("Disable") : _("Enable"));
+    menu->Append(Minimal_Activate, g_enabled.IsEnabled() ? _("Disable") : _("Enable"));
     menu->Append(Minimal_Show, _("Show"));
     menu->Append(Minimal_Quit, _("Exit"));
 

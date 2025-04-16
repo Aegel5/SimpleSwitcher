@@ -61,8 +61,9 @@ file(GLOB_RECURSE all_implement_units
 src/*.cpp 
 src/res/myres.rc
 src/simpleswitcher.manifest
-EXCLUDE PATTERN  "binary_to_compressed_c.cpp"
 )
+
+list(FILTER all_implement_units EXCLUDE REGEX ".*binary_to_compressed_c.cpp")
 
 #file(GLOB_RECURSE all_interface_modules  
 #src/*.ixx 

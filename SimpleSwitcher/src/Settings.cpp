@@ -109,7 +109,7 @@ namespace nlohmann {
 
 
 void to_json(json& j, const CHotKey& p) {
-    j             = p.ToString().c_str();
+    j             = p.ToString();
 }
 
 
@@ -119,13 +119,21 @@ void from_json(const json& j, CHotKey& p) {
     }
 }
 void to_json(json& j, const CHotKeyList& p) {
-    j = p.keys;
+	if (p.keys.size() == 1) {
+		j = p.key();
+	}
+	else {
+		j = p.keys;
+	}
 }
 
 void from_json(const json& j, CHotKeyList& p) {
     if (j.is_array()) {
         p.keys = j;
-    }
+	}
+	else if (j.is_string()) {
+		p.key() = j;
+	}
 }
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
@@ -218,12 +226,9 @@ TStatus LoadConfig(ProgramConfig& config) {
                 if (key.empty()) continue;
                 auto it  = arr.find(key);
                 if (it != arr.end()) {
-                    auto& obj = it.value();
-                    if (obj.is_array()) {
-                        elem.keys.keys = obj;
-                        if (elem.keys.keys.empty()) {
-                            elem.keys.keys.resize(1);
-                        }
+					elem.keys = it.value();
+                    if (elem.keys.keys.empty()) {
+                        elem.keys.keys.resize(1);
                     }
                 }
             }
@@ -231,7 +236,7 @@ TStatus LoadConfig(ProgramConfig& config) {
 
         config.NormalizePaths();
 
-        SetLogLevel_info(config.IsNeedDebug() ? config.logLevel : LOG_LEVEL_0);
+        SetLogLevel_info(config.IsNeedDebug() ? config.logLevel : LOG_LEVEL_DISABLE);
 
     } catch (std::exception& e) {
         return SW_ERR_JSON;
@@ -255,7 +260,7 @@ TStatus _Save_conf(const ProgramConfig& gui) {
             auto hk = elem.hkId;
             auto key = HotKeyTypeName(hk);
             if (key.empty()) continue;
-            hk_json[key] = elem.keys.keys;
+            hk_json[key] = elem.keys;
         }
 
         data["hotkeys"] = hk_json;
@@ -264,11 +269,7 @@ TStatus _Save_conf(const ProgramConfig& gui) {
         // std::ofstream o(res);
         o << std::setw(4) << data << std::endl;
 
-        auto json = o.str();
-        std::regex regex("\\[(\\ |\\n|\\r|\\t)*");
-        json = std::regex_replace(json, regex, "[ ");
-        std::regex regex2("(\\ |\\n|\\r|\\t)*\\]");
-        json = std::regex_replace(json, regex2, " ]");
+		auto json = o.str();
 
         std::ofstream outp(path);
         outp << json;
