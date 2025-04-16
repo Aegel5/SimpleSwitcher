@@ -15,7 +15,7 @@
 #include <tchar.h>
 #include "main_wnd.h"
 
-#include "misc/fonts/Play-Regular.cpp"
+
 
 // Data
 static ID3D11Device*            g_pd3dDevice = nullptr;
@@ -32,31 +32,7 @@ void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-void InitImGui() {
 
-	ImGuiIO& io = ImGui::GetIO();
-	ImGuiStyle& style = ImGui::GetStyle();
-
-	static ImVector<ImWchar> ranges;
-	{
-		ImFontGlyphRangesBuilder builder;
-		builder.AddRanges(io.Fonts->GetGlyphRangesCyrillic()); // Add one of the default ranges
-		static const ImWchar ranges_additional[] =
-		{
-			//0x1, 0xFFFF,
-			0x0590, 0x05FF, 0xFB1D, 0xFB4F, // hebrew
-			0,
-		};
-		builder.AddRanges(ranges_additional);
-		builder.BuildRanges(&ranges);
-		//io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 20.0f, 0, ranges.Data);
-		io.Fonts->AddFontFromMemoryCompressedTTF(DefaultFont_compressed_data, std::ssize(DefaultFont_compressed_data), 16.0f, 0, ranges.Data);
-	}
-
-
-	style.FrameRounding = 3;
-	style.FrameBorderSize = 1;
-}
 
 // Main code
 void StartGui2() 
@@ -94,11 +70,6 @@ void StartGui2()
 	//io.ConfigDockingTransparentPayload = true;
 	//io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleFonts;     // FIXME-DPI: Experimental. THIS CURRENTLY DOESN'T WORK AS EXPECTED. DON'T USE IN USER APP!
 	//io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleViewports; // FIXME-DPI: Experimental.
-
-    // Setup Dear ImGui style
-    //ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
-    ImGui::StyleColorsLight();
 
 	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 	ImGuiStyle& style = ImGui::GetStyle();

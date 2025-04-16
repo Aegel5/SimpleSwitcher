@@ -55,6 +55,8 @@ public:
     {
         try {
 
+			g_enabled.TryEnable(true);
+
             g_guiHandle = GetHandle();
 
 			coreWork.Start();

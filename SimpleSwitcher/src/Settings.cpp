@@ -130,6 +130,9 @@ void to_json(json& j, const CHotKeyList& p) {
 void from_json(const json& j, CHotKeyList& p) {
     if (j.is_array()) {
         p.keys = j;
+		if (p.keys.empty()) {
+			p.keys.resize(1);
+		}
 	}
 	else if (j.is_string()) {
 		p.key() = j;
@@ -185,7 +188,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     separate_ext_last_word,
     separate_ext_several_words,
     quick_press_ms,
-    win_hotkey_cycle_lang
+    win_hotkey_cycle_lang,
+	theme
     )
     
 
@@ -227,16 +231,16 @@ TStatus LoadConfig(ProgramConfig& config) {
                 auto it  = arr.find(key);
                 if (it != arr.end()) {
 					elem.keys = it.value();
-                    if (elem.keys.keys.empty()) {
-                        elem.keys.keys.resize(1);
-                    }
                 }
             }
         }
 
         config.NormalizePaths();
 
-        SetLogLevel_info(config.IsNeedDebug() ? config.logLevel : LOG_LEVEL_DISABLE);
+		if (config.force_DbgMode) {
+			SetLogLevel_info(config.logLevel);
+		}
+        
 
     } catch (std::exception& e) {
         return SW_ERR_JSON;

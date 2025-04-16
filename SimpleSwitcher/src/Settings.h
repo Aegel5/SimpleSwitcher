@@ -70,7 +70,6 @@ public:
     HKL fixRAlt_lay_ = (HKL)0x4090409;
     bool isMonitorAdmin = false;
     bool force_DbgMode              = false;
-    bool IsNeedDebug() const { return Utils::IsDebug() || force_DbgMode; }
     bool fClipboardClearFormat = false;
     bool EnableKeyLoggerDefence = false;
     bool disableAccessebility    = false;
@@ -83,6 +82,7 @@ public:
     bool separate_ext_last_word = false;
     bool separate_ext_several_words = false;
     CHotKey win_hotkey_cycle_lang { VK_LMENU, VK_SHIFT };
+	std::string theme = "Dark";
 
     std::vector< CHotKeySet> hotkeysList;
     std::vector< RunProgramInfo> run_programs = { {.path = L"example: calc.exe"} };

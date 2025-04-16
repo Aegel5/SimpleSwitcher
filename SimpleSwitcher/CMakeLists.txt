@@ -64,6 +64,9 @@ src/simpleswitcher.manifest
 )
 
 list(FILTER all_implement_units EXCLUDE REGEX ".*binary_to_compressed_c.cpp")
+list(FILTER all_implement_units EXCLUDE REGEX ".*/old/.*")
+
+#message(all_implement_units=${all_implement_units})
 
 #file(GLOB_RECURSE all_interface_modules  
 #src/*.ixx 

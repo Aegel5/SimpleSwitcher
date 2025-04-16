@@ -7,23 +7,25 @@ inline TStatus SetRegRun()
 {
 	std::wstring sPath;
     IFS_RET(Utils::GetPath_exe_noLower(sPath));
-
 	IFS_RET(Startup::AddWindowsRun(c_sRegRunValue, sPath.c_str(), c_sArgAutostart));
 
-	RETURN_SUCCESS;
-}
-inline TStatus DelRegRun()
-{
-	IFS_RET(Startup::RemoveWindowsRun(c_sRegRunValue));
 	RETURN_SUCCESS;
 }
 inline TStatus CheckRegRun(bool& isAllOk, bool& isHasTask)
 {
 	std::wstring sPath;
     IFS_RET(Utils::GetPath_exe_noLower(sPath));
-
 	IFS_RET(Startup::CheckAutoStartUser(isAllOk, isHasTask, c_sRegRunValue, sPath.c_str(), c_sArgAutostart));
 
+	RETURN_SUCCESS;
+}
+inline TStatus DelRegRun() {
+	bool isUserAllOk = false;
+	bool isUserHasTask = false;
+	IFS_RET(CheckRegRun(isUserAllOk, isUserHasTask));
+	if (isUserHasTask) {
+		IFS_RET(Startup::RemoveWindowsRun(c_sRegRunValue));
+	}
 	RETURN_SUCCESS;
 }
 

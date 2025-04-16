@@ -27,7 +27,7 @@ private:
 	void DrawMessage() {
 		ImVec2 center = ImGui::GetWindowViewport()->GetCenter();
 		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-		if (ImGui::BeginPopupModal(LOC("Message"), 0, ImGuiWindowFlags_AlwaysAutoResize)) {
+		if (ImGui::BeginPopupModal(LOC("Message"), 0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings)) {
 			ImGui::Text(show_message);
 			//ImGui::Separator();
 			if (ImGui::Button("OK", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
@@ -63,7 +63,7 @@ private:
 public:
 	MainWindow()  {
 		title = std::format(
-			"SimpleSwitcher {}{}{}", SW_VERSION,
+			"SimpleSwitcher {}{}{}###main_wnd", SW_VERSION,
 			Utils::IsSelfElevated() ? " Administrator" : "",
 			Utils::IsDebug() ? " DEBUG" : "");
 		GETCONF;
@@ -87,6 +87,7 @@ public:
 		}
 		check_add_to_auto = autostart_get();
 		SyncLays();
+		ApplyAcessebil();
 	}
 	void SafeUpdate() {
 	}
@@ -158,6 +159,7 @@ public:
 					bool val = cfg->disableAccessebility;
 					if (ImGui::Checkbox(LOC("Disable the accessibility shortcut keys (5 SHIFT and others)"), &val)) {
 						SaveConfigWith([val](auto p) {p->disableAccessebility = val; });
+						ApplyAcessebil();
 					}
 				}
 
@@ -169,9 +171,21 @@ public:
 				}
 
 				{
-					bool val = conf_get_unsafe()->IsNeedDebug();
+					bool val = GetLogLevel() > LOG_LEVEL_DISABLE;
 					if (ImGui::Checkbox(LOC("Enable debug log"), &val)) {
 						SetLogLevel_info(val ? conf_get_unsafe()->logLevel : LOG_LEVEL_DISABLE);
+					}
+				}
+
+				{
+					if (ImGui::BeginCombo("Theme", cfg->theme.c_str(), 0)){
+						for (const char* it : {"Dark","Light","Classic"} ) {
+							if (ImGui::Selectable(it, cfg->theme == it)) {
+								SaveConfigWith([&](auto p) {p->theme = it; });
+								SetStyle();
+							}
+						}
+						ImGui::EndCombo();
 					}
 				}
 

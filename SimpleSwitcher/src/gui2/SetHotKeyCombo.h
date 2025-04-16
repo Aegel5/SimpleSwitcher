@@ -28,7 +28,6 @@ class SetHotKeyCombo {
 		if (key.Compare(k, CHotKey::COMPARE_STRICK_MODIFIER)) return;
 		key = k;
 		key_str = Str_Utils::Convert(key.ToString());
-		left_right = key.Has_left_right();
 		if(apl)
 			apply(key);
 	}
