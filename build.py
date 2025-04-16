@@ -15,7 +15,7 @@ for arg in sys.argv[1:]:
     if arg == "/publish":        is_publ = True
     elif arg == "/debug":        is_debug = True
     elif arg == "/notel":        is_notel = True
-    elif arg == "/dev":        ver_suff = 'a DEV'
+    elif arg == "/dev":        ver_suff = '_dev'
     else :
         print(f"unknown arg {arg}")
         exit(1)
@@ -150,18 +150,16 @@ def publish():
 
     if not is_notel:
         bot_token = Path("D:/yy/tok.txt").read_text() 
-        msg = f"Новая версия! {curv2_v} [Скачать](https://github.com/Aegel5/SimpleSwitcher/releases)"
+        msg = f'Новая версия! {curv2_v}  <a href="https://github.com/Aegel5/SimpleSwitcher/releases">Скачать</a>'
         url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
-        params = {
-            'chat_id': '-1002391595712',
-            'text': msg,
-            'parse_mode': 'Markdown'  # или 'HTML', если хотите использовать HTML-разметку
-        }
-        response = requests.post(url, params=params)
-        if response.status_code == 200:
-            print("Сообщение успешно отправлено!")
-        else:
-            print(f"Ошибка при отправке сообщения: {response.status_code} - {response.text}")
+        # Create the payload as a dictionary
+        payload = { 'chat_id': '-1002391595712',    'text': msg,    'parse_mode': 'HTML' }
+        # Convert the payload to JSON format
+        json_payload = json.dumps(payload)
+        # Send the request to the Telegram API
+        response = requests.post(url, data=json_payload, headers={'Content-Type': 'application/json'})
+        # Print the response from Telegram
+        print(response.json())
     
 if is_publ:  
     publish()    
