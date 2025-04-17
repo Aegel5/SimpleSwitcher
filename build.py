@@ -39,9 +39,6 @@ if not is_publ: ver_custom = ' USER'
 curv2 = f'5.{ver_num:03}{ver_suff}{ver_custom}'
 Path(ver_path_2).write_text(f'static const char* SW_VERSION = "{curv2}";')
 
-curv2_v = "v" + curv2
-print(curv2_v)
-
 package_build_folder = pathlib.Path("package_build")
 result_dir_root = package_build_folder / "OUT"
 result_dir = result_dir_root / "SimpleSwitcher"
@@ -118,7 +115,7 @@ build("SimpleSwitcher", is64=False)
 print("Copy bin files")
 shutil.copytree("SimpleSwitcher/bin_files", result_dir, dirs_exist_ok=True)
 
-zippath = result_dir_root / f"SimpleSwitcher_{curv2_v}"
+zippath = result_dir_root / f"SimpleSwitcher_{curv2}"
     
 shutil.make_archive(zippath, 'zip', result_dir) 
 
@@ -145,12 +142,12 @@ def publish():
     
     last_com = repo.get_branch("master").commit
     print(last_com)
-    newrel = repo.create_git_tag_and_release(curv2, curv2, release_name=f"SimpleSwitcher {curv2_v}", release_message=rel_message, object=last_com.sha, type="commit")
+    newrel = repo.create_git_tag_and_release(curv2, curv2, release_name=f"SimpleSwitcher {curv2}", release_message=rel_message, object=last_com.sha, type="commit")
     newrel.upload_asset(str(zippath) + ".zip")
 
     if not is_notel:
         bot_token = Path("D:/yy/tok.txt").read_text() 
-        msg = f'Новая версия! {curv2_v}  <a href="https://github.com/Aegel5/SimpleSwitcher/releases">Скачать</a>'
+        msg = f'Новая версия! {curv2}  <a href="https://github.com/Aegel5/SimpleSwitcher/releases">Скачать</a>'
         url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
         # Create the payload as a dictionary
         payload = { 'chat_id': '-1002391595712',    'text': msg,    'parse_mode': 'HTML' }
