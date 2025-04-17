@@ -6,6 +6,7 @@ import shutil
 import sys
 import subprocess
 import requests
+import json
 
 is_debug = False
 is_publ = False
