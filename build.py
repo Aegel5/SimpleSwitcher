@@ -36,7 +36,7 @@ Path(ver_path_1).write_text(str(ver_num))
 
 ver_custom = ''
 if not is_publ: ver_custom = ' USER'
-curv2 = f'6.{ver_num:03}{ver_suff}{ver_custom}'
+curv2 = f'5.{ver_num:03}{ver_suff}{ver_custom}'
 Path(ver_path_2).write_text(f'static const char* SW_VERSION = "{curv2}";')
 
 curv2_v = "v" + curv2
