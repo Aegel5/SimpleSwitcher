@@ -130,7 +130,7 @@ https://t.me/simple_switcher
 
 ## Donate
 Если вам нравится программа, и вы хотите поддержать ее развитие:
-- 4276 1609 6336 6548, CберБанк, Александр Ж.
+- 2202 2050 0289 5834, CберБанк, Александр Ж.
 - https://boosty.to/alekseshka/donate
 - https://yoomoney.ru/bill/pay/19AFP3RQA50.250330
 - https://www.donationalerts.com/r/alekseshka
