@@ -1,1 +1,1 @@
-"./gnuwin32/xgettext.exe" -d ss -s --keyword=LOC -o mess.pot --from-code=utf-8  -C "../src/*.cpp" "../src/*.h" "../src/gui2/*.h" "../src/gui2/*.cpp"
+"./gnuwin32/xgettext.exe" -d ss -s --keyword=_ --keyword=LOC -o "./messages.pot" --from-code=utf-8  -C "../src/*.cpp" "../src/*.h" "../src/gui2/*.h" "../src/gui2/*.cpp" "../src/gui/*.h" "../src/gui/*.cpp"
