@@ -6,6 +6,8 @@ enum {
 	VKE_1 = 0x31,
 	VKE_2 = 0x32,
 	VKE_3 = 0x33,
+	VKE_V = 0x56,
+	VKE_C = 67,
 	VKE_BREAK = VK_PAUSE,
 
 	VKE_MAX = 2048,

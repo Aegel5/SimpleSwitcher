@@ -94,67 +94,6 @@ private:
         RETURN_SUCCESS;
     }
 
-
-
-
-
-	//void ClipboardWorker()
-	//{
-		//IFW_LOG(SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL));
-
-		//TClipMessage msg;
-		//while (true)
-		//{
-		//	if (!m_queueClip.GetMessage(msg))
-		//	{
-		//		break;
-		//	}
-		//	auto mode = msg.mode;
-		//	if (mode == ClipMode_GetClipString)
-		//	{
-		//		std::wstring data;
-		//		IFS_LOG(OpenAndGetFromClipBoardOur(data));
-
-		//		LOG_INFO_2(L"buf: %s\n, len: %u", data.c_str(), data.length());
-
-		//		if (data.length() == 0)
-		//		{
-		//			LOG_ANY(L"Skip empty buffer");
-		//		}
-		//		else if (data.length() > 1000)
-		//		{
-		//			LOG_ANY(L"Skip length > 1000");
-		//		}
-		//		else
-		//		{
-  //                  MoveToData(data);
-		//			Worker()->PostMsg(HWORKER_GetClipStringCallback);
-		//		}
-		//	}
-		//	else if (mode == ClipMode_SavePrevData)
-		//	{
-		//		std::wstring data;
-		//		IFS_LOG(OpenAndGetFromClipBoardOur(data));
-  //              MoveToData(data);
-		//		Worker()->PostMsgW(HWORKER_SavePrevDataCallback, (WPARAM)msg.request);
-		//	}
-		//	else if (mode == ClipMode_RestoreClipData)
-		//	{
-  //              std::wstring data = TakeData();
-  //              IFS_LOG(OpenAndPutToClipBoardOur(data));
-		//	}
-		//	else if (mode == ClipMode_ClipClearFormat)
-		//	{
-		//		IFS_LOG(ClipboardClearFormat());
-		//	}
-		//	//else if (mode == ClipMode_InsertData)
-		//	//{
-  // //             std::wstring data = TakeData();
-		//	//	IFS_LOG(OpenAndPutToClipBoardOur(data));
-		//	//}
-		//}
-		//LOG_ANY(L"Exit clip worker");
-	//}
 public:
 
     std::wstring getCurString() {

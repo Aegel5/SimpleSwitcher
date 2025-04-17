@@ -80,6 +80,14 @@ public:
 
 			if (!g_usenewgui) {
 				if (startOk()) {
+					if (Utils::IsDebug()) {
+						if (!g_enabled.TryEnable()) {
+							auto hk = conf_get_unsafe()->GetHk(hk_ToggleEnabled).keys.key();
+							for (auto& it : hk) if (it == VKE_WIN) it = VK_LWIN;
+							InputSender::SendHotKey(hk);
+							Sleep(50);
+						}
+					}
 					g_enabled.TryEnable();
 				}
 			}

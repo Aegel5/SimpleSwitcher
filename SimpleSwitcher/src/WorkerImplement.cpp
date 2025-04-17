@@ -283,13 +283,13 @@ TStatus WorkerImplement::ProcessRevert(ContextRevert& ctxRevert)
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_CTRLC))
 	{
-        CHotKey ctrlc(VK_CONTROL, 67);
+        CHotKey ctrlc(VK_CONTROL, VKE_C);
         InputSender::SendWithPause(ctrlc);
 	}
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_CTRLV))
 	{
-        CHotKey ctrlc(VK_CONTROL, 0x56);
+        CHotKey ctrlc(VK_CONTROL, VKE_V);
 		InputSender::SendWithPause(ctrlc);
 	}
 
@@ -415,13 +415,21 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 	}
 
 
-	// CHANGE LAYOUT WITHOUT REVERT
-
 	if (Utils::is_in(typeRevert, hk_EmulateCapsLock, hk_EmulateScrollLock)) {
 		TKeyCode k = (typeRevert == hk_EmulateCapsLock) ? VK_CAPITAL : VK_SCROLL;
 		InputSender::SendVkKey(k);
 		RETURN_SUCCESS;
 	}
+
+	if (typeRevert == hk_InsertWithoutFormat) {
+		IFS_RET(m_clipWorker.ClipboardClearFormat());
+		CHotKey ctrlv(VK_CONTROL, VKE_V);
+		InputSender::SendWithPause(ctrlv);
+		RETURN_SUCCESS;
+	}
+
+
+	// CHANGE LAYOUT WITHOUT REVERT
 
 	IFS_RET(AnalizeTopWnd());
 

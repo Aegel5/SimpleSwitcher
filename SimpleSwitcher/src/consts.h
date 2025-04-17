@@ -44,6 +44,7 @@ enum HotKeyType : TUInt32
     hk_toUpperSelected,
     hk_ToggleEnabled,
     hk_ShowMainWindow,
+	hk_InsertWithoutFormat,
 
     hk_hotkeys_end,
 
@@ -64,6 +65,7 @@ inline const char* GetGuiTextForHk(HotKeyType hk) {
     case hk_toUpperSelected: return LOC("Selected text to UPPER/lower");
     case hk_ToggleEnabled: return LOC("Enable/Disable");
     case hk_ShowMainWindow: return LOC("Show main window");
+	case hk_InsertWithoutFormat: return LOC("Insert text without formatting");
     }
     return "Error";
 }

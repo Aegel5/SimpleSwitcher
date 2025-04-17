@@ -73,6 +73,12 @@ void ProgramConfig::GenerateListHK()
         AddHotKey(hk_ShowMainWindow, set);
     }
 
+	{
+		CHotKeySet set;
+		set.def_list = { CHotKey(VK_CONTROL, VK_SHIFT, VKE_V) };
+		AddHotKey(hk_InsertWithoutFormat, set);
+	}
+
     for (auto& it : hotkeysList) {
         if (it.fUseDef) {
             it.keys.key() = it.def_list[0];
