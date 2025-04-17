@@ -43,6 +43,7 @@ Simple Switcher поставляется в portable виде (не требуе
 - При одновременном назначении (`hotkey` | `hotkey #up`) и `hotkey #double` будет применена задержка 280 ms (параметр конфига `quick_press_ms`)
 - LAlt + ... - может работать неправильно.
 - Win + CapsLock - хот-кей работает некорректно.
+- `Ctrl + Break` = `Cancel` - это особенность Windows
 
 ## Использование CapsLock
 _Рекомендуется:_ 
