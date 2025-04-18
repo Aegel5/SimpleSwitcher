@@ -50,7 +50,7 @@ public:
             auto info = conf_get_unsafe()->layouts_info.GetLayoutIndex(id - Minimal_SetLay_1);
             if (info != nullptr) {
                 auto lay = info->layout;
-                Worker()->PostMsg([lay](auto& w) {w.SetNewLay(lay);});
+                Worker()->PostMsg([lay](auto w) {w->SetNewLay(lay);});
             }
             });
     }

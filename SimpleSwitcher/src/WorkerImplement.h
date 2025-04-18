@@ -16,6 +16,12 @@ public:
 
 	WorkerImplement() {
 		IFS_LOG(Utils::GetPath_fileExe_lower(m_sSelfExeName));
+		TimerCallBack();
+	}
+
+	void TimerCallBack() {
+		m_cycleList.ClearByTimer();
+		Worker()->PostMsg([](auto p) {p->TimerCallBack(); }, 30000);
 	}
 
 	void ClearAllWords() { m_cycleList.Clear(); }

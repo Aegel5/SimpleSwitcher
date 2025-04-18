@@ -67,7 +67,7 @@ class CoreWorker {
 				//PostQuitMessage(0);
 			}
 			else if (mesg == WM_CLIPBOARDUPDATE) {
-				Worker()->PostMsg([](auto& w) {w.CliboardChanged(); });
+				Worker()->PostMsg([](auto w) {w->CliboardChanged(); });
 			}
 			else {
 				//TranslateMessage(&msg);

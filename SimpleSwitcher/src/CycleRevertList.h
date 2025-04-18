@@ -8,13 +8,12 @@ class CycleRevertList {
 	static const int c_nMaxLettersSave = 90;
 	std::deque<TKeyHookInfo> m_symbolList; // просто список всего, что сейчас набрано.
 	int iCurrentWord = -1;
-	TKeyBaseInfo last_info;
+	TimePoint lastadd;
 
 public:
 	void DeleteLastSymbol() {
 		if (!m_symbolList.empty())
 			m_symbolList.pop_back();
-		last_info = {};
 		ClearGenerated();
 	}
 	bool HasAnySymbol() const { return !m_symbolList.empty(); }
@@ -24,6 +23,11 @@ public:
 			m_symbolList.clear();
 		}
 		ClearGenerated();
+	}
+	void ClearByTimer() {
+		if (lastadd.DeltToNow() >= 10min) {
+			Clear();
+		}
 	}
 private: void ClearGenerated() {
 	iCurrentWord = -1;
@@ -50,7 +54,7 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 
 			auto check = [&]() -> bool {
 
-				if (cur.as_previous) { // одинаковый клавиши - всегда обрабатываются одинаково.
+				if (cur.key == prev->key) { // одинаковый клавиши - всегда обрабатываются одинаково.
 					return false;
 				}
 
@@ -177,9 +181,8 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 		}
 	}
 
-
 	for (int i = iStartFrom; i < ssize(m_symbolList); ++i) {
-		keyList.keys.push_back(m_symbolList[i].decrypted().key());
+		keyList.keys.push_back(m_symbolList[i].key);
 	}
 
 	return keyList;
@@ -191,27 +194,23 @@ public: void SetSeparateLast() {
 public: void AddKeyToList(TKeyType type, TScanCode_Ext scan_code, bool is_shift, TKeyCode vk = 0) {
 	ClearGenerated();
 
+	lastadd.SetNow();
+
 	while (m_symbolList.size() >= c_nMaxLettersSave) {
 		m_symbolList.pop_front();
 	}
 
 	TKeyHookInfo key;
 	if (vk != 0) {
-		key.key().vk_code = vk;
+		key.key.vk_code = vk;
 	}
 	else {
-		key.key().scan_code = scan_code;
+		key.key.scan_code = scan_code;
 	}
-	if (is_shift) key.key().shift_key = VK_LSHIFT;
+	if (is_shift) 
+		key.key.shift_key = VK_LSHIFT;
 	key.type = type;
 
-	if (!m_symbolList.empty()) {
-		if (last_info.scan_code.scan == 0) last_info = m_symbolList.back().decrypted().key();
-		if (last_info == key.key()) key.as_previous = true;
-	}
-	last_info = key.key();
-
-	key.encrypt();
 	m_symbolList.push_back(key);
 }
 

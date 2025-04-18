@@ -151,7 +151,7 @@ void WorkerImplement::CliboardChanged()
         }
         else {
             if (request == CLRMY_GET_FROM_CLIP) {
-				Worker()->PostMsg([](WorkerImplement& w) {w.GetClipStringCallback(); }, 20);
+				Worker()->PostMsg([](WorkerImplement* w) {w->GetClipStringCallback(); }, 20);
 				return;
             }
 
@@ -167,7 +167,7 @@ void WorkerImplement::CliboardChanged()
 	// --- This is user request ----
 
 	if (conf_get_unsafe()->fClipboardClearFormat) {
-		Worker()->PostMsg([](WorkerImplement& w) {w.ClipboardClearFormat2(); }, 500);
+		Worker()->PostMsg([](WorkerImplement* w) {w->ClipboardClearFormat2(); }, 500);
 	}
 
 	LOG_ANY(L"ClipboardChangedInt complete");

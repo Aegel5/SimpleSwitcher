@@ -36,7 +36,7 @@ void CMainWorker::WorkerInt()
 				workerImpl.ClearAllWords();
 			}
 			else if constexpr (std::is_same_v<T, Message_Func>) {
-				arg(workerImpl);
+				arg(&workerImpl);
 			}
 		}, msg.value());
 	}

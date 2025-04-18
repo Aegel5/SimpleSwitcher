@@ -48,6 +48,8 @@
 #include "utils/getpath.h"
 #include "utils/procstart.h"
 #include "utils/layout-utils.h"
+#include "utils/TimePoint.h"
+
 
 // base
 #include "ver.h"
@@ -66,8 +68,8 @@
 #include "globals.h"
 #include "CClipWorker.h"
 #include "CMainWorkerMsg.h"
-#include "WorkerImplement.h"
 #include "CMainWorker.h"
+#include "WorkerImplement.h"
 #include "Hooker.h"
 #include "HookerThread.h"
 

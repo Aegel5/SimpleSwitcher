@@ -41,34 +41,9 @@ struct TKeyBaseInfo {
 using TKeyRevert = std::vector<TKeyBaseInfo>;
 
 struct TKeyHookInfo{
-
-	struct alignas(16) crypted {
-		TKeyBaseInfo key;
-		TUInt64 _random_data;
-	} crypted;
-
-	void encrypt() {
-		static_assert(sizeof(crypted) == CRYPTPROTECTMEMORY_BLOCK_SIZE);
-		crypted._random_data = GetTickCount64(); // заполняем случайными данными чтобы одна и та же буква каждый раз шифровалась по разному
-		IFW_LOG(CryptProtectMemory(&crypted, CRYPTPROTECTMEMORY_BLOCK_SIZE, CRYPTPROTECTMEMORY_SAME_PROCESS));
-	}
-
-	TKeyHookInfo decrypted() {
-		TKeyHookInfo res = *this;
-		IFW_LOG(CryptUnprotectMemory(&res.crypted, CRYPTPROTECTMEMORY_BLOCK_SIZE, CRYPTPROTECTMEMORY_SAME_PROCESS));
-		return res;
-	}
-
-
-	TKeyBaseInfo& key() {
-		return crypted.key;
-	}
-
-	// open part
-
+	TKeyBaseInfo key;
 	TKeyType type = TKeyType::KEYTYPE_NONE;
 	bool is_last_revert = false;
-	bool as_previous = false;
 };
 
 

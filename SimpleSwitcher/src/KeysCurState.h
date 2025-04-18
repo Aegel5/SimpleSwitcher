@@ -1,13 +1,13 @@
-#pragma once
+﻿#pragma once
 
 // Класс для отслеживания текущего состояния нажатых клавиш
 
 class CurStateWrapper {
-	std::map<TKeyCode, ULONGLONG> all_keys;
+	std::map<TKeyCode, TimePoint> all_keys;
 	CHotKey one_value; 
 	CHotKey multi_value; 
 	TKeyCode vk_last_down = 0;
-	ULONGLONG last_down_time = 0;
+	TimePoint last_down_time;
 	bool is_hold = false;
 	int cnt_quick_press = 0;
 	TKeyCode possible_vk_quick = 0;
@@ -73,7 +73,7 @@ public:
 				bool ok_quick = false;
 				if (possible_vk_quick == vkCode) {
 					// снова нажали ту же клавишу, теперь проверим время.
-					if (GetTickCount64() - last_down_time <= conf_get_unsafe()->quick_press_ms) {
+					if (last_down_time.DeltToNowMs() <= conf_get_unsafe()->quick_press_ms) {
 						// засчитываем за срабатывание
 						ok_quick = true;
 					}
@@ -88,14 +88,14 @@ public:
 			// HOLD
 			is_hold = vk_last_down == vkCode && vkCode != 0;
 			vk_last_down = vkCode;
-			last_down_time = GetTickCount64();
+			last_down_time.SetNow();
 		}
 
 
 		// update stores
 		if (curKeyState == KEY_STATE_DOWN) {
 			one_value.Add(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
-			all_keys[vkCode] = GetTickCount64();
+			all_keys[vkCode].SetNow();
 		}
 		else {
 			one_value.Remove(vkCode);
@@ -109,7 +109,7 @@ private:
 	void CheckOk() {
 		std::vector<TKeyCode> to_del;
 		for (const auto& it : all_keys) {
-			if (GetTickCount64() > (it.second + 10000)) {
+			if (it.second.DeltToNow() > 10s) {
 				if (!(GetAsyncKeyState(it.first) & 0x8000)) { // TODO: не понятно как это работает в remote сценарии....
 					to_del.push_back(it.first);
 				}

@@ -29,6 +29,7 @@ void ProgramConfig::GenerateListHK()
     {
         CHotKeySet set;
         set.def_list = { CHotKey{VK_CONTROL, VK_CAPITAL}};
+		set.fUseDef = true;
         AddHotKey(hk_RevertAllRecentText, set);
     }
 

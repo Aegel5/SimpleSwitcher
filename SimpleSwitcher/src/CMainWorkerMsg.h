@@ -26,7 +26,7 @@ struct Message_ClearWorlds {
 };
 
 class WorkerImplement;
-using Message_Func = std::move_only_function<void(WorkerImplement&)>; // все захваченное должно быть копией.
+using Message_Func = std::move_only_function<void(WorkerImplement*)>; // все захваченное должно быть копией.
 
 using Message_Variant = std::variant< Message_KeyType, Message_Hotkey, Message_ClearWorlds, Message_Func, Message_ChangeForeg, Message_GetCurLay >;
 
