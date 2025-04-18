@@ -82,7 +82,7 @@ public:
     bool separate_ext_last_word = false;
     bool separate_ext_several_words = false;
     CHotKey win_hotkey_cycle_lang { VK_LMENU, VK_SHIFT };
-	std::string theme = "Dark";
+	std::string theme = "Light";
 
     std::vector< CHotKeySet> hotkeysList;
     std::vector< RunProgramInfo> run_programs = { {.path = L"example: calc.exe"} };

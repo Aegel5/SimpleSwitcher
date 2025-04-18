@@ -4,13 +4,10 @@ class WorkerImplement
 {
 private:
 
-	struct ContextRevert
-	{
+	struct ContextRevert {
 		TKeyRevert keylist;
-		HotKeyType typeRevert;
 		HKL lay = 0;
 		TUInt32 flags = 0;
-		//tstring txtToInsert;
 	};
 
 	typedef std::vector<CHotKey> TKeyToRevert;
@@ -28,12 +25,69 @@ public:
 	void CliboardChanged();
     TStatus GetClipStringCallback();
 	void ClipboardClearFormat2() { IFS_LOG(m_clipWorker.ClipboardClearFormat()); }
-	TStatus ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist);
+	void ClipboardToSendData(const std::wstring& clipdata) {
+
+		m_cycleList.Clear();
+
+		HKL layouts[10];
+		int count = GetKeyboardLayoutList(std::ssize(layouts), layouts);
+		if (count == 0) {
+			IFW_LOG(false);
+			return;
+		}
+
+
+		for (auto c : clipdata) {
+			if (c == L'\r')
+				continue;
+			auto lay = CurLay();
+			SHORT res = VkKeyScanEx(c, lay);
+			if (res == -1) {
+				for (int i = 0; i < count; ++i) {
+					if (layouts[i] != lay)
+						res = VkKeyScanEx(c, layouts[i]);
+					if (res != -1)
+						break;
+				}
+			}
+			if (res == -1) {
+				IFS_LOG(SW_ERR_UNKNOWN, L"Cant scan char %c", c);
+				continue;
+			}
+			BYTE mods = HIBYTE(res);
+			BYTE code = LOBYTE(res);
+
+			TKeyType type = KEYTYPE_LETTER;
+			// Пока сделаем супер-простое разделение
+			if (StrUtils::IsSpace(c)) type = KEYTYPE_SPACE;
+			m_cycleList.AddKeyToList(type, {}, TestFlag(mods, 0x1), code);
+		}
+
+		RevertText(hk_RevertAllRecentText, true);
+		if (clear_alfter_selected) {
+			m_cycleList.Clear();
+		}
+	}
+
+	void RevertText(HotKeyType typeRevert, bool no_backs = false) {
+		auto nextLng = getNextLang();
+		auto to_revert = m_cycleList.FillKeyToRevert(typeRevert);
+		if (to_revert.keys.empty()) {
+			LOG_ANY(L"nothing to revert. skip");
+			return;
+		}
+		m_cycleList.SetSeparateLast();
+		bool isNeedLangChange = to_revert.needLanguageChange;
+		ContextRevert data;
+		data.keylist = std::move(to_revert.keys);
+		data.flags = SW_CLIENT_PUTTEXT | SW_CLIENT_SetLang | (no_backs ? 0 : SW_CLIENT_BACKSPACE);
+		data.lay = isNeedLangChange ? nextLng : 0;
+		IFS_LOG(ProcessRevert(std::move(data)));
+	}
 
 	void ChangeForeground(HWND hwnd);
 	void ProcessKeyMsg(const Message_KeyType& keyData);
 
-	TStatus SendCtrlC(EClipRequest clRequest);
 	void RequestWaitClip(EClipRequest clRequest)
 	{
 		m_clipRequest = clRequest;
@@ -92,9 +146,11 @@ public:
 
 		GETCONF;
 
+		clear_alfter_selected = hk == hk_RevertSelelected;
+
 		if (IsNeedSavedWords(hk) && !m_cycleList.HasAnySymbol()) {
 			bool found = false;
-			for (const auto& [hk2,key2] : cfg->All_hot_keys()) {
+			for (const auto& [hk2, key2] : cfg->All_hot_keys()) {
 				if (!IsNeedSavedWords(hk2) && key.Compare(key2)) {
 					// Есть точно такой же хот-кей, не требующий сохраненных слов, используем его.
 					hk = hk2;
@@ -117,7 +173,7 @@ public:
 	}
 
 	HKL CurLay() { return topWndInfo2.lay; }
-	TStatus ProcessRevert(ContextRevert& ctxRevert);
+	TStatus ProcessRevert(ContextRevert&& ctxRevert);
 
 private:
 
@@ -135,7 +191,7 @@ private:
 	std::wstring m_sSelfExeName;
 	CycleRevertList m_cycleList;
 	CurStateWrapper m_curStateWrap;
-
+	bool clear_alfter_selected = false;
 };
 
 

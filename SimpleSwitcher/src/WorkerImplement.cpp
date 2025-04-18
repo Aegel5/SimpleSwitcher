@@ -74,53 +74,6 @@ TStatus ClipHasTextFormating(bool& fres)
 	RETURN_SUCCESS;
 }
 
-TStatus WorkerImplement::ClipboardToSendData(std::wstring& clipdata, TKeyRevert& keylist)
-{
-
-	HKL layouts[10];
-	int count = GetKeyboardLayoutList(std::ssize(layouts), layouts);
-	IFW_RET(count != 0);
-
-	//SwZeroMemory(m_sendData);
-	keylist.clear();
-
-	//SW_LOG_INFO_2(L"layout=%u", m_layoutTopWnd);
-	for (size_t i = 0; i < clipdata.length(); ++i)
-	{
-		TCHAR c = clipdata[i];
-		if (c == L'\r')
-			continue;
-        auto lay  = CurLay();
-		SHORT res = VkKeyScanEx(c, lay);
-		if (res == -1)
-		{
-			for (int i = 0; i < count; ++i)
-			{
-                if (layouts[i] != lay)
-					res = VkKeyScanEx(c, layouts[i]);
-				if (res != -1)
-					break;
-			}
-		}
-		if (res == -1)
-		{
-			IFS_LOG(SW_ERR_UNKNOWN, L"Cant scan char %c", c);
-			continue;
-		}
-		BYTE mods = HIBYTE(res);
-		BYTE code = LOBYTE(res);
-
-		TKeyBaseInfo key;
-
-		key.vk_code = code;
-		if (TestFlag(mods, 0x1))
-			key.shift_key = VK_SHIFT;
-		
-		keylist.push_back(key);
-	}
-	RETURN_SUCCESS;
-}
-
 void toUpper(std::wstring& buf) {
 
 	wxString str1 = buf;
@@ -151,28 +104,15 @@ TStatus WorkerImplement::GetClipStringCallback() {
 		LOG_ANY(L"TOO MANY TO REVERT. SKIP");
 	}
 	else {
-        ContextRevert ctxRev;
-        ctxRev.typeRevert = m_lastRevertRequest;
 		if (m_lastRevertRequest == hk_RevertSelelected) {
-
-            IFS_LOG(ClipboardToSendData(data, ctxRev.keylist));
-
-    //        for (auto k : ctxRev.keylist) {
-				//TKeyType type = GetCurKeyType(k);
-				//AddKeyToList(type, k);
-    //        }
-
-            ctxRev.lay        = getNextLang();
-            ctxRev.flags      = SW_CLIENT_PUTTEXT | SW_CLIENT_SetLang;
-            IFS_LOG(ProcessRevert(ctxRev));
-
+            ClipboardToSendData(data);
         } else if(m_lastRevertRequest == hk_toUpperSelected) {
 
 			toUpper(data);
             m_clipWorker.setString(data);
 
-            ctxRev.flags      = SW_CLIENT_CTRLV;
-            IFS_LOG(ProcessRevert(ctxRev));
+			IFS_LOG(ProcessRevert({.flags = SW_CLIENT_CTRLV }));
+
             if (needResotore) {
                 needResotore = data != m_savedClipData;
 				if(needResotore)
@@ -251,7 +191,7 @@ void WorkerImplement::ChangeForeground(HWND hwnd)
 	m_dwIdProcoreground = procId; 
 }
 
-TStatus WorkerImplement::ProcessRevert(ContextRevert& ctxRevert)
+TStatus WorkerImplement::ProcessRevert(ContextRevert&& ctxRevert)
 {
 	bool fDels = false;
 
@@ -283,6 +223,7 @@ TStatus WorkerImplement::ProcessRevert(ContextRevert& ctxRevert)
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_CTRLC))
 	{
+		LOG_ANY(L"Send ctrlc...");
         CHotKey ctrlc(VK_CONTROL, VKE_C);
         InputSender::SendWithPause(ctrlc);
 	}
@@ -297,24 +238,6 @@ TStatus WorkerImplement::ProcessRevert(ContextRevert& ctxRevert)
 
 	RETURN_SUCCESS;
 }
-
-
-TStatus WorkerImplement::SendCtrlC(EClipRequest clRequest)
-{
-    m_savedClipData = m_clipWorker.getCurString();
-
-	RequestWaitClip(clRequest);
-
-    LOG_ANY(L"Send ctrlc...");
-
-    ContextRevert ctxRev;
-    ctxRev.flags = SW_CLIENT_CTRLC;
-
-    IFS_RET(ProcessRevert(ctxRev));
-
-	RETURN_SUCCESS;
-}
-
 
 HKL WorkerImplement::getNextLang () {
 	HKL result = (HKL)HKL_NEXT;
@@ -344,6 +267,8 @@ HKL WorkerImplement::getNextLang () {
 
 TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 
+	m_lastRevertRequest = typeRevert;
+
 	LOG_ANY("Hotkey start {}({})", HotKeyTypeName(typeRevert), (int)typeRevert);
 
 	if (typeRevert == hk_ToggleEnabled) {
@@ -355,10 +280,6 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 		LOG_ANY("Skip hk because disabled");
 		RETURN_SUCCESS;
 	}
-
-	ContextRevert data;
-	data.typeRevert = typeRevert;
-	m_lastRevertRequest = typeRevert;
 
 	// --------------- skip
 
@@ -372,16 +293,6 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 	}
 
 	// Сбросим сразу все клавиши для программы. Будет двойной (или даже тройной и более) up, но пока что это не проблема... 
-
-	//// если нужно просто сменить язык - то не будем делать up 
-	//// https://github.com/Aegel5/SimpleSwitcher/issues/61
-	//// Для клавиши LCtrl событие отсылается дважды, причем второй раз без флага inject (баг windows?)
-	//// в остальных случаях мы эмулируем нажатия каких-то клавиш, поэтому нужно сбросить текущее состояние нажатых клавиш.
-	//bool skipUpKeys = (TestFlag(typeRevert, hk_SetLayout_flag) || typeRevert == hk_CycleSwitchLayout) && conf_get_unsafe()->AlternativeLayoutChange == false;
-	//if (!skipUpKeys) {
-	//	UpAllKeys();
-	//}
-
 	m_curStateWrap.UpAllKeys();
 
 	if (TestFlag(typeRevert, hk_RunProgram_flag)) {
@@ -434,9 +345,7 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 	IFS_RET(AnalizeTopWnd());
 
 	if (typeRevert == hk_CycleSwitchLayout) {
-		data.flags = SW_CLIENT_SetLang;
-		data.lay = getNextLang();
-		IFS_RET(ProcessRevert(data));
+		IFS_RET(ProcessRevert({ .lay = getNextLang(), .flags = SW_CLIENT_SetLang }));
 		RETURN_SUCCESS;
 	}
 
@@ -453,9 +362,7 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 			RETURN_SUCCESS;
 		}
 
-		data.flags = SW_CLIENT_SetLang | SW_CLIENT_NO_WAIT_LANG;
-		data.lay = info->layout;
-		IFS_RET(ProcessRevert(data));
+		IFS_RET(ProcessRevert({.lay = info->layout , .flags = SW_CLIENT_SetLang | SW_CLIENT_NO_WAIT_LANG }));
 
 		RETURN_SUCCESS;
 	}
@@ -466,13 +373,13 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 	if (!allow_do_revert)
 		RETURN_SUCCESS;
 
-
 	if (Utils::is_in(typeRevert, hk_RevertSelelected, hk_toUpperSelected)) {
-		IFS_RET(SendCtrlC(CLRMY_GET_FROM_CLIP));
+		LOG_ANY(L"save buff");
+		m_savedClipData = m_clipWorker.getCurString();
+		RequestWaitClip(CLRMY_GET_FROM_CLIP);
+		IFS_RET(ProcessRevert({ .flags = SW_CLIENT_CTRLC }));
 		RETURN_SUCCESS;
 	}
-
-	auto nextLng = getNextLang();
 
 	// ---------------classic revert---------------
 
@@ -480,17 +387,7 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 		IFS_RET(SW_ERR_UNKNOWN, L"Unknown typerevert {}", (int)typeRevert);
 	}
 
-	auto to_revert = m_cycleList.FillKeyToRevert(typeRevert);
-	if (to_revert.keys.empty()) {
-		LOG_ANY(L"nothing to revert. skip");
-		RETURN_SUCCESS;
-	}
-	m_cycleList.SetSeparateLast();
-	bool isNeedLangChange = to_revert.needLanguageChange;
-	data.keylist = std::move(to_revert.keys);
-	data.flags = SW_CLIENT_PUTTEXT | SW_CLIENT_SetLang | SW_CLIENT_BACKSPACE;
-	data.lay = isNeedLangChange ? nextLng : 0;
-	IFS_RET(ProcessRevert(data));
+	RevertText(typeRevert);
 
 	RETURN_SUCCESS;
 }

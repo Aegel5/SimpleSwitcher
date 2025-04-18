@@ -9,6 +9,8 @@ public:
 		if (m_stat)
 			RETURN_SUCCESS;
 
+		LOG_ANY(L"open clip");
+
 		auto start = GetTickCount64();
 		int countTry = 0;
 		while (true)

@@ -14,27 +14,27 @@ void ProgramConfig::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_CAPITAL), CHotKey(VK_PAUSE), CHotKey(VK_F24) };
+        set.def_list = { CHotKey(VK_CAPITAL), CHotKey(VK_PAUSE) };
         set.fUseDef = true;
         AddHotKey(hk_RevertLastWord, set);
     }
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_PAUSE), CHotKey(VK_SHIFT, VK_F24) };
+        set.def_list = { CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_PAUSE) };
         set.fUseDef = true;
         AddHotKey(hk_RevertSeveralWords, set);
     }
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_SHIFT, VK_CAPITAL), CHotKey(VK_SHIFT, VK_PAUSE), CHotKey(VK_LSHIFT).SetDouble() };
+        set.def_list = { CHotKey{VK_CONTROL, VK_CAPITAL}};
         AddHotKey(hk_RevertAllRecentText, set);
     }
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey{VK_CONTROL, VK_CAPITAL}, CHotKey{VK_CONTROL, VK_CAPITAL}.SetDouble(), CHotKey{VK_CONTROL, VKE_BREAK} };
+        set.def_list = { CHotKey{VK_CONTROL, VK_CAPITAL} };
         set.fUseDef = true;
         AddHotKey(hk_RevertSelelected, set);
     }
@@ -48,13 +48,13 @@ void ProgramConfig::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VKE_WIN, VK_CAPITAL), CHotKey(VK_CONTROL, VK_F24) };
+        set.def_list = { CHotKey(VKE_WIN, VK_CAPITAL) };
         AddHotKey(hk_EmulateCapsLock, set);
     }
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VK_SCROLL), CHotKey(VK_PAUSE), CHotKey(VK_F23) };
+        set.def_list = { CHotKey(VK_SCROLL), CHotKey(VK_PAUSE) };
         set.fUseDef = true;
         AddHotKey(hk_toUpperSelected, set);
     }

@@ -221,4 +221,9 @@ namespace StrUtils
 		return converterX.from_bytes(str);
 	}
 
+	inline bool IsSpace(wchar_t c) {
+		static const wstring spaces(L" \t-=+*()%!\n\r");
+		return spaces.find(c) != -1;
+	}
+
 }

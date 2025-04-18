@@ -179,10 +179,10 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				msg_hotkey.delayed_from = GetTickCount64();
 			}
 
-			LOG_ANY(L"post {}. has_double {}", msg_hotkey.hotkey.ToString(), double_exists);
+			LOG_ANY(L"post {} {}. has_double {}", msg_hotkey.hotkey.ToString(), (int)msg_hotkey.hk, double_exists);
 			Worker()->PostMsg(std::move(msg_hotkey), delay);
 		}
-		if (res && g_enabled.IsEnabled())
+		if (res && (g_enabled.IsEnabled() || msg_hotkey.hk == hk_ToggleEnabled))
 			return 1; // запрет
 	}
 

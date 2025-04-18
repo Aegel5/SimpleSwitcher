@@ -188,7 +188,7 @@ public: void SetSeparateLast() {
 	if (!m_symbolList.empty())
 		m_symbolList.back().is_last_revert = true;
 }
-public: void AddKeyToList(TKeyType type, TScanCode_Ext scan_code, bool is_shift) {
+public: void AddKeyToList(TKeyType type, TScanCode_Ext scan_code, bool is_shift, TKeyCode vk = 0) {
 	ClearGenerated();
 
 	while (m_symbolList.size() >= c_nMaxLettersSave) {
@@ -196,7 +196,12 @@ public: void AddKeyToList(TKeyType type, TScanCode_Ext scan_code, bool is_shift)
 	}
 
 	TKeyHookInfo key;
-	key.key().scan_code = scan_code;
+	if (vk != 0) {
+		key.key().vk_code = vk;
+	}
+	else {
+		key.key().scan_code = scan_code;
+	}
 	if (is_shift) key.key().shift_key = VK_LSHIFT;
 	key.type = type;
 

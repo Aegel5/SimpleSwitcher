@@ -121,10 +121,8 @@ inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& s
 
 		// old simple algo
 
-		static const wxString spaces(L" \t-=+*()%!");
-		if (spaces.Index(curSymbol) != -1) {
+		if (StrUtils::IsSpace(curSymbol)) 
 			return KEYTYPE_SPACE;
-		}
 
 		if (vk == VK_OEM_2) {
 			return KEYTYPE_CUSTOM;
