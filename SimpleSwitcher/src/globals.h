@@ -7,8 +7,9 @@ inline HWND g_guiHandle = nullptr;
 
 inline TStatus OpenClipboard(CAutoClipBoard& clip) { return clip.Open(g_guiHandle); }
 
-inline constexpr bool g_usenewgui = false;
-inline std::atomic_bool g_exit = false;
-inline std::atomic_bool g_show_gui = true;
+#define USE_GUI2
 
-inline EnableHodler g_enabled;
+inline EnableHodler g_enabled{};
+inline bool g_autostart = false;
+
+inline std::atomic_int64_t g_layout_change_cnt{5};

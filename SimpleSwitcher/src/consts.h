@@ -11,15 +11,7 @@ static const UINT WM_ShowWindow = 0xBFFF - 30;
 static const UINT c_timerKeyloggerDefence = 12;
 static const TChar c_sArgAutostart[] = L"/autostart";
 
-enum 
-{
-	SW_CLIENT_PUTTEXT =      1<<0,
-	SW_CLIENT_BACKSPACE   =  1<<1,
-	SW_CLIENT_SetLang =      1<<2,
-	SW_CLIENT_CTRLC =        1<<3,
-	SW_CLIENT_CTRLV =        1<<4,
-	SW_CLIENT_NO_WAIT_LANG = 1<<5,
-};
+
 
 
 static const int c_nCommonWaitProcess = 5000;

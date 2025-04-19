@@ -76,6 +76,7 @@ public:
     static constexpr TStr showOriginalFlags = L"Original Flags";
     static constexpr TStr showAppIcon = L"Application Icon";
     wstring flagsSet = L"Square";
+    string flagsSet2 = "Square";
     bool AllowRemoteKeys_ = true;
     bool AlternativeLayoutChange = false;
     TUInt32 quick_press_ms = 280;
@@ -126,6 +127,7 @@ public:
 using ConfPtr = std::shared_ptr<ProgramConfig>;
 inline constinit ConfPtr __g_config; 
 inline auto conf_get_unsafe() { // Проблемы синтаксиса conf_get_unsafe()->...  1) std::generator не держит temporary 2) множественном вызов даст другую версию.
+	assert(__g_config.get() != 0);
     auto res = std::const_pointer_cast<const ProgramConfig>(__g_config);
     return res; 
 }

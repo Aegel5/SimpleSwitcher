@@ -153,6 +153,9 @@ namespace StrUtils
 	{
 		std::transform(str.begin(), str.end(), str.begin(), ::toupper);
 	}
+	inline void ToUpper(std::string& str) {
+		std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+	}
 	typedef std::vector<std::wstring> TVectStr;
 	inline TVectStr Split(SView str, wchar_t delim, bool skipEmpty = true)
 	{

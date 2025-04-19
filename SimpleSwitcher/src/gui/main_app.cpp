@@ -15,8 +15,9 @@ public:
 
 };
 
-
+#ifndef USE_GUI2
 wxIMPLEMENT_APP(MyApp);
+#endif
 
 COM::CAutoCOMInitialize autoCom;
 

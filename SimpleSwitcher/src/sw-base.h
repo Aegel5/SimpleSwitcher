@@ -34,6 +34,7 @@
 #include <regex>
 #include <charconv>
 #include <codecvt>
+#include <cassert>
 
 // утилиты
 #include "core/inc_all.h"

@@ -6,16 +6,12 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
-#pragma comment(lib, "d3d11.lib")
-
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 #include <d3d11.h>
 #include <tchar.h>
 #include "main_wnd.h"
-
-
 
 // Data
 static ID3D11Device*            g_pd3dDevice = nullptr;
@@ -32,23 +28,21 @@ void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-
-
 // Main code
-void StartGui2() 
+int main(int, char**)
 {
     // Create application window
     //ImGui_ImplWin32_EnableDpiAwareness();
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
     ::RegisterClassExW(&wc);
-    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"SimpleSwitcher", WS_OVERLAPPEDWINDOW, 100, 100, 800, 800/1.3, nullptr, nullptr, wc.hInstance, nullptr);
+    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Dear ImGui DirectX11 Example", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
 
     // Initialize Direct3D
     if (!CreateDeviceD3D(hwnd))
     {
         CleanupDeviceD3D();
         ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
-        return;
+        return 1;
     }
 
     // Show the window
@@ -73,7 +67,8 @@ void StartGui2()
 
 	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 	ImGuiStyle& style = ImGui::GetStyle();
-	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
 		style.WindowRounding = 0.0f;
 		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 	}
@@ -91,23 +86,25 @@ void StartGui2()
     // - Read 'docs/FONTS.md' for more instructions and details.
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
     //io.Fonts->AddFontDefault();
-    //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 18.0f, 0, io.Fonts->GetGlyphRangesCyrillic());
-    //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\tahoma.ttf", 18.0f, 0, io.Fonts->GetGlyphRangesCyrillic());{
-	
+    //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
+    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
+    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
+    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
+    //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
+    //IM_ASSERT(font != nullptr);
 
 	
 
     // Our state
     //bool show_demo_window = true;
-    //bool show_another_window = true;
+    //bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-	InitImGui();
 	MainWindow mainWindow;
 
     // Main loop
     bool done = false;
-    while (!done && !g_exit)
+    while (!done)
     {
         // Poll and handle messages (inputs, window resize, etc.)
         // See the WndProc() function below for our to dispatch events to the Win32 backend.
@@ -153,8 +150,6 @@ void StartGui2()
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
 
-			//ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f)); // place the next window in the top left corner (0,0)
-			//ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize); // make the next window fullscreen
 			mainWindow.DrawFrame();
 
         }
@@ -197,10 +192,11 @@ void StartGui2()
     CleanupDeviceD3D();
     ::DestroyWindow(hwnd);
     ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
+
+	return 0;
 }
 
 // Helper functions
-
 bool CreateDeviceD3D(HWND hWnd)
 {
     // Setup swap chain
@@ -269,35 +265,6 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	//static bool isDragging = false;
-	//static POINT lastLocation;
-
-	//switch (msg) {
-	//case WM_LBUTTONDOWN:
-
-	//	GetCursorPos(&lastLocation);
-	//	ScreenToClient(hWnd, &lastLocation);
-	//	if (lastLocation.y <= 20) {
-	//		isDragging = true;
-	//	}
-	//	break;
-
-	//case WM_LBUTTONUP:
-	//	isDragging = false;
-	//	break;
-
-	//case WM_MOUSEMOVE:
-	//	if (isDragging) {
-	//		POINT currentPos;
-	//		GetCursorPos(&currentPos);
-	//		int dx = currentPos.x - lastLocation.x;
-	//		int dy = currentPos.y - lastLocation.y;
-	//		//MoveWindow(hWnd, dx, dy, 0, 0, true);
-	//		SetWindowPos(hWnd, NULL, dx, dy, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-	//	}
-	//	break;
-	//}
-
     if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
         return true;
 
@@ -327,3 +294,15 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
+
+
+#ifdef USE_GUI2
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+	{
+		std::string cmdLine(lpCmdLine);
+		g_autostart = cmdLine.find("/autostart") != std::string::npos;
+	}
+	// Ваш код...
+	return main(0, 0);
+}
+#endif 

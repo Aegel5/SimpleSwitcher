@@ -84,4 +84,11 @@ inline void InitImGui() {
 	SetStyle();
 }
 
+inline TStatus update_cur_dir() {
+	std::wstring dir;
+	IFS_RET(Utils::GetPath_folder_noLower(dir));
+	IFW_RET(SetCurrentDirectory(dir.c_str()));
+	RETURN_SUCCESS;
+}
+
 

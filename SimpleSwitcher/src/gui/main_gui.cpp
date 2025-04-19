@@ -28,22 +28,8 @@ namespace {
 		return Utils::IsSelfElevated() || !conf_get_unsafe()->isMonitorAdmin;
 	}
 }
-extern void StartGui2();
-class TemporGuiHolder {
-	std::thread thr;
-public:
-	void Start() {
-		thr = std::thread(StartGui2);
-	}
-	~TemporGuiHolder() {
-		g_exit = true;
-		if (thr.joinable())
-			thr.join();
-	}
-};
 
 class MainWnd : public MyFrame4 {
-public:TemporGuiHolder gui2;
 private:
 	IconManager iconsMan;
 	Timers timers;
@@ -78,18 +64,16 @@ public:
 
 			g_guiHandle = GetHandle();
 
-			if (!g_usenewgui) {
-				if (startOk()) {
-					if (Utils::IsDebug()) {
-						if (!g_enabled.TryEnable()) {
-							auto hk = conf_get_unsafe()->GetHk(hk_ToggleEnabled).keys.key();
-							for (auto& it : hk) if (it == VKE_WIN) it = VK_LWIN;
-							InputSender::SendHotKey(hk);
-							Sleep(50);
-						}
+			if (startOk()) {
+				if (Utils::IsDebug()) {
+					if (!g_enabled.TryEnable()) {
+						auto hk = conf_get_unsafe()->GetHk(hk_ToggleEnabled).keys.key();
+						for (auto& it : hk) if (it == VKE_WIN) it = VK_LWIN;
+						InputSender::SendHotKey(hk);
+						Sleep(50);
 					}
-					g_enabled.TryEnable();
 				}
+				g_enabled.TryEnable();
 			}
 
 			coreWork.Start();
@@ -290,12 +274,8 @@ public:
 private:
 
 	void show_wnd() {
-		if (g_usenewgui) {
-			g_show_gui = true;
-		}
-		else {
-			ForceShow(this);
-		}
+
+		ForceShow(this);
 	}
 
 	void initChoiceFlags() {
@@ -738,21 +718,14 @@ void StartMainGui(bool show, bool conf_err_msg) {
 
 	// and show it (the frames, unlike simple controls, are not shown when
 	// created initially)
-	frame->Show(show && !g_usenewgui);
+	frame->Show(show);
 
-	if (g_usenewgui) {
-		g_show_gui = show;
-		frame->gui2.Start();
+	if (conf_err_msg) {
+		wxMessageBox(_("Error reading config"));
 	}
-	else {
 
-		if (conf_err_msg) {
-			wxMessageBox(_("Error reading config"));
-		}
-
-		if (!startOk()) {
-			ShowNeedAdmin();
-		}
+	if (!startOk()) {
+		ShowNeedAdmin();
 	}
 
 
