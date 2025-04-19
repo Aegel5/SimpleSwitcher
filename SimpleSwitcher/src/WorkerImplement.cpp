@@ -453,7 +453,10 @@ void WorkerImplement::CheckCurLay(bool forceSend) {
 	}
 	else {
 		if ((forceSend || old_lay != topWndInfo2.lay) && g_guiHandle != nullptr) {
+			g_layout_change_cnt++;
+#ifndef USE_GUI2
 			PostMessage(g_guiHandle, WM_LayNotif, (WPARAM)topWndInfo2.lay, 0);
+#endif
 		}
 	}
 }

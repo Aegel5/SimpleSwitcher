@@ -22,9 +22,17 @@ public:
 	std::optional<TMessage> GetMessage() {
 		std::unique_lock<std::mutex> lock(m_mtxQueue);
 		while (true) {
+
 			if (m_fNeedExit) {
 				return std::nullopt;
 			}
+
+			if (!m_queue.empty()) {
+				auto res = std::move(m_queue.front());
+				m_queue.pop_front();
+				return res;
+			}
+
 			if (!m_delayed.empty()) {
 				auto now = Now();
 				auto& it = m_delayed.top();
@@ -34,17 +42,11 @@ public:
 					m_delayed.pop();
 					return msg;
 				}
-				if (m_queue.empty()) {
-					m_cvQueue.wait_for(lock, delayedtoStart - now);
-					continue;
-				}
+				m_cvQueue.wait_for(lock, delayedtoStart - now + std::chrono::microseconds(300));
 			}
-			if (!m_queue.empty()) {
-				auto res = std::move(m_queue.front());
-				m_queue.pop_front();
-				return res;
+			else {
+				m_cvQueue.wait(lock);
 			}
-			m_cvQueue.wait(lock);
 		}
 	}
 	size_t Size() {

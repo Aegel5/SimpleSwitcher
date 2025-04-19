@@ -12,7 +12,6 @@ public:
 		return now > time ? now - time : time - now;
 	}
 	auto DeltToNowMs() const {
-		using namespace std::chrono_literals;
 		return std::chrono::duration_cast<std::chrono::milliseconds>(DeltToNow()).count();
 	}
 	void SetNow() {

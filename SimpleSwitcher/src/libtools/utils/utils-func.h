@@ -169,6 +169,7 @@ namespace Utils
 
     bool is_in(auto&& first, auto&&... t) { return ((first == t) || ...); }
     bool is_all(auto&& first, auto&&... t) { return ((first == t) && ...); }
+
 }
 
 

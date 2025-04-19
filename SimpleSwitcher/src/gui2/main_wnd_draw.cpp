@@ -8,7 +8,7 @@ void MainWindow::DrawFrameActual() {
 
 	GETCONF;
 
-	ImGui::SetNextWindowSize({ 514,455 }, ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize({ 800,600 }, ImGuiCond_FirstUseEver);
 	ImGui::Begin(title.c_str(), &show_main, ImGuiWindowFlags_NoCollapse);
 
 	hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
@@ -159,10 +159,11 @@ void MainWindow::DrawFrameActual() {
 	}
 
 	{
-		float widthNeeded = 100 + ImGui::GetStyle().ItemSpacing.x;
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - widthNeeded);
+		auto text = LOC("Close to tray");
+		float w = ImGui::CalcTextSize(text).x + ImGui::GetStyle().FramePadding.x*2.f + ImGui::GetStyle().ItemSpacing.x;
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - w);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetContentRegionAvail().y - ImGui::GetFrameHeightWithSpacing()); // todo use child_wnd
-		if (ImGui::Button("Close to tray", { 100,0 })) { show_main = false; }
+		if (ImGui::Button(text)) { show_main = false; }
 	}
 
 	ImGui::End();

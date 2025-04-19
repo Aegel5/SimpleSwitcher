@@ -130,7 +130,37 @@ namespace Images {
 	}
 
 	inline void SetBrightness(Image image, float factor) {
+		int img_size = image->width * image->height * image->channels;
+		for (int i = 0; i < img_size; i++) {
+			// Если есть альфа-канал (channels == 4), не трогаем его
+			if (image->channels == 4 && (i % 4) == 3) continue;
 
+			int value = static_cast<int>(image->data[i] * factor);
+			image->data[i] = static_cast<unsigned char>(std::clamp(value, 0, 255));
+		}
+	}
+
+	inline void SetToGray(Image image) {
+		int img_size = image->width * image->height * image->channels;
+		auto img = image->data;
+		for (int i = 0; i < img_size; i += image->channels) {
+			// Вычисляем яркость по формуле для преобразования в оттенки серого
+			unsigned char gray = static_cast<unsigned char>(
+				0.299f * img[i] + // Красный
+				0.587f * img[i + 1] + // Зеленый
+				0.114f * img[i + 2]   // Синий
+				);
+
+			// Устанавливаем значения R, G и B в одно и то же значение серого
+			img[i] = gray;       // R
+			img[i + 1] = gray;   // G
+			img[i + 2] = gray;   // B
+
+			// Если есть альфа-канал, оставляем его без изменений
+			if (image->channels == 4) {
+				img[i + 3] = img[i + 3]; // Альфа-канал остается прежним
+			}
+		}
 	}
 
 }

@@ -26,6 +26,9 @@ class MainWindow {
 	TrayIcon tray;
 	uint64_t last_lay_cnt = 0;
 	HWND hwnd = 0;
+	POINT cursorPos{-1,-1};
+	std::vector<std::pair<string, HKL>> menu_lays;
+	CoreWorker coreWork;
 private:
 	void update_flags() { flagsSets = { std::from_range, Test::Inst().ScanFlags() }; }
 	bool IsAdminOk() { return Utils::IsSelfElevated() || !conf_get_unsafe()->isMonitorAdmin; }
@@ -40,7 +43,7 @@ private:
 		if (ImGui::BeginPopupModal(LOC("Message"), 0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings)) {
 			ImGui::Text(show_message);
 			//ImGui::Separator();
-			if (ImGui::Button("OK", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+			if (ImGui::Button("OK", ImVec2(ImGui::CalcTextSize("OK").x * 4, 0))) { ImGui::CloseCurrentPopup(); }
 			ImGui::EndPopup();
 		}
 	}
@@ -119,14 +122,77 @@ public:
 		config_path = StrUtils::Convert(std::format(L"file://{}", GetPath_Conf()));
 		show_main = !g_autostart;
 		update_flags();
-		tray.TrayHandler().OnDouble([this]() { show_main = true; 
-		SetForegroundWindow(hwnd);  
-			});
+		tray.TrayHandler().OnDouble([this]() { Show(); });
+		tray.TrayHandler().OnRight([this]() { GetCursorPos(&cursorPos);});
+		coreWork.Start();
+	}
+	void Show() {
+		show_main = true;
+		if(hwnd != 0)
+			SetForegroundWindow(hwnd);
 	}
 	void SafeUpdate() {
 	}
+	void DrawTrayMenu() {
+		if (cursorPos.x != -1) {
+			ImGui::SetNextWindowPos({ (float)cursorPos.x, (float)cursorPos.y }, ImGuiCond_Always);
+			ImGui::OpenPopup("tray menu", 0);
+			cursorPos.x = -1;
+		}
+		if (ImGui::BeginPopup("tray menu", ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings)) {
 
+
+			if (ImGui::IsWindowAppearing()) {
+				menu_lays.clear();
+				for (const auto & it : conf_get_unsafe()->layouts_info.info) {
+					menu_lays.emplace_back(StrUtils::Convert(Utils::GetNameForHKL(it.layout)), it.layout);
+				}
+			}
+
+			HWND hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
+			if (ImGui::GetWindowViewport()->PlatformWindowCreated) {
+				static HWND last_hwnd = 0;
+				if (last_hwnd != hwnd) {
+					last_hwnd = hwnd;
+					SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+					//SetForegroundWindow(hwnd);
+					ImGui::GetPlatformIO().Platform_SetWindowFocus(ImGui::GetWindowViewport());
+				}
+				if (!ImGui::GetPlatformIO().Platform_GetWindowFocus(ImGui::GetWindowViewport())) {
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
+			for (const auto& it : menu_lays) {
+				if (ImGui::Selectable(it.first.c_str(), false)) {
+					auto lay = it.second;
+					Worker()->PostMsg([lay](auto w) {w->SetNewLay(lay); });
+				}
+			}
+
+			ImGui::Separator();
+
+			{
+				bool val = g_enabled.IsEnabled();
+				if (ImGui::Checkbox(LOC("Enable"), &val)) {
+					g_enabled.TryEnable(val);
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
+			if (ImGui::Selectable(LOC("Show"), false)) {
+				Show();
+			}
+
+			if (ImGui::Selectable(LOC("Exit"), false)) {
+				PostQuitMessage(0);
+			}
+			ImGui::EndPopup();
+		}
+	}
 public: void DrawFrame() {
+
+	DrawTrayMenu();
 
 	if (show_main) {
 

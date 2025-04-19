@@ -32,3 +32,10 @@
 		o << std::setw(4) << data << std::endl;
 
 		auto json = o.str();
+
+
+
+		ImGuiWindowClass windowClass;
+		windowClass.TabItemFlagsOverrideSet = ImGuiViewportFlags_TopMost;
+		ImGui::SetNextWindowClass(&windowClass);
+		ImGui::SetNextWindowPos({ (float)cursorPos.x, (float)cursorPos.y });

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "utils/accessibil.h"
+#include "utils/win_utils.h"
 
 #include "misc/fonts/Play-Regular.cpp"
 
@@ -60,7 +61,8 @@ inline void InitImGui() {
 
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuiStyle& style = ImGui::GetStyle();
-
+	auto scale = WinUtils::GetDpiMainMonScale2();
+	style.ScaleAllSizes(scale);
 	static ImVector<ImWchar> ranges;
 	{
 		ImFontGlyphRangesBuilder builder;
@@ -73,8 +75,11 @@ inline void InitImGui() {
 		};
 		builder.AddRanges(ranges_additional);
 		builder.BuildRanges(&ranges);
+
+
+		float size = std::floorf(16.0f * scale);
 		//io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 20.0f, 0, ranges.Data);
-		io.Fonts->AddFontFromMemoryCompressedTTF(DefaultFont_compressed_data, std::ssize(DefaultFont_compressed_data), 16.0f, 0, ranges.Data);
+		io.Fonts->AddFontFromMemoryCompressedTTF(DefaultFont_compressed_data, std::ssize(DefaultFont_compressed_data), size, 0, ranges.Data);
 	}
 
 

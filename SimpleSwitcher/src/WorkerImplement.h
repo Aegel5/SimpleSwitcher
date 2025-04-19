@@ -23,12 +23,20 @@ public:
 
 	WorkerImplement() {
 		IFS_LOG(Utils::GetPath_fileExe_lower(m_sSelfExeName));
-		TimerCallBack();
+		TimerClear();
+#ifdef USE_GUI2
+		TimerCheckLay();
+#endif
 	}
 
-	void TimerCallBack() {
+	void TimerClear() {
 		m_cycleList.ClearByTimer();
-		Worker()->PostMsg([](auto p) {p->TimerCallBack(); }, 30000);
+		Worker()->PostMsg([](auto p) {p->TimerClear(); }, 30000);
+	}
+
+	void TimerCheckLay() {
+		CheckCurLay();
+		Worker()->PostMsg([](auto p) {p->TimerCheckLay(); }, 200);
 	}
 
 	void ClearAllWords() { m_cycleList.Clear(); }

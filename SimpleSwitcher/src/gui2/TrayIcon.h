@@ -5,8 +5,13 @@
 class TrayIcon {
 	WinTray tray;
 	HICON app_icon = 0;
-	int GetSize() {
-		return 16;
+	ImVec2 GetSize() {
+		int iconWidth = GetSystemMetrics(SM_CXSMICON);
+		int iconHeight = GetSystemMetrics(SM_CYSMICON);
+		int bigIconWidth = GetSystemMetrics(SM_CXICON);
+		int bigIconHeight = GetSystemMetrics(SM_CYICON);
+		auto scale = WinUtils::GetDpiMainMonScale();
+		return{ iconWidth * scale.first, iconHeight * scale.second };
 	}
 public:
 	WinTray& TrayHandler() {

@@ -63,14 +63,33 @@ public:
 		return inst;
 	}
 
-	Images::ImageIcon GetIcon(UStr contry_id, int size = 16, bool is_gray = false) {
+	Images::ImageIcon GetIcon(UStr contry_id, ImVec2 size, bool is_gray = false) {
 
+		// приоритет: 1) все границы равны. 2) 1 граница равна, другая меньше 3) самый большой размер
 		const auto& bndl = GetBundle(contry_id, is_gray);
+		Images::ImageIcon pr2;
+		Images::ImageIcon pr3;
 		for (const auto it : bndl) {
-			return it;
+
+			auto w = it->img.width;
+			auto h = it->img.height;
+
+			if (w == size.x && h == size.y) 
+				return it;
+
+			if ((w == size.x && h < size.y) || (w < size.x && h == size.y)) {
+				pr2 = it;
+			}
+			auto sum = w + h;
+			if (!pr3 || pr3->img.width + pr3->img.height < sum) {
+				pr3 = it;
+			}
 		}
 
-		return std::make_shared<Images::ImageIcon::element_type>();
+		if (pr2) return pr2;
+		if (pr3) return pr3;
+
+		return std::make_shared<Images::ImageIcon::element_type>(); // empty
 	}
 
 	void ClearCache() {

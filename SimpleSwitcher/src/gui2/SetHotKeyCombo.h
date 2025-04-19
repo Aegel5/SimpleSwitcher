@@ -46,7 +46,9 @@ public:
 	}
 	void Draw() {
 
-		ImGui::SetNextItemWidth(180);
+		auto w = ImGui::CalcTextSize("Ctrl + Shift + CapsLock #double");
+
+		ImGui::SetNextItemWidth(w.x);
 
 		if (ImGui::BeginCombo(title.c_str(), key_str.c_str(), ImGuiComboFlags_HeightLarge)) {
 
@@ -93,7 +95,7 @@ public:
 			ImGui::SameLine();
 			ImGui::Checkbox(LOC("Left right difference"), &left_right);
 			//ImGui::AlignTextToFramePadding();
-			ImGui::SetNextItemWidth(160);
+			ImGui::SetNextItemWidth(w.x*0.9f);
 			static std::string empty;
 			ImGui::InputText("##cur", found ? &empty:&key_str, ImGuiInputTextFlags_ReadOnly);
 			ImGui::SameLine();
