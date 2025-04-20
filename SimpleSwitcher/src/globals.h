@@ -7,7 +7,7 @@ inline HWND g_guiHandle = nullptr;
 
 inline TStatus OpenClipboard(CAutoClipBoard& clip) { return clip.Open(g_guiHandle); }
 
-#define USE_GUI2
+//#define USE_GUI2
 
 inline EnableHodler g_enabled{};
 inline bool g_autostart = false;

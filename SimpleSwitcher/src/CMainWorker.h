@@ -8,7 +8,7 @@ class CMainWorker {
 	void WorkerInt();
 
 	void StopAndWait() {
-		m_queue.QuitRequest();
+		m_queue.PostMsg(Message_Quit{});
 		if (m_thread.joinable())
 			m_thread.join();
 	}

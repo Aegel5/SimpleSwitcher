@@ -8,7 +8,7 @@ void MainWindow::DrawFrameActual() {
 
 	GETCONF;
 
-	ImGui::SetNextWindowSize({ 800,600 }, ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(startsize, ImGuiCond_FirstUseEver);
 	ImGui::Begin(title.c_str(), &show_main, ImGuiWindowFlags_NoCollapse);
 
 	hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;

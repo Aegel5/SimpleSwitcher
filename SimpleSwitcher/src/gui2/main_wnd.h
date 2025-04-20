@@ -29,8 +29,9 @@ class MainWindow {
 	POINT cursorPos{-1,-1};
 	std::vector<std::pair<string, HKL>> menu_lays;
 	CoreWorker coreWork;
+	ImVec2 startsize{ 544.0, 544.0/1.12 };
 private:
-	void update_flags() { flagsSets = { std::from_range, Test::Inst().ScanFlags() }; }
+	void update_flags() { flagsSets = { std::from_range, IconMgr::Inst().ScanFlags() }; }
 	bool IsAdminOk() { return Utils::IsSelfElevated() || !conf_get_unsafe()->isMonitorAdmin; }
 	void ShowMessage(UStr msg) {
 		show_message = msg;
@@ -125,6 +126,9 @@ public:
 		tray.TrayHandler().OnDouble([this]() { Show(); });
 		tray.TrayHandler().OnRight([this]() { GetCursorPos(&cursorPos);});
 		coreWork.Start();
+		auto scal = WinUtils::GetDpiMainMonScale();
+		startsize.x *= scal.first;
+		startsize.y *= scal.second;
 	}
 	void Show() {
 		show_main = true;
@@ -155,7 +159,7 @@ public:
 				if (last_hwnd != hwnd) {
 					last_hwnd = hwnd;
 					SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-					//SetForegroundWindow(hwnd);
+					SetForegroundWindow(hwnd);
 					ImGui::GetPlatformIO().Platform_SetWindowFocus(ImGui::GetWindowViewport());
 				}
 				if (!ImGui::GetPlatformIO().Platform_GetWindowFocus(ImGui::GetWindowViewport())) {

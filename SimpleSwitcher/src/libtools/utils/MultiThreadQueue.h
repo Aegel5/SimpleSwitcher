@@ -17,15 +17,33 @@ template<class TMessage> class MultiThreadQueue {
 		bool operator< (const QueueElem& other) const { return time > other.time; }
 	};
 	std::priority_queue<QueueElem> m_delayed;
-	bool m_fNeedExit = false;
 public:
-	std::optional<TMessage> GetMessage() {
-		std::unique_lock<std::mutex> lock(m_mtxQueue);
-		while (true) {
+	std::optional<TMessage> GetMessageNoWait() {
 
-			if (m_fNeedExit) {
-				return std::nullopt;
+		std::unique_lock<std::mutex> lock(m_mtxQueue);
+
+		if (!m_queue.empty()) {
+			auto res = std::move(m_queue.front());
+			m_queue.pop_front();
+			return res;
+		}
+		if (!m_delayed.empty()) {
+			auto now = Now();
+			auto& it = m_delayed.top();
+			auto delayedtoStart = it.time;
+			if (now >= delayedtoStart) {
+				auto msg = std::move(it.msg);
+				m_delayed.pop();
+				return msg;
 			}
+		}
+		return std::nullopt;
+	}
+	TMessage GetMessageWait() {
+
+		std::unique_lock<std::mutex> lock(m_mtxQueue);
+
+		while (true) {
 
 			if (!m_queue.empty()) {
 				auto res = std::move(m_queue.front());
@@ -64,14 +82,8 @@ public:
 	}
 	void Reinitialize() {
 		std::unique_lock<std::mutex> lock(m_mtxQueue);
-		m_fNeedExit = false;
 		m_queue.clear();
 		m_delayed = {};
-	}
-	void QuitRequest() {
-		std::unique_lock<std::mutex> lock(m_mtxQueue);
-		m_fNeedExit = true;
-		m_cvQueue.notify_all();
 	}
 
 };

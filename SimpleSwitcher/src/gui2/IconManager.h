@@ -2,7 +2,7 @@
 #include "utils/Images.h"
 
 
-class Test {
+class IconMgr {
 	string flagFold;
 	using Bundle = std::vector<Images::ImageIcon>;
 	std::map<string, Bundle> icons;
@@ -55,11 +55,11 @@ class Test {
 		return icons.emplace(key, res).first->second;
 	}
 public:
-	Test() {
+	IconMgr() {
 		flagFold = StrUtils::Convert(Utils::GetPath_folder_noLower() + L"\\Flags");
 	}
-	static Test& Inst() {
-		static Test inst;
+	static IconMgr& Inst() {
+		static IconMgr inst;
 		return inst;
 	}
 

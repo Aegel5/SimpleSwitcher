@@ -48,7 +48,7 @@ public:
 
 		auto w = ImGui::CalcTextSize("Ctrl + Shift + CapsLock #double");
 
-		ImGui::SetNextItemWidth(w.x);
+		ImGui::SetNextItemWidth(w.x + ImGui::GetStyle().FramePadding.x * 2.f);
 
 		if (ImGui::BeginCombo(title.c_str(), key_str.c_str(), ImGuiComboFlags_HeightLarge)) {
 

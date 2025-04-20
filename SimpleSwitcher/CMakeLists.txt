@@ -90,7 +90,7 @@ target_sources(SimpleSwitcher
 #    ${all_interface_modules}
 #)
 
-target_compile_definitions(SimpleSwitcher PUBLIC IMGUI_ENABLE_FREETYPE)
+#target_compile_definitions(SimpleSwitcher PUBLIC IMGUI_ENABLE_FREETYPE)
 
 target_precompile_headers(SimpleSwitcher PRIVATE src/sw-base.h )
 

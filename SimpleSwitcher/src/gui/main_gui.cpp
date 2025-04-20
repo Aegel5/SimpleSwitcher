@@ -78,7 +78,7 @@ public:
 
 			coreWork.Start();
 
-			timers.StartCycle(200, [this]() { Worker()->PostMsg(Message_GetCurLay{});
+			timers.StartCycle(200, [this]() { 
 			if (m_checkBoxEnable->GetValue() != g_enabled.IsEnabled()) {
 				updateEnable();
 			}

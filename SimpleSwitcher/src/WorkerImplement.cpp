@@ -271,17 +271,21 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 
 	LOG_ANY("Hotkey start {}({})", HotKeyTypeName(typeRevert), (int)typeRevert);
 
-	if (typeRevert == hk_ToggleEnabled) {
-		g_enabled.TryToggle();
-		RETURN_SUCCESS;
-	}
-
-	if (!g_enabled.IsEnabled()) {
+	if (!g_enabled.IsEnabled() && typeRevert != hk_ToggleEnabled) {
 		LOG_ANY("Skip hk because disabled");
 		RETURN_SUCCESS;
 	}
 
 	// --------------- skip
+
+	// Сбросим сразу все клавиши для программы. Будет двойной (или даже тройной и более) up, но пока что это не проблема... 
+	m_curStateWrap.UpAllKeys();
+
+	if (typeRevert == hk_ToggleEnabled) {
+		g_enabled.TryToggle();
+		g_layout_change_cnt++;
+		RETURN_SUCCESS;
+	}
 
 	bool allow_do_revert = true;
 
@@ -291,9 +295,6 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 		LOG_ANY(L"Skip hotkey in self program");
 		allow_do_revert = false;
 	}
-
-	// Сбросим сразу все клавиши для программы. Будет двойной (или даже тройной и более) up, но пока что это не проблема... 
-	m_curStateWrap.UpAllKeys();
 
 	if (TestFlag(typeRevert, hk_RunProgram_flag)) {
 		int i = typeRevert;

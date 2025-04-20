@@ -43,7 +43,7 @@ public:
 			tray.SetIcon(app_icon);
 			return;
 		}
-		auto icon = Test::Inst().GetIcon(StrUtils::Convert(id).c_str(), GetSize(), is_gray);
+		auto icon = IconMgr::Inst().GetIcon(StrUtils::Convert(id).c_str(), GetSize(), is_gray);
 		if (!icon->IsOk()) {
 			tray.SetIcon(app_icon);
 			return;
