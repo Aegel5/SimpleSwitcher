@@ -3,6 +3,7 @@
 #include "utils/WinTray.h"
 
 class TrayIcon {
+	uint64_t last_lay_cnt = 0;
 	WinTray tray;
 	HICON app_icon = 0;
 	ImVec2 GetSize() {
@@ -17,7 +18,13 @@ public:
 	WinTray& TrayHandler() {
 		return tray;
 	}
-	void Update(bool is_gray) {
+public:void Update() {
+		if (last_lay_cnt != g_layout_change_cnt) {
+			last_lay_cnt = g_layout_change_cnt;
+			Update(!g_enabled.IsEnabled());
+		}
+	}
+private:void Update(bool is_gray) {
 		auto cur = Utils::GetFocusedWndInfo();
 		auto lay = cur.lay;
 		wstring id;

@@ -4,8 +4,6 @@
 #include "main_wnd.h"
 
 void MainWindow::DrawFrameActual() {
-	int next_id = 5;
-
 	GETCONF;
 
 	ImGui::SetNextWindowSize(startsize, ImGuiCond_FirstUseEver);
@@ -13,14 +11,13 @@ void MainWindow::DrawFrameActual() {
 
 	hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
 
-	ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
-	if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
+	if (ImGui::BeginTabBar("MyTabBar", ImGuiTabBarFlags_None)) {
 
 		with_TabItem(LOC("Settings")) {
 
 			{
 				bool val = g_enabled.IsEnabled();
-				if (ImGui::Checkbox("Enable", &val)) {
+				if (ImGui::Checkbox(LOC("Enable"), &val)) {
 					if (val && !IsAdminOk()) {
 						val = false;
 						ShowMessageAdmin();
@@ -56,7 +53,7 @@ void MainWindow::DrawFrameActual() {
 			}
 
 			{
-				if (ImGui::BeginCombo("Set of flags", cfg->flagsSet2.c_str(), 0)) {
+				if (ImGui::BeginCombo(LOC("Set of flags"), cfg->flagsSet2.c_str(), 0)) {
 					for (const auto& it : flagsSets) {
 						if (ImGui::Selectable(it.c_str(), cfg->flagsSet2 == it)) {
 							SaveConfigWith([&](auto p) {p->flagsSet2 = it; });
@@ -128,7 +125,7 @@ void MainWindow::DrawFrameActual() {
 			ImGui::SeparatorText("Language layouts");
 			for (int i = -1; const auto & it : cfg->layouts_info.info) {
 				i++;
-				with_ID(next_id++) {
+				with_ID(i+20) {
 					bool val = it.enabled;
 					if (ImGui::Checkbox("", &val)) {
 						SaveConfigWith([&](auto p) {p->layouts_info.info[i].enabled ^= 1; });

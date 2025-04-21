@@ -39,3 +39,17 @@
 		windowClass.TabItemFlagsOverrideSet = ImGuiViewportFlags_TopMost;
 		ImGui::SetNextWindowClass(&windowClass);
 		ImGui::SetNextWindowPos({ (float)cursorPos.x, (float)cursorPos.y });
+
+
+
+		class PushIdLoc {
+			UStr name;
+		public:
+			PushIdLoc(UStr name) :name(name) {
+				ImGui::PushID(name);
+			}
+			UStr Loc() { return LOC(name); }
+			~PushIdLoc() {
+				ImGui::PopID();
+			}
+		};

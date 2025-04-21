@@ -24,7 +24,6 @@ class MainWindow {
 	COM::CAutoCOMInitialize autoCom;
 	std::vector<string> flagsSets;
 	TrayIcon tray;
-	uint64_t last_lay_cnt = 0;
 	HWND hwnd = 0;
 	std::vector<std::pair<string, HKL>> menu_lays;
 	CoreWorker coreWork;
@@ -149,10 +148,7 @@ public: void DrawFrame() {
 			ImGui::ShowDemoWindow(&show_demo_window);
 	}
 
-	if (last_lay_cnt != g_layout_change_cnt) {
-		last_lay_cnt = g_layout_change_cnt;
-		tray.Update(!g_enabled.IsEnabled());
-	}
+
 
 }
 };

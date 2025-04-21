@@ -102,6 +102,7 @@ int main(int, char**)
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	MainWindow mainWindow;
+	uint64_t skip = 0;
 
     // Main loop
     bool done = false;
@@ -120,9 +121,13 @@ int main(int, char**)
         if (done)
             break;
 
-		if (!mainWindow.IsNeedDraw()) {
-			::Sleep(10);
-			continue;
+		{
+			if (mainWindow.IsNeedDraw()) skip = 0;
+			else skip++;
+			if (skip >= 20) {
+				Sleep(10);
+				continue;
+			}
 		}
 
         // Handle window being minimized or screen locked
