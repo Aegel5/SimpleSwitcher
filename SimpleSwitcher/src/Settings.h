@@ -77,7 +77,7 @@ public:
     static constexpr TStr showAppIcon = L"Application Icon";
     wstring flagsSet = L"Square";
     string flagsSet2 = "Square";
-    bool AllowRemoteKeys_ = true;
+    bool AlwaysSkipInject = false;
     bool AlternativeLayoutChange = false;
     TUInt32 quick_press_ms = 280;
     bool separate_ext_last_word = false;

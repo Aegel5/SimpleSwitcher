@@ -51,6 +51,11 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			return 0;
 		}
 
+		if (is_low_inject) {
+			LOG_ANY(L"skip low_inject");
+			return 0;
+		}
+
 		if (isInjected) {
 			if (InjectSkipper::Inst().IsInjectOur())
 				return 0;

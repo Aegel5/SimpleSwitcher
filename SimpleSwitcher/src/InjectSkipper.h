@@ -22,8 +22,8 @@ public:
 		}
 	};
 	bool IsInjectOur() {
-		if (!conf_get_unsafe()->AllowRemoteKeys_) {
-			LOG_ANY(L"skip our inject");
+		if (conf_get_unsafe()->AlwaysSkipInject) {
+			LOG_ANY(L"skip inject because AlwaysSkipInject");
 			return true;
 		}
 		if (is_our_send) {
@@ -34,7 +34,7 @@ public:
 		return false;
 	}
   //  void AddOur(int cnt) {
-		//if (conf_get_unsafe()->AllowRemoteKeys_) {
+		//if (conf_get_unsafe()->AlwaysSkipInject) {
 		//	std::unique_lock<std::mutex> _lock(m_mtx);
 		//	skipdata.emplace_back(GetTickCount64() + 500, cnt);
 		//	if (skipdata.size() >= 10000) {
@@ -48,7 +48,7 @@ public:
 	}
   //  bool IsAllowInject() {
 
-		//if (conf_get_unsafe()->AllowRemoteKeys_) {
+		//if (conf_get_unsafe()->AlwaysSkipInject) {
 		//	std::unique_lock<std::mutex> _lock(m_mtx);
 		//	while (1) {
 		//		if (skipdata.empty()) {

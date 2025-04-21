@@ -120,6 +120,11 @@ int main(int, char**)
         if (done)
             break;
 
+		if (!mainWindow.IsNeedDraw()) {
+			::Sleep(10);
+			continue;
+		}
+
         // Handle window being minimized or screen locked
         if (g_SwapChainOccluded && g_pSwapChain->Present(0, DXGI_PRESENT_TEST) == DXGI_STATUS_OCCLUDED)
         {
@@ -136,8 +141,6 @@ int main(int, char**)
             g_ResizeWidth = g_ResizeHeight = 0;
             CreateRenderTarget();
         }
-
-		mainWindow.SafeUpdate();
 
         // Start the Dear ImGui frame
         ImGui_ImplDX11_NewFrame();
