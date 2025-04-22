@@ -29,14 +29,13 @@ void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 // Main code
-int StartGui()
+int StartGui(std::stop_token token)
 {
     // Create application window
     //ImGui_ImplWin32_EnableDpiAwareness();
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
     ::RegisterClassExW(&wc);
     HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Dear ImGui DirectX11 Example", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
-	g_guiHandle = hwnd;
 
     // Initialize Direct3D
     if (!CreateDeviceD3D(hwnd))
@@ -94,19 +93,16 @@ int StartGui()
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
     //IM_ASSERT(font != nullptr);
 
-	
-
     // Our state
     //bool show_demo_window = true;
     //bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	MainWindow mainWindow;
-	uint64_t skip = 0;
 
     // Main loop
     bool done = false;
-    while (!done)
+    while (!done && !token.stop_requested())
     {
         // Poll and handle messages (inputs, window resize, etc.)
         // See the WndProc() function below for our to dispatch events to the Win32 backend.
@@ -120,23 +116,6 @@ int StartGui()
         }
         if (done)
             break;
-
-		if (!mainWindow.IsNeedDraw()) {
-			break;
-		}
-
-		//{
-		//	mainWindow.Update();
-		//	if (mainWindow.IsNeedDraw()) skip = 0;
-		//	else skip++;
-		//	if (skip >= 20) {
-		//		if (skip == 20) {
-		//			done = 1;
-		//		}
-		//		Sleep(10);
-		//		continue;
-		//	}
-		//}
 
         // Handle window being minimized or screen locked
         if (g_SwapChainOccluded && g_pSwapChain->Present(0, DXGI_PRESENT_TEST) == DXGI_STATUS_OCCLUDED)
@@ -160,9 +139,6 @@ int StartGui()
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        //if (show_demo_window)
-        //    ImGui::ShowDemoWindow(&show_demo_window);
 
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
@@ -171,27 +147,19 @@ int StartGui()
 
         }
 
-        // 3. Show another simple window.
-        //if (show_another_window)
-        //{
-        //    ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-        //    ImGui::Text("Hello from another window!");
-        //    if (ImGui::Button("Close Me"))
-        //        show_another_window = false;
-        //    ImGui::End();
-        //}
+
 
         // Rendering
         ImGui::Render();
-        //const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
-        //g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
-        //g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
-        //ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+		ImGui::UpdatePlatformWindows();
 
-
-		// Update and Render additional Platform Windows
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-			ImGui::UpdatePlatformWindows();
+		auto optimiz = conf_get_unsafe()->optimize_gui;
+		if (optimiz) {
+			static bool skip = false;
+			if (!skip) { ImGui::RenderPlatformWindowsDefault(); }
+			skip ^= 1;
+		}
+		else {
 			ImGui::RenderPlatformWindowsDefault();
 		}
 
@@ -200,13 +168,12 @@ int StartGui()
 		//HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
 		g_SwapChainOccluded = (hr == DXGI_STATUS_OCCLUDED);
 
-		//float wantDelta = 50;
-		//if (io.DeltaTime < wantDelta) {
-		//	Sleep(wantDelta - io.DeltaTime);
-		//}
-		//else {
-		//	int k = 0;
-		//}
+		if (optimiz) {
+			float wantDelta = 30;
+			if (io.DeltaTime < wantDelta) {
+				Sleep(wantDelta - io.DeltaTime);
+			}
+		}
     }
 
     // Cleanup
@@ -309,7 +276,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         ::PostQuitMessage(0);
         return 0;
 	case WM_DPICHANGED:
-		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DpiEnableScaleViewports) {
+        if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DpiEnableScaleViewports)
+        {
 			//const int dpi = HIWORD(wParam);
 			//printf("WM_DPICHANGED to %d (%.0f%%)\n", dpi, (float)dpi / 96.0f * 100.0f);
 			const RECT* suggested_rect = (RECT*)lParam;
@@ -319,5 +287,3 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
-
-

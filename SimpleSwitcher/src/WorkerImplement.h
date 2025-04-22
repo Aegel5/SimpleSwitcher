@@ -24,9 +24,7 @@ public:
 	WorkerImplement() {
 		IFS_LOG(Utils::GetPath_fileExe_lower(m_sSelfExeName));
 		TimerClear();
-#ifdef USE_GUI2
 		TimerCheckLay();
-#endif
 	}
 
 	void TimerClear() {
@@ -117,7 +115,21 @@ public:
 	}
     HKL getNextLang();
 
-	void CheckCurLay(bool forceSend = false);
+	void CheckCurLay() {
+		auto old_lay = topWndInfo2.lay;
+
+		topWndInfo2 = Utils::GetFocusedWndInfo();
+
+		if (topWndInfo2.lay == 0) {
+			// оставим прежний
+			topWndInfo2.lay = old_lay;
+		}
+		else {
+			if (old_lay != topWndInfo2.lay) {
+				new_layout_request(topWndInfo2.lay);
+			}
+		}
+	}
 
 	TStatus FixCtrlAlt(CHotKey key);
 

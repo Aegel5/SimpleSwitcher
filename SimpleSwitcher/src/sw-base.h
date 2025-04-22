@@ -69,6 +69,7 @@
 
 // core-worker
 #include "globals.h"
+#include "IconManager.h"
 #include "CClipWorker.h"
 #include "CMainWorkerMsg.h"
 #include "CMainWorker.h"

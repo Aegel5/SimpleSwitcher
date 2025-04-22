@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "utils/Images.h"
 
-
 class IconMgr {
 	string flagFold;
 	using Bundle = std::vector<Images::ImageIcon>;

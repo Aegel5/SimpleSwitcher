@@ -1,7 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
-#define STB_IMAGE_IMPLEMENTATION
-
-#include "main_wnd.h"
+﻿#include "main_wnd.h"
 
 void MainWindow::DrawFrameActual() {
 	GETCONF;
@@ -9,7 +6,11 @@ void MainWindow::DrawFrameActual() {
 	ImGui::SetNextWindowSize(startsize, ImGuiCond_FirstUseEver);
 	ImGui::Begin(title.c_str(), &show_main, ImGuiWindowFlags_NoCollapse);
 
-	hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
+	if (g_bring_gui_to_top && ImGui::GetWindowViewport()->PlatformWindowCreated) {
+		g_bring_gui_to_top = false;
+		auto hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
+		SetForegroundWindow(hwnd);
+	}
 
 	if (ImGui::BeginTabBar("MyTabBar", ImGuiTabBarFlags_None)) {
 
@@ -22,8 +23,9 @@ void MainWindow::DrawFrameActual() {
 						val = false;
 						ShowMessageAdmin();
 					}
-					g_layout_change_cnt++; // for update tray.
-					g_enabled.TryEnable(val);
+					if (g_enabled.TryEnable(val)) {
+						new_layout_request();
+					}
 				}
 			}
 
@@ -57,7 +59,7 @@ void MainWindow::DrawFrameActual() {
 					for (const auto& it : flagsSets) {
 						if (ImGui::Selectable(it.c_str(), cfg->flagsSet2 == it)) {
 							SaveConfigWith([&](auto p) {p->flagsSet2 = it; });
-							g_layout_change_cnt++;
+							new_layout_request();
 						}
 					}
 					ImGui::EndCombo();
@@ -89,10 +91,10 @@ void MainWindow::DrawFrameActual() {
 
 
 			{
-				if (ImGui::BeginCombo("Theme", cfg->theme_.c_str(), 0)) {
+				if (ImGui::BeginCombo("Theme", cfg->theme.c_str(), 0)) {
 					for (const char* it : { "Dark","Light","Classic" }) {
-						if (ImGui::Selectable(it, cfg->theme_ == it)) {
-							SaveConfigWith([&](auto p) {p->theme_ = it; });
+						if (ImGui::Selectable(it, cfg->theme == it)) {
+							SaveConfigWith([&](auto p) {p->theme = it; });
 							SetStyle();
 						}
 					}
@@ -142,6 +144,20 @@ void MainWindow::DrawFrameActual() {
 			if (Utils::IsDebug()) {
 				if (ImGui::Button("Show demo"))
 					show_demo_window = true;
+			}
+
+			{
+				bool val = cfg->optimize_gui;
+				if (ImGui::Checkbox(LOC("Optimize GUI"), &val)) {
+					SaveConfigWith([val](auto p) {p->optimize_gui = val; });
+				}
+			}
+
+			{
+				bool val = cfg->SkipLowLevelInjectKeys;
+				if (ImGui::Checkbox("SkipLowLevelInjectKeys", &val)) {
+					SaveConfigWith([val](auto p) {p->SkipLowLevelInjectKeys = val; });
+				}
 			}
 
 		}

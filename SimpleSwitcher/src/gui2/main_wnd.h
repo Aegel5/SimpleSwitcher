@@ -7,8 +7,6 @@
 #include "gui_utils.h"
 #include "SwAutostart.h"
 #include "SetHotKeyCombo.h"
-#include "IconManager.h"
-#include "TrayIcon.h"
 
 class MainWindow {
 	string config_path;
@@ -23,12 +21,10 @@ class MainWindow {
 	std::vector<SetHotKeyCombo> layout_win_hotkeys;
 	COM::CAutoCOMInitialize autoCom;
 	std::vector<string> flagsSets;
-	HWND hwnd = 0;
 	std::vector<std::pair<string, HKL>> menu_lays;
-	ImVec2 startsize{ 544.0, 544.0/1.12 };
+	ImVec2 startsize{ 544.0, 544.0 / 1.12 };
 private:
-	void update_flags() { flagsSets = { std::from_range, IconMgr::Inst().ScanFlags() }; }
-	bool IsAdminOk() { return Utils::IsSelfElevated() || !conf_get_unsafe()->isMonitorAdmin; }
+	void update_flags() { flagsSets = { std::from_range, IconMgr::Inst().ScanFlags() }; IconMgr::Inst().ClearCache(); }
 	void ShowMessage(UStr msg) {
 		show_message = msg;
 		ImGui::OpenPopup(LOC("Message"));
@@ -57,13 +53,13 @@ private:
 		layout_win_hotkeys.clear();
 		for (int i = -1; const auto & it : cfg->layouts_info.info) {
 			i++;
-			layout_hotkeys.emplace_back( StrUtils::Convert(Utils::GetNameForHKL(it.layout)), it.hotkey.key(), def_list,
+			layout_hotkeys.emplace_back(StrUtils::Convert(Utils::GetNameForHKL(it.layout)), it.hotkey.key(), def_list,
 				[i](auto key) {
-				SaveConfigWith([&](auto conf) {
-					if (i >= conf->layouts_info.info.size()) return;
-					auto& rec = conf->layouts_info.info[i];
-					rec.hotkey.key() = key;
-					});
+					SaveConfigWith([&](auto conf) {
+						if (i >= conf->layouts_info.info.size()) return;
+						auto& rec = conf->layouts_info.info[i];
+						rec.hotkey.key() = key;
+						});
 				}
 			);
 
@@ -71,8 +67,7 @@ private:
 	}
 	void DrawFrameActual();
 public:
-	MainWindow()  {
-
+	MainWindow() {
 		IFS_LOG(autoCom.Init());
 		InitImGui();
 		title = std::format(
@@ -82,54 +77,27 @@ public:
 		GETCONF;
 		for (int i = -1; const auto & it : cfg->hotkeysList) {
 			i++;
-			hotbox.emplace_back(GetGuiTextForHk(it.hkId), it.keys.key(), it.def_list, 
+			hotbox.emplace_back(GetGuiTextForHk(it.hkId), it.keys.key(), it.def_list,
 				[i](auto k) {
-				SaveConfigWith([i,k](auto p) {p->hotkeysList[i].keys.key() = k; });
+					SaveConfigWith([i, k](auto p) {p->hotkeysList[i].keys.key() = k; });
 				});
-		}
-		if (IsAdminOk()) {
-			if (Utils::IsDebug()) {
-				if (!g_enabled.TryEnable()) {
-					auto hk = conf_get_unsafe()->GetHk(hk_ToggleEnabled).keys.key();
-					for (auto& it : hk) if (it == VKE_WIN) it = VK_LWIN;
-					InputSender::SendHotKey(hk);
-					Sleep(50);
-				}
-			}
-			g_enabled.TryEnable();
 		}
 		check_add_to_auto = autostart_get();
 		SyncLays();
-		ApplyAcessebil();
 		config_path = StrUtils::Convert(std::format(L"file://{}", GetPath_Conf()));
-		show_main = !g_autostart;
 		update_flags();
-		//tray.TrayHandler().OnCreateMenu();
 		auto scal = WinUtils::GetDpiMainMonScale();
 		startsize.x *= scal.x;
 		startsize.y *= scal.y;
 	}
-	void Show() {
-		show_main = true;
-		if(hwnd != 0)
-			SetForegroundWindow(hwnd);
-	}
 
-	bool IsNeedDraw() {
-		return show_main;
-	}
-
-public: void DrawFrame() {
-
-	if (show_main) {
-
+	void DrawFrame() {
+		if (!show_main) {
+			PostQuitMessage(0);
+			return;
+		}
 		DrawFrameActual();
-
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
 	}
-
-
-
-}
 };

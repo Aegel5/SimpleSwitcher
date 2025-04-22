@@ -29,9 +29,6 @@ void CMainWorker::WorkerInt()
 			else if constexpr (std::is_same_v<T, Message_ChangeForeg>) {
 				workerImpl.ChangeForeground(arg.hwnd);
 			}
-			else if constexpr (std::is_same_v<T, Message_GetCurLay>) {
-				workerImpl.CheckCurLay(arg.force);
-			}
 			else if constexpr (std::is_same_v<T, Message_ClearWorlds>) {
 				workerImpl.ClearAllWords();
 			}

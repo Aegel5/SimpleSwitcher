@@ -20,6 +20,7 @@ for arg in sys.argv[1:]:
     else :
         print(f"unknown arg {arg}")
         exit(1)
+if ver_suff != '' is_notel = True
 
 
 curpath = pathlib.Path(__file__).parent.resolve()

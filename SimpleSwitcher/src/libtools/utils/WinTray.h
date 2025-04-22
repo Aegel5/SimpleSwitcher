@@ -3,9 +3,11 @@
 class WinTray {
 
 public:struct TrayItem {
-		UStr name;
+		string name;
 		std::function<void()> callback;
 		bool is_separator = false;
+		bool is_checkbox = false;
+		bool edit_val = false;
 	};
 private:
 
@@ -43,7 +45,15 @@ private:
 					HMENU hMenu = CreatePopupMenu();
 					for (int i = 0; auto & it : Inst->last_menu) {
 						i++;
-						AppendMenu(hMenu, MF_STRING, i, StrUtils::Convert((string)it.name).c_str());
+						if (it.is_separator) {
+							AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+							continue;
+						}
+						if (it.is_checkbox) {
+							AppendMenu(hMenu, MF_STRING | (it.edit_val ? MF_CHECKED : MF_UNCHECKED), i, StrUtils::Convert(it.name).c_str());
+							continue;
+						}
+						AppendMenu(hMenu, MF_STRING, i, StrUtils::Convert(it.name).c_str());
 					}
 
 					SetForegroundWindow(hwnd);
@@ -112,7 +122,7 @@ public:
 		//nid.uID = ID_TRAY_APP_ICON;
 		nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 		nid.uCallbackMessage = WM_TRAYICON;
-		wcscpy_s(nid.szTip, L"SimpleSwitcher");
+		swprintf_s(nid.szTip, L"SimpleSwitcher %S", SW_VERSION);
 
 
 	}

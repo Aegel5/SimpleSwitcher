@@ -100,7 +100,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 						// очищаем, возможное нахождение up
 						{
-							possible_hk_up.Clear(); 
+							possible_hk_up.Clear();
 							msg_type.hk = hk_NULL;
 						}
 
@@ -112,7 +112,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				}
 
 				if (key.GetKeyup()) {
-					possible_hk_up = curk; 
+					possible_hk_up = curk;
 					msg_type.hk = hk; // уведомим, что это наша клавиша.
 				}
 			}
@@ -191,12 +191,6 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			return 1; // запрет
 	}
 
-
-	if (cfg->EnableKeyLoggerDefence) {
-		return 0;
-	}
-	else {
-		return CallNextHookEx(0, nCode, wParam, lParam);
-	}
+	return CallNextHookEx(0, nCode, wParam, lParam);
 
 }

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "utils/accessibil.h"
+
 #include "utils/win_utils.h"
 
 #include "misc/fonts/Play-Regular.cpp"
@@ -48,13 +48,9 @@ inline void SyncLayouts() {
 
 inline void SetStyle() {
 	GETCONF;
-	if (cfg->theme_ == "Light") { ImGui::StyleColorsLight(); }
-	else if (cfg->theme_ == "Classic") { ImGui::StyleColorsClassic(); }
+	if (cfg->theme == "Light") { ImGui::StyleColorsLight(); }
+	else if (cfg->theme == "Classic") { ImGui::StyleColorsClassic(); }
 	else  { ImGui::StyleColorsDark(); }
-}
-
-inline void ApplyAcessebil() {
-	AllowAccessibilityShortcutKeys(!conf_get_unsafe()->disableAccessebility);
 }
 
 inline void InitImGui() {

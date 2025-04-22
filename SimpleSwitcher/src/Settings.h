@@ -21,19 +21,20 @@ public:
     }
 
     std::set <std::wstring> disableInPrograms;
-    std::set <std::wstring> disableInPrograms_normalized;
 
     void NormalizePaths() {
+		std::set <std::wstring> res;
         for (const auto& it : disableInPrograms) {
 			auto cur = it;
 			StrUtils::ToLower(cur);
             Utils::NormalizeDelims(cur);
-            disableInPrograms_normalized.insert(cur);
+            res.insert(std::move(cur)); // todo cast
         }
+		disableInPrograms = std::move(res);
     }
     bool IsSkipProgramTop() const {
 
-        const auto& col = disableInPrograms_normalized;
+        const auto& col = disableInPrograms;
 
         if (col.empty()) return false;
 
@@ -69,7 +70,6 @@ public:
     bool isMonitorAdmin = false;
     bool force_DbgMode              = false;
     bool fClipboardClearFormat = false;
-    bool EnableKeyLoggerDefence = false;
     bool disableAccessebility    = false;
     static constexpr TStr showOriginalFlags = L"Original Flags";
     static constexpr TStr showAppIcon = L"Application Icon";
@@ -82,7 +82,8 @@ public:
     bool separate_ext_last_word = false;
     bool separate_ext_several_words = false;
     CHotKey win_hotkey_cycle_lang { VK_LMENU, VK_SHIFT };
-	std::string theme_ = "Light";
+	std::string theme = "Light";
+	bool optimize_gui = false;
 
     std::vector< CHotKeySet> hotkeysList;
     std::vector< RunProgramInfo> run_programs = { {.path = L"example: calc.exe"} };

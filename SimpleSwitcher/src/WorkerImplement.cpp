@@ -274,8 +274,7 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 	m_curStateWrap.UpAllKeys();
 
 	if (typeRevert == hk_ToggleEnabled) {
-		g_enabled.TryToggle();
-		g_layout_change_cnt++;
+		try_toggle_enable();
 		RETURN_SUCCESS;
 	}
 
@@ -314,7 +313,7 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 	}
 
 	if (typeRevert == hk_ShowMainWindow) {
-		PostMessage(g_guiHandle, WM_ShowWindow, 0, 0);
+		show_main_wind();
 		RETURN_SUCCESS;
 	}
 
@@ -430,26 +429,6 @@ void WorkerImplement::SwitchLangByEmulate(HKL lay) {
 			}
 			cur = next;
 			InputSender::SendHotKey(altshift);
-		}
-	}
-}
-
-void WorkerImplement::CheckCurLay(bool forceSend) {
-
-	auto old_lay = topWndInfo2.lay;
-
-	topWndInfo2 = Utils::GetFocusedWndInfo();
-
-	if (topWndInfo2.lay == 0) {
-		// оставим прежний
-		topWndInfo2.lay = old_lay;
-	}
-	else {
-		if ((forceSend || old_lay != topWndInfo2.lay) && g_guiHandle != nullptr) {
-			g_layout_change_cnt++;
-#ifndef USE_GUI2
-			PostMessage(g_guiHandle, WM_LayNotif, (WPARAM)topWndInfo2.lay, 0);
-#endif
 		}
 	}
 }

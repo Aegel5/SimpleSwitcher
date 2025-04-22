@@ -36,13 +36,12 @@ public:
 	bool IsEnabled() {
 		return mtx.is_taked();
 	}
-	void TryToggle() { TryEnable(!IsEnabled()); }
-	bool TryEnable(bool val=true) {
+	bool TryToggle() { return TryEnable(!IsEnabled()); }
+	bool TryEnable(bool val = true) {
 		if (!val) {
 			mtx.clear();
-			return false;
+			return true;
 		}
-
 		return mtx.take();
 	}
 };

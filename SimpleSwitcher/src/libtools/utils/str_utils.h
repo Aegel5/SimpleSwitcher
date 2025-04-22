@@ -212,10 +212,13 @@ namespace StrUtils
 		}
 	}
 
-	inline std::string Convert(const std::wstring& wstr) {
+	inline std::string Convert(TStr wstr) {
 		using convert_typeX = std::codecvt_utf8<wchar_t>;
 		std::wstring_convert<convert_typeX, wchar_t> converterX;
 		return converterX.to_bytes(wstr);
+	}
+	inline std::string Convert(const std::wstring& wstr) {
+		return Convert(wstr.c_str());
 	}
 
 	inline std::wstring Convert(const std::string& str) {

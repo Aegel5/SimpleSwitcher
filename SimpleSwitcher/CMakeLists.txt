@@ -24,39 +24,40 @@ src/*.cpp
 #src/res/myres.rc
 src/simpleswitcher.manifest
 )
-
-list(FILTER all_implement_units EXCLUDE REGEX ".*binary_to_compressed_c.cpp")
+#message(all_implement_units=${all_implement_units})
 list(FILTER all_implement_units EXCLUDE REGEX ".*/old/.*")
 
-#message(all_implement_units=${all_implement_units})
+
+file(GLOB_RECURSE extern_files  extern/*.cpp )
+list(FILTER extern_files EXCLUDE REGEX ".*binary_to_compressed_c.cpp")
+set_source_files_properties(${extern_files} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 
 #file(GLOB_RECURSE all_interface_modules  
 #src/*.ixx 
 #)
-
-
-set(CMAKE_CXX_STANDARD 23)
-
-add_executable (SimpleSwitcher WIN32)
-target_sources(SimpleSwitcher    PUBLIC    ${all_implement_units})
-
 #target_sources(SimpleSwitcher
 #  PUBLIC
 #    FILE_SET all_my_modules TYPE CXX_MODULES FILES
 #    ${all_interface_modules}
 #)
 
-target_precompile_headers(SimpleSwitcher PRIVATE src/sw-base.h )
+set(CMAKE_CXX_STANDARD 23)
 
-target_link_libraries(SimpleSwitcher "Imm32.lib" "Psapi.lib" freetype "d3d11.lib" "d3dcompiler.lib" "dxgi.lib")
+add_executable (SimpleSwitcher WIN32)
+target_sources(SimpleSwitcher    PRIVATE    ${extern_files}  ${all_implement_units})
+target_precompile_headers(SimpleSwitcher PRIVATE src/sw-base.h)
+
+
+target_link_libraries(SimpleSwitcher PRIVATE "Imm32.lib" "Psapi.lib" freetype "d3d11.lib" "d3dcompiler.lib" "dxgi.lib")
 
 target_include_directories(SimpleSwitcher PRIVATE "src/libtools")
-target_include_directories(SimpleSwitcher PRIVATE "src/extern")
-target_include_directories(SimpleSwitcher PRIVATE "src/extern/iamgui")
-target_include_directories(SimpleSwitcher PRIVATE "src/extern/iamgui/misc/cpp")
-target_include_directories(SimpleSwitcher PRIVATE "src/extern/iamgui/backends")
-target_include_directories(SimpleSwitcher PRIVATE "${freetype_SOURCE_DIR}/include")
+target_include_directories(SimpleSwitcher PRIVATE "extern")
+target_include_directories(SimpleSwitcher PRIVATE "extern/iamgui")
+target_include_directories(SimpleSwitcher PRIVATE "extern/iamgui/misc/cpp")
+target_include_directories(SimpleSwitcher PRIVATE "extern/iamgui/backends")
 target_include_directories(SimpleSwitcher PRIVATE "src") 
+target_include_directories(SimpleSwitcher PRIVATE "${freetype_SOURCE_DIR}/include")
+
 
 
 

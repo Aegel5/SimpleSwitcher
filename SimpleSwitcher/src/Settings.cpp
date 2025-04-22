@@ -1,6 +1,6 @@
 ﻿#include "sw-base.h"
 #include "Settings.h"
-#include "extern/json.hpp"
+#include "json.hpp"
 
 using json = nlohmann::json;
 
@@ -179,7 +179,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     isMonitorAdmin,
     force_DbgMode,
     fClipboardClearFormat,
-    EnableKeyLoggerDefence,
     disableAccessebility,
     flagsSet,
     disableInPrograms,
@@ -196,7 +195,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     separate_ext_several_words,
     quick_press_ms,
     win_hotkey_cycle_lang,
-	theme_
+	theme,
+	optimize_gui
     )
     
 
