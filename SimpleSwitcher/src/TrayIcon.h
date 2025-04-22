@@ -1,30 +1,44 @@
 ﻿#pragma once
 
 #include "utils/WinTray.h"
-
+#include "IconManager.h"
+extern int StartGui();
 class TrayIcon {
+	
 	uint64_t last_lay_cnt = 0;
 	WinTray tray;
 	HICON app_icon = 0;
-	ImVec2 GetSize() {
+	Vec2 GetSize() {
 		int iconWidth = GetSystemMetrics(SM_CXSMICON);
 		int iconHeight = GetSystemMetrics(SM_CYSMICON);
 		int bigIconWidth = GetSystemMetrics(SM_CXICON);
 		int bigIconHeight = GetSystemMetrics(SM_CYICON);
 		auto scale = WinUtils::GetDpiMainMonScale();
-		return{ iconWidth * scale.first, iconHeight * scale.second };
+		return{ iconWidth * scale.x, iconHeight * scale.y };
+	}
+	void ShowGui() {
+
 	}
 public:
 	WinTray& TrayHandler() {
 		return tray;
 	}
-public:void Update() {
+	TrayIcon() {
+		tray.OnDouble([this]() { ShowGui(); });
+		tray.OnCreateMenu([this]() {
+			std::vector<WinTray::TrayItem> res;
+			res.push_back({ .name = LOC("Show"), .callback = [this]() { ShowGui(); } });
+			res.push_back({ .name = LOC("Exit"), .callback = []() { PostQuitMessage(0); } });
+			return res;
+			});
+	}
+public:void UpdateCheck() {
 		if (last_lay_cnt != g_layout_change_cnt) {
 			last_lay_cnt = g_layout_change_cnt;
 			Update(!g_enabled.IsEnabled());
 		}
 	}
-private:void Update(bool is_gray) {
+void Update(bool is_gray=false) {
 		auto cur = Utils::GetFocusedWndInfo();
 		auto lay = cur.lay;
 		wstring id;

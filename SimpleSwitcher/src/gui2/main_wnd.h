@@ -23,10 +23,8 @@ class MainWindow {
 	std::vector<SetHotKeyCombo> layout_win_hotkeys;
 	COM::CAutoCOMInitialize autoCom;
 	std::vector<string> flagsSets;
-	TrayIcon tray;
 	HWND hwnd = 0;
 	std::vector<std::pair<string, HKL>> menu_lays;
-	CoreWorker coreWork;
 	ImVec2 startsize{ 544.0, 544.0/1.12 };
 private:
 	void update_flags() { flagsSets = { std::from_range, IconMgr::Inst().ScanFlags() }; }
@@ -74,23 +72,8 @@ private:
 	void DrawFrameActual();
 public:
 	MainWindow()  {
-		SetLogLevel(Utils::IsDebug() ? LOG_LEVEL_2 : LOG_LEVEL_DISABLE);
-		__g_config.reset(new ProgramConfig());
-		auto errLoadConf = LoadConfig(*__g_config);
-		if (errLoadConf != TStatus::SW_ERR_SUCCESS) {
-			IFS_LOG(errLoadConf);
-			ShowMessage("Error load config"); // todo check
-		}
-		else {
-			if (__g_config->config_version != SW_VERSION) {
-				__g_config->config_version = SW_VERSION;
-				SaveConfigWith([](auto cfg) {}); // пересохраним конфиг, чтобы туда добавились все последние настройки, которые заполнены по-умолчанию.
-			}
-		}
+
 		IFS_LOG(autoCom.Init());
-		setlocale(LC_ALL, "en_US.utf8");
-		IFS_LOG(update_cur_dir());
-		LOG_ANY("Start program {}", SW_VERSION);
 		InitImGui();
 		title = std::format(
 			"SimpleSwitcher {}{}{}###main_wnd", SW_VERSION,
@@ -121,12 +104,10 @@ public:
 		config_path = StrUtils::Convert(std::format(L"file://{}", GetPath_Conf()));
 		show_main = !g_autostart;
 		update_flags();
-		tray.TrayHandler().OnDouble([this]() { Show(); });
 		//tray.TrayHandler().OnCreateMenu();
-		coreWork.Start();
 		auto scal = WinUtils::GetDpiMainMonScale();
-		startsize.x *= scal.first;
-		startsize.y *= scal.second;
+		startsize.x *= scal.x;
+		startsize.y *= scal.y;
 	}
 	void Show() {
 		show_main = true;

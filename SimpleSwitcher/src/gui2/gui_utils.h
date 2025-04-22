@@ -48,8 +48,8 @@ inline void SyncLayouts() {
 
 inline void SetStyle() {
 	GETCONF;
-	if (cfg->theme == "Light") { ImGui::StyleColorsLight(); }
-	else if (cfg->theme == "Classic") { ImGui::StyleColorsClassic(); }
+	if (cfg->theme_ == "Light") { ImGui::StyleColorsLight(); }
+	else if (cfg->theme_ == "Classic") { ImGui::StyleColorsClassic(); }
 	else  { ImGui::StyleColorsDark(); }
 }
 
@@ -89,12 +89,7 @@ inline void InitImGui() {
 	SetStyle();
 }
 
-inline TStatus update_cur_dir() {
-	std::wstring dir;
-	IFS_RET(Utils::GetPath_folder_noLower(dir));
-	IFW_RET(SetCurrentDirectory(dir.c_str()));
-	RETURN_SUCCESS;
-}
+
 
 
 

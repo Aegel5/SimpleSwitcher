@@ -29,7 +29,7 @@ void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 // Main code
-int main(int, char**)
+int StartGui()
 {
     // Create application window
     //ImGui_ImplWin32_EnableDpiAwareness();
@@ -121,14 +121,22 @@ int main(int, char**)
         if (done)
             break;
 
-		{
-			if (mainWindow.IsNeedDraw()) skip = 0;
-			else skip++;
-			if (skip >= 20) {
-				Sleep(10);
-				continue;
-			}
+		if (!mainWindow.IsNeedDraw()) {
+			break;
 		}
+
+		//{
+		//	mainWindow.Update();
+		//	if (mainWindow.IsNeedDraw()) skip = 0;
+		//	else skip++;
+		//	if (skip >= 20) {
+		//		if (skip == 20) {
+		//			done = 1;
+		//		}
+		//		Sleep(10);
+		//		continue;
+		//	}
+		//}
 
         // Handle window being minimized or screen locked
         if (g_SwapChainOccluded && g_pSwapChain->Present(0, DXGI_PRESENT_TEST) == DXGI_STATUS_OCCLUDED)
@@ -139,13 +147,13 @@ int main(int, char**)
         g_SwapChainOccluded = false;
 
         // Handle window resize (we don't resize directly in the WM_SIZE handler)
-        if (g_ResizeWidth != 0 && g_ResizeHeight != 0)
-        {
-            CleanupRenderTarget();
-            g_pSwapChain->ResizeBuffers(0, g_ResizeWidth, g_ResizeHeight, DXGI_FORMAT_UNKNOWN, 0);
-            g_ResizeWidth = g_ResizeHeight = 0;
-            CreateRenderTarget();
-        }
+        //if (g_ResizeWidth != 0 && g_ResizeHeight != 0)
+        //{
+        //    CleanupRenderTarget();
+        //    g_pSwapChain->ResizeBuffers(0, g_ResizeWidth, g_ResizeHeight, DXGI_FORMAT_UNKNOWN, 0);
+        //    g_ResizeWidth = g_ResizeHeight = 0;
+        //    CreateRenderTarget();
+        //}
 
         // Start the Dear ImGui frame
         ImGui_ImplDX11_NewFrame();
@@ -175,10 +183,10 @@ int main(int, char**)
 
         // Rendering
         ImGui::Render();
-        const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
-        g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
-        g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
-        ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+        //const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
+        //g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
+        //g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
+        //ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 
 		// Update and Render additional Platform Windows
@@ -187,10 +195,18 @@ int main(int, char**)
 			ImGui::RenderPlatformWindowsDefault();
 		}
 
-        // Present
-        HRESULT hr = g_pSwapChain->Present(1, 0);   // Present with vsync
-        //HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
-        g_SwapChainOccluded = (hr == DXGI_STATUS_OCCLUDED);
+		// Present
+		HRESULT hr = g_pSwapChain->Present(1, 0);   // Present with vsync
+		//HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
+		g_SwapChainOccluded = (hr == DXGI_STATUS_OCCLUDED);
+
+		//float wantDelta = 50;
+		//if (io.DeltaTime < wantDelta) {
+		//	Sleep(wantDelta - io.DeltaTime);
+		//}
+		//else {
+		//	int k = 0;
+		//}
     }
 
     // Cleanup
@@ -305,13 +321,3 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 
-#ifdef USE_GUI2
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-	{
-		std::string cmdLine(lpCmdLine);
-		g_autostart = cmdLine.find("/autostart") != std::string::npos;
-	}
-	// Ваш код...
-	return main(0, 0);
-}
-#endif 

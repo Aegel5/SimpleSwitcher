@@ -1,7 +1,8 @@
 ﻿#pragma once
 
-// wx widgets
-#include "wx/wxprec.h"
+#define UNICODE
+#define _UNICODE
+#define NOMINMAX
 
 // windows
 #define WIN32_LEAN_AND_MEAN // убрать лишние header из winapi
@@ -50,6 +51,7 @@
 #include "utils/procstart.h"
 #include "utils/layout-utils.h"
 #include "utils/TimePoint.h"
+#include "utils/win_utils.h"
 
 
 // base

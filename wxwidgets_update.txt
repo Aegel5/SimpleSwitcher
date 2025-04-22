@@ -1,8 +1,0 @@
-﻿удалить папку wxWidgets
-удалить все папки с кешами
-git clone --branch v3.2.6 --recurse-submodules https://github.com/wxWidgets/wxWidgets.git
-закомитить через тортоиз
-внести патчи
-
-
-git checkout v3.2.6

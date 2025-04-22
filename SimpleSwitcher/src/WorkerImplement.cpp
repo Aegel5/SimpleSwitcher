@@ -75,19 +75,11 @@ TStatus ClipHasTextFormating(bool& fres)
 }
 
 void toUpper(std::wstring& buf) {
-
-	wxString str1 = buf;
-
-	str1.UpperCase();
-    auto r1 = str1.ToStdWstring();
-    if (r1 != buf)
-        buf = r1;
-    else {
-        wxString str2 = buf;
-        str2.MakeLower();
-        buf = str2.ToStdWstring();
+	auto copy = buf;
+	StrUtils::ToUpper(buf);
+    if (copy == buf){
+		StrUtils::ToLower(buf);
     }
-
 }
 
 TStatus WorkerImplement::GetClipStringCallback() {

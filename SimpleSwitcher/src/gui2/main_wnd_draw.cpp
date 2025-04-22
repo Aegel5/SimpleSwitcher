@@ -89,10 +89,10 @@ void MainWindow::DrawFrameActual() {
 
 
 			{
-				if (ImGui::BeginCombo("Theme", cfg->theme.c_str(), 0)) {
+				if (ImGui::BeginCombo("Theme", cfg->theme_.c_str(), 0)) {
 					for (const char* it : { "Dark","Light","Classic" }) {
-						if (ImGui::Selectable(it, cfg->theme == it)) {
-							SaveConfigWith([&](auto p) {p->theme = it; });
+						if (ImGui::Selectable(it, cfg->theme_ == it)) {
+							SaveConfigWith([&](auto p) {p->theme_ = it; });
 							SetStyle();
 						}
 					}

@@ -64,8 +64,6 @@ public:
 
     string config_version;
 
-    TUInt32 uiLang_ = wxLANGUAGE_RUSSIAN;
-
     bool fixRAlt = false;
     HKL fixRAlt_lay_ = (HKL)0x4090409;
     bool isMonitorAdmin = false;
@@ -77,13 +75,14 @@ public:
     static constexpr TStr showAppIcon = L"Application Icon";
     wstring flagsSet = L"Square";
     string flagsSet2 = "Square";
-    bool AlwaysSkipInject = false;
+    bool SkipAllInjectKeys = false;
+    bool SkipLowLevelInjectKeys = false;
     bool AlternativeLayoutChange = false;
     TUInt32 quick_press_ms = 280;
     bool separate_ext_last_word = false;
     bool separate_ext_several_words = false;
     CHotKey win_hotkey_cycle_lang { VK_LMENU, VK_SHIFT };
-	std::string theme = "Light";
+	std::string theme_ = "Light";
 
     std::vector< CHotKeySet> hotkeysList;
     std::vector< RunProgramInfo> run_programs = { {.path = L"example: calc.exe"} };
