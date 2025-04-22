@@ -141,21 +141,22 @@ namespace StrUtils
 		return false;
 	}
 
-	inline void ToLower(std::wstring& str)
-	{
-		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+	inline void ToLower(std::wstring& str)	{
+		std::transform(str.begin(), str.end(), str.begin(), [](wchar_t c) { return std::towlower(c); });
 	}
-	inline void ToLower(std::string& str)
-	{
-		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+	inline void ToUpper(std::wstring& str) {
+		std::transform(str.begin(), str.end(), str.begin(), [](wchar_t c) { return std::towupper(c); });
 	}
-	inline void ToUpper(std::wstring& str)
-	{
-		std::transform(str.begin(), str.end(), str.begin(), ::toupper);
-	}
-	inline void ToUpper(std::string& str) {
-		std::transform(str.begin(), str.end(), str.begin(), ::toupper);
-	}
+
+	// utf8 - incorrect todo lib
+	//inline void ToLower(std::string& str) {
+	//	std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
+	//}
+	//inline void ToUpper(std::string& str) {
+	//	std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::toupper(c); });
+	//}
+
+
 	typedef std::vector<std::wstring> TVectStr;
 	inline TVectStr Split(SView str, wchar_t delim, bool skipEmpty = true)
 	{

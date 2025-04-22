@@ -2,18 +2,18 @@
 #include "utils/Images.h"
 
 class IconMgr {
-	string flagFold;
+	wstring flagFold;
 	using Bundle = std::vector<Images::ImageIcon>;
-	std::map<string, Bundle> icons;
+	std::map<wstring, Bundle> icons;
 
-	const Bundle& GetBundle(UStr contry_id, bool is_gray = false) {
+	const Bundle& GetBundle(TStr contry_id, bool is_gray = false) {
 
 		namespace fs = std::filesystem;
 
 		GETCONF;
 
-		const auto& folder_name = cfg->flagsSet;
-		string key = std::format("{}$&{}{}", contry_id, folder_name, is_gray ? "$%^&!" : "");
+		auto folder_name = StrUtils::Convert(cfg->flagsSet);
+		wstring key = std::format(L"{}$&{}{}", contry_id, folder_name, is_gray ? L"$%^&!" : L"");
 
 		auto it = icons.find(key);
 		if (it != icons.end()) {
@@ -22,12 +22,12 @@ class IconMgr {
 
 		std::vector<Images::Image> bndl;
 
-		string dir = flagFold + "\\" + folder_name;
+		wstring dir = flagFold + L"\\" + folder_name;
 		if (fs::is_directory(dir)) {
 			for (const auto& entry : fs::directory_iterator(dir)) {
 				if (entry.is_regular_file()) {
 					fs::path p{ entry.path() };
-					auto name = p.filename().string();
+					auto name = p.filename().wstring();
 					StrUtils::ToUpper(name);
 					if (name.starts_with(contry_id)) {
 						auto cur = Images::LoadImageFromFile(p.string().c_str());
@@ -55,14 +55,14 @@ class IconMgr {
 	}
 public:
 	IconMgr() {
-		flagFold = StrUtils::Convert(Utils::GetPath_folder_noLower() + L"\\Flags");
+		flagFold = Utils::GetPath_folder_noLower() + L"\\Flags";
 	}
 	static IconMgr& Inst() {
 		static IconMgr inst;
 		return inst;
 	}
 
-	Images::ImageIcon GetIcon(UStr contry_id, Vec2 size, bool is_gray = false) {
+	Images::ImageIcon GetIcon(TStr contry_id, Vec2 size, bool is_gray = false) {
 
 		// приоритет: 1) все границы равны. 2) 1 граница равна, другая меньше 3) самый большой размер
 		const auto& bndl = GetBundle(contry_id, is_gray);

@@ -49,7 +49,7 @@ public:
 		if (curlay == 0) {
 			curlay = Utils::GetFocusedWndInfo().lay;
 		}
-		string id;
+		wstring id;
 		{
 			WORD langid = LOWORD(curlay);
 
@@ -63,9 +63,9 @@ public:
 			auto len_str = wcslen(buf);
 			if (len_str >= 2) {
 				TStr name = buf + len_str - 2;
-				id = StrUtils::Convert(name);
+				id = name;
 				StrUtils::ToUpper(id);
-				LOG_ANY("mainguid new layout: {}, name={}", (void*)lay, id);
+				LOG_ANY(L"mainguid new layout: {}, name={}", (void*)lay, id);
 			}
 		}
 		if (id.empty()) {
