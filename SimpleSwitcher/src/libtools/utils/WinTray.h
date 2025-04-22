@@ -135,7 +135,7 @@ public:
 		nid.hIcon = icon; // Load your icon here
 		if (!Shell_NotifyIcon(NIM_MODIFY, &nid)) {
 			if (!Shell_NotifyIcon(NIM_ADD, &nid)) {
-				int k = 0;
+				LOG_WARN("Can't modify or add icon");
 				// todo - by timer
 			}
 		}

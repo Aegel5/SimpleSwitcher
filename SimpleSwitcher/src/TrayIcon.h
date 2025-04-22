@@ -21,6 +21,7 @@ public:
 		return tray;
 	}
 	TrayIcon() {
+		app_icon = LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(101));
 		Update();
 		tray.OnDouble([this]() { show_main_wind(); });
 		tray.OnCreateMenu([this]() {
@@ -40,6 +41,10 @@ public:
 
 		if (lay != 0) {
 			curlay = lay;
+		}
+		if (conf_get_unsafe()->flagsSet == ProgramConfig::showFlags_Nothing) {
+			tray.DeleteIcon();
+			return;
 		}
 		if (curlay == 0) {
 			curlay = Utils::GetFocusedWndInfo().lay;

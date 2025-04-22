@@ -20,7 +20,7 @@ for arg in sys.argv[1:]:
     else :
         print(f"unknown arg {arg}")
         exit(1)
-if ver_suff != '' is_notel = True
+if ver_suff != '': is_notel = True
 
 
 curpath = pathlib.Path(__file__).parent.resolve()
@@ -38,7 +38,7 @@ Path(ver_path_1).write_text(str(ver_num))
 
 ver_custom = ''
 if not is_publ: ver_custom = ' USER'
-curv2 = f'5.{ver_num:03}{ver_suff}{ver_custom}'
+curv2 = f'6.{ver_num:03}{ver_suff}{ver_custom}'
 Path(ver_path_2).write_text(f'static const char* SW_VERSION = "{curv2}";')
 
 package_build_folder = pathlib.Path("package_build")

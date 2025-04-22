@@ -55,12 +55,17 @@ void MainWindow::DrawFrameActual() {
 			}
 
 			{
-				if (ImGui::BeginCombo(LOC("Set of flags"), cfg->flagsSet2.c_str(), 0)) {
-					for (const auto& it : flagsSets) {
-						if (ImGui::Selectable(it.c_str(), cfg->flagsSet2 == it)) {
-							SaveConfigWith([&](auto p) {p->flagsSet2 = it; });
+				if (ImGui::BeginCombo(LOC("Set of flags"), cfg->flagsSet.c_str(), 0)) {
+					auto add = [&cfg](UStr s) {
+						if (ImGui::Selectable(s, cfg->flagsSet == s)) {
+							SaveConfigWith([&](auto p) {p->flagsSet = s; });
 							new_layout_request();
 						}
+						};
+					add(ProgramConfig::showFlags_Nothing);
+					add(ProgramConfig::showFlags_AppIcon);
+					for (const auto& it : flagsSets) {
+						add(it.c_str());
 					}
 					ImGui::EndCombo();
 				}

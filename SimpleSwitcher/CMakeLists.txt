@@ -21,11 +21,13 @@ endif()
 
 file(GLOB_RECURSE all_implement_units  
 src/*.cpp 
-#src/res/myres.rc
 src/simpleswitcher.manifest
 )
 #message(all_implement_units=${all_implement_units})
 list(FILTER all_implement_units EXCLUDE REGEX ".*/old/.*")
+
+
+#set_source_files_properties(src/res/res.rc PROPERTIES LANGUAGE RC)
 
 
 file(GLOB_RECURSE extern_files  extern/*.cpp )
@@ -44,7 +46,7 @@ set_source_files_properties(${extern_files} PROPERTIES SKIP_PRECOMPILE_HEADERS O
 set(CMAKE_CXX_STANDARD 23)
 
 add_executable (SimpleSwitcher WIN32)
-target_sources(SimpleSwitcher    PRIVATE    ${extern_files}  ${all_implement_units})
+target_sources(SimpleSwitcher    PRIVATE    ${extern_files}  ${all_implement_units} src/res/res.rc)
 target_precompile_headers(SimpleSwitcher PRIVATE src/sw-base.h)
 
 

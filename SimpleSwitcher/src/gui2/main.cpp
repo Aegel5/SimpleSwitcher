@@ -153,15 +153,10 @@ int StartGui(std::stop_token token)
         ImGui::Render();
 		ImGui::UpdatePlatformWindows();
 
-		auto optimiz = conf_get_unsafe()->optimize_gui;
-		if (optimiz) {
-			static bool skip = false;
-			if (!skip) { ImGui::RenderPlatformWindowsDefault(); }
-			skip ^= 1;
-		}
-		else {
-			ImGui::RenderPlatformWindowsDefault();
-		}
+		auto optimiz = conf_get_unsafe()->optimize_gui && ImGui::GetFrameCount() >= 10;
+
+		if (!optimiz || (ImGui::GetFrameCount() & 1))
+			ImGui::RenderPlatformWindowsDefault(); 
 
 		// Present
 		HRESULT hr = g_pSwapChain->Present(1, 0);   // Present with vsync

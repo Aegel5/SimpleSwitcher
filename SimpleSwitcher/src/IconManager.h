@@ -12,7 +12,7 @@ class IconMgr {
 
 		GETCONF;
 
-		const auto& folder_name = cfg->flagsSet2;
+		const auto& folder_name = cfg->flagsSet;
 		string key = std::format("{}$&{}{}", contry_id, folder_name, is_gray ? "$%^&!" : "");
 
 		auto it = icons.find(key);

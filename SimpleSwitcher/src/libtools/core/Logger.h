@@ -262,7 +262,16 @@ namespace _log_int {
 	inline void LOG_WARN(const std::wformat_string<Args...> s, Args&&... v) {
 		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
 		SwLoggerGlobal().AppendPrefix();
-		SwLoggerGlobal().Append(L"[WARN] ");
+		SwLoggerGlobal().Append("[WARN] ");
+		SwLoggerGlobal().AppendFormat(s, FORWARD(v)...);
+		SwLoggerGlobal().EndLineFlash();
+	}
+
+	template<typename... Args>
+	inline void LOG_WARN(const std::format_string<Args...> s, Args&&... v) {
+		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
+		SwLoggerGlobal().AppendPrefix();
+		SwLoggerGlobal().Append("[WARN] ");
 		SwLoggerGlobal().AppendFormat(s, FORWARD(v)...);
 		SwLoggerGlobal().EndLineFlash();
 	}

@@ -71,10 +71,10 @@ public:
     bool force_DbgMode              = false;
     bool fClipboardClearFormat = false;
     bool disableAccessebility    = false;
-    static constexpr TStr showOriginalFlags = L"Original Flags";
-    static constexpr TStr showAppIcon = L"Application Icon";
-    wstring flagsSet = L"Square";
-    string flagsSet2 = "Square";
+    static constexpr UStr showFlags_OriginalFlags = "Original Flags";
+    static constexpr UStr showFlags_AppIcon = "Application Icon";
+    static constexpr UStr showFlags_Nothing = "Nothing";
+    string flagsSet = "Square";
     bool SkipAllInjectKeys = false;
     bool SkipLowLevelInjectKeys = false;
     bool AlternativeLayoutChange = false;
