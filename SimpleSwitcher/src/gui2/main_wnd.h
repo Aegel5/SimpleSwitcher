@@ -12,8 +12,8 @@ class MainWindow {
 	string config_path;
 	std::string title;
 	bool check_add_to_auto = false;
-	bool check_altmode = false;
 	bool show_demo_window = false;
+	bool ShowStyleEditor = false;
 	bool show_main = true;
 	UStr show_message = 0;
 	std::vector<SetHotKeyCombo> hotbox;
@@ -97,7 +97,13 @@ public:
 			return;
 		}
 		DrawFrameActual();
-		if (show_demo_window)
+		if (show_demo_window) {
 			ImGui::ShowDemoWindow(&show_demo_window);
+		}
+		//if (ShowStyleEditor) {
+		//	ImGui::Begin(LOC("Style editor"), &ShowStyleEditor);
+		//	ImGui::ShowStyleEditor();
+		//	ImGui::End();
+		//}
 	}
 };

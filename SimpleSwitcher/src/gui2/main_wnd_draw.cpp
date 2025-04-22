@@ -1,6 +1,9 @@
 ﻿#include "main_wnd.h"
 
 void MainWindow::DrawFrameActual() {
+
+
+
 	GETCONF;
 
 	ImGui::SetNextWindowSize(startsize, ImGuiCond_FirstUseEver);
@@ -96,8 +99,8 @@ void MainWindow::DrawFrameActual() {
 
 
 			{
-				if (ImGui::BeginCombo("Theme", cfg->theme.c_str(), 0)) {
-					for (const char* it : { "Dark","Light","Classic" }) {
+				if (ImGui::BeginCombo(LOC("Theme"), cfg->theme.c_str(), 0)) {
+					for (const char* it : { "Dark","Light","Classic", "Ocean" }) {
 						if (ImGui::Selectable(it, cfg->theme == it)) {
 							SaveConfigWith([&](auto p) {p->theme = it; });
 							SetStyle();
@@ -105,6 +108,10 @@ void MainWindow::DrawFrameActual() {
 					}
 					ImGui::EndCombo();
 				}
+				//ImGui::SameLine();
+				//if (ImGui::Button(LOC("Styles..."))) {
+				//	ShowStyleEditor ^= 1;
+				//}
 			}
 
 			ImGui::AlignTextToFramePadding();
