@@ -1,6 +1,10 @@
 ﻿#pragma once
 
-namespace Utils {
+//inline std::filesystem::path ToPath(auto&& p) {
+//	return p;
+//}
+
+namespace PathUtils {
 
 	enum TPathType {
 		PATH_TYPE_SELF_FOLDER,
@@ -45,6 +49,8 @@ namespace Utils {
 		return path;
 	}
 
+	inline std::filesystem::path GetPath_folder_noLower2() { return GetPath_folder_noLower(); }
+
 
 
 	inline TStatus GetPath_exe_noLower(std::wstring& sPath) {
@@ -58,5 +64,7 @@ namespace Utils {
 	inline void NormalizeDelims(auto& cur) {
 		std::replace(cur.begin(), cur.end(), L'/', L'\\');
 	}
+
 }
+
 

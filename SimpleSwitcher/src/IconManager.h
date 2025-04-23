@@ -2,7 +2,7 @@
 #include "utils/Images.h"
 
 class IconMgr {
-	wstring flagFold;
+	std::filesystem::path flagFold;
 	using Bundle = std::vector<Images::ImageIcon>;
 	std::map<wstring, Bundle> icons;
 
@@ -22,11 +22,11 @@ class IconMgr {
 
 		std::vector<Images::Image> bndl;
 
-		wstring dir = flagFold + L"\\" + folder_name;
+		auto dir = flagFold / folder_name;
 		if (fs::is_directory(dir)) {
 			for (const auto& entry : fs::directory_iterator(dir)) {
 				if (entry.is_regular_file()) {
-					fs::path p{ entry.path() };
+					auto p = entry.path();
 					auto name = p.filename().wstring();
 					StrUtils::ToUpper(name);
 					if (name.starts_with(contry_id)) {
@@ -55,7 +55,7 @@ class IconMgr {
 	}
 public:
 	IconMgr() {
-		flagFold = Utils::GetPath_folder_noLower() + L"\\Flags";
+		flagFold = PathUtils::GetPath_folder_noLower2() / L"Flags";
 	}
 	static IconMgr& Inst() {
 		static IconMgr inst;
@@ -100,8 +100,7 @@ public:
 		if (fs::is_directory(flagFold)) {
 			for (const auto& entry : fs::directory_iterator(flagFold)) {
 				if (entry.is_directory()) {
-					fs::path p{ entry.path() };
-					co_yield p.filename().string();
+					co_yield entry.path().filename().string();
 				}
 			}
 		}

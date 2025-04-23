@@ -22,7 +22,7 @@ class WorkerImplement
 public:
 
 	WorkerImplement() {
-		IFS_LOG(Utils::GetPath_fileExe_lower(m_sSelfExeName));
+		IFS_LOG(PathUtils::GetPath_fileExe_lower(m_sSelfExeName));
 		TimerClear();
 		TimerCheckLay();
 	}

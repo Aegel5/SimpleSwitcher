@@ -5,7 +5,7 @@
 
 inline TStatus update_cur_dir() {
 	std::wstring dir;
-	IFS_RET(Utils::GetPath_folder_noLower(dir));
+	IFS_RET(PathUtils::GetPath_folder_noLower(dir));
 	IFW_RET(SetCurrentDirectory(dir.c_str()));
 	RETURN_SUCCESS;
 }

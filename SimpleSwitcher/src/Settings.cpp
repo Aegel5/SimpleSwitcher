@@ -196,34 +196,22 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     quick_press_ms,
     win_hotkey_cycle_lang,
 	theme,
-	optimize_gui
+	optimize_gui,
+	background
     )
     
 
 
 TStatus LoadConfig(ProgramConfig& config) {
-    try {
+	try {
 
+		auto p = PathUtils::GetPath_folder_noLower2() / "SimpleSwitcher.json";
+		if (!std::filesystem::is_regular_file(p)){
+			// конфиг файла еще нет - считаем что загружены конфигом по-умолчанию.
+			RETURN_SUCCESS;
+		}
 
-        std::wstring path_old;
-        std::wstring path_new;
-        IFS_RET(Utils::GetPath_folder_noLower(path_old));
-        path_new = path_old;
-        path_old += L"conf.json";
-        path_new += L"SimpleSwitcher.json";
-
-
-        if (!FileUtils::IsFileExists(path_new.c_str())) {
-            if (FileUtils::IsFileExists(path_old.c_str())) {
-                FileUtils::RenameFile(path_old.c_str(), path_new.c_str());
-            }
-            else {
-                // конфиг файла еще нет - считаем что загружены конфигом по-умолчанию.
-                RETURN_SUCCESS;
-            }
-        }
-
-        std::ifstream ifs(path_new);
+        std::ifstream ifs(p);
 
         json data = json::parse(ifs, nullptr, true, true);
 
@@ -261,8 +249,7 @@ TStatus LoadConfig(ProgramConfig& config) {
 
 TStatus _Save_conf(const ProgramConfig& gui) {
     try {
-        std::wstring path;
-        IFS_RET(GetPath_Conf(path));
+		auto path = ProgramConfig::GetPath_Conf();
 
         json data = gui;
         json hk_json;

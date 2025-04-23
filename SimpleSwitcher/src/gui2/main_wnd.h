@@ -21,9 +21,33 @@ class MainWindow {
 	std::vector<SetHotKeyCombo> layout_win_hotkeys;
 	COM::CAutoCOMInitialize autoCom;
 	std::vector<string> flagsSets;
+	std::vector<string> backgrounds;
 	std::vector<std::pair<string, HKL>> menu_lays;
 	ImVec2 startsize{ 544.0, 544.0 / 1.12 };
+	Images::ShaderResource background = MAKE_SHARED(background);
 private:
+	void update_backg() {
+		backgrounds.clear();
+		namespace fs = std::filesystem;
+		auto dir = PathUtils::GetPath_folder_noLower2() / "Background";
+		if (fs::is_directory(dir)) {
+			for (const auto& entry : fs::directory_iterator(dir)) {
+				if (entry.is_regular_file()) {
+					backgrounds.push_back(entry.path().filename().string());
+				}
+			}
+		}
+		else {
+		}
+	}
+	void apply_background() {
+		namespace fs = std::filesystem;
+		auto p = PathUtils::GetPath_folder_noLower2() / "Background" / conf_get_unsafe()->background;
+		auto img = Images::LoadImageFromFile(p.string().c_str());
+		if (!img->IsOk()) { background->clear();  return; }
+		Images::SetAlphaFactor(img, 0.5f);
+		background = Images::ImageToShaderConsume(img);
+	}
 	void update_flags() { flagsSets = { std::from_range, IconMgr::Inst().ScanFlags() }; IconMgr::Inst().ClearCache(); }
 	void ShowMessage(UStr msg) {
 		show_message = msg;
@@ -68,6 +92,8 @@ private:
 	void DrawFrameActual();
 public:
 	MainWindow() {
+		update_backg();
+		apply_background();
 		IFS_LOG(autoCom.Init());
 		InitImGui();
 		title = std::format(
@@ -84,7 +110,7 @@ public:
 		}
 		check_add_to_auto = autostart_get();
 		SyncLays();
-		config_path = StrUtils::Convert(std::format(L"file://{}", GetPath_Conf()));
+		config_path = StrUtils::Convert(std::format(L"file://{}", ProgramConfig::GetPath_Conf().wstring()));
 		update_flags();
 		auto scal = WinUtils::GetDpiMainMonScale();
 		startsize.x *= scal.x;

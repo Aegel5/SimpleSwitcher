@@ -2,20 +2,9 @@
 
 #include "ConfigData.h"
 
-inline TStatus GetPath_Conf(std::wstring& path) {
-    IFS_RET(Utils::GetPath_folder_noLower(path));
-    path += L"SimpleSwitcher.json";
-    RETURN_SUCCESS;
-}
-
-inline std::wstring GetPath_Conf() {
-    std::wstring path;
-    IFS_LOG(GetPath_Conf(path));
-    return path;
-}
-
 class ProgramConfig {
 public:
+	static auto GetPath_Conf() { return PathUtils::GetPath_folder_noLower2() / L"SimpleSwitcher.json"; }
     ProgramConfig() {
         GenerateListHK();
     }
@@ -27,7 +16,7 @@ public:
         for (const auto& it : disableInPrograms) {
 			auto cur = it;
 			StrUtils::ToLower(cur);
-            Utils::NormalizeDelims(cur);
+            PathUtils::NormalizeDelims(cur);
             res.insert(std::move(cur)); // todo cast
         }
 		disableInPrograms = std::move(res);
@@ -84,6 +73,7 @@ public:
     CHotKey win_hotkey_cycle_lang { VK_LMENU, VK_SHIFT };
 	std::string theme = "Light";
 	bool optimize_gui = false;
+	string background = "";
 
     std::vector< CHotKeySet> hotkeysList;
     std::vector< RunProgramInfo> run_programs = { {.path = L"example: calc.exe"} };

@@ -72,6 +72,10 @@ void MainWindow::DrawFrameActual() {
 					}
 					ImGui::EndCombo();
 				}
+				ImGui::SameLine();
+				if (ImGui::Button(LOC("Update"))) {
+					update_flags();
+				}
 			}
 
 			{
@@ -100,7 +104,7 @@ void MainWindow::DrawFrameActual() {
 
 			{
 				if (ImGui::BeginCombo(LOC("Theme"), cfg->theme.c_str(), 0)) {
-					for (const char* it : { "Dark","Light","Classic", "Ocean" }) {
+					for (const char* it : { "Dark","Light","Classic", "Ocean","Dark Relax" }) {
 						if (ImGui::Selectable(it, cfg->theme == it)) {
 							SaveConfigWith([&](auto p) {p->theme = it; });
 							SetStyle();
@@ -151,7 +155,7 @@ void MainWindow::DrawFrameActual() {
 
 		}
 
-		with_TabItem(LOC("Experimental")) {
+		with_TabItem(LOC("Expert")) {
 
 			if (Utils::IsDebug()) {
 				if (ImGui::Button("Show demo"))
@@ -172,6 +176,26 @@ void MainWindow::DrawFrameActual() {
 				}
 			}
 
+			{
+				if (ImGui::BeginCombo(LOC("Background"), cfg->background.c_str(), 0)) {
+					auto add = [&cfg, this](UStr s) {
+						if (ImGui::Selectable(s, cfg->background == s)) {
+							SaveConfigWith([&](auto p) {p->background = s; });
+							apply_background();
+						}
+						};
+					add("None");
+					for (const auto& it : backgrounds) {
+						add(it.c_str());
+					}
+					ImGui::EndCombo();
+				}
+				ImGui::SameLine();
+				if (ImGui::Button(LOC("Update"))) {
+					update_backg();
+				}
+			}
+
 		}
 
 		with_TabItem(LOC("About")) {
@@ -189,6 +213,26 @@ void MainWindow::DrawFrameActual() {
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - w);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetContentRegionAvail().y - ImGui::GetFrameHeightWithSpacing()); // todo use child_wnd
 		if (ImGui::Button(text)) { show_main = false; }
+	}
+
+	if (background->IsOk()) {
+
+
+		//auto w = background->img.width;
+		//auto h = background->img.height;
+		auto size = ImGui::GetWindowSize();
+		auto h = size.y;
+		auto w = background->img.width * size.y / background->img.height;
+		auto x = size.x - w;
+		//ImGui::SetCursorPos({ x,0 });
+		//ImGui::Image((ImTextureID)(intptr_t)background->pTexture, ImVec2(background->img.width, background->img.height));
+		ImVec2 window_pos = ImGui::GetWindowPos();
+		ImVec2 min = window_pos;
+		min.x += x;
+		ImVec2 max = min;
+		max.x += w;
+		max.y += h;
+		ImGui::GetForegroundDrawList()->AddImage((ImTextureID)(intptr_t)background->pTexture, min, max);
 	}
 
 	ImGui::End();

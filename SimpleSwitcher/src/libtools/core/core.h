@@ -72,4 +72,5 @@ inline void SwZeroMemory(T& t)
 
 #define FORWARD(x) std::forward<decltype(x)>(x)
 #define DECLTYPE_DECAY(x) std::decay_t<decltype(x)>
+#define MAKE_SHARED(x) std::make_shared<DECLTYPE_DECAY(x)::element_type>();
 

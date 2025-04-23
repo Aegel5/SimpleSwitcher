@@ -295,7 +295,7 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 		}
 		const auto& it = cfg->run_programs[i];
 		auto path = it.path;
-		Utils::NormalizeDelims(path);
+		PathUtils::NormalizeDelims(path);
 		LOG_ANY(L"run program {} {}", path.c_str(), it.args.c_str());
 
 		procstart::CreateProcessParm parm;
