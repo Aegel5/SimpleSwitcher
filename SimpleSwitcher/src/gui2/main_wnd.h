@@ -7,6 +7,7 @@
 #include "gui_utils.h"
 #include "SwAutostart.h"
 #include "SetHotKeyCombo.h"
+#include "Notificator.h"
 
 class MainWindow {
 	string config_path;
@@ -25,6 +26,7 @@ class MainWindow {
 	std::vector<std::pair<string, HKL>> menu_lays;
 	ImVec2 startsize{ 544.0, 544.0 / 1.12 };
 	Images::ShaderResource background = MAKE_SHARED(background);
+	Notificator notif;
 private:
 	void update_backg() {
 		backgrounds.clear();

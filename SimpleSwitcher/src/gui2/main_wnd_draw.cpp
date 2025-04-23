@@ -198,6 +198,10 @@ void MainWindow::DrawFrameActual() {
 
 		}
 
+		with_TabItem(LOC("Notificator")) {
+			notif.DrawSettings();
+		}
+
 		with_TabItem(LOC("About")) {
 			ImGui::TextLinkOpenURL("Github", "https://github.com/Aegel5/SimpleSwitcher");
 			ImGui::TextLinkOpenURL("Telegram", "https://t.me/simple_switcher");

@@ -16,6 +16,7 @@ using SView = std::wstring_view;
 using SViewChar = std::string_view;
 using std::wstring;
 using std::string;
+using namespace std::string_literals;
 
 template <typename T1, typename T2>
 inline bool TestFlagAll(T1 V, T2 F)
