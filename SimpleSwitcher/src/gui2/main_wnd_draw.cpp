@@ -2,15 +2,14 @@
 
 void MainWindow::DrawFrameActual() {
 
-
-
 	GETCONF;
 
+	ImGuiUtils::ToCenter();
 	ImGui::SetNextWindowSize(startsize, ImGuiCond_FirstUseEver);
 	ImGui::Begin(title.c_str(), &show_main, ImGuiWindowFlags_NoCollapse);
 
-	if (g_bring_gui_to_top && ImGui::GetWindowViewport()->PlatformWindowCreated) {
-		g_bring_gui_to_top = false;
+	if (totop < 5 && ImGui::GetWindowViewport()->PlatformWindowCreated) {
+		totop++;
 		auto hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
 		SetForegroundWindow(hwnd);
 	}
@@ -163,9 +162,8 @@ void MainWindow::DrawFrameActual() {
 			}
 
 			{
-				bool val = cfg->optimize_gui;
-				if (ImGui::Checkbox(LOC("Optimize GUI"), &val)) {
-					SaveConfigWith([val](auto p) {p->optimize_gui = val; });
+				if (ImGui::Checkbox(LOC("Optimize GUI"), &optmz)) {
+					SaveConfigWith([this](auto p) {p->optimize_gui = optmz; });
 				}
 			}
 
@@ -196,10 +194,12 @@ void MainWindow::DrawFrameActual() {
 				}
 			}
 
-		}
+			{
+				if (ImGui::Button("Notifications")) {
+					show_main_wind(1);
+				}
+			}
 
-		with_TabItem(LOC("Notificator")) {
-			notif.DrawSettings();
 		}
 
 		with_TabItem(LOC("About")) {

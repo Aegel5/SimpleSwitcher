@@ -6,15 +6,16 @@
 // one-time write...
 inline HWND g_guiHandle = nullptr;
 
+inline std::atomic<HWND> g_guiHandle2 = nullptr;
+
 inline TStatus OpenClipboard(CAutoClipBoard& clip) { return clip.Open(g_guiHandle); }
 
 inline EnableHodler g_enabled{};
-inline std::atomic_bool g_bring_gui_to_top = false;
 inline void new_layout_request(HKL layout = 0) { PostMessage(g_guiHandle, WM_LayNotif, (WPARAM)layout, 0); }
 inline void try_toggle_enable() { if (g_enabled.TryToggle()) new_layout_request(); } // todo not thread safe
-inline void show_main_wind() {
-	PostMessage(g_guiHandle, WM_ShowWindow, 0, 0); 
-	g_bring_gui_to_top = true;
+inline void show_main_wind(int mode = 0) {
+	PostMessage(g_guiHandle, WM_ShowWindow, mode, 0); 
+	PostMessage(g_guiHandle2, WM_ShowWindow, mode, 0); 
 }
 
 inline void ApplyAcessebil() {	AllowAccessibilityShortcutKeys(!conf_get_unsafe()->disableAccessebility);}

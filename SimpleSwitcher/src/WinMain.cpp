@@ -1,6 +1,7 @@
 ﻿
 #include "TrayIcon.h"
 #include "GuiWorker.h"
+#include "utils/WinTimer.h"
 
 
 inline TStatus update_cur_dir() {
@@ -36,7 +37,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	IFW_LOG(hwnd != NULL);
 	if (hwnd == 0) return 1;
 	g_guiHandle = hwnd;
-	IFW_LOG(AddClipboardFormatListener(hwnd));
 
 	if (IsAdminOk()) {
 		if (Utils::IsDebug() && !g_enabled.TryEnable()) {
@@ -49,21 +49,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	GuiWorker gui;
-
-	if (std::string{ lpCmdLine }.find("/autostart") == std::string::npos) 
-		gui.Start();
+	gui.Start(std::string{ lpCmdLine }.find("/autostart") == -1);
+	//gui.Start(false);
 
 	TrayIcon trayIcon;
+	WinTimer timer;
 
 	CoreWorker core;
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0)>0) {
 		switch (msg.message) {
-		case WM_CLIPBOARDUPDATE: {
-			Worker()->PostMsg([](auto w) {w->CliboardChanged(); });
-			break;
-		}
 		case WM_LayNotif: {
 			trayIcon.Update((HKL)msg.wParam);
 			break;

@@ -6,12 +6,17 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
+// todo - disable copy to InputEventsTrail
+//      - ImGuiWantFrameDelay(type, 50ms)
+// proposal - ImGuiHasAnyInputToProcess
+
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 #include <d3d11.h>
 #include <tchar.h>
 #include "main_wnd.h"
+#include "utils/WinTimer.h"
 
 // Data
 ID3D11Device*            g_pd3dDevice = nullptr;
@@ -29,13 +34,14 @@ void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 // Main code
-int StartGui(std::stop_token token)
+int StartGui(bool show)
 {
     // Create application window
     //ImGui_ImplWin32_EnableDpiAwareness();
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
     ::RegisterClassExW(&wc);
     HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Dear ImGui DirectX11 Example", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
+	g_guiHandle2 = hwnd;
 
     // Initialize Direct3D
     if (!CreateDeviceD3D(hwnd))
@@ -51,8 +57,9 @@ int StartGui(std::stop_token token)
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
+	auto ctx = ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigInputTextCursorBlink = false;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
@@ -77,99 +84,96 @@ int StartGui(std::stop_token token)
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
-    // Load Fonts
-    // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
-    // - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple.
-    // - If the file cannot be loaded, the function will return a nullptr. Please handle those errors in your application (e.g. use an assertion, or display an error and quit).
-    // - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
-    // - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
-    // - Read 'docs/FONTS.md' for more instructions and details.
-    // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-    //io.Fonts->AddFontDefault();
-    //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-    //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
-    //IM_ASSERT(font != nullptr);
 
-    // Our state
-    //bool show_demo_window = true;
-    //bool show_another_window = false;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	MainWindow mainWindow(show);
+	Notific::Notificator notif;
+	WinTimer timer;
+	timer.CycleTimer([&]() {
+		if (mainWindow.IsOptimiz() && !mainWindow.IsVisible() && !notif.IsNeedGui()) {
+			PostQuitMessage(0);
+		}
+		notif.Process(); }, 1000);
 
-	MainWindow mainWindow;
+	std::chrono::high_resolution_clock::time_point lastPlatformRender;
 
-    // Main loop
-    bool done = false;
-    while (!done && !token.stop_requested())
-    {
-        // Poll and handle messages (inputs, window resize, etc.)
-        // See the WndProc() function below for our to dispatch events to the Win32 backend.
-        MSG msg;
-        while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE))
-        {
-            ::TranslateMessage(&msg);
-            ::DispatchMessage(&msg);
-            if (msg.message == WM_QUIT)
-                done = true;
-        }
-        if (done)
-            break;
+	auto GuiStep = [&]() {
+		// Handle window being minimized or screen locked
+		if (g_SwapChainOccluded && g_pSwapChain->Present(0, DXGI_PRESENT_TEST) == DXGI_STATUS_OCCLUDED) {
+			::Sleep(10);
+			return;
+		}
+		g_SwapChainOccluded = false;
 
-        // Handle window being minimized or screen locked
-        if (g_SwapChainOccluded && g_pSwapChain->Present(0, DXGI_PRESENT_TEST) == DXGI_STATUS_OCCLUDED)
-        {
-            ::Sleep(10);
-            continue;
-        }
-        g_SwapChainOccluded = false;
+		// Start the Dear ImGui frame
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
 
-        // Handle window resize (we don't resize directly in the WM_SIZE handler)
-        //if (g_ResizeWidth != 0 && g_ResizeHeight != 0)
-        //{
-        //    CleanupRenderTarget();
-        //    g_pSwapChain->ResizeBuffers(0, g_ResizeWidth, g_ResizeHeight, DXGI_FORMAT_UNKNOWN, 0);
-        //    g_ResizeWidth = g_ResizeHeight = 0;
-        //    CreateRenderTarget();
-        //}
+		mainWindow.DrawFrame();
+		notif.Draw();
 
-        // Start the Dear ImGui frame
-        ImGui_ImplDX11_NewFrame();
-        ImGui_ImplWin32_NewFrame();
-        ImGui::NewFrame();
-
-
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-        {
-
-			mainWindow.DrawFrame();
-
-        }
-
-
-
-        // Rendering
-        ImGui::Render();
+		// Rendering
+		ImGui::Render();
 		ImGui::UpdatePlatformWindows();
 
-		auto optimiz = conf_get_unsafe()->optimize_gui && ImGui::GetFrameCount() >= 10;
-
-		if (!optimiz || (ImGui::GetFrameCount() & 1))
-			ImGui::RenderPlatformWindowsDefault(); 
+		{
+			auto now = std::chrono::high_resolution_clock::now();
+			if (now - lastPlatformRender > (mainWindow.IsOptimiz() ? 50ms : 12ms)) {
+				lastPlatformRender = now;
+				ImGui::RenderPlatformWindowsDefault();
+			}
+		}
 
 		// Present
 		HRESULT hr = g_pSwapChain->Present(1, 0);   // Present with vsync
 		//HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
-		g_SwapChainOccluded = (hr == DXGI_STATUS_OCCLUDED);
+		g_SwapChainOccluded = hr == DXGI_STATUS_OCCLUDED;
 
-		if (optimiz) {
-			float wantDelta = 30;
-			if (io.DeltaTime < wantDelta) {
-				Sleep(wantDelta - io.DeltaTime);
-			}
+		};
+
+
+	MSG msg;
+	std::chrono::time_point<std::chrono::steady_clock> drawNormalUntil;
+	auto prolong = [&]() {drawNormalUntil = std::chrono::steady_clock::now() + 180ms; };// for ImGuiHoveredFlags_DelayShort popup must be > 0.15
+	prolong();
+
+	auto ProcessMessage = [&]() {
+
+		if (msg.message == WM_ShowWindow) {
+			int mode = msg.wParam;
+			if (mode) notif.ShowHide();
+			else mainWindow.ShowHide();
 		}
-    }
+		else {
+			::TranslateMessage(&msg);
+			::DispatchMessage(&msg);
+		}
+
+		if (msg.message != WM_TIMER) {
+			prolong();
+		}
+
+		};
+
+	auto Cycle = [&]() {
+
+		while (true) {
+
+			if (drawNormalUntil < std::chrono::steady_clock::now()) {
+				// wait mode
+				if (GetMessage(&msg, 0, 0, 0) <= 0) { return; }	ProcessMessage();
+				while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) { if (msg.message == WM_QUIT) return; ProcessMessage(); }
+				continue;
+			}
+
+			// normal mode
+			while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) { if (msg.message == WM_QUIT) return; ProcessMessage(); }
+
+			GuiStep();
+		}
+	};
+
+	Cycle();
 
     // Cleanup
     ImGui_ImplDX11_Shutdown();
@@ -178,6 +182,7 @@ int StartGui(std::stop_token token)
 
     CleanupDeviceD3D();
     ::DestroyWindow(hwnd);
+	g_guiHandle2 = 0;
     ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
 
 	return 0;

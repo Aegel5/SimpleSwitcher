@@ -32,12 +32,14 @@ class EnableHodler {
 			clear();
 		}
 	} mtx;
+	std::mutex mtx2;
 public:
 	bool IsEnabled() {
 		return mtx.is_taked();
 	}
 	bool TryToggle() { return TryEnable(!IsEnabled()); }
 	bool TryEnable(bool val = true) {
+		std::unique_lock<std::mutex> _lock(mtx2);
 		if (!val) {
 			mtx.clear();
 			return true;

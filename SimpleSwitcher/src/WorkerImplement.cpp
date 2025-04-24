@@ -317,6 +317,11 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 		RETURN_SUCCESS;
 	}
 
+	if (typeRevert == hk_ShowRemainderWnd) {
+		show_main_wind(1);
+		RETURN_SUCCESS;
+	}
+
 
 	if (Utils::is_in(typeRevert, hk_EmulateCapsLock, hk_EmulateScrollLock)) {
 		TKeyCode k = (typeRevert == hk_EmulateCapsLock) ? VK_CAPITAL : VK_SCROLL;

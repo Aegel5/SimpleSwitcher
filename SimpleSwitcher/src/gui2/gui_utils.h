@@ -203,7 +203,7 @@ inline void InitImGui() {
 
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuiStyle& style = ImGui::GetStyle();
-	auto scale = WinUtils::GetDpiMainMonScale2();
+	auto scale = WinUtils::GetDpiMainMonScale2() * 1.2f;
 	style.ScaleAllSizes(scale);
 	static ImVector<ImWchar> ranges;
 	{
@@ -216,6 +216,7 @@ inline void InitImGui() {
 			0,
 		};
 		builder.AddRanges(ranges_additional);
+		//builder.AddText((const char*)u8"×");
 		builder.BuildRanges(&ranges);
 
 

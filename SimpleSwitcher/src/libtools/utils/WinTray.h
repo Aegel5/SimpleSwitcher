@@ -21,9 +21,6 @@ private:
 	std::function<std::vector<TrayItem>()> createMenu;
 	std::vector<TrayItem> last_menu;
 
-	int lastTimerId = 1;
-	std::vector<std::function<void()>> timerCallbacks;
-
 	NOTIFYICONDATA nid {};
 	HWND hwnd = 0;
 
@@ -81,16 +78,6 @@ private:
 			break;
 		}
 
-
-		case WM_TIMER:
-		{
-			UINT_PTR timerId = wParam-1;
-			if (timerId < Inst->timerCallbacks.size()) {
-				Inst->timerCallbacks[timerId]();
-			}
-			break;
-		}
-
 		default:
 			return DefWindowProc(hwnd, uMsg, wParam, lParam);
 		}
@@ -106,15 +93,10 @@ public:
 	void OnRight(auto&& func) {
 		r_click = std::move(func);
 	}
-	void CycleTimer(auto&& func, int ms) {
-		timerCallbacks.push_back(func);
-		auto timeId = SetTimer(hwnd, lastTimerId, ms, NULL);
-		IFW_LOG(timeId != 0);
-		lastTimerId++;
-	}
+
 	WinTray() {
 		Inst = this;
-		hwnd = WinUtils::CreateMsgWin(L"SimpleSwitcher_Tray_000", WindowProc);
+		hwnd = WinUtils::CreateMsgWin(L"SimpleSwitcher_Tray_001", WindowProc);
 		//hwnd = CreateWindowEx(0, CLASS_NAME, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		//UpdateWindow(hwnd);
 		nid.cbSize = sizeof(NOTIFYICONDATA);

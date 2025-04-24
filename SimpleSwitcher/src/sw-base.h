@@ -37,6 +37,11 @@
 #include <codecvt>
 #include <cassert>
 
+#include "imgui.h"
+#include "imgui_sugar.hpp"
+#include "imgui_stdlib.h"
+#include "utils/ImGuiUtils.h"
+
 // утилиты
 #include "core/inc_all.h"
 #include "utils/CAutoCleanupWin.h"

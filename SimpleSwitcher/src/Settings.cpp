@@ -69,10 +69,16 @@ void ProgramConfig::GenerateListHK()
 
     {
         CHotKeySet set;
-        set.def_list = { CHotKey(VKE_WIN, VK_SHIFT).SetDouble(), CHotKey(VK_SHIFT).SetDouble() };
+        set.def_list = { CHotKey(VKE_WIN, VK_SHIFT).SetKeyup(), CHotKey(VK_SHIFT).SetDouble() };
         set.fUseDef = true;
         AddHotKey(hk_ShowMainWindow, set);
     }
+
+	{
+		CHotKeySet set;
+		set.def_list = { CHotKey(VKE_BREAK) };
+		AddHotKey(hk_ShowRemainderWnd, set);
+	}
 
 	{
 		CHotKeySet set;
@@ -87,21 +93,20 @@ void ProgramConfig::GenerateListHK()
     }
 }
 
-//namespace ns {
-
-void to_json(json& j, const HKL& p) {
-    char sBuf[30] = {0};
-    sprintf(sBuf, "0x%I64X", (uint64_t)p);
-    j = sBuf;
-}
-
-void from_json(const json& j, HKL& p) {
-    if (j.is_string()) {
-        StrUtils::ToInt(j.get_ref<const std::string&>(), p);
-    }
-}
-
 namespace nlohmann {
+
+	void to_json(json& j, const HKL& p) {
+		char sBuf[30] = { 0 };
+		sprintf(sBuf, "0x%I64X", (uint64_t)p);
+		j = sBuf;
+	}
+
+	void from_json(const json& j, HKL& p) {
+		if (j.is_string()) {
+			StrUtils::ToInt(j.get_ref<const std::string&>(), p);
+		}
+	}
+
 	template <>
 	struct adl_serializer<std::wstring> {
 		static void to_json(json& j, const std::wstring& str) {
@@ -112,95 +117,94 @@ namespace nlohmann {
 			str = StrUtils::Convert(j.get_ref<const std::string&>());
 		}
 	};
-}
 
 
-void to_json(json& j, const CHotKey& p) {
-    j             = p.ToString();
-}
-
-
-void from_json(const json& j, CHotKey& p) {
-    if (j.is_string()) {
-        p = CHotKey::FromString(StrUtils::Convert(j.get_ref<const std::string&>()));
-    }
-}
-void to_json(json& j, const CHotKeyList& p) {
-	if (p.keys.size() == 1) {
-		j = p.key();
+	void to_json(json& j, const CHotKey& p) {
+		j = p.ToString();
 	}
-	else {
-		j = p.keys;
-	}
-}
 
-void from_json(const json& j, CHotKeyList& p) {
-    if (j.is_array()) {
-        p.keys = j;
-		if (p.keys.empty()) {
-			p.keys.resize(1);
+
+	void from_json(const json& j, CHotKey& p) {
+		if (j.is_string()) {
+			p = CHotKey::FromString(StrUtils::Convert(j.get_ref<const std::string&>()));
 		}
 	}
-	else if (j.is_string()) {
-		p.key() = j;
+	void to_json(json& j, const CHotKeyList& p) {
+		if (p.keys.size() == 1) {
+			j = p.key();
+		}
+		else {
+			j = p.keys;
+		}
 	}
+
+	void from_json(const json& j, CHotKeyList& p) {
+		if (j.is_array()) {
+			p.keys = j;
+			if (p.keys.empty()) {
+				p.keys.resize(1);
+			}
+		}
+		else if (j.is_string()) {
+			p.key() = j;
+		}
+	}
+
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+		LayoutInfo,
+		layout,
+		enabled,
+		win_hotkey,
+		hotkey
+	)
+
+		void to_json(json& j, const LayoutInfoList& p) {
+		j = p.info;
+	}
+
+	void from_json(const json& j, LayoutInfoList& p) {
+		j.get_to(p.info);
+	}
+
+
+
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+		RunProgramInfo,
+		path,
+		args,
+		elevated,
+		hotkey
+	)
+
+
+		NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+			ProgramConfig,
+			isMonitorAdmin,
+			force_DbgMode,
+			fClipboardClearFormat,
+			disableAccessebility,
+			flagsSet,
+			disableInPrograms,
+			logLevel,
+			SkipAllInjectKeys,
+			SkipLowLevelInjectKeys,
+			AlternativeLayoutChange,
+			config_version,
+			layouts_info,
+			fixRAlt,
+			fixRAlt_lay_,
+			run_programs,
+			separate_ext_last_word,
+			separate_ext_several_words,
+			quick_press_ms,
+			win_hotkey_cycle_lang,
+			theme,
+			optimize_gui,
+			background
+		)
 }
-
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    LayoutInfo,
-    layout,
-    enabled,
-    win_hotkey,
-    hotkey
-)
-
-void to_json(json& j, const LayoutInfoList& p) {
-    j = p.info;
-}
-
-void from_json(const json& j, LayoutInfoList& p) {
-    j.get_to(p.info);
-}
-
-
-
-
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    RunProgramInfo,
-    path,
-    args,
-    elevated,
-    hotkey
-)
-
-
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    ProgramConfig,
-    isMonitorAdmin,
-    force_DbgMode,
-    fClipboardClearFormat,
-    disableAccessebility,
-    flagsSet,
-    disableInPrograms,
-    logLevel,
-    SkipAllInjectKeys,
-    SkipLowLevelInjectKeys,
-    AlternativeLayoutChange,
-    config_version,
-    layouts_info, 
-    fixRAlt,
-    fixRAlt_lay_,
-    run_programs,
-    separate_ext_last_word,
-    separate_ext_several_words,
-    quick_press_ms,
-    win_hotkey_cycle_lang,
-	theme,
-	optimize_gui,
-	background
-    )
-    
-
 
 TStatus LoadConfig(ProgramConfig& config) {
 	try {
@@ -214,7 +218,6 @@ TStatus LoadConfig(ProgramConfig& config) {
         std::ifstream ifs(p);
 
         json data = json::parse(ifs, nullptr, true, true);
-
         data.get_to(config);
 
         const auto& arr = data["hotkeys"];

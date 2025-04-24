@@ -1,10 +1,9 @@
 ﻿#pragma once
 
-#include "imgui.h"
-#include "imgui_sugar.hpp"
-#include "imgui_stdlib.h"
+
 
 #include "gui_utils.h"
+
 #include "SwAutostart.h"
 #include "SetHotKeyCombo.h"
 #include "Notificator/Notificator.h"
@@ -16,6 +15,7 @@ class MainWindow {
 	bool show_demo_window = false;
 	bool ShowStyleEditor = false;
 	bool show_main = true;
+	int totop = 10;
 	UStr show_message = 0;
 	std::vector<SetHotKeyCombo> hotbox;
 	std::vector<SetHotKeyCombo> layout_hotkeys;
@@ -26,8 +26,18 @@ class MainWindow {
 	std::vector<std::pair<string, HKL>> menu_lays;
 	ImVec2 startsize{ 544.0, 544.0 / 1.12 };
 	Images::ShaderResource background = MAKE_SHARED(background);
-	Notific::Notificator notif;
+	bool optmz = false;
+public:
+	void ShowHide() { 
+		if (show_main) show_main = false;
+		else {
+			show_main = true; totop = 0;
+		}
+	}
+	bool IsVisible() { return show_main; }
+	bool IsOptimiz() { return optmz; }
 private:
+
 	void update_backg() {
 		backgrounds.clear();
 		namespace fs = std::filesystem;
@@ -93,7 +103,8 @@ private:
 	}
 	void DrawFrameActual();
 public:
-	MainWindow() {
+	MainWindow(bool show) : show_main(show) {
+		optmz = conf_get_unsafe()->optimize_gui;
 		update_backg();
 		apply_background();
 		IFS_LOG(autoCom.Init());
@@ -120,11 +131,13 @@ public:
 	}
 
 	void DrawFrame() {
+
 		if (!show_main) {
-			PostQuitMessage(0);
 			return;
 		}
+
 		DrawFrameActual();
+
 		if (show_demo_window) {
 			ImGui::ShowDemoWindow(&show_demo_window);
 		}

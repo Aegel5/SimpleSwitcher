@@ -50,7 +50,7 @@ public:
 
 		ImGui::SetNextItemWidth(w.x + ImGui::GetStyle().FramePadding.x * 2.f);
 
-		if (ImGui::BeginCombo(title.c_str(), key_str.c_str(), ImGuiComboFlags_HeightLarge)) {
+		if (ImGui::BeginCombo(title.c_str(), key_str.c_str(), ImGuiComboFlags_HeightLarge | ImGuiComboFlags_NoArrowButton)) {
 
 			popup_open = true;
 

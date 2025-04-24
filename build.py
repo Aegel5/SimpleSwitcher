@@ -11,12 +11,14 @@ import json
 is_debug = False
 is_publ = False
 is_notel = False
+is_clean = False
 ver_suff = ''
 for arg in sys.argv[1:]:
     if arg == "/publish":        is_publ = True
     elif arg == "/debug":        is_debug = True
     elif arg == "/notel":        is_notel = True
     elif arg == "/dev":        ver_suff = '_dev'
+    elif arg == "/clean":        is_clean = True
     else :
         print(f"unknown arg {arg}")
         exit(1)
@@ -66,9 +68,14 @@ def build_localization():
 build_localization()  
 
 def delfold(fold):
+    def remove_readonly(func, path, excinfo):
+        # Функция для обработки ошибок при удалении файлов
+        os.chmod(path, 0o777)  # Изменяем права доступа к файлу
+        func(path)  # Повторяем попытку удаления
     if os.path.exists(fold): 
-        shutil.rmtree(fold) 
-        
+        shutil.rmtree(fold, onerror=remove_readonly) 
+  
+if is_clean: delfold(package_build_folder)  # Полная пересборка!
 delfold(result_dir_root)      
 result_dir.mkdir(parents=True, exist_ok=True) 
 
@@ -131,7 +138,7 @@ def publish():
     g = Github(tok)
     
     repo = g.get_repo("aegel5/SimpleSwitcher")
-    rel_message = "## Changes\n- minor fixes"
+    rel_message = "## Changes\n- incremental build"
     
     last_r = repo.get_latest_release()
     all_download = 0

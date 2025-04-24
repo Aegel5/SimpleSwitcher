@@ -20,13 +20,18 @@ class CoreWorker {
 		m_hWnd = WinUtils::CreateMsgWin(L"SimpleSw_325737FD_Serv");
 		IFW_LOG(m_hWnd != NULL);
 		
+		IFW_LOG(AddClipboardFormatListener(m_hWnd));
 		//IFW_LOG(ChangeWindowMessageFilterEx(hWnd, WM_LayNotif, MSGFLT_ALLOW, 0));
 
 		Hooker hooker;
 		IFS_LOG(hooker.StartHook());
 
 		MSG msg;
-		while (GetMessage(&msg, NULL, 0, 0) > 0);
+		while (GetMessage(&msg, NULL, 0, 0) > 0) {
+			if (msg.message == WM_CLIPBOARDUPDATE) {
+				Worker()->PostMsg([](auto w) {w->CliboardChanged(); });
+			}
+		}
 	}
 
 public:

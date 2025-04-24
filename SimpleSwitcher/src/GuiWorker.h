@@ -1,23 +1,22 @@
 ﻿#pragma once
 
-extern int StartGui(std::stop_token token);
+extern int StartGui(bool show);
 
 class GuiWorker {
 	std::jthread thread;
 	bool is_run = false;
-	std::stop_source stopSource;
 public:
-	void Start() {
+	void Start(bool show = true) {
 		if (is_run) {
 			return;
 		}
 		if (thread.joinable()) {
 			thread.join();
 		}
-		thread = std::jthread([this]() {
+		thread = std::jthread([show,this]() {
 			is_run = true; 
 			try {
-				StartGui(stopSource.get_token());
+				StartGui(show);
 			}
 			catch (...){
 				LOG_WARN(L"exception gui");
@@ -26,6 +25,6 @@ public:
 			});
 	}
 	~GuiWorker() {
-		stopSource.request_stop();
+		PostMessage(g_guiHandle2, WM_QUIT, 0,0);
 	}
 };
