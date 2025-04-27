@@ -23,6 +23,7 @@ for arg in sys.argv[1:]:
         print(f"unknown arg {arg}")
         exit(1)
 if ver_suff != '': is_notel = True
+if is_publ: is_clean = True
 
 
 curpath = pathlib.Path(__file__).parent.resolve()
