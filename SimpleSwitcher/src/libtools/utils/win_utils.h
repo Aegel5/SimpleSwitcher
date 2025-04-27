@@ -29,11 +29,9 @@ namespace WinUtils {
 		RegisterClass(&wc);
 		return CreateWindowW(name, name, 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, wc.hInstance, NULL);
 	}
+	inline void PostMsg(HWND hwnd, UINT msg, WPARAM wparm = 0) {
+		if(hwnd != 0) PostMessage(hwnd, msg, wparm, 0);
+	}
 }
 
-class WinTimers {
-public:
-	WinTimers() {
 
-	}
-};

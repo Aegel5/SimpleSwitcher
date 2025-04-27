@@ -15,7 +15,7 @@ inline void new_layout_request(HKL layout = 0) { PostMessage(g_guiHandle, WM_Lay
 inline void try_toggle_enable() { if (g_enabled.TryToggle()) new_layout_request(); } // todo not thread safe
 inline void show_main_wind(int mode = 0) {
 	PostMessage(g_guiHandle, WM_ShowWindow, mode, 0); 
-	PostMessage(g_guiHandle2, WM_ShowWindow, mode, 0); 
+	WinUtils::PostMsg(g_guiHandle2, WM_ShowWindow, mode);
 }
 
 inline void ApplyAcessebil() {	AllowAccessibilityShortcutKeys(!conf_get_unsafe()->disableAccessebility);}

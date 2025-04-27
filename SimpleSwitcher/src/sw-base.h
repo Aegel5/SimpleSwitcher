@@ -36,6 +36,7 @@
 #include <charconv>
 #include <codecvt>
 #include <cassert>
+#include <future>
 
 #include "imgui.h"
 #include "imgui_sugar.hpp"

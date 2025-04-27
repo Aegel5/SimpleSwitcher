@@ -4,27 +4,22 @@ extern int StartGui(bool show);
 
 class GuiWorker {
 	std::jthread thread;
-	bool is_run = false;
+	std::atomic_bool is_started = false;
 public:
-	void Start(bool show = true) {
-		if (is_run) {
-			return;
-		}
-		if (thread.joinable()) {
-			thread.join();
-		}
+	void Start(bool show = true) { // todo: must not be called quickly several times
+		if (is_started) return;
 		thread = std::jthread([show,this]() {
-			is_run = true; 
+			is_started = true;
 			try {
 				StartGui(show);
 			}
 			catch (...){
 				LOG_WARN(L"exception gui");
 			}
-			is_run = false; 
+			is_started = false;
 			});
 	}
 	~GuiWorker() {
-		PostMessage(g_guiHandle2, WM_QUIT, 0,0);
+		WinUtils::PostMsg(g_guiHandle2, WM_QUIT);
 	}
 };

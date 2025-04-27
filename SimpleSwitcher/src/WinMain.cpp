@@ -50,7 +50,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	GuiWorker gui;
 	gui.Start(std::string{ lpCmdLine }.find("/autostart") == -1);
-	//gui.Start(false);
 
 	TrayIcon trayIcon;
 	WinTimer timer;
