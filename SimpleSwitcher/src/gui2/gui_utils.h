@@ -199,11 +199,10 @@ inline void SetStyle() {
 		ImGui::StyleColorsLight(); }
 }
 
-inline void InitImGui() {
+inline void InitImGui(float scale) {
 
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuiStyle& style = ImGui::GetStyle();
-	auto scale = WinUtils::GetDpiMainMonScale2() * 1.2f;
 	style.ScaleAllSizes(scale);
 	static ImVector<ImWchar> ranges;
 	{

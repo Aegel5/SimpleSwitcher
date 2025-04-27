@@ -108,7 +108,8 @@ public:
 		update_backg();
 		apply_background();
 		IFS_LOG(autoCom.Init());
-		InitImGui();
+		auto scale = WinUtils::GetDpiMainMonScale2() * 1.2f;
+		InitImGui(scale);
 		title = std::format(
 			"SimpleSwitcher {}{}{}###main_wnd", SW_VERSION,
 			Utils::IsSelfElevated() ? " Administrator" : "",
@@ -125,9 +126,8 @@ public:
 		SyncLays();
 		config_path = StrUtils::Convert(std::format(L"file://{}", ProgramConfig::GetPath_Conf().wstring()));
 		update_flags();
-		auto scal = WinUtils::GetDpiMainMonScale();
-		startsize.x *= scal.x;
-		startsize.y *= scal.y;
+		startsize.x *= scale;
+		startsize.y *= scale;
 	}
 
 	void DrawFrame() {

@@ -84,7 +84,9 @@ int StartGui(bool show)
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
-
+	std::chrono::time_point<std::chrono::steady_clock> drawNormalUntil;
+	auto prolong = [&]() {drawNormalUntil = std::chrono::steady_clock::now() + 180ms; };// for ImGuiHoveredFlags_DelayShort popup must be > 0.15
+	prolong();
 	MainWindow mainWindow(show);
 	Notific::Notificator notif;
 	WinTimer timer;
@@ -133,9 +135,6 @@ int StartGui(bool show)
 
 
 	MSG msg;
-	std::chrono::time_point<std::chrono::steady_clock> drawNormalUntil;
-	auto prolong = [&]() {drawNormalUntil = std::chrono::steady_clock::now() + 180ms; };// for ImGuiHoveredFlags_DelayShort popup must be > 0.15
-	prolong();
 
 	auto ProcessMessage = [&]() {
 
