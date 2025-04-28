@@ -6,13 +6,9 @@ void MainWindow::DrawFrameActual() {
 
 	ImGuiUtils::ToCenter();
 	ImGui::SetNextWindowSize(startsize, ImGuiCond_FirstUseEver);
-	ImGui::Begin(title.c_str(), &show_main, ImGuiWindowFlags_NoCollapse);
+	ImGui::Begin(title.c_str(), &show_wnd, ImGuiWindowFlags_NoCollapse);
 
-	if (totop < 5 && ImGui::GetWindowViewport()->PlatformWindowCreated) {
-		totop++;
-		auto hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
-		SetForegroundWindow(hwnd);
-	}
+	process_helper();
 
 	if (ImGui::BeginTabBar("MyTabBar", ImGuiTabBarFlags_None)) {
 
@@ -218,7 +214,7 @@ void MainWindow::DrawFrameActual() {
 		float w = ImGui::CalcTextSize(text).x + ImGui::GetStyle().FramePadding.x*2.f + ImGui::GetStyle().ItemSpacing.x;
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - w);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetContentRegionAvail().y - ImGui::GetFrameHeightWithSpacing()); // todo use child_wnd
-		if (ImGui::Button(text)) { show_main = false; }
+		if (ImGui::Button(text)) { show_wnd = false; }
 	}
 
 	if (background->IsOk()) {

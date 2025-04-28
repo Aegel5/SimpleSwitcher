@@ -8,14 +8,12 @@
 #include "SetHotKeyCombo.h"
 #include "Notificator/Notificator.h"
 
-class MainWindow {
+class MainWindow : public ImGuiUtils::WindowHelper {
 	string config_path;
 	std::string title;
 	bool check_add_to_auto = false;
 	bool show_demo_window = false;
 	bool ShowStyleEditor = false;
-	bool show_main = true;
-	int totop = 10;
 	UStr show_message = 0;
 	std::vector<SetHotKeyCombo> hotbox;
 	std::vector<SetHotKeyCombo> layout_hotkeys;
@@ -27,13 +25,7 @@ class MainWindow {
 	ImVec2 startsize{ 544.0, 544.0 / 1.12 };
 	Images::ShaderResource background = MAKE_SHARED(background);
 public:
-	void ShowHide() { 
-		if (show_main) show_main = false;
-		else {
-			show_main = true; totop = 0;
-		}
-	}
-	bool IsVisible() { return show_main; }
+	bool IsVisible() { return show_wnd; }
 private:
 
 	void update_backg() {
@@ -106,7 +98,8 @@ private:
 	}
 	void DrawFrameActual();
 public:
-	MainWindow(bool show) : show_main(show) {
+	MainWindow(bool show) {
+		show_wnd = show;
 		update_backg();
 		apply_background();
 		IFS_LOG(autoCom.Init());
@@ -134,7 +127,7 @@ public:
 
 	void DrawFrame() {
 
-		if (!show_main) {
+		if (!show_wnd) {
 			return;
 		}
 

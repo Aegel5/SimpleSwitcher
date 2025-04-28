@@ -177,19 +177,26 @@ namespace Notific {
 					SetPoint({});
 					changes = true;
 				}
+				if (Utils::IsDebug()) {
+					ImGui::SameLine();
+					if (ImGui::Button("+10 sec")) {
+						SetQuick(10s);
+						changes = true;
+					}
+				}
 				ImGui::SameLine();
 				if (ImGui::Button("+1 min")) {
-					SetQuick(1);
+					SetQuick(1min);
 					changes = true;
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("+10 min")) {
-					SetQuick(10);
+					SetQuick(10min);
 					changes = true;
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("+30 min")) {
-					SetQuick(30);
+					SetQuick(30min);
 					changes = true;
 				}
 			}
@@ -200,11 +207,11 @@ namespace Notific {
 			return changes;
 
 		}
-		void SetQuick(int min) {
+		void SetQuick(auto time) {
 			if (DeltToNow(lastQuick) > 2min) {
 				SetPoint(Now());
 			}
-			SetPoint(point + minutes(min));
+			SetPoint(point + time);
 			lastQuick = Now();
 		}
 	};

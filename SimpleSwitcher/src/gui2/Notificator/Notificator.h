@@ -8,32 +8,20 @@ namespace Notific {
 		std::vector<Entry> list;
 	};
 
-	class Notificator {
-
+	class Notificator : public ImGuiUtils::WindowHelper {
 		Settings settings;
-
 		void Save();
 		void Load();
 		bool need_show = false;
 		HWND last_hwnd = 0;
-		int cnt = 0;
 		std::vector<Entry>& entries;
-	public:
-		bool show_settings = false;
-		int totop = 5;
 	public:
 		Notificator() : entries(settings.list) {
 			Load();
 		}
 
-		void ShowHide() { 
-			if (show_settings) show_settings = false;
-			else {
-				show_settings = true; totop = 0;
-			}
-		}
 		bool IsVisible() { 
-			return need_show || show_settings; 
+			return need_show || show_wnd;
 		}
 
 		bool Process() {
@@ -45,23 +33,7 @@ namespace Notific {
 					break;
 				}
 			}
-			if (need_show) {
-				if (cnt < 10) {
-					cnt++;
-					to_top();
-				}
-			}
-			else {
-				last_hwnd = 0;
-				cnt = 0;
-			}
 			return need_show;
-		}
-
-		void to_top() {
-			if (!last_hwnd) return;
-			IFW_LOG(SetWindowPos(last_hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE));
-			//ImGui::GetPlatformIO().Platform_SetWindowFocus(ImGui::GetWindowViewport());
 		}
 
 		void DrawNotify() {
@@ -75,8 +47,8 @@ namespace Notific {
 						HWND hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
 						if (hwnd != 0 && last_hwnd != hwnd) {
 							last_hwnd = hwnd;
+							IFW_LOG(SetWindowPos(last_hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE));
 							//IFW_LOG(SetForegroundWindow(last_hwnd));
-							to_top();
 						}
 					}
 
@@ -108,17 +80,13 @@ namespace Notific {
 		}
 		void DrawSettings() {
 
-			if (!show_settings) return;
+			if (!show_wnd) return;
 
 			ImGuiUtils::ToCenter();
 			ImGui::SetNextWindowSize({800, 600}, ImGuiCond_FirstUseEver);
-			ImGui::Begin("Notifications", &show_settings);
+			ImGui::Begin("Notifications", &show_wnd);
 
-			if (totop < 5 && (HWND)ImGui::GetWindowViewport()->PlatformHandle) {
-				totop++;
-				auto hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
-				SetForegroundWindow(hwnd);
-			}
+			process_helper();
 
 			int id = 1;
 			for (int i = 0; i < entries.size(); i++) {
