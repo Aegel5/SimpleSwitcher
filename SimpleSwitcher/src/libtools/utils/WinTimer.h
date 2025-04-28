@@ -23,6 +23,7 @@ class WinTimer {
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 public:
+	HWND GetHandler() { return hwnd; }
 	WinTimer() {
 		Inst = this;
 		hwnd = WinUtils::CreateMsgWin(L"SimpleSwitcher_Timer_001", WindowProc2);

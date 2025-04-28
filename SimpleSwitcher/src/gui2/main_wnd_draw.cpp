@@ -161,17 +161,19 @@ void MainWindow::DrawFrameActual() {
 					show_demo_window = true;
 			}
 
-			{
-				if (ImGui::Checkbox(LOC("Optimize GUI"), &optmz)) {
-					SaveConfigWith([this](auto p) {p->optimize_gui = optmz; });
-				}
-			}
+			//{
+			//	if (ImGui::Checkbox(LOC("Optimize GUI"), &optmz)) {
+			//		SaveConfigWith([this](auto p) {p->optimize_gui = optmz; });
+			//	}
+			//	ImGui::SetItemTooltip(LOC("Unload gui completely when closed to tray (actual for old PC)"));
+			//}
 
 			{
 				bool val = cfg->SkipLowLevelInjectKeys;
 				if (ImGui::Checkbox("SkipLowLevelInjectKeys", &val)) {
 					SaveConfigWith([val](auto p) {p->SkipLowLevelInjectKeys = val; });
 				}
+				ImGui::SetItemTooltip(LOC("Disable interception of keys sent to remote computer for RDP connection"));
 			}
 
 			{

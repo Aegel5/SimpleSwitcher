@@ -201,7 +201,6 @@ namespace nlohmann {
 			quick_press_ms,
 			win_hotkey_cycle_lang,
 			theme,
-			optimize_gui,
 			background
 		)
 }

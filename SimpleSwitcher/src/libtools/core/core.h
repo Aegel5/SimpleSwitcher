@@ -13,7 +13,7 @@ typedef TCHAR TChar;
 typedef const TChar* TStr;
 using UStr = const char*;
 using SView = std::wstring_view;
-using SViewChar = std::string_view;
+using UView = std::string_view;
 using std::wstring;
 using std::string;
 using namespace std::string_literals;
@@ -73,5 +73,6 @@ inline void SwZeroMemory(T& t)
 
 #define FORWARD(x) std::forward<decltype(x)>(x)
 #define DECLTYPE_DECAY(x) std::decay_t<decltype(x)>
-#define MAKE_SHARED(x) std::make_shared<DECLTYPE_DECAY(x)::element_type>();
+#define MAKE_SHARED(x) std::make_shared<DECLTYPE_DECAY(x)::element_type>()
+#define MAX_FOR(x) std::numeric_limits<DECLTYPE_DECAY(x)>::max()
 

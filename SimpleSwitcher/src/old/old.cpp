@@ -94,3 +94,13 @@
 		//LOG_INFO_3(L"skip inject");
 		//return false;
   //  }
+
+
+		{
+			static std::chrono::high_resolution_clock::time_point lastPlatformRender{};
+			auto now = std::chrono::high_resolution_clock::now();
+			if (now - lastPlatformRender > (mainWindow.IsOptimiz() ? 50ms : 12ms)) {
+				lastPlatformRender = now;
+				ImGui::RenderPlatformWindowsDefault();
+			}
+		}

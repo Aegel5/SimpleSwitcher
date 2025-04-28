@@ -1,6 +1,5 @@
 ﻿
 #include "TrayIcon.h"
-#include "GuiWorker.h"
 #include "utils/WinTimer.h"
 
 
@@ -10,7 +9,7 @@ inline TStatus update_cur_dir() {
 	IFW_RET(SetCurrentDirectory(dir.c_str()));
 	RETURN_SUCCESS;
 }
-
+extern int StartGui(bool show);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
 
@@ -33,11 +32,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	ApplyAcessebil();
 
-	auto hwnd = WinUtils::CreateMsgWin(L"SimpleSwitcher_MainThread");
-	IFW_LOG(hwnd != NULL);
-	if (hwnd == 0) return 1;
-	g_guiHandle = hwnd;
-
 	if (IsAdminOk()) {
 		if (Utils::IsDebug() && !g_enabled.TryEnable()) {
 			auto hk = conf_get_unsafe()->GetHk(hk_ToggleEnabled).keys.key();
@@ -48,33 +42,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		g_enabled.TryEnable();
 	}
 
-	GuiWorker gui;
-	gui.Start(std::string{ lpCmdLine }.find("/autostart") == -1);
-
-	TrayIcon trayIcon;
-	WinTimer timer;
+	bool show = std::string{ lpCmdLine }.find("/autostart") == -1;
 
 	CoreWorker core;
 
-	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0)>0) {
-		switch (msg.message) {
-		case WM_LayNotif: {
-			trayIcon.Update((HKL)msg.wParam);
-			break;
-		}
-		case WM_ShowWindow: {
-			gui.Start();
-			break;
-		}
-		default: {
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-			break;
-		}
+	StartGui(show);
 
-		}
-	}
+	LOG_ANY("program exit");
 
 	return 0;
 

@@ -4641,6 +4641,8 @@ static ImGuiHoveredFlags ApplyHoverFlagsForTooltip(ImGuiHoveredFlags user_flags,
     return user_flags | shared_flags;
 }
 
+extern void ImWantNewFrameWithDelay(int ms);
+
 // This is roughly matching the behavior of internal-facing ItemHoverable()
 // - we allow hovering to be true when ActiveId==window->MoveID, so that clicking on non-interactive items such as a Text() item still returns true with IsItemHovered()
 // - this should work even for non-interactive items that have no ID, so we cannot use LastItemId
@@ -4722,11 +4724,15 @@ bool ImGui::IsItemHovered(ImGuiHoveredFlags flags)
         // When changing hovered item we requires a bit of stationary delay before activating hover timer,
         // but once unlocked on a given item we also moving.
         //if (g.HoverDelayTimer >= delay && (g.HoverDelayTimer - g.IO.DeltaTime < delay || g.MouseStationaryTimer - g.IO.DeltaTime < g.Style.HoverStationaryDelay)) { IMGUI_DEBUG_LOG("HoverDelayTimer = %f/%f, MouseStationaryTimer = %f\n", g.HoverDelayTimer, delay, g.MouseStationaryTimer); }
-        if ((flags & ImGuiHoveredFlags_Stationary) != 0 && g.HoverItemUnlockedStationaryId != hover_delay_id)
-            return false;
+		if ((flags & ImGuiHoveredFlags_Stationary) != 0 && g.HoverItemUnlockedStationaryId != hover_delay_id) {
+			ImWantNewFrameWithDelay(50);
+			return false;
+		}
 
-        if (g.HoverItemDelayTimer < delay)
-            return false;
+		if (g.HoverItemDelayTimer < delay) {
+			ImWantNewFrameWithDelay(50);
+			return false;
+		}
     }
 
     return true;

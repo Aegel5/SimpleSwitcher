@@ -10,6 +10,7 @@
 //      - ImGuiWantFrameDelay(type, 50ms)
 // proposal - ImGuiHasAnyInputToProcess
 
+#include "imgui_internal.h"
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
@@ -17,6 +18,7 @@
 #include <tchar.h>
 #include "main_wnd.h"
 #include "utils/WinTimer.h"
+#include "TrayIcon.h"
 
 // Data
 ID3D11Device*            g_pd3dDevice = nullptr;
@@ -33,6 +35,11 @@ void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+static int wantFrameDelay = MAX_FOR(wantFrameDelay);
+void ImWantNewFrameWithDelay(int ms) {
+	if (ms < wantFrameDelay) wantFrameDelay = ms;
+}
+
 // Main code
 int StartGui(bool show)
 {
@@ -41,7 +48,8 @@ int StartGui(bool show)
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
     ::RegisterClassExW(&wc);
     HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Dear ImGui DirectX11 Example", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
-	g_guiHandle2 = hwnd;
+	if (hwnd == 0) return 1;
+	g_guiHandle = hwnd;
 
     // Initialize Direct3D
     if (!CreateDeviceD3D(hwnd))
@@ -84,19 +92,17 @@ int StartGui(bool show)
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
-	std::chrono::time_point<std::chrono::steady_clock> drawNormalUntil;
-	auto prolong = [&]() {drawNormalUntil = std::chrono::steady_clock::now() + 180ms; };// for ImGuiHoveredFlags_DelayShort popup must be > 0.15
-	prolong();
+
 	MainWindow mainWindow(show);
 	Notific::Notificator notif;
 	WinTimer timer;
-	timer.CycleTimer([&]() {
-		if (mainWindow.IsOptimiz() && !mainWindow.IsVisible() && !notif.IsNeedGui()) {
-			PostQuitMessage(0);
-		}
-		notif.Process(); }, 1000);
+	TrayIcon trayIcon;
 
-	std::chrono::high_resolution_clock::time_point lastPlatformRender;
+	timer.CycleTimer([&]() {
+		if (notif.Process()) {
+			ImWantNewFrameWithDelay(0);
+		}
+		}, 1000);
 
 	auto GuiStep = [&]() {
 		// Handle window being minimized or screen locked
@@ -113,18 +119,13 @@ int StartGui(bool show)
 
 		mainWindow.DrawFrame();
 		notif.Draw();
+		if (notif.IsVisible()) 
+			ImWantNewFrameWithDelay(500); // for timer display
 
 		// Rendering
 		ImGui::Render();
 		ImGui::UpdatePlatformWindows();
-
-		{
-			auto now = std::chrono::high_resolution_clock::now();
-			if (now - lastPlatformRender > (mainWindow.IsOptimiz() ? 50ms : 12ms)) {
-				lastPlatformRender = now;
-				ImGui::RenderPlatformWindowsDefault();
-			}
-		}
+		ImGui::RenderPlatformWindowsDefault();
 
 		// Present
 		HRESULT hr = g_pSwapChain->Present(1, 0);   // Present with vsync
@@ -142,31 +143,72 @@ int StartGui(bool show)
 			int mode = msg.wParam;
 			if (mode) notif.ShowHide();
 			else mainWindow.ShowHide();
-		}
-		else {
-			::TranslateMessage(&msg);
-			::DispatchMessage(&msg);
+			return true;
 		}
 
-		if (msg.message != WM_TIMER) {
-			prolong();
+		if (msg.message == WM_LayNotif) {
+			trayIcon.Update((HKL)msg.wParam);
+			return false;
 		}
+
+		::TranslateMessage(&msg);
+		::DispatchMessage(&msg);
+		return msg.message == WM_PAINT || !ctx->InputEventsQueue.empty();
 
 		};
 
+
 	auto Cycle = [&]() {
 
-		while (true) {
+		int framesToDraw = 3;
 
-			if (drawNormalUntil < std::chrono::steady_clock::now()) {
-				// wait mode
-				if (GetMessage(&msg, 0, 0, 0) <= 0) { return; }	ProcessMessage();
-				while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) { if (msg.message == WM_QUIT) return; ProcessMessage(); }
+		auto proc = [&]() {
+			if (ProcessMessage()) {
+				framesToDraw = 3;
+			}
+			};
+
+		auto peek = [&]() {
+			while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
+				if (msg.message == WM_QUIT) return false;
+				proc();
+			}
+			return true;
+			};
+
+		while (true) {
+			if (framesToDraw > 0) {
+				framesToDraw--;
+				if (!peek()) return;
+			}
+			else {
+				if (wantFrameDelay == MAX_FOR(wantFrameDelay)) {
+					if (GetMessage(&msg, 0, 0, 0) <= 0) { return; }	proc();
+				}
+				else {
+					auto delay = wantFrameDelay;
+					wantFrameDelay = MAX_FOR(wantFrameDelay);
+					if (delay == 0) {
+						framesToDraw = 3;
+					}
+					else {
+						TimePoint start;
+						start.SetNow();
+						auto res = ::MsgWaitForMultipleObjectsEx(0, NULL, delay, QS_ALLINPUT, MWMO_INPUTAVAILABLE | MWMO_ALERTABLE);
+						if (res == WAIT_TIMEOUT) {
+							framesToDraw = 3;
+						}
+						else {
+							if (!peek()) return;
+							if (framesToDraw == 0) {
+								// continue  wait
+								wantFrameDelay = std::max(delay - start.DeltToNowMs(), 0);
+							}
+						}
+					}
+				}
 				continue;
 			}
-
-			// normal mode
-			while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) { if (msg.message == WM_QUIT) return; ProcessMessage(); }
 
 			GuiStep();
 		}
@@ -181,7 +223,6 @@ int StartGui(bool show)
 
     CleanupDeviceD3D();
     ::DestroyWindow(hwnd);
-	g_guiHandle2 = 0;
     ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
 
 	return 0;

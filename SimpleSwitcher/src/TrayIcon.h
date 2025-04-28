@@ -2,7 +2,6 @@
 
 #include "utils/WinTray.h"
 #include "IconManager.h"
-extern int StartGui();
 class TrayIcon {
 	HKL curlay = 0;
 	uint64_t last_lay_cnt = 0;

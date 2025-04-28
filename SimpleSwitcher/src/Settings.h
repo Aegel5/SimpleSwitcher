@@ -72,7 +72,7 @@ public:
     bool separate_ext_several_words = false;
     CHotKey win_hotkey_cycle_lang { VK_LMENU, VK_SHIFT };
 	std::string theme = "Light";
-	bool optimize_gui = false;
+	//bool optimize_gui = false;
 	string background = "";
 
     std::vector< CHotKeySet> hotkeysList;

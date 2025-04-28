@@ -26,7 +26,6 @@ class MainWindow {
 	std::vector<std::pair<string, HKL>> menu_lays;
 	ImVec2 startsize{ 544.0, 544.0 / 1.12 };
 	Images::ShaderResource background = MAKE_SHARED(background);
-	bool optmz = false;
 public:
 	void ShowHide() { 
 		if (show_main) show_main = false;
@@ -35,7 +34,6 @@ public:
 		}
 	}
 	bool IsVisible() { return show_main; }
-	bool IsOptimiz() { return optmz; }
 private:
 
 	void update_backg() {
@@ -54,10 +52,15 @@ private:
 	}
 	void apply_background() {
 		namespace fs = std::filesystem;
-		auto p = PathUtils::GetPath_folder_noLower2() / "Background" / conf_get_unsafe()->background;
+		auto name = conf_get_unsafe()->background;
+		auto p = PathUtils::GetPath_folder_noLower2() / "Background" / name;
 		auto img = Images::LoadImageFromFile(p.string().c_str());
 		if (!img->IsOk()) { background->clear();  return; }
-		Images::SetAlphaFactor(img, 0.5f);
+		auto parts = StrUtils::Split(name, '@');
+		int alp = -1;
+		if (parts.size() > 1 && StrUtils::ToInt(parts[0], alp) && alp >= 0 && alp <= 100) {
+			Images::SetAlphaFactor(img, alp * 0.01f);
+		}
 		background = Images::ImageToShaderConsume(img);
 	}
 	void update_flags() { flagsSets = { std::from_range, IconMgr::Inst().ScanFlags() }; IconMgr::Inst().ClearCache(); }
@@ -104,7 +107,6 @@ private:
 	void DrawFrameActual();
 public:
 	MainWindow(bool show) : show_main(show) {
-		optmz = conf_get_unsafe()->optimize_gui;
 		update_backg();
 		apply_background();
 		IFS_LOG(autoCom.Init());

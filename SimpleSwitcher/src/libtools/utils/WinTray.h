@@ -84,6 +84,7 @@ private:
 		return 0;
 	}
 public:
+	HWND GetHandler() { return hwnd; }
 	void OnCreateMenu(auto&& func) {
 		createMenu = func;
 	}

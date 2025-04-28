@@ -174,6 +174,20 @@ namespace StrUtils
 		return res;
 	}
 
+	inline auto Split(UView str, char delim, bool skipEmpty = true) {
+		std::vector<std::string> res;
+		std::ispanstream data(str);
+
+		std::string line;
+		while (std::getline(data, line, delim)) {
+			if (skipEmpty && line.empty())
+				continue;;
+			res.push_back(line);
+		}
+
+		return res;
+	}
+
 	inline bool replaceAll(std::wstring & s, SView search, SView replace) {
 		bool found = false;
 		size_t pos = 0;

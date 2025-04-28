@@ -9,10 +9,11 @@ public:
 	}
 	auto DeltToNow() const {
 		auto now = std::chrono::steady_clock::now();
-		return now > time ? now - time : time - now;
+		//return now > time ? now - time : time - now;
+		return now - time;
 	}
-	auto DeltToNowMs() const {
-		return std::chrono::duration_cast<std::chrono::milliseconds>(DeltToNow()).count();
+	int DeltToNowMs() const {
+		return (int)std::chrono::duration_cast<std::chrono::milliseconds>(DeltToNow()).count();
 	}
 	void SetNow() {
 		time = std::chrono::steady_clock::now();
