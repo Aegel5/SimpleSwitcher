@@ -38,12 +38,10 @@ namespace Notific {
 
 		bool Process() {
 			need_show = false;
-			bool recent = false;
 			for (auto& it : entries) {
 				if (it.IsTrigger()) {
 					it.AdjastActiveString();
 					need_show = true;
-					recent = Now() - it.nextActivate <= 5s;
 					break;
 				}
 			}
@@ -57,7 +55,7 @@ namespace Notific {
 				last_hwnd = 0;
 				cnt = 0;
 			}
-			return recent;
+			return need_show;
 		}
 
 		void to_top() {
