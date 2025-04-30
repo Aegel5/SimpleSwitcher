@@ -21,11 +21,20 @@ namespace nlohmann {
 		period,
 		point,
 		nextActivate,
-		enabled
+		enabled,
+		days_period
 	)
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+		Notific::Folder,
+		name,
+		list
+	)
+
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 		Notific::Settings,
-		list
+		folders,
+		cur_folder_index
 	)
 }
 
@@ -49,7 +58,8 @@ namespace Notific {
 		catch (std::exception& e) {
 			IFS_LOG(SW_ERR_JSON);
 		}
-		for (auto& it : entries) {
+
+		for (auto& it : all_entries()) {
 			it.AdjastActiveString();
 		}
 	}

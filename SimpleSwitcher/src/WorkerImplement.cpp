@@ -275,6 +275,7 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 
 	if (typeRevert == hk_ToggleEnabled) {
 		try_toggle_enable();
+		ClearAllWords();
 		RETURN_SUCCESS;
 	}
 

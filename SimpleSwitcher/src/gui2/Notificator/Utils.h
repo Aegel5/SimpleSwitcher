@@ -19,19 +19,17 @@ namespace Notific {
 			auto cur = year(y) / month(m) / last;
 			return (unsigned int)cur.day();
 		}
-		void AddDay() {
-			d++;
-			if (d > MaxDay()) {
-				d = 1;
-				AddMon();
-			}
-		}
+
 		void AddMon() {
 			m++;
 			if (m > 12) {
 				m = 1;
 				y++;
 			}
+			FixDay();
+		}
+		void AddYear() {
+			y++;
 			FixDay();
 		}
 	};
@@ -90,7 +88,7 @@ namespace Notific {
 				// todo - store local time in windows for cache
 			}
 			for (int i = 1; i <= time.MaxDay(); i++) {
-				sprintf_s(buf, "%d", i);
+				StrUtils::Sprintf(buf, "%d", i);
 				if (((i - 1) % 7) != 0) ImGui::SameLine();
 				bool pop = false;
 				if (time.d == i) {
@@ -106,7 +104,8 @@ namespace Notific {
 				}
 			}
 
-			if (ImGui::SliderInt("year", &time.y, 2025, 2040)) {
+			if (ImGui::InputInt("year", &time.y, 1, 10)) {
+				Clamp(time.y, 1900, 2200);
 				edit = true;
 				time.FixDay();
 			}

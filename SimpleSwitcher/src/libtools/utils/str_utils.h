@@ -247,4 +247,16 @@ namespace StrUtils
 		return spaces.find(c) != -1;
 	}
 
+	inline void Sprintf(auto& buf, auto&&... args) { // todo array
+		snprintf(buf, std::ssize(buf), FORWARD(args)...);
+	}
+
+	template<typename... Args>
+	inline void FormatTo(auto& buf, const std::format_string<Args...> s, Args&&... v) { // todo array
+		auto sz = std::size(buf);
+		if (sz == 0) return;
+		auto res = std::format_to_n(buf, sz-1, s, FORWARD(v)...);
+		*res.out = 0;
+	}
+
 }

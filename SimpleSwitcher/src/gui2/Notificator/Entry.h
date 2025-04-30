@@ -7,29 +7,37 @@ namespace Notific {
 
 		enum class Period {
 			OneTime = 0,
-			Month = 1
+			Month = 1,
+			NDays = 2,
+			Year = 3,
 		};
+		int days_period = 0;
 
 		Period period = Period::Month;
 
 		UStr PeriodName(Period p) {
 			if (p == Period::Month) return LOC("Every month");
+			if (p == Period::Year) return LOC("Every year");
 			if (p == Period::OneTime) return LOC("One time");
+			if (p == Period::NDays) return LOC("Days");
 			return "Error";
 		}
 
 		string next_activ_string;
 
-		string name = "Item";
+		string name = LOC("Item");
 		bool enabled = true;
 
 		DateTime nextActivate;
 		DateTime point;
-
 		DateTime lastQuick;
 
+		void correct_days_period() {
+			days_period = std::clamp(days_period, 1, 1000);
+		}
+
 		bool IsPeriodic() {
-			return period == Period::Month;
+			return period != Period::OneTime;
 		}
 		void SetPoint(DateTime t) {
 			point = t;
@@ -38,28 +46,46 @@ namespace Notific {
 
 		DateTime Unset() { return {}; }
 
-		bool IsFuture() {return nextActivate > Now();}
-		bool IsIsFutureAndEnabled() { return enabled && IsFuture(); }
+		bool IsIsFutureAndEnabled() { return enabled && nextActivate > Now(); }
 		void SetupNextActivate() {
 
-			SetActivate(point);
-			if (IsFuture()) return;
+			auto now = Now();
+			if (point >= now) {
+				SetActivate(point);
+				return;
+			}
 
-			if (IsPeriodic()) {
-				if (period == Period::Month) {
-					auto now = Convert(Now());
-					auto pt = Convert(point);
-					pt.m = now.m;
-					pt.y = now.y;
-					if (Convert(pt) <= Now()) {
-						pt.AddMon();
-					}
-					SetActivate(Convert(pt));
-				}
-			}
-			else {
+			if (!IsPeriodic()) {
 				SetActivate({});
+				return;
 			}
+
+			if (period == Period::Month) {
+				auto now = Convert(Now());
+				auto pt = Convert(point);
+				pt.m = now.m;
+				pt.y = now.y;
+				while (Convert(pt) <= Now()) {
+					pt.AddMon();
+				}
+				SetActivate(Convert(pt));
+			}
+			else if (period == Period::NDays) {
+				correct_days_period();
+				auto delt_d = floor<days>(now - point).count();
+				delt_d /= days_period;
+				SetActivate(point + days(delt_d * days_period + days_period)); // accurate calc
+			}
+			else if (period == Period::Year) {
+				auto now = Convert(Now());
+				auto pt = Convert(point);
+				pt.y = now.y;
+				while (Convert(pt) <= Now()) {
+					pt.AddYear();
+				}
+				SetActivate(Convert(pt));
+			}
+
 		}
 		void SetActivate(DateTime dt) {
 			nextActivate = dt;
@@ -91,16 +117,11 @@ namespace Notific {
 					ImGui::OpenPopup("menu");
 				}
 				with_Popup("menu") {
-					{
-						auto need = std::count(name.begin(), name.end(), '\n') + 1;
-						auto h = ImGui::GetFontSize() * need + ImGui::GetStyle().FramePadding.y * 2.0f;
-						if (ImGui::InputTextMultiline("##input", &name, { ImGui::GetContentRegionAvail().x, h })) {
-							changes = true;
-						}
+					auto need = std::count(name.begin(), name.end(), '\n') + 1;
+					auto h = ImGui::GetFontSize() * need + ImGui::GetStyle().FramePadding.y * 2.0f;
+					if (ImGui::InputTextMultiline("##input", &name, { ImGui::GetContentRegionAvail().x, h })) {
+						changes = true;
 					}
-					//if (ImGui::MenuItem("Delete")) {
-					//	changes = 10;
-					//}
 				}
 				if (ImGui::Button("Date")) {
 					ImGui::OpenPopup("edit");
@@ -109,37 +130,53 @@ namespace Notific {
 					changes = true;
 					SetupNextActivate();
 				}
-				if (ImGui::BeginMenu(PeriodName(period))) {
-					auto add = [&](Period p) {
-						if (ImGui::Selectable(PeriodName(p), p == period)) {
-							period = p;
+				{
+					char buf[100];
+					auto title = PeriodName(period);
+					if (period == Period::NDays) {
+						StrUtils::FormatTo(buf, "{} {}", days_period, PeriodName(Period::NDays));
+						title = buf;
+					}
+
+					if (ImGui::Button(title)) {
+						ImGui::OpenPopup("menu2");
+					}
+					with_Popup("menu2") {
+					//if (ImGui::BeginMenu(title)) {
+						auto add = [&](Period p) {
+							if (ImGui::Selectable(PeriodName(p), p == period)) {
+								period = p;
+								changes = true;
+							}
+							};
+						add(Period::OneTime);
+						add(Period::Month);
+						add(Period::Year);
+
+						//if(ImGui::InputInt(LOC("Days"), &day_period, 1,
+						ImGui::SetNextItemWidth(ImGui::CalcTextSize("1111").x * 4);
+						if (ImGui::InputInt(PeriodName(Period::NDays), &days_period, 1, 10)) {
+							correct_days_period();
+							period = Period::NDays;
 							changes = true;
 						}
-						};
-					add(Period::OneTime);
-					add(Period::Month);
-					//if (ImGui::MenuItem("OneTime")) {
-					//	changes = 10;
-					//}
-					ImGui::EndMenu();
+					}
 				}
+
+
 
 				{
 					auto text = (const char*)u8"x";
-					auto sz = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.x;
+					auto w = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.x;
 					//float w = ImGui::CalcTextSize(text).x + ImGui::GetStyle().FramePadding.x * 2.f + ImGui::GetStyle().ItemSpacing.x;
-					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - sz);
-					if (ImGui::Button(text, {sz,0})) { changes = 10; }
+					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - w);
+					if (ImGui::Button(text, {w,0})) { changes = 10; }
 				}
 
 				ImGui::EndMenuBar();
 			}
 
 
-			{
-				set_ID(++id);
-
-			}
 
 			//ImGui::SameLine();
 			ImGui::Text(next_activ_string.c_str());
@@ -150,7 +187,7 @@ namespace Notific {
 				auto delt = DeltToNow(nextActivate);
 				auto days = std::chrono::duration_cast<std::chrono::days>(delt);
 				if (days.count() >= 1) {
-					sprintf_s(buf, "%d days", days.count());
+					StrUtils::Sprintf(buf, "%d days", days.count());
 				}
 				else {
 					auto hh = std::chrono::duration_cast<std::chrono::hours>(delt);
@@ -159,13 +196,13 @@ namespace Notific {
 					delt -= mm;
 					auto ss = std::chrono::duration_cast<std::chrono::seconds>(delt);
 					if (hh.count() >= 1) {
-						sprintf_s(buf, "%d hours %d minutes", (int)hh.count(), (int)mm.count());
+						StrUtils::Sprintf(buf, "%d hours %d minutes", (int)hh.count(), (int)mm.count());
 					}
 					else {
-						if(mm.count() >= 1)	
-							sprintf_s(buf, "%d minutes", (int)mm.count());
-						else 
-							sprintf_s(buf, "%d sec", (int)ss.count());
+						if (mm.count() >= 1)
+							StrUtils::Sprintf(buf, "%d minutes", (int)mm.count());
+						else
+							StrUtils::Sprintf(buf, "%d sec", (int)ss.count());
 					}
 				}
 				ImGui::SameLine();
@@ -200,6 +237,7 @@ namespace Notific {
 					changes = true;
 				}
 			}
+
 			ImGui::EndChild();
 			ImGui::PopID();
 			ImGui::PopStyleVar();

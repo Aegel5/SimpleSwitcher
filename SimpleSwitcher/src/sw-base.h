@@ -37,11 +37,11 @@
 #include <codecvt>
 #include <cassert>
 #include <future>
+#include <random>
 
 #include "imgui.h"
 #include "imgui_sugar.hpp"
 #include "imgui_stdlib.h"
-#include "utils/ImGuiUtils.h"
 
 // утилиты
 #include "core/inc_all.h"
@@ -58,6 +58,7 @@
 #include "utils/layout-utils.h"
 #include "utils/TimePoint.h"
 #include "utils/win_utils.h"
+#include "utils/ImGuiUtils.h"
 
 
 // base

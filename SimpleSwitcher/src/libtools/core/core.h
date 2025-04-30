@@ -76,3 +76,6 @@ inline void SwZeroMemory(T& t)
 #define MAKE_SHARED(x) std::make_shared<DECLTYPE_DECAY(x)::element_type>()
 #define MAX_FOR(x) std::numeric_limits<DECLTYPE_DECAY(x)>::max()
 
+using std::numeric_limits;
+
+inline void Clamp(auto& v, auto l, auto h) {	v = std::clamp(v, (DECLTYPE_DECAY(v))l, (DECLTYPE_DECAY(v))h);}

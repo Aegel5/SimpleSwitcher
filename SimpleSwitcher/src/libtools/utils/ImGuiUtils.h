@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 namespace ImGuiUtils {
+
 	inline void ToCenter(bool always = false) {
 		auto rec = ImGui::GetPlatformIO().Monitors[0].MainSize;
 		rec.x *= 0.5f;
@@ -32,4 +33,16 @@ namespace ImGuiUtils {
 			}
 		}
 	};
+
+
+	//inline float ButtonRightFrom(UStr text, int& new_offset, int w =0, float offset = 0) { // temporary solution
+	//	auto cur = ImGui::GetCursorPos();
+	//	w = ImGui::CalcTextSize(text).x + ImGui::GetStyle().FramePadding.x * 2.f + ImGui::GetStyle().ItemSpacing.x;
+	//	auto r = ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - w - offset;
+	//	ImGui::SetCursorPosX(r);
+	//	auto res = false;
+	//	if (ImGui::Button(text)) { res = true; }
+	//	ImGui::SetCursorPos(cur);
+	//	return res;
+	//}
 }

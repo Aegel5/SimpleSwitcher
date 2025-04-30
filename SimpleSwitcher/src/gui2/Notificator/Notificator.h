@@ -4,20 +4,45 @@
 
 namespace Notific {
 
-	struct Settings {
+	struct Folder {
+		string name = LOC("Folder");
 		std::vector<Entry> list;
+	};
+
+	struct Settings {
+		std::vector<Folder> folders;
+		int cur_folder_index = 0;
 	};
 
 	class Notificator : public ImGuiUtils::WindowHelper {
 		Settings settings;
-		void Save();
+		void SaveRequest() {
+			need_save = true;
+		}
+		void SaveCheck() {
+			if (need_save) {
+				need_save = false;
+				Save();
+			}
+		}
+		bool need_save = false;
 		void Load();
+		void Save();
 		bool need_show = false;
 		HWND last_hwnd = 0;
-		std::vector<Entry>& entries;
+		std::generator<Entry&> all_entries() {
+			for (auto& folder : settings.folders) {
+				for (auto& it : folder.list) {
+					co_yield it;
+				}
+			}
+		}
 	public:
-		Notificator() : entries(settings.list) {
+		Notificator() {
 			Load();
+		}
+		~Notificator() {
+			SaveCheck();
 		}
 
 		bool IsVisible() { 
@@ -26,23 +51,26 @@ namespace Notific {
 
 		bool Process() {
 			need_show = false;
-			for (auto& it : entries) {
+			for (auto& it : all_entries()) {
 				if (it.IsTrigger()) {
 					it.AdjastActiveString();
 					need_show = true;
 					break;
 				}
 			}
+			SaveCheck();
 			return need_show;
 		}
 
 		void DrawNotify() {
 			if (!need_show) return;
-			for (auto& it : entries) {
+
+
+			for (auto& it : all_entries()) {
 				if (it.IsTrigger()) {
 					bool val = true;
 					ImGuiUtils::ToCenter(true);
-					ImGui::Begin("Notification", &val, ImGuiWindowFlags_NoSavedSettings);
+					ImGui::Begin(LOC("Event!"), &val, ImGuiWindowFlags_NoSavedSettings| ImGuiWindowFlags_AlwaysAutoResize);
 					{
 						HWND hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
 						if (hwnd != 0 && last_hwnd != hwnd) {
@@ -52,19 +80,15 @@ namespace Notific {
 						}
 					}
 
-					ImGui::Text("Event:");
-					ImGui::SameLine();
-					ImGui::Text(it.name.c_str());
+					ImGui::TextWrapped(it.name.c_str());
 					if (ImGui::Button("Got it!")) {
 						it.SetupNextActivate();
-						Save();
+						SaveRequest();
 					}
 					ImGui::SameLine();
 					if (ImGui::Button("Remain me tomorow...")) {
-						auto now = Convert(Now());
-						now.AddDay();
-						it.SetActivate(Convert(now));
-						Save();
+						it.SetActivate(Now() + days(1));
+						SaveRequest();
 					}
 
 					ImGui::End();
@@ -89,21 +113,72 @@ namespace Notific {
 			process_helper();
 
 			int id = 1;
-			for (int i = 0; i < entries.size(); i++) {
-				auto cur = entries[i].Draw(id);
-				if (cur == 10) {
-					Utils::RemoveAt(entries, i);
-					i--;
+
+			// left
+			{
+				auto w = ImGui::GetFontSize() * 15;
+				ImGui::BeginChild("left pane", ImVec2(w, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX);
+
+				for (int i = 0; i < settings.folders.size(); i++) {
+					auto& folder = settings.folders[i];
+					{
+						set_ID(id++);
+						if (ImGui::Selectable(folder.name.c_str(), i == settings.cur_folder_index)) {
+							settings.cur_folder_index = i;
+						}
+					}
+					with_PopupContextItem() {
+						if (ImGui::InputText("##edit_f", &folder.name, ImGuiInputTextFlags_None)) {
+							SaveRequest();
+						}
+						if (ImGui::Selectable(LOC("Delete"))) {
+							Utils::RemoveAt(settings.folders, i);
+							i--;
+							SaveRequest();
+						}
+					}
 				}
-				if (cur) {
-					Save();
+
+
+				if (ImGui::Button("+", { ImGui::GetFrameHeight(),0 })) {
+					settings.folders.emplace_back();
+					SaveRequest();
 				}
+
+				ImGui::EndChild();
 			}
 
-			if (ImGui::Button("+", { ImGui::GetFrameHeight(),0 })) {
-				entries.emplace_back();
-				entries.back().SetPoint(Now());
-				Save();
+			ImGui::SameLine();
+			id += 1000;
+
+			// right
+			{
+
+				ImGui::BeginGroup();
+
+				for (int iFolder = -1; auto & folder : settings.folders) {
+					iFolder++;
+					if (iFolder == settings.cur_folder_index) {
+						for (int i = 0; i < folder.list.size(); i++) {
+							auto& entr = folder.list[i];
+							auto cur = entr.Draw(id);
+							if (cur == 10) {
+								Utils::RemoveAt(folder.list, i);
+								i--;
+							}
+							if (cur) {
+								SaveRequest();
+							}
+						}
+						if (ImGui::Button("+", { ImGui::GetFrameHeight(),0 })) {
+							auto& res = folder.list.emplace_back();
+							res.SetPoint(Now());
+							SaveRequest();
+						}
+					}
+				}
+
+				ImGui::EndGroup();
 			}
 
 			ImGui::End();

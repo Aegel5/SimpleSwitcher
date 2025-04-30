@@ -102,7 +102,7 @@ int StartGui(bool show)
 		if (notif.Process()) {
 			ImWantNewFrameWithDelay(0);
 		}
-		}, 1000);
+		}, 2000);
 
 	auto GuiStep = [&]() {
 		// Handle window being minimized or screen locked
