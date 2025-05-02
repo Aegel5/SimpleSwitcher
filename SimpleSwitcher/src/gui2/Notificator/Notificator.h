@@ -127,14 +127,17 @@ namespace Notific {
 							settings.cur_folder_index = i;
 						}
 					}
-					with_PopupContextItem() {
-						if (ImGui::InputText("##edit_f", &folder.name, ImGuiInputTextFlags_None)) {
-							SaveRequest();
-						}
-						if (ImGui::Selectable(LOC("Delete"))) {
-							Utils::RemoveAt(settings.folders, i);
-							i--;
-							SaveRequest();
+					with_ID(id++) {
+						if (ImGui::BeginPopupContextItem("ctx1")) {
+							if (ImGui::InputText("##edit_f", &folder.name, ImGuiInputTextFlags_None)) {
+								SaveRequest();
+							}
+							if (ImGui::Selectable(LOC("Delete"))) {
+								Utils::RemoveAt(settings.folders, i);
+								i--;
+								SaveRequest();
+							}
+							ImGui::EndPopup();
 						}
 					}
 				}

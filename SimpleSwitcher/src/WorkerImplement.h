@@ -22,7 +22,7 @@ class WorkerImplement
 public:
 
 	WorkerImplement() {
-		IFS_LOG(PathUtils::GetPath_fileExe_lower(m_sSelfExeName));
+		//IFS_LOG(PathUtils::GetPath_fileExe_lower(m_sSelfExeName));
 		TimerClear();
 		TimerCheckLay();
 	}
@@ -221,7 +221,7 @@ private:
 	CClipWorker m_clipWorker; 
 	std::wstring m_savedClipData;
 	HotKeyType m_lastRevertRequest = hk_NULL;
-	std::wstring m_sSelfExeName;
+	//std::wstring m_sSelfExeName;
 	CycleRevertList m_cycleList;
 	CurStateWrapper m_curStateWrap;
 	bool clear_alfter_selected = false;

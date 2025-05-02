@@ -186,15 +186,13 @@ int StartGui(bool show)
 					if (GetMessage(&msg, 0, 0, 0) <= 0) { return; }	proc();
 				}
 				else {
-					auto delay = wantFrameDelay;
-					wantFrameDelay = MAX_FOR(wantFrameDelay);
-					if (delay == 0) {
+					if (wantFrameDelay <= 0) {
 						framesToDraw = 3;
 					}
 					else {
 						TimePoint start;
 						start.SetNow();
-						auto res = ::MsgWaitForMultipleObjectsEx(0, NULL, delay, QS_ALLINPUT, MWMO_INPUTAVAILABLE | MWMO_ALERTABLE);
+						auto res = ::MsgWaitForMultipleObjectsEx(0, NULL, wantFrameDelay, QS_ALLINPUT, MWMO_INPUTAVAILABLE | MWMO_ALERTABLE);
 						if (res == WAIT_TIMEOUT) {
 							framesToDraw = 3;
 						}
@@ -202,7 +200,7 @@ int StartGui(bool show)
 							if (!peek()) return;
 							if (framesToDraw == 0) {
 								// continue  wait
-								wantFrameDelay = std::max(delay - start.DeltToNowMs(), 0);
+								wantFrameDelay = std::max(wantFrameDelay - start.DeltToNowMs(), 0);
 							}
 						}
 					}
@@ -210,6 +208,7 @@ int StartGui(bool show)
 				continue;
 			}
 
+			wantFrameDelay = MAX_FOR(wantFrameDelay); // очищаем каждый фрейм, следующая итерация может заново поставить, если нужно.
 			GuiStep();
 		}
 	};

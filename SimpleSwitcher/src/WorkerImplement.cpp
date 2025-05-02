@@ -279,14 +279,14 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 		RETURN_SUCCESS;
 	}
 
-	bool allow_do_revert = true;
+	//bool allow_do_revert = true;
 
 	GETCONF;
 
-	if (m_sTopProcName == m_sSelfExeName) {
-		LOG_ANY(L"Skip hotkey in self program");
-		allow_do_revert = false;
-	}
+	//if (m_sTopProcName == m_sSelfExeName) {
+	//	LOG_ANY(L"Skip hotkey in self program");
+	//	allow_do_revert = false;
+	//}
 
 	if (TestFlag(typeRevert, hk_RunProgram_flag)) {
 		int i = typeRevert;
@@ -368,8 +368,8 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 
 	// REVERT AND CHANGE LAYOUT
 
-	if (!allow_do_revert)
-		RETURN_SUCCESS;
+	//if (!allow_do_revert)
+	//	RETURN_SUCCESS;
 
 	if (Utils::is_in(typeRevert, hk_RevertSelelected, hk_toUpperSelected)) {
 		LOG_ANY(L"save buff");

@@ -106,6 +106,12 @@ namespace Notific {
 			//SetPoint(Now());
 		}
 
+		UView GetLine(const string& s) {
+			auto i = s.find("\n");
+			if (i != -1) return { s.c_str(), i };
+			return { s.c_str(), s.length() };
+		}
+
 		int Draw(int& id) {
 			int changes = 0;
 			ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
@@ -113,6 +119,18 @@ namespace Notific {
 			ImGui::BeginChild("", {}, ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_Borders | ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_MenuBar);
 			
 			if (ImGui::BeginMenuBar()) {
+				//{
+				//	char buf[200];
+				//	StrUtils::FormatTo(buf, "{}###{}", GetLine(name), ++id);
+				//	if (ImGui::BeginMenu(buf)) {
+				//		auto need = std::count(name.begin(), name.end(), '\n') + 1;
+				//		auto h = ImGui::GetFontSize() * need + ImGui::GetStyle().FramePadding.y * 2.0f;
+				//		if (ImGui::InputTextMultiline("##input", &name, { ImGui::GetContentRegionAvail().x, h })) {
+				//			changes = true;
+				//		}
+				//		ImGui::EndMenu();
+				//	}
+				//}
 				if (ImGui::Button(name.c_str())) {
 					ImGui::OpenPopup("menu");
 				}

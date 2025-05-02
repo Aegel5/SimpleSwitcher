@@ -1,4 +1,4 @@
-// dear imgui, v1.92.0 WIP
+﻿// dear imgui, v1.92.0 WIP
 // (headers)
 
 // Help:
@@ -322,7 +322,7 @@ typedef ImU64 ImTextureID;          // Default: store a pointer or an integer fi
 // [SECTION] Dear ImGui end-user API functions
 // (Note that ImGui:: being a namespace, you can add extra ImGui:: functions in your own separate file. Please don't modify imgui source files!)
 //-----------------------------------------------------------------------------
-
+void ImWantNewFrameWithDelay(int ms); // IMGUI_PATCH_TODO_FORK
 namespace ImGui
 {
     // Context creation and access

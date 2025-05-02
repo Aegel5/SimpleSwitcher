@@ -52,6 +52,8 @@ public:
 
 		if (ImGui::BeginCombo(title.c_str(), key_str.c_str(), ImGuiComboFlags_HeightLarge | ImGuiComboFlags_NoArrowButton)) {
 
+			ImWantNewFrameWithDelay(60);
+
 			popup_open = true;
 
 			if (ImGui::IsWindowAppearing()) {
@@ -63,16 +65,16 @@ public:
 				auto cur = last_type.load();
 				auto [vk, oper] = cur;
 				if (vk != 0) {
+					last_type.exchange({});
 					if (!left_right) {
 						vk = CHotKey::Normalize(vk);
 					}
-					last_type.exchange({});
 					if (oper == KEY_STATE_DOWN) {
 						state.Add(vk, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_NO_STRICK_MODS_CHECK);
 						SetKey(state);
 					}
 					else {
-						state.Remove(vk, false);
+						state.Clear();
 					}
 				}
 			}
