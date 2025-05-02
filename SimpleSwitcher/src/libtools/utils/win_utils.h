@@ -32,6 +32,23 @@ namespace WinUtils {
 	inline void PostMsg(HWND hwnd, UINT msg, WPARAM wparm = 0) {
 		if(hwnd != 0) PostMessage(hwnd, msg, wparm, 0);
 	}
+
+	inline SpanByte GetResource(TStr id) {
+
+		auto hModule = GetModuleHandle(NULL);
+
+		HRSRC hResource = FindResource(hModule, id, RT_RCDATA);
+		if (!hResource) return {};
+
+		HGLOBAL hLoadedResource = LoadResource(hModule, hResource);
+		if (!hLoadedResource) return {};
+
+		void* pData = LockResource(hLoadedResource);
+		DWORD resourceSize = SizeofResource(hModule, hResource);
+
+		return { (std::byte*)pData, resourceSize };
+
+	}
 }
 
 

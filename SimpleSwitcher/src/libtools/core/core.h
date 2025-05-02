@@ -18,6 +18,8 @@ using std::wstring;
 using std::string;
 using namespace std::string_literals;
 
+using SpanByte = std::span<std::byte>;
+
 template <typename T1, typename T2>
 inline bool TestFlagAll(T1 V, T2 F)
 {
