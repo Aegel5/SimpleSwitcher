@@ -31,6 +31,8 @@ MAKE_AUTO_CLEANUP(HMODULE, ::FreeLibrary, nullptr, CAutoHMODULE)
 MAKE_AUTO_CLEANUP(SC_HANDLE, ::CloseServiceHandle, nullptr, CAutoSCHandle)
 MAKE_AUTO_CLEANUP(LPVOID, ::LocalFree, nullptr, CAutoWinMem)
 MAKE_AUTO_CLEANUP(LPVOID, ::GlobalUnlock, nullptr, CAutoGlobalLock)
+MAKE_AUTO_CLEANUP(HICON, ::DestroyIcon, nullptr, CAutoHIcon)  // todo use unique_ptr
+MAKE_AUTO_CLEANUP(HBITMAP, ::DeleteObject, nullptr, CAutoHBitmap)
 
 class CAutoWinEvent
 {

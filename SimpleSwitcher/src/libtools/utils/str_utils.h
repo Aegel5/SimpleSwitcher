@@ -227,11 +227,20 @@ namespace StrUtils
 		}
 	}
 
+	namespace details {
+		inline auto converter() {
+			using convert_typeX = std::codecvt_utf8<wchar_t>;
+			return std::wstring_convert<convert_typeX, wchar_t> {};
+		}
+	}
+
 	inline std::string Convert(TStr wstr) {
 		using convert_typeX = std::codecvt_utf8<wchar_t>;
 		std::wstring_convert<convert_typeX, wchar_t> converterX;
 		return converterX.to_bytes(wstr);
 	}
+	inline std::wstring Convert(UStr str) { return details::converter().from_bytes(str); }
+
 	inline std::string Convert(const std::wstring& wstr) {
 		return Convert(wstr.c_str());
 	}
