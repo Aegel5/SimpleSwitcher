@@ -14,18 +14,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 
 	SetLogLevel(Utils::IsDebug() ? LOG_LEVEL_2 : LOG_LEVEL_DISABLE);
-	__g_config.reset(new ProgramConfig());
-	auto errLoadConf = LoadConfig(*__g_config);
-	if (errLoadConf != TStatus::SW_ERR_SUCCESS) {
-		IFS_LOG(errLoadConf);
+
+	{
+		__g_config = MAKE_SHARED(__g_config);
+		auto errLoadConf = LoadConfig(*__g_config);
+		if (errLoadConf != TStatus::SW_ERR_SUCCESS) {
+			IFS_LOG(errLoadConf);
 		//ShowMessage("Error load config"); // todo check
-	}
-	else {
-		if (__g_config->config_version != SW_VERSION) {
-			__g_config->config_version = SW_VERSION;
-			SaveConfigWith([](auto cfg) {}); // пересохраним конфиг, чтобы туда добавились все последние настройки, которые заполнены по-умолчанию.
+		}
+		else {
+			if (__g_config->config_version != SW_VERSION) {
+				__g_config->config_version = SW_VERSION;
+				SaveConfigWith([](auto cfg) {}); // пересохраним конфиг, чтобы туда добавились все последние настройки, которые заполнены по-умолчанию.
+			}
 		}
 	}
+
 	setlocale(LC_ALL, "en_US.utf8");
 	IFS_LOG(update_cur_dir());
 	LOG_ANY("Start program {}", SW_VERSION);
