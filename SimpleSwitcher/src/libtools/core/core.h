@@ -81,3 +81,8 @@ inline void SwZeroMemory(T& t)
 using std::numeric_limits;
 
 inline void Clamp(auto& v, auto l, auto h) {	v = std::clamp(v, (DECLTYPE_DECAY(v))l, (DECLTYPE_DECAY(v))h);}
+
+struct Vec_f2 { float x = 0; float y = 0; };
+struct Vec_i2 { int x = 0; int y = 0; };
+
+inline auto RoundToInt(auto v) { return (int)std::round(v); }

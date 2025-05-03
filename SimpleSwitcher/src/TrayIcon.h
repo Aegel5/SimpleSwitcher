@@ -7,13 +7,13 @@ class TrayIcon {
 	uint64_t last_lay_cnt = 0;
 	WinTray tray;
 	HICON app_icon = 0;
-	Vec2 GetSize() {
+	Vec_i2 GetSize() {
 		int iconWidth = GetSystemMetrics(SM_CXSMICON);
 		int iconHeight = GetSystemMetrics(SM_CYSMICON);
 		int bigIconWidth = GetSystemMetrics(SM_CXICON);
 		int bigIconHeight = GetSystemMetrics(SM_CYICON);
 		auto scale = WinUtils::GetDpiMainMonScale();
-		return{ iconWidth * scale.x, iconHeight * scale.y };
+		return{ RoundToInt(iconWidth * scale.x), RoundToInt(iconHeight * scale.y) };
 	}
 public:
 	WinTray& TrayHandler() {

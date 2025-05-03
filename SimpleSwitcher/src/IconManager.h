@@ -62,7 +62,7 @@ public:
 		return inst;
 	}
 
-	Images::ImageIcon GetIcon(TStr contry_id, Vec2 size, bool is_gray = false) {
+	Images::ImageIcon GetIcon(TStr contry_id, Vec_i2 size, bool is_gray = false) {
 
 		// приоритет: 1) все границы равны. 2) 1 граница равна, другая меньше 3) самый большой размер
 		const auto& bndl = GetBundle(contry_id, is_gray);

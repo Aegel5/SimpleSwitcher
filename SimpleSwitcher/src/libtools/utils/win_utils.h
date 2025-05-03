@@ -4,7 +4,7 @@
 
 namespace WinUtils {
 
-	inline Vec2 GetDpiMainMonScale() {
+	inline Vec_f2 GetDpiMainMonScale() {
 
 		if (!WinApiInt::GetDpiForMonitor) {
 			return { 1.0f,1.0f };

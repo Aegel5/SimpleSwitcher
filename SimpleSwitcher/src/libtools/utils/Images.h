@@ -168,7 +168,8 @@ namespace Images {
 
 		inline TStatus LoadIcoFromFile(const char* file, ImageImpl* image) {
 
-			CAutoHIcon hIcon = (HICON)LoadImage(NULL, StrUtils::Convert(file).c_str(), IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
+			// возьмем самую большую что есть. todo - брать все размеры.
+			CAutoHIcon hIcon = (HICON)LoadImage(NULL, StrUtils::Convert(file).c_str(), IMAGE_ICON, 256, 256, LR_LOADFROMFILE); 
 			IFW_RET(hIcon.IsInvalid());
 
 			// Получаем HBITMAP из HICON
