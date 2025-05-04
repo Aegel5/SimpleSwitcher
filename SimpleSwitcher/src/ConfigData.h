@@ -40,16 +40,6 @@ struct CHotKeyList {
     }
 };
 
-struct CHotKeySet
-{
-    std::vector<CHotKey> def_list;
-    bool fUseDef = false;
-    HotKeyType hkId = hk_NULL;
-    CHotKeyList keys;
-
-};
-
-
 struct LayoutInfo {
     HKL layout = 0;
     bool enabled = true;

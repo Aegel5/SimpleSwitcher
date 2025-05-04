@@ -113,7 +113,7 @@ public:
 		GETCONF;
 		for (int i = -1; const auto & it : cfg->hotkeysList) {
 			i++;
-			hotbox.emplace_back(GetGuiTextForHk(it.hkId), it.keys.key(), it.def_list,
+			hotbox.emplace_back(GetGuiTextForHk(it.hkId), it.keys.key(), GetHk_Defaults(it.hkId),
 				[i](auto k) {
 					SaveConfigWith([i, k](auto p) {p->hotkeysList[i].keys.key() = k; });
 				});

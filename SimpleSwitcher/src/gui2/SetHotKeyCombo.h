@@ -10,7 +10,8 @@ class SetHotKeyCombo {
 	bool popup_open = false;
 
 	inline static bool left_right = false;
-	inline static std::atomic< std::pair<DWORD, KeyState>> last_type = {};
+	//inline static std::atomic< std::pair<DWORD, KeyState>> last_type = {};
+	inline static std::pair<DWORD, KeyState > last_type = {};
 	inline static CHotKey state;
 	inline static CAutoHHOOK hook;
 
@@ -38,8 +39,8 @@ class SetHotKeyCombo {
 		state.Clear();
 	}
 public:
-	SetHotKeyCombo(std::string title, CHotKey key, const std::vector<CHotKey>& def, auto&& apply) : title(std::move(title)), apply(apply) {
-		for (const auto& it : def) {
+	SetHotKeyCombo(std::string title, CHotKey key, auto&& def, auto&& apply) : title(std::move(title)), apply(apply) {
+		for (const CHotKey& it : def) {
 			defaults.push_back(StrUtils::Convert(it.ToString()));
 		}
 		SetKey(key,false);
@@ -62,10 +63,9 @@ public:
 			}
 
 			{
-				auto cur = last_type.load();
-				auto [vk, oper] = cur;
+				auto [vk, oper] = last_type;
 				if (vk != 0) {
-					last_type.exchange({});
+					last_type = {};
 					if (!left_right) {
 						vk = CHotKey::Normalize(vk);
 					}

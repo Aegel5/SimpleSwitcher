@@ -1,12 +1,35 @@
 ﻿#pragma once
 
 #include "ConfigData.h"
+#include "ConfigData_hk.h"
 
 class ProgramConfig {
+	struct CHotKeySet {
+		HotKeyType hkId = hk_NULL;
+		CHotKeyList keys;
+	};
 public:
 	static auto GetPath_Conf() { return PathUtils::GetPath_folder_noLower2() / L"SimpleSwitcher.json"; }
+
     ProgramConfig() {
-        GenerateListHK();
+
+		auto add = [&](HotKeyType type, bool usedef = false) {
+			hotkeysList.emplace_back(type);
+			if (usedef)
+				hotkeysList.back().keys.key() = *(GetHk_Defaults(type).begin());
+			};
+
+		add(hk_RevertLastWord,true);
+		add(hk_RevertSeveralWords,true);
+		add(hk_RevertAllRecentText,true);
+		add(hk_RevertSelelected,true);
+		add(hk_CycleSwitchLayout);
+		add(hk_EmulateCapsLock);
+		add(hk_toUpperSelected);
+		add(hk_ToggleEnabled,true);
+		add(hk_ShowMainWindow,true);
+		add(hk_ShowRemainderWnd);
+		add(hk_InsertWithoutFormat);
     }
 
     std::set <std::wstring> disableInPrograms;
@@ -108,8 +131,6 @@ public:
             }
         }
     }
-
-    void GenerateListHK();
 
 };
 
