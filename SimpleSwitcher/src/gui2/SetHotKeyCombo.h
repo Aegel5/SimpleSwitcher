@@ -5,9 +5,8 @@ class SetHotKeyCombo {
 	std::vector<std::string> defaults;
 	CHotKey key;
 	std::string key_str; // cache
-	using Apply = std::function<void(const CHotKey&)>;
-	Apply apply;
 	bool popup_open = false;
+	CHotKeyList* hotkeys;
 
 	inline static bool left_right = false;
 	//inline static std::atomic< std::pair<DWORD, KeyState>> last_type = {};
@@ -29,8 +28,11 @@ class SetHotKeyCombo {
 		if (key.Compare(k, CHotKey::COMPARE_STRICK_MODIFIER)) return;
 		key = k;
 		key_str = StrUtils::Convert(key.ToString());
-		if(apl)
-			apply(key);
+		if (apl) {
+			hotkeys->key() = key;
+			conf_gui()->hotkeysList[0].keys.key() = key;
+			SaveApplyGuiConfig();
+		}
 	}
 	void Init() {
 		if (hook.IsInvalid()) {
@@ -39,11 +41,11 @@ class SetHotKeyCombo {
 		state.Clear();
 	}
 public:
-	SetHotKeyCombo(std::string title, CHotKey key, auto&& def, auto&& apply) : title(std::move(title)), apply(apply) {
+	SetHotKeyCombo(std::string title, auto&& def, CHotKeyList* hotkeys) : title(std::move(title)), hotkeys(hotkeys) {
 		for (const CHotKey& it : def) {
 			defaults.push_back(StrUtils::Convert(it.ToString()));
 		}
-		SetKey(key,false);
+		SetKey(hotkeys->key(),false);
 	}
 	void Draw() {
 

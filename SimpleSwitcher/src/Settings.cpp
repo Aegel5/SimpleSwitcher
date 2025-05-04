@@ -116,72 +116,77 @@ namespace nlohmann {
 		)
 }
 
-TStatus LoadConfig(ProgramConfig& config) {
-	try {
+namespace cfg_details {
 
-		auto p = PathUtils::GetPath_folder_noLower2() / "SimpleSwitcher.json";
-		if (!std::filesystem::is_regular_file(p)){
-			// конфиг файла еще нет - считаем что загружены конфигом по-умолчанию.
-			RETURN_SUCCESS;
+	TStatus LoadConfig(ProgramConfig& cfg) {
+		try {
+
+			auto p = PathUtils::GetPath_folder_noLower2() / "SimpleSwitcher.json";
+			if (!std::filesystem::is_regular_file(p)) {
+				// конфиг файла еще нет - считаем что загружены конфигом по-умолчанию.
+				RETURN_SUCCESS;
+			}
+
+			std::ifstream ifs(p);
+
+			json data = json::parse(ifs, nullptr, true, true);
+			data.get_to(cfg);
+
+			const auto& arr = data["hotkeys"];
+
+			if (arr.is_object()) {
+				for (auto& elem : cfg.hotkeysList) {
+					auto key = HotKeyTypeName(elem.hkId);
+					if (key.empty()) continue;
+					auto it = arr.find(key);
+					if (it != arr.end()) {
+						elem.keys = it.value();
+					}
+				}
+			}
+
+			cfg.NormalizePaths();
+
+			if (cfg.force_DbgMode) {
+				SetLogLevel_info(cfg.logLevel);
+			}
+
+
+		}
+		catch (std::exception& e) {
+			LOG_ANY("error load={}", e.what());
+			return SW_ERR_JSON;
 		}
 
-        std::ifstream ifs(p);
 
-        json data = json::parse(ifs, nullptr, true, true);
-        data.get_to(config);
+		RETURN_SUCCESS;
+	}
 
-        const auto& arr = data["hotkeys"];
 
-        if (arr.is_object()) {
-            for (auto& elem : config.hotkeysList) {
-                auto key = HotKeyTypeName(elem.hkId);
-                if (key.empty()) continue;
-                auto it  = arr.find(key);
-                if (it != arr.end()) {
-					elem.keys = it.value();
-                }
-            }
-        }
+	TStatus Save_conf(const ProgramConfig& gui) {
+		try {
+			auto path = ProgramConfig::GetPath_Conf();
 
-        config.NormalizePaths();
+			json data = gui;
+			json hk_json;
 
-		if (config.force_DbgMode) {
-			SetLogLevel_info(config.logLevel);
+			for (auto& elem : gui.hotkeysList) {
+				auto hk = elem.hkId;
+				auto key = HotKeyTypeName(hk);
+				if (key.empty()) continue;
+				hk_json[key] = elem.keys;
+			}
+
+			data["hotkeys"] = hk_json;
+
+			std::ofstream outp(path);
+			outp << std::setw(4) << data << std::endl;
+
 		}
-        
+		catch (std::exception& e) {
+			return SW_ERR_JSON;
+		}
 
-    } catch (std::exception& e) {
-        return SW_ERR_JSON;
-    }
-
-
-    RETURN_SUCCESS;
-}
-
-
-
-TStatus _Save_conf(const ProgramConfig& gui) {
-    try {
-		auto path = ProgramConfig::GetPath_Conf();
-
-        json data = gui;
-        json hk_json;
-
-        for (auto& elem : gui.hotkeysList) {
-            auto hk = elem.hkId;
-            auto key = HotKeyTypeName(hk);
-            if (key.empty()) continue;
-            hk_json[key] = elem.keys;
-        }
-
-        data["hotkeys"] = hk_json;
-
-        std::ofstream outp(path);
-        outp << std::setw(4) << data << std::endl;
-
-    } catch (std::exception& e) {
-        return SW_ERR_JSON;
-    }
-
-    RETURN_SUCCESS;
+		RETURN_SUCCESS;
+	}
 }

@@ -2,8 +2,6 @@
 
 void MainWindow::DrawFrameActual() {
 
-	GETCONF;
-
 	ImGuiUtils::ToCenter();
 	ImGui::SetNextWindowSize(startsize, ImGuiCond_FirstUseEver);
 	ImGui::Begin(title.c_str(), &show_wnd, ImGuiWindowFlags_NoCollapse);
@@ -36,27 +34,22 @@ void MainWindow::DrawFrameActual() {
 
 			DrawMessage();
 
-			{
-				bool val = cfg->isMonitorAdmin;
-				if (ImGui::Checkbox(LOC("Work in programs running by admin"), &val)) {
-					SaveConfigWith([val](auto p) {p->isMonitorAdmin = val; });
-					if (!IsAdminOk()) g_enabled.TryEnable(false);
-					check_add_to_auto = autostart_get();
-				}
+			if (ImGui::Checkbox(LOC("Work in programs running by admin"), &conf_gui()->isMonitorAdmin)) {
+				SaveApplyGuiConfig();
+				if (!IsAdminOk()) g_enabled.TryEnable(false);
+				check_add_to_auto = autostart_get();
+			}
+
+			if (ImGui::Checkbox(LOC("Alternative mode layout change (emulate LAlt + Shift)"), &conf_gui()->AlternativeLayoutChange)) {
+				SaveApplyGuiConfig();
 			}
 
 			{
-				bool val = cfg->AlternativeLayoutChange;
-				if (ImGui::Checkbox(LOC("Alternative mode layout change (emulate LAlt + Shift)"), &val)) {
-					SaveConfigWith([val](auto p) {p->AlternativeLayoutChange = val; });
-				}
-			}
-
-			{
-				if (ImGui::BeginCombo(LOC("Set of flags"), cfg->flagsSet.c_str(), 0)) {
-					auto add = [&cfg](UStr s) {
-						if (ImGui::Selectable(s, cfg->flagsSet == s)) {
-							SaveConfigWith([&](auto p) {p->flagsSet = s; });
+				if (ImGui::BeginCombo(LOC("Set of flags"), conf_gui()->flagsSet.c_str(), 0)) {
+					auto add = [](UStr s) {
+						if (ImGui::Selectable(s, conf_gui()->flagsSet == s)) {
+							conf_gui()->flagsSet = s;
+							SaveApplyGuiConfig();
 							new_layout_request();
 						}
 						};
@@ -73,35 +66,28 @@ void MainWindow::DrawFrameActual() {
 				}
 			}
 
-			{
-				bool val = cfg->disableAccessebility;
-				if (ImGui::Checkbox(LOC("Disable the accessibility shortcut keys (5 SHIFT and others)"), &val)) {
-					SaveConfigWith([val](auto p) {p->disableAccessebility = val; });
-					ApplyAcessebil();
-				}
+			if (ImGui::Checkbox(LOC("Disable the accessibility shortcut keys (5 SHIFT and others)"), &conf_gui()->disableAccessebility)) {
+				SaveApplyGuiConfig();
+				ApplyAcessebil();
 			}
 
-			{
-				bool val = cfg->fClipboardClearFormat;
-				if (ImGui::Checkbox(LOC("Clear text format on Ctrl-C"), &val)) {
-					SaveConfigWith([val](auto p) {p->fClipboardClearFormat = val; });
-				}
+			if (ImGui::Checkbox(LOC("Clear text format on Ctrl-C"), &conf_gui()->fClipboardClearFormat)) {
+				SaveApplyGuiConfig();
 			}
 
 			{
 				bool val = GetLogLevel() > LOG_LEVEL_DISABLE;
 				if (ImGui::Checkbox(LOC("Enable debug log"), &val)) {
-					SetLogLevel_info(val ? conf_get_unsafe()->logLevel : LOG_LEVEL_DISABLE);
+					SetLogLevel_info(val ? conf_gui()->logLevel : LOG_LEVEL_DISABLE);
 				}
 			}
 
-
-
 			{
-				if (ImGui::BeginCombo(LOC("Theme"), cfg->theme.c_str(), 0)) {
+				if (ImGui::BeginCombo(LOC("Theme"), conf_gui()->theme.c_str(), 0)) {
 					for (const char* it : { "Dark","Light","Classic", "Ocean","Dark Relax" }) {
-						if (ImGui::Selectable(it, cfg->theme == it)) {
-							SaveConfigWith([&](auto p) {p->theme = it; });
+						if (ImGui::Selectable(it, conf_gui()->theme == it)) {
+							conf_gui()->theme = it;
+							SaveApplyGuiConfig();
 							SetStyle();
 						}
 					}
@@ -116,16 +102,9 @@ void MainWindow::DrawFrameActual() {
 			ImGui::AlignTextToFramePadding();
 			ImGui::TextLinkOpenURL("SimpleSwitcher.json", config_path.c_str());
 			ImGui::SameLine();
+
 			if (ImGui::Button("Reload")) {
-				auto conf = ConfPtr(new ProgramConfig());
-				auto errLoadConf = LoadConfig(*conf);
-				IFS_LOG(errLoadConf);
-				if (errLoadConf != SW_ERR_SUCCESS) {
-					ShowMessage(LOC("Error reading config"));
-				}
-				else {
-					_conf_set(conf);
-				}
+				Reinit(!cfg_details::ReloadGuiConfig());
 			}
 
 		}
@@ -136,12 +115,11 @@ void MainWindow::DrawFrameActual() {
 				it.Draw();
 			}
 			ImGui::SeparatorText("Language layouts");
-			for (int i = -1; const auto & it : cfg->layouts_info.info) {
+			for (int i = -1; auto & it : conf_gui()->layouts_info.info) {
 				i++;
 				with_ID(i+20) {
-					bool val = it.enabled;
-					if (ImGui::Checkbox("", &val)) {
-						SaveConfigWith([&](auto p) {p->layouts_info.info[i].enabled ^= 1; });
+					if (ImGui::Checkbox("", &it.enabled)) {
+						SaveApplyGuiConfig();
 					}
 				}
 				ImGui::SameLine();
@@ -165,18 +143,18 @@ void MainWindow::DrawFrameActual() {
 			//}
 
 			{
-				bool val = cfg->SkipLowLevelInjectKeys;
-				if (ImGui::Checkbox("SkipLowLevelInjectKeys", &val)) {
-					SaveConfigWith([val](auto p) {p->SkipLowLevelInjectKeys = val; });
+				if (ImGui::Checkbox("SkipLowLevelInjectKeys", &conf_gui()->SkipLowLevelInjectKeys)) {
+					SaveApplyGuiConfig();
 				}
 				ImGui::SetItemTooltip(LOC("Disable interception of keys sent to remote computer for RDP connection"));
 			}
 
 			{
-				if (ImGui::BeginCombo(LOC("Background"), cfg->background.c_str(), 0)) {
-					auto add = [&cfg, this](UStr s) {
-						if (ImGui::Selectable(s, cfg->background == s)) {
-							SaveConfigWith([&](auto p) {p->background = s; });
+				if (ImGui::BeginCombo(LOC("Background"), conf_gui()->background.c_str(), 0)) {
+					auto add = [this](UStr s) {
+						if (ImGui::Selectable(s, conf_gui()->background == s)) {
+							conf_gui()->background = s;
+							SaveApplyGuiConfig();
 							apply_background();
 						}
 						};

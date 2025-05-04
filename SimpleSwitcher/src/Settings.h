@@ -135,41 +135,74 @@ public:
 };
 
 
-using ConfPtr = std::shared_ptr<ProgramConfig>;
-inline constinit ConfPtr __g_config; 
-inline auto conf_get_unsafe() { // Проблемы синтаксиса conf_get_unsafe()->...  1) std::generator не держит temporary 2) множественном вызов даст другую версию.
-	assert(__g_config.get() != 0);
-    auto res = std::const_pointer_cast<const ProgramConfig>(__g_config);
-    return res; 
-}
+namespace cfg_details {
 
-#define GETCONF auto cfg = conf_get_unsafe();
+	using ConfPtr = std::shared_ptr<ProgramConfig>;
 
+	inline constinit ConfPtr g_config;
+	inline constinit std::unique_ptr<ProgramConfig> g_guiCfg;
 
-TStatus LoadConfig(ProgramConfig& sets);
-TStatus _Save_conf(const ProgramConfig& gui);
+	inline auto conf_gui() { return g_guiCfg.get(); }
 
-inline void _conf_set(ConfPtr& conf) {
-    __g_config.swap(conf);
-    conf.reset();
-    IFS_LOG(_Save_conf(*__g_config)); // сразу сохраняем в файл.
-}
+	TStatus LoadConfig(ProgramConfig& cfg);
+	TStatus Save_conf(const ProgramConfig& gui);
 
-inline void SaveConfigWith(auto change) {
-    ConfPtr conf{ new ProgramConfig(*conf_get_unsafe()) };
-    change(conf.get());
-    _conf_set(conf);
+	inline void ApplyGuiConfig() {
+		ConfPtr ptr = MAKE_SHARED(ptr);
+		*ptr = *conf_gui();
+		g_config.swap(ptr);
+	}
+
+	inline void SaveGuiConfig() {
+		IFS_LOG(Save_conf(*conf_gui()));
+	}
+
+	inline bool ReloadGuiConfig() {
+		bool res = true;
+		if (!g_guiCfg) {
+			g_guiCfg.reset(new ProgramConfig());
+		}
+		auto errLoadConf = LoadConfig(*conf_gui());
+		if (errLoadConf != TStatus::SW_ERR_SUCCESS) {
+			IFS_LOG(errLoadConf);
+			res = false;
+		}
+		else {
+			if (conf_gui()->config_version != SW_VERSION) {
+				conf_gui()->config_version = SW_VERSION;
+				SaveGuiConfig();
+			}
+		}
+		ApplyGuiConfig();
+		return res;
+	}
 }
 
 /*
 Многопоточный конфиг
-
-Чтение:
-    GETCONF, далее используем cfg.
-Запись:
-    SaveConfigWith()
-
+	conf_gui() - read/write from gui thread
+	conf_get_unsafe, GETCONF - read from any threads
 */
+
+inline auto conf_get_unsafe() { // Проблемы синтаксиса conf_get_unsafe()->...  1) std::generator не держит temporary 2) множественном вызов даст другую версию.
+    auto res = std::const_pointer_cast<const ProgramConfig>(cfg_details::g_config);
+    return res; 
+}
+
+inline auto conf_gui() { return cfg_details::conf_gui();}
+
+#define GETCONF auto cfg = conf_get_unsafe();
+
+
+inline void SaveApplyGuiConfig() {
+	cfg_details::ApplyGuiConfig();
+	cfg_details::SaveGuiConfig();
+}
+
+
+
+
+
 
 
 

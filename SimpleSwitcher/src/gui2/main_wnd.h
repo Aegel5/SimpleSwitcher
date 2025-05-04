@@ -15,6 +15,7 @@ class MainWindow : public ImGuiUtils::WindowHelper {
 	bool show_demo_window = false;
 	bool ShowStyleEditor = false;
 	UStr show_message = 0;
+	int need_show_message = 0;
 	std::vector<SetHotKeyCombo> hotbox;
 	std::vector<SetHotKeyCombo> layout_hotkeys;
 	std::vector<SetHotKeyCombo> layout_win_hotkeys;
@@ -44,7 +45,7 @@ private:
 	}
 	void apply_background() {
 		namespace fs = std::filesystem;
-		auto name = conf_get_unsafe()->background;
+		auto name = conf_gui()->background;
 		auto p = PathUtils::GetPath_folder_noLower2() / "Background" / name;
 		auto img = Images::LoadImageFromFile(p.string().c_str());
 		if (!img->IsOk()) { background->clear();  return; }
@@ -58,10 +59,17 @@ private:
 	void update_flags() { flagsSets = { std::from_range, IconMgr::Inst().ScanFlags() }; IconMgr::Inst().ClearCache(); }
 	void ShowMessage(UStr msg) {
 		show_message = msg;
-		ImGui::OpenPopup(LOC("Message"));
+		need_show_message = 1;
 	}
 	void ShowMessageAdmin() { ShowMessage(LOC("Need admin right")); }
+	void ShowMessageConfError() { ShowMessage(LOC("Load config error")); }
 	void DrawMessage() {
+		if (!need_show_message) return;
+		if (need_show_message == 1) {
+			auto title = LOC("Message");
+			if(!ImGui::IsPopupOpen(title)) ImGui::OpenPopup(title);
+			need_show_message = 2;
+		}
 		ImVec2 center = ImGui::GetWindowViewport()->GetCenter();
 		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 		if (ImGui::BeginPopupModal(LOC("Message"), 0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings)) {
@@ -70,35 +78,33 @@ private:
 			if (ImGui::Button("OK", ImVec2(ImGui::CalcTextSize("OK").x * 4, 0))) { ImGui::CloseCurrentPopup(); }
 			ImGui::EndPopup();
 		}
+		else {
+			need_show_message = 0;
+		}
 	}
 	void SyncLays() {
+
 		SyncLayouts();
-		GETCONF;
+
 		std::vector<CHotKey> def_list = {
 			CHotKey(VK_LCONTROL).SetKeyup(),
 			CHotKey(VK_RCONTROL).SetKeyup(),
 			CHotKey(VK_LSHIFT).SetDouble(),
 			CHotKey(VK_RSHIFT).SetDouble()
 		};
+
 		layout_hotkeys.clear();
 		layout_win_hotkeys.clear();
-		for (int i = -1; const auto & it : cfg->layouts_info.info) {
-			i++;
-			layout_hotkeys.emplace_back(StrUtils::Convert(Utils::GetNameForHKL(it.layout)), it.hotkey.key(), def_list,
-				[i](auto key) {
-					SaveConfigWith([&](auto conf) {
-						if (i >= conf->layouts_info.info.size()) return;
-						auto& rec = conf->layouts_info.info[i];
-						rec.hotkey.key() = key;
-						});
-				}
-			);
-
+		for (auto & it : conf_gui()->layouts_info.info) {
+			layout_hotkeys.emplace_back(
+				StrUtils::Convert(Utils::GetNameForHKL(it.layout)),
+				def_list,
+				&it.hotkey);
 		}
 	}
 	void DrawFrameActual();
 public:
-	MainWindow(bool show) {
+	MainWindow(bool show, bool conf_err) {
 		show_wnd = show;
 		update_backg();
 		apply_background();
@@ -110,20 +116,23 @@ public:
 			"SimpleSwitcher {}{}{}###main_wnd", SW_VERSION,
 			Utils::IsSelfElevated() ? " Administrator" : "",
 			Utils::IsDebug() ? " DEBUG" : "");
-		GETCONF;
-		for (int i = -1; const auto & it : cfg->hotkeysList) {
-			i++;
-			hotbox.emplace_back(GetGuiTextForHk(it.hkId), it.keys.key(), GetHk_Defaults(it.hkId),
-				[i](auto k) {
-					SaveConfigWith([i, k](auto p) {p->hotkeysList[i].keys.key() = k; });
-				});
-		}
 		check_add_to_auto = autostart_get();
-		SyncLays();
 		config_path = StrUtils::Convert(std::format(L"file://{}", ProgramConfig::GetPath_Conf().wstring()));
 		update_flags();
 		startsize.x *= scale;
 		startsize.y *= scale;
+		Reinit(conf_err);
+	}
+	void Reinit(bool conf_err) {
+		if (conf_err) {
+			ShowMessageConfError();
+			return;
+		}
+		hotbox.clear();
+		for (auto& it : conf_gui()->hotkeysList) {
+			hotbox.emplace_back(GetGuiTextForHk(it.hkId), GetHk_Defaults(it.hkId), &it.keys);
+		}
+		SyncLays();
 	}
 
 	void DrawFrame() {

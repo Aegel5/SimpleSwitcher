@@ -17,7 +17,7 @@ inline void SyncLayouts() {
 		return false;
 		};
 
-	auto info_copy = conf_get_unsafe()->layouts_info;
+	auto& info_copy = conf_gui()->layouts_info;
 	auto& info = info_copy.info;
 	bool was_changes = false;
 
@@ -41,13 +41,13 @@ inline void SyncLayouts() {
 
 	if (was_changes) {
 		// пересохраним если были изменения.
-		SaveConfigWith([&](auto conf) {  conf->layouts_info = info_copy; });
+		SaveApplyGuiConfig();
 	}
 
 }
 
 inline void SetStyle() {
-	GETCONF;
+	auto* cfg = conf_gui();
 	const auto& theme = cfg->theme;
 	auto& style = ImGui::GetStyle();
 

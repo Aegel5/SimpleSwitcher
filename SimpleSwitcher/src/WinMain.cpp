@@ -9,26 +9,13 @@ inline TStatus update_cur_dir() {
 	IFW_RET(SetCurrentDirectory(dir.c_str()));
 	RETURN_SUCCESS;
 }
-extern int StartGui(bool show);
+extern int StartGui(bool show, bool);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
 
 	SetLogLevel(Utils::IsDebug() ? LOG_LEVEL_2 : LOG_LEVEL_DISABLE);
 
-	{
-		__g_config = MAKE_SHARED(__g_config);
-		auto errLoadConf = LoadConfig(*__g_config);
-		if (errLoadConf != TStatus::SW_ERR_SUCCESS) {
-			IFS_LOG(errLoadConf);
-		//ShowMessage("Error load config"); // todo check
-		}
-		else {
-			if (__g_config->config_version != SW_VERSION) {
-				__g_config->config_version = SW_VERSION;
-				SaveConfigWith([](auto cfg) {}); // пересохраним конфиг, чтобы туда добавились все последние настройки, которые заполнены по-умолчанию.
-			}
-		}
-	}
+	auto conf_ok = cfg_details::ReloadGuiConfig();
 
 	setlocale(LC_ALL, "en_US.utf8");
 	IFS_LOG(update_cur_dir());
@@ -50,7 +37,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	CoreWorker core;
 
-	StartGui(show);
+	StartGui(show, !conf_ok);
 
 	LOG_ANY("program exit");
 

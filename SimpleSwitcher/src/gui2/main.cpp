@@ -41,7 +41,7 @@ void ImWantNewFrameWithDelay(int ms) {
 }
 
 // Main code
-int StartGui(bool show)
+int StartGui(bool show, bool err_conf)
 {
     // Create application window
     //ImGui_ImplWin32_EnableDpiAwareness();
@@ -93,7 +93,7 @@ int StartGui(bool show)
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
 
-	MainWindow mainWindow(show);
+	MainWindow mainWindow(show, err_conf);
 	Notific::Notificator notif;
 	WinTimer timer;
 	TrayIcon trayIcon;
