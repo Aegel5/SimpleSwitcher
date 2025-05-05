@@ -34,6 +34,29 @@ namespace ImGuiUtils {
 		}
 	};
 
+	inline void Combo(UStr name, string& data, auto&& choices, auto&& apply) {
+		if (ImGui::BeginCombo(name, data.c_str(), 0)) {
+			if constexpr (std::is_invocable_v<DECLTYPE_DECAY(choices)>) {
+				for (UStr s : choices()) {
+					if (ImGui::Selectable(s, data == s)) {
+						data = s;
+						apply();
+					}
+				}
+			}
+			else {
+				for (UStr s : choices) {
+					if (ImGui::Selectable(s, data == s)) {
+						data = s;
+						apply();
+					}
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+	}
+
 
 	//inline float ButtonRightFrom(UStr text, int& new_offset, int w =0, float offset = 0) { // temporary solution
 	//	auto cur = ImGui::GetCursorPos();

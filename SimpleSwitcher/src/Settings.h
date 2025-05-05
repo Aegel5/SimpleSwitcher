@@ -95,8 +95,8 @@ public:
     bool separate_ext_several_words = false;
     CHotKey win_hotkey_cycle_lang { VK_LMENU, VK_SHIFT };
 	std::string theme = "Light";
-	//bool optimize_gui = false;
 	string background = "";
+	string gui_lang = "Russian";
 
     std::vector< CHotKeySet> hotkeysList;
     std::vector< RunProgramInfo> run_programs = { {.path = L"example: calc.exe"} };
@@ -199,7 +199,9 @@ inline void SaveApplyGuiConfig() {
 	cfg_details::SaveGuiConfig();
 }
 
-
+inline void ApplyLocalization() {
+	loc_details::g_loc.Reinit(conf_gui()->gui_lang.c_str());
+}
 
 
 

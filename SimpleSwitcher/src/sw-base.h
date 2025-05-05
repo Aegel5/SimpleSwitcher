@@ -38,6 +38,7 @@
 #include <cassert>
 #include <future>
 #include <random>
+//#include <flat_map>
 
 #include "imgui.h"
 #include "imgui_sugar.hpp"
@@ -64,7 +65,9 @@
 // base
 #include "ver.h"
 #include "consts.h"
+#include "Localizator.h"
 #include "Settings.h"
+
 
 // core-worker-utils
 #include "InjectSkipper.h"

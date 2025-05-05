@@ -45,35 +45,34 @@ void MainWindow::DrawFrameActual() {
 			}
 
 			{
-				if (ImGui::BeginCombo(LOC("Set of flags"), conf_gui()->flagsSet.c_str(), 0)) {
-					auto add = [](UStr s) {
-						if (ImGui::Selectable(s, conf_gui()->flagsSet == s)) {
-							conf_gui()->flagsSet = s;
-							SaveApplyGuiConfig();
-							new_layout_request();
-						}
-						};
-					add(ProgramConfig::showFlags_Nothing);
-					add(ProgramConfig::showFlags_AppIcon);
-					for (const auto& it : flagsSets) {
-						add(it.c_str());
+				ImGuiUtils::Combo(LOC("Set of flags"), conf_gui()->flagsSet,
+					[this]()-> std::generator<UStr> {
+						co_yield ProgramConfig::showFlags_Nothing;
+						co_yield ProgramConfig::showFlags_AppIcon;
+						for (const auto& it : flagsSets) co_yield it.c_str();
+					},
+					[] {
+						SaveApplyGuiConfig();
+						new_layout_request();
 					}
-					ImGui::EndCombo();
-				}
+				);
+
 				ImGui::SameLine();
 				if (ImGui::Button(LOC("Update"))) {
 					update_flags();
 				}
 			}
 
-			if (ImGui::Checkbox(LOC("Disable the accessibility shortcut keys (5 SHIFT and others)"), &conf_gui()->disableAccessebility)) {
+			if (ImGui::Checkbox(LOC("Disable the accessibility functions"), &conf_gui()->disableAccessebility)) {
 				SaveApplyGuiConfig();
 				ApplyAcessebil();
 			}
+			ImGui::SetItemTooltip(LOC("Sticking after 5 shift and others"));
 
 			if (ImGui::Checkbox(LOC("Clear text format on Ctrl-C"), &conf_gui()->fClipboardClearFormat)) {
 				SaveApplyGuiConfig();
 			}
+
 
 			{
 				bool val = GetLogLevel() > LOG_LEVEL_DISABLE;
@@ -83,28 +82,38 @@ void MainWindow::DrawFrameActual() {
 			}
 
 			{
-				if (ImGui::BeginCombo(LOC("Theme"), conf_gui()->theme.c_str(), 0)) {
-					for (const char* it : { "Dark","Light","Classic", "Ocean","Dark Relax" }) {
-						if (ImGui::Selectable(it, conf_gui()->theme == it)) {
-							conf_gui()->theme = it;
-							SaveApplyGuiConfig();
-							SetStyle();
-						}
+				ImGuiUtils::Combo(LOC("Theme"), conf_gui()->theme,
+					std::array {"Dark", "Light", "Classic", "Ocean", "Dark Relax"},
+					[]() {
+						SaveApplyGuiConfig();
+						SetStyle();
 					}
-					ImGui::EndCombo();
-				}
+				);
+
 				//ImGui::SameLine();
 				//if (ImGui::Button(LOC("Styles..."))) {
 				//	ShowStyleEditor ^= 1;
 				//}
 			}
 
-			ImGui::AlignTextToFramePadding();
-			ImGui::TextLinkOpenURL("SimpleSwitcher.json", config_path.c_str());
-			ImGui::SameLine();
+			{
+				ImGuiUtils::Combo("GUI language", conf_gui()->gui_lang,
+					std::array {"English", "Russian", "Hebrew"},
+					[]() {
+						SaveApplyGuiConfig();
+						ApplyLocalization();
+					}
+				);
+			}
 
-			if (ImGui::Button("Reload")) {
-				Reinit(!cfg_details::ReloadGuiConfig());
+			{
+				ImGui::AlignTextToFramePadding();
+				ImGui::TextLinkOpenURL("SimpleSwitcher.json", config_path.c_str());
+				ImGui::SameLine();
+
+				if (ImGui::Button("Reload")) {
+					Reinit(!cfg_details::ReloadGuiConfig());
+				}
 			}
 
 		}
@@ -143,27 +152,31 @@ void MainWindow::DrawFrameActual() {
 			//}
 
 			{
-				if (ImGui::Checkbox("SkipLowLevelInjectKeys", &conf_gui()->SkipLowLevelInjectKeys)) {
+				if (ImGui::Checkbox(LOC("Skip low level inject keys"), &conf_gui()->SkipLowLevelInjectKeys)) {
 					SaveApplyGuiConfig();
 				}
 				ImGui::SetItemTooltip(LOC("Disable interception of keys sent to remote computer for RDP connection"));
 			}
 
 			{
-				if (ImGui::BeginCombo(LOC("Background"), conf_gui()->background.c_str(), 0)) {
-					auto add = [this](UStr s) {
-						if (ImGui::Selectable(s, conf_gui()->background == s)) {
-							conf_gui()->background = s;
-							SaveApplyGuiConfig();
-							apply_background();
-						}
-						};
-					add("None");
-					for (const auto& it : backgrounds) {
-						add(it.c_str());
-					}
-					ImGui::EndCombo();
+				if (ImGui::Checkbox(LOC("Disable Ctrl + LAlt as RAlt on extended layouts"), &conf_gui()->fixRAlt)) {
+					SaveApplyGuiConfig();
 				}
+				ImGui::SetItemTooltip("%s %s", LOC("This is done by temporary switching to layout"), "'config/fixRAlt_lay_'");
+			}
+
+			{
+				ImGuiUtils::Combo(LOC("Background"), conf_gui()->background,
+					[this]()-> std::generator<UStr> {
+						co_yield "None";
+						for (const auto& it : backgrounds) co_yield it.c_str();
+					},
+					[] {
+						SaveApplyGuiConfig();
+						new_layout_request();
+					}
+				);
+
 				ImGui::SameLine();
 				if (ImGui::Button(LOC("Update"))) {
 					update_backg();

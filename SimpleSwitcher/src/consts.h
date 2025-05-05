@@ -20,7 +20,7 @@ static const int c_nCommonWaitMtx = 30000;
 static const LPCWSTR c_wszTaskName = L"SimpleSwitcherTask";
 const static TChar c_sRegRunValue[] = L"SimpleSwitcher";
 
-inline const char* LOC(const char* s) { return s; }
+
 
 
 
