@@ -40,9 +40,10 @@ void MainWindow::DrawFrameActual() {
 				check_add_to_auto = autostart_get();
 			}
 
-			if (ImGui::Checkbox(LOC("Alternative mode layout change (emulate LAlt + Shift)"), &conf_gui()->AlternativeLayoutChange)) {
+			if (ImGui::Checkbox(LOC("Alternative mode layout change"), &conf_gui()->AlternativeLayoutChange)) {
 				SaveApplyGuiConfig();
 			}
+			ImGui::SetItemTooltip(LOC("Emulate 'Alt + Shift' Windows hotkey"));
 
 			{
 				ImGuiUtils::Combo(LOC("Set of flags"), conf_gui()->flagsSet,

@@ -25,7 +25,7 @@ namespace Notific {
 
 		string next_activ_string;
 
-		string name = LOC("Item");
+		string name = LOC("<Name>");
 		bool enabled = true;
 
 		DateTime nextActivate;
@@ -96,7 +96,7 @@ namespace Notific {
 				next_activ_string = PrintLocal(nextActivate);
 			}
 			else {
-				next_activ_string = IsTrigger() ? "NOW!" : "Never";
+				next_activ_string = IsTrigger() ? LOC("NOW!") : LOC("Never");
 			}
 		}
 		bool IsTrigger() {
@@ -141,7 +141,7 @@ namespace Notific {
 						changes = true;
 					}
 				}
-				if (ImGui::Button("Date")) {
+				if (ImGui::Button(LOC("Date"))) {
 					ImGui::OpenPopup("edit");
 				}
 				if (Edit(point)) {

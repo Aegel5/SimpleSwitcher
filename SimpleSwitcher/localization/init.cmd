@@ -1,1 +1,1 @@
-"./gnuwin32/msginit" --input=mess.pot --output=%1.po --locale=%1
+"./gnuwin32/msginit" --input=messages.pot --output=%1.po --locale=%1

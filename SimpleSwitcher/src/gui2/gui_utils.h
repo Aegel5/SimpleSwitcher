@@ -3,8 +3,6 @@
 
 #include "utils/win_utils.h"
 
-#include "misc/fonts/Play-Regular.cpp"
-
 inline void SyncLayouts() {
 
 	HKL all_lays[50] = { 0 };
@@ -219,9 +217,16 @@ inline void InitImGui(float scale) {
 		builder.BuildRanges(&ranges);
 
 
-		float size = std::floorf(16.0f * scale);
-		//io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 20.0f, 0, ranges.Data);
-		io.Fonts->AddFontFromMemoryCompressedTTF(DefaultFont_compressed_data, std::ssize(DefaultFont_compressed_data), size, 0, ranges.Data);
+		float size = std::floorf(18.0f * scale);
+		ImFont* fnt = 0;
+		//fnt = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", size, 0, ranges.Data);
+		if (!fnt) {
+			auto data = WinUtils::GetResource(L"font2");
+			if(data.empty()) std::abort();
+			ImFontConfig cfg{};
+			cfg.FontDataOwnedByAtlas = false;
+			io.Fonts->AddFontFromMemoryTTF(data.data(), data.size(), std::floorf(size*0.92f), &cfg, ranges.Data);
+		}
 	}
 
 

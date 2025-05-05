@@ -81,12 +81,12 @@ namespace Notific {
 					}
 
 					ImGui::TextWrapped(it.name.c_str());
-					if (ImGui::Button("Got it!")) {
+					if (ImGui::Button(LOC("Got it!"))) {
 						it.SetupNextActivate();
 						SaveRequest();
 					}
 					ImGui::SameLine();
-					if (ImGui::Button("Remain me tomorow...")) {
+					if (ImGui::Button(LOC("Remain me tomorow..."))) {
 						it.SetActivate(Now() + days(1));
 						SaveRequest();
 					}
@@ -108,7 +108,7 @@ namespace Notific {
 
 			ImGuiUtils::ToCenter();
 			ImGui::SetNextWindowSize({800, 600}, ImGuiCond_FirstUseEver);
-			ImGui::Begin("Notifications", &show_wnd);
+			ImGui::Begin(LOC("Reminder"), &show_wnd);
 
 			process_helper();
 

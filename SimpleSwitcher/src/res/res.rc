@@ -1,3 +1,4 @@
 101 ICON "app.ico"
 lang_Russian RCDATA "../../localization/ru.mo"
 lang_Hebrew RCDATA "../../localization/he.mo"
+font2 RCDATA "Play-Regular.ttf"

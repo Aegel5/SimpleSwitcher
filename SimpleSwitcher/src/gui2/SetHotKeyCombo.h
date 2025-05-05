@@ -109,7 +109,7 @@ public:
 
 			{
 				bool val = key.GetKeyup();
-				if (ImGui::Checkbox(LOC("Triggers on KEYUP"), &val)) {
+				if (ImGui::Checkbox("KEYUP", &val)) {
 					if (val) key.SetDouble(false);
 					auto k = key;
 					k.SetKeyup(val);
@@ -119,7 +119,7 @@ public:
 
 			{
 				bool val = key.IsDouble();
-				if (ImGui::Checkbox(LOC("Triggers on double press"), &val)) {
+				if (ImGui::Checkbox(LOC("Double-tapping"), &val)) {
 					if (val) key.SetKeyup(false);
 					auto k = key;
 					k.SetDouble(val);
