@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-12 11:36+0300\n"
-"PO-Revision-Date: 2025-04-12 11:43+0300\n"
+"POT-Creation-Date: 2025-05-05 15:56+0300\n"
+"PO-Revision-Date: 2025-05-05 15:58+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -19,248 +19,300 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 "X-Generator: Poedit 3.6\n"
 
-#: ../src/gui/main_gui.cpp:20
-msgid " for: "
-msgstr " для: "
-
-#: ../src/gui/noname.cpp:259
-msgid "About / Help"
-msgstr "О / помощь"
-
-#: ../src/gui/noname.cpp:227
-msgid "Add float panel"
+#: ../src/gui2/Notificator/Entry.h:28
+msgid "<Name>"
 msgstr ""
 
-#: ../src/gui/noname.cpp:34
+#: ../src/gui2/main_wnd_draw.cpp:195
+msgid "About"
+msgstr "О программе"
+
+#: ../src/gui2/main_wnd_draw.cpp:28
 msgid "Add to autostart"
 msgstr "Добавить в автозапуск"
 
-#: ../src/gui/noname.cpp:80
-msgid "Advanced"
+#: ../src/gui2/main_wnd_draw.cpp:43
+msgid "Alternative mode layout change"
 msgstr ""
 
-#: ../src/gui/noname.cpp:40
-msgid "Alternative mode layout change (emulate LAlt + Shift)"
+#: ../src/gui2/main_wnd_draw.cpp:170
+msgid "Background"
 msgstr ""
 
-#: ../src/gui/noname.cpp:28
-msgid "Base"
-msgstr "Базовые"
-
-#: ../src/gui/noname.cpp:245
-msgid "Build date:"
-msgstr "Дата билда:"
-
-#: ../src/gui/noname.cpp:182
-msgid "CapsLock / ScrollLock"
-msgstr "Capslock / Scrolllock"
-
-#: ../src/consts.h:58
+#: ../src/ConfigData_hk.h:79
 msgid "Change layout for all recent text"
 msgstr "Исправить весь недавно введенный текст"
 
-#: ../src/consts.h:57
+#: ../src/ConfigData_hk.h:78
 msgid "Change layout for last several words"
 msgstr "Исправить несколько слов"
 
-#: ../src/consts.h:56
+#: ../src/ConfigData_hk.h:77
 msgid "Change layout for last word"
 msgstr "Исправить последнее слово"
 
-#: ../src/consts.h:59
+#: ../src/ConfigData_hk.h:80
 msgid "Change layout for selected text"
 msgstr "Исправить выделенный текст"
 
-#: ../src/gui/noname.cpp:341
+#: ../src/gui2/SetHotKeyCombo.h:106
 msgid "Clear"
 msgstr "Очистить"
 
-#: ../src/gui/noname.cpp:85
+#: ../src/gui2/main_wnd_draw.cpp:73
 msgid "Clear text format on Ctrl-C"
 msgstr "Очищать форматирование текста при Ctrl-C"
 
-#: ../src/gui/noname.cpp:269
+#: ../src/gui2/main_wnd_draw.cpp:205
 msgid "Close to tray"
 msgstr "Свернуть в трей"
 
-#: ../src/consts.h:60
-msgid "Cycle change layout"
+#: ../src/ConfigData_hk.h:81
+msgid "Cyclic layout change"
 msgstr "Циклическая смена"
 
-#: ../src/gui/noname.cpp:199
+#: ../src/gui2/Notificator/Entry.h:144
+msgid "Date"
+msgstr ""
+
+#: ../src/gui2/Notificator/Entry.h:22
+msgid "Days"
+msgstr ""
+
+#: ../src/gui2/Notificator/Notificator.h:135
 msgid "Delete"
 msgstr "Удалить"
 
-#: ../src/gui/main_gui.cpp:775
-msgid "Disable"
+#: ../src/gui2/main_wnd_draw.cpp:163
+msgid "Disable Ctrl + LAlt as RAlt on extended layouts"
 msgstr ""
 
-#: ../src/gui/noname.cpp:220
-msgid ""
-"Disable Ctrl + LAlt as RAlt on extended layouts by temporary switching to"
+#: ../src/gui2/main_wnd_draw.cpp:159
+msgid "Disable interception of keys sent to remote computer for RDP connection"
 msgstr ""
 
-#: ../src/gui/noname.cpp:82
-msgid "Disable the accessibility shortcut keys (5 SHIFT and others)"
+#: ../src/gui2/main_wnd_draw.cpp:67
+#| msgid "Disable the accessibility shortcut keys (5 SHIFT and others)"
+msgid "Disable the accessibility functions"
 msgstr ""
-"Отключить функции accessibility (залипание после нажатия 5 Shift подряд и "
-"другие)"
 
-#: ../src/gui/noname.cpp:347
-msgid "Distinguish between left and right modifiers"
-msgstr "Различать левые и правые модификаторы"
+#: ../src/gui2/SetHotKeyCombo.h:122
+msgid "Double-tapping"
+msgstr ""
 
-#: ../src/gui/main_gui.cpp:775 ../src/gui/noname.cpp:30
+#: ../src/gui2/main_wnd_draw.cpp:46
+msgid "Emulate 'Alt + Shift' Windows hotkey"
+msgstr ""
+
+#: ../src/TrayIcon.h:34 ../src/gui2/main_wnd_draw.cpp:17
 msgid "Enable"
 msgstr "Включить"
 
-#: ../src/gui/noname.cpp:91
+#: ../src/gui2/main_wnd_draw.cpp:80
 msgid "Enable debug log"
 msgstr "Включить debug log"
 
-#: ../src/consts.h:63
+#: ../src/ConfigData_hk.h:84
 msgid "Enable/Disable"
 msgstr ""
 
-#: ../src/consts.h:66
-msgid "Error"
+#: ../src/gui2/main_wnd.h:65
+msgid "Error loading config file"
+msgstr "Ошибка чтения конфиг файла"
+
+#: ../src/gui2/Notificator/Notificator.h:73
+msgid "Event!"
 msgstr ""
 
-#: ../src/gui/main_gui.cpp:114 ../src/gui/main_gui.cpp:794
-msgid "Error reading config"
-msgstr "Ошибка чтения конфигурации"
-
-#: ../src/gui/main_app.cpp:84
-msgid "Error while initing app: "
-msgstr "Ошибка инициализации программы: "
-
-#: ../src/gui/main_gui.cpp:262
-msgid "Error while initing main wnd: "
+#: ../src/gui2/Notificator/Entry.h:19
+msgid "Every month"
 msgstr ""
 
-#: ../src/gui/main_gui.cpp:777 ../src/gui/noname.cpp:266
+#: ../src/gui2/Notificator/Entry.h:20
+msgid "Every year"
+msgstr ""
+
+#: ../src/TrayIcon.h:35
 msgid "Exit"
 msgstr "Закрыть"
 
-#: ../src/gui/noname.cpp:240
-msgid "Experimental"
+#: ../src/gui2/main_wnd_draw.cpp:141
+msgid "Expert"
 msgstr ""
 
-#: ../src/gui/noname.cpp:88
-msgid "Extended word separation"
-msgstr "Расширенное разделение слов"
-
-#: ../src/gui/noname.cpp:46
-msgid "Flags set"
-msgstr "Набор флагов"
-
-#: ../src/gui/noname.cpp:64
-msgid "GUI Language"
+#: ../src/gui2/Notificator/Notificator.h:8
+msgid "Folder"
 msgstr ""
 
-#: ../src/consts.h:61
+#: ../src/ConfigData_hk.h:82
 msgid "Generate CapsLock"
 msgstr "Генерировать CapsLock"
 
-#: ../src/gui/noname.cpp:131 ../src/gui/noname.cpp:158
-msgid "Hotkey"
-msgstr "Горячая клавиша"
+#: ../src/gui2/Notificator/Notificator.h:84
+msgid "Got it!"
+msgstr ""
 
-#: ../src/gui/noname.cpp:176
+#: ../src/gui2/main_wnd_draw.cpp:122
 msgid "Hotkeys"
 msgstr "Горячие клавиши"
 
-#: ../src/gui/noname.cpp:212
-msgid "Keys Remap"
+#: ../src/gui2/SetHotKeyCombo.h:100
+msgid "Left right difference"
 msgstr ""
 
-#: ../src/gui/main_gui.cpp:18
-msgid "Need admin rights"
+#: ../src/gui2/main_wnd.h:69 ../src/gui2/main_wnd.h:75
+msgid "Message"
+msgstr ""
+
+#: ../src/gui2/Notificator/Entry.h:99
+msgid "NOW!"
+msgstr ""
+
+#: ../src/gui2/main_wnd.h:64
+msgid "Need admin right"
 msgstr "Программа должна быть запущена от администратора"
 
-#: ../src/gui/main_gui.cpp:214
-msgid "Need restart program"
-msgstr "Необходимо перезапустить программу"
+#: ../src/gui2/Notificator/Entry.h:99
+msgid "Never"
+msgstr ""
 
-#: ../src/gui/noname.cpp:329
+#: ../src/gui2/Notificator/Entry.h:21
+msgid "One time"
+msgstr ""
+
+#: ../src/ConfigData_hk.h:87
+msgid "Paste text without formatting"
+msgstr ""
+
+#: ../src/gui2/SetHotKeyCombo.h:98
 msgid "Press any key..."
 msgstr "Нажмите любую клавишу ..."
 
-#: ../src/gui/noname.cpp:217
-msgid ""
-"Prevent other programs to hook keyboard (may cause problems in games and "
-"other apps)"
-msgstr ""
-"Запретить другим программам перехватывать клавиатуру (может вызывать "
-"проблемы)"
-
-#: ../src/gui/noname.cpp:97
-msgid "Reload config"
-msgstr "Перезагрузить конфиг"
-
-#: ../src/gui/noname.cpp:184
-msgid "Remap CapsLock as F24"
-msgstr "Переназначить CapsLock как F24"
-
-#: ../src/gui/noname.cpp:187
-msgid "Remap ScrollLock as F23"
-msgstr "Переназначить ScrollLock как F23"
-
-#: ../src/gui/noname.cpp:230
-msgid "Remove all panels"
-msgstr "Удалить все панели"
-
-#: ../src/consts.h:62
-msgid "Selected text to UPPER/lower case"
+#: ../src/gui2/Notificator/Notificator.h:89
+msgid "Remain me tomorow..."
 msgstr ""
 
-#: ../src/gui/noname.h:130
-msgid "Set hotkey"
-msgstr "Изменить горячую клавишу"
+#: ../src/gui2/Notificator/Notificator.h:111
+msgid "Reminder"
+msgstr ""
 
-#: ../src/gui/noname.cpp:113
+#: ../src/ConfigData_hk.h:83
+msgid "Selected text to UPPER/lower"
+msgstr ""
+
+#: ../src/gui2/main_wnd_draw.cpp:49
+msgid "Set of flags"
+msgstr ""
+
+#: ../src/gui2/main_wnd_draw.cpp:13
 msgid "Settings"
 msgstr "Настройки"
 
-#: ../src/gui/main_gui.cpp:776
+#: ../src/TrayIcon.h:33
 msgid "Show"
 msgstr "Показать"
 
-#: ../src/consts.h:64
-msgid "Show main window"
-msgstr "Показать главное окно"
+#: ../src/ConfigData_hk.h:85
+msgid "Show/hide main window"
+msgstr "Показать/скрыть главное окно"
 
-#: ../src/gui/noname.h:100
-msgid "SimpleSwitcher"
+#: ../src/ConfigData_hk.h:86
+msgid "Show/hide remainder"
 msgstr ""
 
-#: ../src/gui/noname.cpp:350
-msgid "Triggers on KEYUP"
-msgstr "Срабатывать на KEYUP"
+#: ../src/gui2/main_wnd_draw.cpp:156
+msgid "Skip low level inject keys"
+msgstr ""
 
-#: ../src/gui/noname.cpp:353
-msgid "Triggers on double press"
-msgstr "Двойное нажатие"
+#: ../src/gui2/main_wnd_draw.cpp:71
+msgid "Sticking after 5 shift and others"
+msgstr ""
 
-#: ../src/gui/noname.cpp:55 ../src/gui/noname.cpp:196
+#: ../src/gui2/main_wnd_draw.cpp:86
+msgid "Theme"
+msgstr ""
+
+#: ../src/gui2/main_wnd_draw.cpp:166
+msgid "This is done by temporary switching to layout"
+msgstr ""
+
+#: ../src/gui2/main_wnd_draw.cpp:62 ../src/gui2/main_wnd_draw.cpp:182
 msgid "Update"
 msgstr "Обновить"
 
-#: ../src/gui/noname.cpp:157
-msgid "Use in cycle"
-msgstr "Использовать в цикле"
-
-#: ../src/gui/main_gui.cpp:521
-msgid "Will be applied after PC reboot"
-msgstr "Будет применено после перезагрузки ОС"
-
-#: ../src/gui/noname.cpp:37
+#: ../src/gui2/main_wnd_draw.cpp:37
 msgid "Work in programs running by admin"
 msgstr "Работать в программах, запущенных от администратора"
 
-#: ../src/gui/main_gui.cpp:689
-msgid "delete old task"
-msgstr "удалить старую задачу"
+#~ msgid " for: "
+#~ msgstr " для: "
+
+#~ msgid "About / Help"
+#~ msgstr "О / помощь"
+
+#~ msgid "Base"
+#~ msgstr "Базовые"
+
+#~ msgid "Build date:"
+#~ msgstr "Дата билда:"
+
+#~ msgid "CapsLock / ScrollLock"
+#~ msgstr "Capslock / Scrolllock"
+
+#~ msgid "Distinguish between left and right modifiers"
+#~ msgstr "Различать левые и правые модификаторы"
+
+#~ msgid "Error while initing app: "
+#~ msgstr "Ошибка инициализации программы: "
+
+#~ msgid "Extended word separation"
+#~ msgstr "Расширенное разделение слов"
+
+#~ msgid "Flags set"
+#~ msgstr "Набор флагов"
+
+#~ msgid "Hotkey"
+#~ msgstr "Горячая клавиша"
+
+#~ msgid "Need restart program"
+#~ msgstr "Необходимо перезапустить программу"
+
+#~ msgid ""
+#~ "Prevent other programs to hook keyboard (may cause problems in games and "
+#~ "other apps)"
+#~ msgstr ""
+#~ "Запретить другим программам перехватывать клавиатуру (может вызывать "
+#~ "проблемы)"
+
+#~ msgid "Reload config"
+#~ msgstr "Перезагрузить конфиг"
+
+#~ msgid "Remap CapsLock as F24"
+#~ msgstr "Переназначить CapsLock как F24"
+
+#~ msgid "Remap ScrollLock as F23"
+#~ msgstr "Переназначить ScrollLock как F23"
+
+#~ msgid "Remove all panels"
+#~ msgstr "Удалить все панели"
+
+#~ msgid "Set hotkey"
+#~ msgstr "Изменить горячую клавишу"
+
+#~ msgid "Triggers on KEYUP"
+#~ msgstr "Срабатывать на KEYUP"
+
+#~ msgid "Triggers on double press"
+#~ msgstr "Двойное нажатие"
+
+#~ msgid "Use in cycle"
+#~ msgstr "Использовать в цикле"
+
+#~ msgid "Will be applied after PC reboot"
+#~ msgstr "Будет применено после перезагрузки ОС"
+
+#~ msgid "delete old task"
+#~ msgstr "удалить старую задачу"
 
 #~ msgid "Error while UpdateAutostartExplain: "
 #~ msgstr "Ошибка в то время как UpdateautostartExplain: "
@@ -270,9 +322,6 @@ msgstr "удалить старую задачу"
 
 #~ msgid "Show flags in tray"
 #~ msgstr "Показывать флаги в трее"
-
-#~ msgid "About"
-#~ msgstr "О программе"
 
 #~ msgid "Fix layout"
 #~ msgstr "Исправить раскладку"

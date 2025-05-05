@@ -116,6 +116,7 @@ public:
 
 namespace loc_details {
 	inline Localizator g_loc;
+	inline bool do_reinit = false;
 }
 
 inline UStr LOC(UStr s) { return loc_details::g_loc.Translate(s); }

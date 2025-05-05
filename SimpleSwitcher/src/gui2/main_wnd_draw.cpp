@@ -10,7 +10,12 @@ void MainWindow::DrawFrameActual() {
 
 	if (ImGui::BeginTabBar("MyTabBar", ImGuiTabBarFlags_None)) {
 
-		with_TabItem(LOC("Settings")) {
+		ImGuiTabItemFlags flags = 0;
+		if (loc_details::do_reinit) {
+			loc_details::do_reinit = false;
+			flags |= ImGuiTabItemFlags_SetSelected;
+		}
+		with_TabItem(LOC("Settings"), 0, flags) {
 
 			{
 				bool val = g_enabled.IsEnabled();
@@ -103,6 +108,7 @@ void MainWindow::DrawFrameActual() {
 					[]() {
 						SaveApplyGuiConfig();
 						ApplyLocalization();
+						loc_details::do_reinit = true;
 					}
 				);
 			}
@@ -185,7 +191,7 @@ void MainWindow::DrawFrameActual() {
 			}
 
 			{
-				if (ImGui::Button("Notifications")) {
+				if (ImGui::Button(LOC("Remainder"))) {
 					show_main_wind(1);
 				}
 			}
