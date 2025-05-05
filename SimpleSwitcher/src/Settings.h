@@ -91,8 +91,7 @@ public:
     bool SkipLowLevelInjectKeys = false;
     bool AlternativeLayoutChange = false;
     TUInt32 quick_press_ms = 280;
-    bool separate_ext_last_word = false;
-    bool separate_ext_several_words = false;
+    int separate_ext_mode = 0; // 1 - several words, 2 - several + last
     CHotKey win_hotkey_cycle_lang { VK_LMENU, VK_SHIFT };
 	std::string theme = "Light";
 	string background = "";

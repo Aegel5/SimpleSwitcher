@@ -54,6 +54,9 @@ class IconMgr {
 		return icons.emplace(key, res).first->second;
 	}
 public:
+	UStr folder() {
+		return 0;
+	}
 	IconMgr() {
 		flagFold = PathUtils::GetPath_folder_noLower2() / L"Flags";
 	}

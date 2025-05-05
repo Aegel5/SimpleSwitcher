@@ -62,18 +62,26 @@ void MainWindow::DrawFrameActual() {
 						new_layout_request();
 					}
 				);
-
 				ImGui::SameLine();
 				if (ImGui::Button(LOC("Update"))) {
 					update_flags();
 				}
 			}
 
+			{
+				UStr items[] = { LOC("Disabled"), LOC("Only for several words correction"), LOC("Always") };
+				Clamp(conf_gui()->separate_ext_mode, 0, 2);
+				if (ImGui::Combo(LOC("Extended word seperation"), &conf_gui()->separate_ext_mode, items, std::size(items))) {
+					SaveApplyGuiConfig();
+				}
+				ImGui::SetItemTooltip("%s %s", LOC("Separate words by keys that can produce both letters and other symbols. Example:"), (UStr)u8"']}' - 'ъЪ'");
+			}
+
 			if (ImGui::Checkbox(LOC("Disable the accessibility functions"), &conf_gui()->disableAccessebility)) {
 				SaveApplyGuiConfig();
 				ApplyAcessebil();
 			}
-			ImGui::SetItemTooltip(LOC("Sticking after 5 shift and others"));
+			ImGui::SetItemTooltip(LOC("Disable sticking after 5 shift and others"));
 
 			if (ImGui::Checkbox(LOC("Clear text format on Ctrl-C"), &conf_gui()->fClipboardClearFormat)) {
 				SaveApplyGuiConfig();
@@ -105,9 +113,10 @@ void MainWindow::DrawFrameActual() {
 			{
 				ImGuiUtils::Combo("GUI language", conf_gui()->gui_lang,
 					std::array {"English", "Russian", "Hebrew"},
-					[]() {
+					[this]() {
 						SaveApplyGuiConfig();
 						ApplyLocalization();
+						ReinitHk();
 						loc_details::do_reinit = true;
 					}
 				);

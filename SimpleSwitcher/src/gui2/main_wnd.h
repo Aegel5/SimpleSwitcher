@@ -123,15 +123,18 @@ public:
 		startsize.y *= scale;
 		Reinit(conf_err);
 	}
+	void ReinitHk() {
+		hotbox.clear();
+		for (auto& it : conf_gui()->hotkeysList) {
+			hotbox.emplace_back(GetGuiTextForHk(it.hkId), GetHk_Defaults(it.hkId), &it.keys);
+		}
+	}
 	void Reinit(bool conf_err) {
 		if (conf_err) {
 			ShowMessageConfError();
 			return;
 		}
-		hotbox.clear();
-		for (auto& it : conf_gui()->hotkeysList) {
-			hotbox.emplace_back(GetGuiTextForHk(it.hkId), GetHk_Defaults(it.hkId), &it.keys);
-		}
+		ReinitHk();
 		SyncLays();
 	}
 
