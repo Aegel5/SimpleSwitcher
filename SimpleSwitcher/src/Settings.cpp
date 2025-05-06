@@ -126,7 +126,7 @@ namespace cfg_details {
 				RETURN_SUCCESS;
 			}
 
-			std::ifstream ifs(p);
+			std::ifstream ifs(p, std::ios::binary);
 
 			json data = json::parse(ifs, nullptr, true, true);
 			data.get_to(cfg);
@@ -178,8 +178,8 @@ namespace cfg_details {
 
 			data["hotkeys"] = hk_json;
 
-			std::ofstream outp(path);
-			outp << std::setw(4) << data << std::endl;
+			std::ofstream outp(path, std::ios::binary);
+			outp << std::setw(2) << data << std::endl;
 
 		}
 		catch (std::exception& e) {

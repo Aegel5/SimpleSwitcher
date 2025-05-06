@@ -48,7 +48,7 @@ void MainWindow::DrawFrameActual() {
 			if (ImGui::Checkbox(LOC("Alternative mode layout change"), &conf_gui()->AlternativeLayoutChange)) {
 				SaveApplyGuiConfig();
 			}
-			ImGui::SetItemTooltip(LOC("Emulate 'Alt + Shift' Windows hotkey"));
+			ImGui::SetItemTooltip("%s %s", LOC("Emulate Windows hotkey"), "'Alt + Shift' [config/win_hotkey_cycle_lang]");
 
 			{
 				ImGuiUtils::Combo(LOC("Set of flags"), conf_gui()->flagsSet,
@@ -178,7 +178,7 @@ void MainWindow::DrawFrameActual() {
 				if (ImGui::Checkbox(LOC("Disable Ctrl + LAlt as RAlt on extended layouts"), &conf_gui()->fixRAlt)) {
 					SaveApplyGuiConfig();
 				}
-				ImGui::SetItemTooltip("%s %s", LOC("This is done by temporary switching to layout"), "'config/fixRAlt_lay_'");
+				ImGui::SetItemTooltip("%s %s", LOC("This is done by temporary switching to layout"), "[config/fixRAlt_lay_]");
 			}
 
 			{
@@ -187,10 +187,11 @@ void MainWindow::DrawFrameActual() {
 						co_yield "None";
 						for (const auto& it : backgrounds) co_yield it.c_str();
 					},
-					[] {
+					[this] {
 						SaveApplyGuiConfig();
-						new_layout_request();
-					}
+						apply_background();
+					},
+					ImGuiComboFlags_HeightLargest
 				);
 
 				ImGui::SameLine();
