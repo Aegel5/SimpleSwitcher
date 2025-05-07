@@ -431,11 +431,14 @@ void WorkerImplement::SwitchLangByEmulate(HKL lay) {
 				return;
 			}
 			if (next == lay) {
+				LOG_ANY("ok. found lay");
 				return;
 			}
+			LOG_ANY("skip lay={}", (void*)next);
 			cur = next;
 			InputSender::SendHotKey(altshift);
 		}
+		LOG_WARN("not found needed lay!");
 	}
 }
 

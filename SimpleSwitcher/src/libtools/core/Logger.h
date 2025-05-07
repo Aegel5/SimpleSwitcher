@@ -309,7 +309,7 @@ namespace _log_int {
 
 inline void SetLogLevel_info(TLogLevel logLevel) {
 	SetLogLevel(logLevel);
-	LOG_ANY(L"Log level now {}", (int)logLevel);
+	LOG_ANY("Log level now {}. ver={}", (int)logLevel, SW_VERSION);
 }
 
 #define RETURN_SUCCESS {return SW_ERR_SUCCESS; }
