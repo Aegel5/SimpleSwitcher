@@ -31,7 +31,7 @@
             "cmakeCommandArgs": "",
             "buildCommandArgs": "",
             "ctestCommandArgs": "",
-            "inheritEnvironments": [ "msvc_x86_x64" ]
+            "inheritEnvironments": [ "msvc_x64" ]
         },
         {
             "name": "x64-Release",
@@ -42,8 +42,7 @@
             "cmakeCommandArgs": "",
             "buildCommandArgs": "",
             "ctestCommandArgs": "",
-            "inheritEnvironments": [ "msvc_x86_x64" ],
-            "variables": []
+            "inheritEnvironments": [ "msvc_x64" ]
         }
     ]
 }
