@@ -6,39 +6,7 @@ private:
 	std::vector<INPUT> list;
 public:
 
-	void Send()
-	{
-		if (list.empty())
-			return;
-		for (auto& i : list)
-		{
-			LOG_ANY(L"SEND {} {}", TestFlag(i.ki.dwFlags, KEYEVENTF_KEYUP) ? L"UP" : L"DW", CHotKey::ToString(i.ki.wVk));
-		}
-
-		bool doPause = false;
-
-		// https://github.com/Aegel5/SimpleSwitcher/issues/53
-		//if (g_hooker->m_sTopProcName == L"notepad.exe") { 
-		//	// костыль для нового notepad...
-		//	// не используем по дефолту, так как работаем медленнее...
-		//	doPause = true; 
-		//}
-
-		if (doPause) {
-			//for (auto& elem : list) {
-			//	InjectSkipper::Inst().AddOur(1);
-			//	auto res = SendInput(1, &elem, sizeof(INPUT));
-			//	IFW_LOG(res == 1);
-			//	Sleep(1);
-			//}
-		}
-		else {
-			InjectSkipper::LocSkipper loc;
-			IFW_LOG(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size()); // синхронно вызывается наш хук.
-		}
-
-		return;
-	}
+	void Send();
 
 	void Clear()
 	{

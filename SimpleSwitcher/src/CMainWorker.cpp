@@ -8,7 +8,7 @@ void CMainWorker::WorkerInt()
 	COM::CAutoCOMInitialize autoCom;
 	IFS_LOG(autoCom.Init());
 
-	WorkerImplement workerImpl;
+	WorkerImplement& workerImpl = WorkerImplement::Inst();
 
 	bool exit = false;
 	while (!exit) {

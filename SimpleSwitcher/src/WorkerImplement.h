@@ -208,6 +208,11 @@ public:
 	HKL CurLay() { return topWndInfo2.lay; }
 	TStatus ProcessRevert(ContextRevert&& ctxRevert);
 
+	static WorkerImplement& Inst() {
+		static WorkerImplement inst;
+		return inst;
+	}
+
 private:
 
 	ULONGLONG m_lastHotKeyTime = 0;
@@ -216,8 +221,8 @@ private:
 	DWORD m_dwIdThreadForeground = -1;
 	DWORD m_dwIdProcoreground = -1;
 	TopWndInfo topWndInfo2;
-	std::wstring m_sTopProcName;
-	std::wstring m_sTopProcPath;
+	public:std::wstring m_sTopProcName;
+	private:std::wstring m_sTopProcPath;
 	CClipWorker m_clipWorker; 
 	std::wstring m_savedClipData;
 	HotKeyType m_lastRevertRequest = hk_NULL;

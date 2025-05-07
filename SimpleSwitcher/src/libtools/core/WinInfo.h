@@ -49,6 +49,27 @@ IsWindows10OrGreater()
 	return IsWindowsVersionOrGreater(HIBYTE(____WIN32_WINNT_WIN10), LOBYTE(____WIN32_WINNT_WIN10), 0);
 }
 
+inline bool
+IsWindows11OrGreater()
+{
+	OSVERSIONINFOEX osvi;
+	ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+
+	if (!GetVersionEx((OSVERSIONINFO*)&osvi)) {
+		return false; // Не удалось получить версию
+	}
+
+	// Проверяем, что версия >= 10.0.22000
+	if (osvi.dwMajorVersion > 10 ||
+		(osvi.dwMajorVersion == 10 && osvi.dwBuildNumber >= 22000)) {
+		return true; // Windows 11 или выше
+	}
+
+	return false; // Версия ниже Windows 11
+
+}
+
 //inline bool IsWindows10OrGreater2()
 //{
 //	OSVERSIONINFO osvi;

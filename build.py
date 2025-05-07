@@ -8,6 +8,8 @@ import subprocess
 import requests
 import json
 
+#pip install requests
+
 is_debug = False
 is_publ = False
 is_notel = False
@@ -45,8 +47,7 @@ curv2 = f'6.{ver_num:03}{ver_suff}{ver_custom}'
 Path(ver_path_2).write_text(f'static const char* SW_VERSION = "{curv2}";')
 
 package_build_folder = pathlib.Path("package_build")
-result_dir_root = package_build_folder / "OUT"
-result_dir = result_dir_root / "SimpleSwitcher"
+
 
 def run(exe, arg):
     cmd = f'{exe} {arg}'
@@ -77,23 +78,28 @@ def delfold(fold):
         shutil.rmtree(fold, onerror=remove_readonly) 
   
 if is_clean: delfold(package_build_folder)  # Полная пересборка!
-delfold(result_dir_root)      
-result_dir.mkdir(parents=True, exist_ok=True) 
+
+result_dir_root = package_build_folder / "OUT"
+delfold(result_dir_root)
+
+assets = []
 
 def build(subfold, is64):
 
-    print(f'*** BUILD {subfold} {("64" if is64 else "32")} ***');
-    
+    to_build = subfold
+
+    suff = ("_x32" if not is64 else "_x64")
+    subfold += suff
+
+    print(f'*** BUILD {subfold} ***');
+
+    result_dir = result_dir_root / subfold
+    result_dir.mkdir(parents=True, exist_ok=True) 
+
+    path = package_build_folder / subfold
+    path.mkdir(parents=True, exist_ok=True)
+   
     rel_name = "Debug" if is_debug else "Release"
-    
-
-    build_folder = subfold
-    if is64:
-        build_folder += "_64"
-    path = package_build_folder / build_folder
-
-    pathlib.Path(path).mkdir(parents=True, exist_ok=True)
-    
     release_folder = path / rel_name
     delfold(release_folder) # ensure we get only builded now binares
     
@@ -102,7 +108,7 @@ def build(subfold, is64):
     #cmake_path_2 = r"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
     #if os.path.isfile(cmake_path_2):cmake_path = cmake_path_2
         
-    run(cmake_path, f'-G "Visual Studio 17 2022"  {" " if is64 else "-A Win32"} -DCMAKE_BUILD_TYPE={rel_name} ./{subfold} -B {path}')
+    run(cmake_path, f'-G "Visual Studio 17 2022"  {" " if is64 else "-A Win32"} -DCMAKE_BUILD_TYPE={rel_name} ./{to_build} -B {path}')
     run(cmake_path, f'--build {path} --parallel --config {rel_name}')
 
     tocopy = ['.exe', '.dll']
@@ -111,23 +117,20 @@ def build(subfold, is64):
             for ext in tocopy:
                 if file.endswith(ext):    
                     file2 = file
-                    if is64:
-                        file2 = file.replace(ext, "64"+ext)
                     print("copy ", file2)
                     shutil.copy(os.path.join(root, file), os.path.join(result_dir, file2))
             
+    print("Copy bin files")
+    shutil.copytree("SimpleSwitcher/bin_files", result_dir, dirs_exist_ok=True)
 
-#build("loader_dll", is64=False)
-#build("loader_dll", is64=True)    
+    zippath = result_dir_root / f"SimpleSwitcher{suff}_{curv2}"
+    shutil.make_archive(zippath, 'zip', result_dir) 
+    assets.append(str(zippath) + ".zip")
+  
+
 build("SimpleSwitcher", is64=False)
+build("SimpleSwitcher", is64=True)
 
-
-print("Copy bin files")
-shutil.copytree("SimpleSwitcher/bin_files", result_dir, dirs_exist_ok=True)
-
-zippath = result_dir_root / f"SimpleSwitcher_{curv2}"
-    
-shutil.make_archive(zippath, 'zip', result_dir) 
 
 def publish():
     print('*** publish release ***')
