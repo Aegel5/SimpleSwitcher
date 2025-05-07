@@ -109,7 +109,8 @@ def build(subfold, is64):
     #if os.path.isfile(cmake_path_2):cmake_path = cmake_path_2
         
     run(cmake_path, f'-G "Visual Studio 17 2022"  {" " if is64 else "-A Win32"} -DCMAKE_BUILD_TYPE={rel_name} ./{to_build} -B {path}')
-    run(cmake_path, f'--build {path} --parallel --config {rel_name}')
+    run(cmake_path, f'--build {path} --config {rel_name}')
+    #run(cmake_path, f'--build {path} --parallel --config {rel_name}')
 
     tocopy = ['.exe', '.dll']
     for root, dirs, files in os.walk(release_folder):
@@ -156,7 +157,8 @@ def publish():
     last_com = repo.get_branch("master").commit
     print(last_com)
     newrel = repo.create_git_tag_and_release(curv2, curv2, release_name=f"SimpleSwitcher {curv2}", release_message=rel_message, object=last_com.sha, type="commit")
-    newrel.upload_asset(str(zippath) + ".zip")
+    for ass in assets:
+        newrel.upload_asset(ass)
 
     if not is_notel:
         bot_token = Path("D:/yy/tok.txt").read_text() 
