@@ -139,7 +139,13 @@ void MainWindow::DrawFrameActual() {
 			for (int i = -1; auto & it : hotbox) {
 				it.Draw();
 			}
-			ImGui::SeparatorText("Language layouts");
+			ImGui::SeparatorText(LOC("Language layouts"));
+			if (ImGui::BeginPopupContextItem("lay_upd")) {
+				if (ImGui::MenuItem(LOC("Update"))) {
+					SyncLays();
+				}
+				ImGui::EndPopup();
+			}
 			for (int i = -1; auto & it : conf_gui()->layouts_info.info) {
 				i++;
 				with_ID(i+20) {

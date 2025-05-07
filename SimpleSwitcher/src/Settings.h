@@ -202,6 +202,14 @@ inline void ApplyLocalization() {
 	loc_details::g_loc.Reinit(conf_gui()->gui_lang.c_str());
 }
 
+inline void SetLogLevel_info(TLogLevel logLevel) {
+	SetLogLevel(logLevel);
+	LOG_ANY("Log level now {}. ver={}", (int)logLevel, SW_VERSION);
+	for (const auto& it : conf_get_unsafe()->layouts_info.info) { // todo print config
+		LOG_ANY("have lay {}. enabled={}", (void*)it.layout, it.enabled);
+	}
+}
+
 
 
 

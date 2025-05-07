@@ -307,9 +307,4 @@ namespace _log_int {
 #define LOG_WARN(...) if (GetLogLevel() >= LOG_LEVEL_2) {_log_int::LOG_WARN(__VA_ARGS__);}
 
 
-inline void SetLogLevel_info(TLogLevel logLevel) {
-	SetLogLevel(logLevel);
-	LOG_ANY("Log level now {}. ver={}", (int)logLevel, SW_VERSION);
-}
-
 #define RETURN_SUCCESS {return SW_ERR_SUCCESS; }
