@@ -208,11 +208,6 @@ public:
 	HKL CurLay() { return topWndInfo2.lay; }
 	TStatus ProcessRevert(ContextRevert&& ctxRevert);
 
-	static WorkerImplement& Inst() {
-		static WorkerImplement inst;
-		return inst;
-	}
-
 private:
 
 	ULONGLONG m_lastHotKeyTime = 0;

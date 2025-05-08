@@ -8,7 +8,7 @@ void CMainWorker::WorkerInt()
 	COM::CAutoCOMInitialize autoCom;
 	IFS_LOG(autoCom.Init());
 
-	WorkerImplement& workerImpl = WorkerImplement::Inst();
+	WorkerImplement& workerImpl = *worker_impl.get();
 
 	bool exit = false;
 	while (!exit) {
@@ -42,6 +42,12 @@ void CMainWorker::WorkerInt()
 	}
 
 	LOG_ANY(L"Exit main worker");
+}
+
+void CMainWorker::Init() {
+	details::g_worker = this;
+	worker_impl = MAKE_UNIQUE(worker_impl);
+	ReStart();
 }
 
 

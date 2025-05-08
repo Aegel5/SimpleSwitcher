@@ -159,7 +159,7 @@ namespace cfg_details {
 	inline bool ReloadGuiConfig() {
 		bool res = true;
 		if (!g_guiCfg) {
-			g_guiCfg.reset(new ProgramConfig());
+			g_guiCfg = MAKE_UNIQUE(g_guiCfg);
 		}
 		auto errLoadConf = LoadConfig(*conf_gui());
 		if (errLoadConf != TStatus::SW_ERR_SUCCESS) {

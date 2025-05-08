@@ -12,7 +12,7 @@ void InputSender::Send()
 	bool doPause = false;
 
 	// https://github.com/Aegel5/SimpleSwitcher/issues/53
-	if (WorkerImplement::Inst().m_sTopProcName == L"notepad.exe" && IsWindows11OrGreater()) {
+	if (WorkerImpl()->m_sTopProcName == L"notepad.exe" && IsWindows11OrGreater()) {
 		// костыль для нового notepad...
 		// не используем по дефолту, так как работаем медленнее...
 		doPause = true; 
