@@ -61,7 +61,7 @@ private:
 		show_message = msg;
 		need_show_message = 1;
 	}
-	void ShowMessageAdmin() { ShowMessage(LOC("Need admin right")); }
+	void ShowMessageAdmin() { ShowMessage(LOC("Need admin rights")); }
 	void ShowMessageConfError() { ShowMessage(LOC("Error loading config file")); }
 	void DrawMessage() {
 		if (!need_show_message) return;

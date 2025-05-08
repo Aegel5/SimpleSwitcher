@@ -48,7 +48,7 @@ void MainWindow::DrawFrameActual() {
 			if (ImGui::Checkbox(LOC("Alternative mode layout change"), &conf_gui()->AlternativeLayoutChange)) {
 				SaveApplyGuiConfig();
 			}
-			ImGui::SetItemTooltip("%s %s", LOC("Emulate Windows hotkey"), "'Alt + Shift' [config/win_hotkey_cycle_lang]");
+			ImGui::SetItemTooltip("%s %s\n%s", LOC("Emulate Windows hotkey"), "'Alt + Shift' [config / win_hotkey_cycle_lang]", LOC("Use this mode if the main one does not work correctly"));
 
 			{
 				ImGuiUtils::Combo(LOC("Set of flags"), conf_gui()->flagsSet,
@@ -70,11 +70,13 @@ void MainWindow::DrawFrameActual() {
 
 			{
 				UStr items[] = { LOC("Disabled"), LOC("Only for several words correction"), LOC("Always") };
-				Clamp(conf_gui()->separate_ext_mode, 0, 2);
+				Clamp(conf_gui()->separate_ext_mode, 0, std::ssize(items)-1);
 				if (ImGui::Combo(LOC("Extended word seperation"), &conf_gui()->separate_ext_mode, items, std::size(items))) {
 					SaveApplyGuiConfig();
 				}
-				ImGui::SetItemTooltip("%s %s", LOC("Separate words by keys that can produce both letters and other symbols. Example:"), (UStr)u8"']}' - 'ъЪ'");
+				ImGui::SetItemTooltip((UStr)u8"%s\n%s: ']}' - 'ъЪ'", 
+					LOC("Separate words by keys that can produce both letters and other symbols"),
+					LOC("Example"));
 			}
 
 			if (ImGui::Checkbox(LOC("Disable the accessibility functions"), &conf_gui()->disableAccessebility)) {
