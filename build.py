@@ -8,6 +8,7 @@ import subprocess
 import requests
 import json
 
+
 #pip install requests
 
 is_debug = False
@@ -26,6 +27,10 @@ for arg in sys.argv[1:]:
         exit(1)
 if ver_suff != '': is_notel = True
 if is_publ: is_clean = True
+
+if is_publ:
+    # pip install PyGithub
+    from github import Github
 
 
 curpath = pathlib.Path(__file__).parent.resolve()
@@ -134,10 +139,7 @@ build("SimpleSwitcher", is64=True)
 
 
 def publish():
-    print('*** publish release ***')
-    
-    # pip install PyGithub requests
-    from github import Github
+    print('*** publish release ***')  
     
     tok = Path("D:/yy/data.txt").read_text() 
     g = Github(tok)
