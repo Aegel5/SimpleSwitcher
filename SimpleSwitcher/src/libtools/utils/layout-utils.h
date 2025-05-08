@@ -111,12 +111,10 @@ namespace Utils
 
 				IFH_RET(pProfile->ActivateProfile(TF_PROFILETYPE_KEYBOARDLAYOUT, cur.langid, CLSID_NULL, GUID_NULL, cur.hkl, TF_IPPMF_ENABLEPROFILE | TF_IPPMF_FORSESSION));
 				//IFH_RET(pProfile2->ChangeCurrentLanguage(cur.langid));
-				LOG_ANY(L"switch ok to {}", (int)lay);
+				LOG_ANY(L"switch ok to {}", (void*)lay);
 				RETURN_SUCCESS;
 			}
 		}
-
-
 
 		RETURN_SUCCESS;
 	}

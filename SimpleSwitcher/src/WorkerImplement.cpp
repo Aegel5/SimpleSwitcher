@@ -398,7 +398,7 @@ void WorkerImplement::SwitchLangByEmulate(HKL lay) {
 	CHotKey altshift = cfg->win_hotkey_cycle_lang;
 	bool switch_until = false;
 
-	if ((int)lay != HKL_NEXT) { 
+	if ((size_t)lay != HKL_NEXT) { 
 
 		auto info = cfg->layouts_info.GetLayoutInfo(lay);
 		if (info != nullptr && !info->win_hotkey.IsEmpty()) {
@@ -475,7 +475,7 @@ TStatus WorkerImplement::FixCtrlAlt(CHotKey key) {
 	bool just_send = false;
 
 	if (cfg->layouts_info.GetLayoutInfo(lay) == nullptr) {
-		auto str = std::format(L"{:x}", (int)lay);
+		auto str = std::format(L"{:x}", (size_t)lay);
 		//const TChar* s = L"00000409";
 		LOG_ANY(L"load temp layout {}", str);
 		temp = LoadKeyboardLayout(str.c_str(), KLF_ACTIVATE);
