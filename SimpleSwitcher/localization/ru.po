@@ -7,37 +7,40 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-05 15:56+0300\n"
-"PO-Revision-Date: 2025-05-05 15:58+0300\n"
+"POT-Creation-Date: 2025-05-09 13:58+0300\n"
+"PO-Revision-Date: 2025-05-09 14:52+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 "X-Generator: Poedit 3.6\n"
 
-#: ../src/gui2/Notificator/Entry.h:28
+#: ../src/gui2/Notificator/Entry.h:27
 msgid "<Name>"
-msgstr ""
+msgstr "<Имя>"
 
-#: ../src/gui2/main_wnd_draw.cpp:195
+#: ../src/gui2/main_wnd_draw.cpp:219
 msgid "About"
 msgstr "О программе"
 
-#: ../src/gui2/main_wnd_draw.cpp:28
+#: ../src/gui2/main_wnd_draw.cpp:33
 msgid "Add to autostart"
 msgstr "Добавить в автозапуск"
 
-#: ../src/gui2/main_wnd_draw.cpp:43
+#: ../src/gui2/main_wnd_draw.cpp:48
 msgid "Alternative mode layout change"
-msgstr ""
+msgstr "Альтернативный режим изменения раскладки"
 
-#: ../src/gui2/main_wnd_draw.cpp:170
+#: ../src/gui2/main_wnd_draw.cpp:72
+msgid "Always"
+msgstr "Всегда"
+
+#: ../src/gui2/main_wnd_draw.cpp:193
 msgid "Background"
-msgstr ""
+msgstr "Фон"
 
 #: ../src/ConfigData_hk.h:79
 msgid "Change layout for all recent text"
@@ -59,11 +62,11 @@ msgstr "Исправить выделенный текст"
 msgid "Clear"
 msgstr "Очистить"
 
-#: ../src/gui2/main_wnd_draw.cpp:73
+#: ../src/gui2/main_wnd_draw.cpp:88
 msgid "Clear text format on Ctrl-C"
 msgstr "Очищать форматирование текста при Ctrl-C"
 
-#: ../src/gui2/main_wnd_draw.cpp:205
+#: ../src/gui2/main_wnd_draw.cpp:229
 msgid "Close to tray"
 msgstr "Свернуть в трей"
 
@@ -71,50 +74,60 @@ msgstr "Свернуть в трей"
 msgid "Cyclic layout change"
 msgstr "Циклическая смена"
 
-#: ../src/gui2/Notificator/Entry.h:144
+#: ../src/gui2/Notificator/Entry.h:143
 msgid "Date"
-msgstr ""
+msgstr "Дата"
 
-#: ../src/gui2/Notificator/Entry.h:22
+#: ../src/gui2/Notificator/Entry.h:175
 msgid "Days"
-msgstr ""
+msgstr "Дни"
 
 #: ../src/gui2/Notificator/Notificator.h:135
 msgid "Delete"
 msgstr "Удалить"
 
-#: ../src/gui2/main_wnd_draw.cpp:163
+#: ../src/gui2/main_wnd_draw.cpp:186
 msgid "Disable Ctrl + LAlt as RAlt on extended layouts"
-msgstr ""
+msgstr "Отключение Ctrl + LAlt как RAlt на расширенных раскладках"
 
-#: ../src/gui2/main_wnd_draw.cpp:159
-msgid "Disable interception of keys sent to remote computer for RDP connection"
+#: ../src/gui2/main_wnd_draw.cpp:182
+msgid ""
+"Disable interception of keys sent to remote computer for RDP connection"
 msgstr ""
+"Отключить перехват клавиш, отправляемых на удаленный компьютер для RDP-"
+"соединения"
 
-#: ../src/gui2/main_wnd_draw.cpp:67
-#| msgid "Disable the accessibility shortcut keys (5 SHIFT and others)"
+#: ../src/gui2/main_wnd_draw.cpp:86
+msgid "Disable sticking after 5 Shift and others"
+msgstr "Отключить залипание после 5 Shift и другие"
+
+#: ../src/gui2/main_wnd_draw.cpp:82
 msgid "Disable the accessibility functions"
-msgstr ""
+msgstr "Отключите функции доступности"
+
+#: ../src/gui2/main_wnd_draw.cpp:72
+msgid "Disabled"
+msgstr "Отключено"
 
 #: ../src/gui2/SetHotKeyCombo.h:122
 msgid "Double-tapping"
-msgstr ""
+msgstr "Двойное нажатие"
 
-#: ../src/gui2/main_wnd_draw.cpp:46
-msgid "Emulate 'Alt + Shift' Windows hotkey"
-msgstr ""
+#: ../src/gui2/main_wnd_draw.cpp:51
+msgid "Emulate Windows hotkey"
+msgstr "Эмуляция горячей клавиши Windows"
 
-#: ../src/TrayIcon.h:34 ../src/gui2/main_wnd_draw.cpp:17
+#: ../src/TrayIcon.h:34 ../src/gui2/main_wnd_draw.cpp:22
 msgid "Enable"
 msgstr "Включить"
 
-#: ../src/gui2/main_wnd_draw.cpp:80
+#: ../src/gui2/main_wnd_draw.cpp:95
 msgid "Enable debug log"
 msgstr "Включить debug log"
 
 #: ../src/ConfigData_hk.h:84
 msgid "Enable/Disable"
-msgstr ""
+msgstr "Включить/выключить"
 
 #: ../src/gui2/main_wnd.h:65
 msgid "Error loading config file"
@@ -122,27 +135,41 @@ msgstr "Ошибка чтения конфиг файла"
 
 #: ../src/gui2/Notificator/Notificator.h:73
 msgid "Event!"
-msgstr ""
+msgstr "Событие!"
+
+#: ../src/gui2/Notificator/Entry.h:154
+#, c-format
+#| msgid "Every year"
+msgid "Every %d days"
+msgstr "Каждые %d дней"
 
 #: ../src/gui2/Notificator/Entry.h:19
 msgid "Every month"
-msgstr ""
+msgstr "Каждый месяц"
 
 #: ../src/gui2/Notificator/Entry.h:20
 msgid "Every year"
-msgstr ""
+msgstr "Каждый год"
+
+#: ../src/gui2/main_wnd_draw.cpp:79
+msgid "Example"
+msgstr "Пример"
 
 #: ../src/TrayIcon.h:35
 msgid "Exit"
 msgstr "Закрыть"
 
-#: ../src/gui2/main_wnd_draw.cpp:141
+#: ../src/gui2/main_wnd_draw.cpp:164
 msgid "Expert"
-msgstr ""
+msgstr "Эксперт"
+
+#: ../src/gui2/main_wnd_draw.cpp:74
+msgid "Extended word separation"
+msgstr "Расширенное разделение слов"
 
 #: ../src/gui2/Notificator/Notificator.h:8
 msgid "Folder"
-msgstr ""
+msgstr "Папка"
 
 #: ../src/ConfigData_hk.h:82
 msgid "Generate CapsLock"
@@ -150,61 +177,80 @@ msgstr "Генерировать CapsLock"
 
 #: ../src/gui2/Notificator/Notificator.h:84
 msgid "Got it!"
-msgstr ""
+msgstr "Понятно!"
 
-#: ../src/gui2/main_wnd_draw.cpp:122
+#: ../src/gui2/main_wnd_draw.cpp:139
 msgid "Hotkeys"
 msgstr "Горячие клавиши"
 
+#: ../src/gui2/main_wnd_draw.cpp:144
+msgid "Language layouts"
+msgstr "Языковые раскладки"
+
 #: ../src/gui2/SetHotKeyCombo.h:100
 msgid "Left right difference"
-msgstr ""
+msgstr "Разница между левым и правым"
 
 #: ../src/gui2/main_wnd.h:69 ../src/gui2/main_wnd.h:75
 msgid "Message"
-msgstr ""
+msgstr "Сообщение"
 
-#: ../src/gui2/Notificator/Entry.h:99
+#: ../src/gui2/Notificator/Entry.h:98
 msgid "NOW!"
-msgstr ""
+msgstr "СЕЙЧАС!"
 
 #: ../src/gui2/main_wnd.h:64
-msgid "Need admin right"
+msgid "Need admin rights"
 msgstr "Программа должна быть запущена от администратора"
 
-#: ../src/gui2/Notificator/Entry.h:99
+#: ../src/gui2/Notificator/Entry.h:98
 msgid "Never"
-msgstr ""
+msgstr "Никогда"
 
 #: ../src/gui2/Notificator/Entry.h:21
 msgid "One time"
-msgstr ""
+msgstr "Один раз"
+
+#: ../src/gui2/main_wnd_draw.cpp:72
+msgid "Only for several words correction"
+msgstr "Только для коррекции нескольких слов"
 
 #: ../src/ConfigData_hk.h:87
 msgid "Paste text without formatting"
-msgstr ""
+msgstr "Вставить текст без форматирования"
 
 #: ../src/gui2/SetHotKeyCombo.h:98
 msgid "Press any key..."
 msgstr "Нажмите любую клавишу ..."
 
+#: ../src/gui2/main_wnd_draw.cpp:132
+#| msgid "Reload config"
+msgid "Reload"
+msgstr "Перезагрузить"
+
 #: ../src/gui2/Notificator/Notificator.h:89
 msgid "Remain me tomorow..."
-msgstr ""
+msgstr "Напомнить мне завтра..."
 
-#: ../src/gui2/Notificator/Notificator.h:111
+#: ../src/gui2/main_wnd_draw.cpp:212 ../src/gui2/Notificator/Notificator.h:111
 msgid "Reminder"
-msgstr ""
+msgstr "Напоминалка"
 
 #: ../src/ConfigData_hk.h:83
 msgid "Selected text to UPPER/lower"
-msgstr ""
+msgstr "Выделенный текст в верхний/нижний регистр"
 
-#: ../src/gui2/main_wnd_draw.cpp:49
+#: ../src/gui2/main_wnd_draw.cpp:78
+msgid "Separate words by keys that can produce both letters and other symbols"
+msgstr ""
+"Разделение слов клавишами, которые могут создавать как буквы, так и другие "
+"символы"
+
+#: ../src/gui2/main_wnd_draw.cpp:54
 msgid "Set of flags"
-msgstr ""
+msgstr "Набор флагов"
 
-#: ../src/gui2/main_wnd_draw.cpp:13
+#: ../src/gui2/main_wnd_draw.cpp:18
 msgid "Settings"
 msgstr "Настройки"
 
@@ -212,35 +258,36 @@ msgstr "Настройки"
 msgid "Show"
 msgstr "Показать"
 
+#: ../src/ConfigData_hk.h:86
+msgid "Show/hide Reminder"
+msgstr "Показать/скрыть Напоминалку"
+
 #: ../src/ConfigData_hk.h:85
 msgid "Show/hide main window"
 msgstr "Показать/скрыть главное окно"
 
-#: ../src/ConfigData_hk.h:86
-msgid "Show/hide remainder"
-msgstr ""
-
-#: ../src/gui2/main_wnd_draw.cpp:156
+#: ../src/gui2/main_wnd_draw.cpp:179
 msgid "Skip low level inject keys"
-msgstr ""
+msgstr "Пропустить клавиши с инжектом низкого уровня"
 
-#: ../src/gui2/main_wnd_draw.cpp:71
-msgid "Sticking after 5 shift and others"
-msgstr ""
-
-#: ../src/gui2/main_wnd_draw.cpp:86
+#: ../src/gui2/main_wnd_draw.cpp:101
 msgid "Theme"
-msgstr ""
+msgstr "Тема"
 
-#: ../src/gui2/main_wnd_draw.cpp:166
+#: ../src/gui2/main_wnd_draw.cpp:189
 msgid "This is done by temporary switching to layout"
-msgstr ""
+msgstr "Это делается путем временного переключения на раскладку"
 
-#: ../src/gui2/main_wnd_draw.cpp:62 ../src/gui2/main_wnd_draw.cpp:182
+#: ../src/gui2/main_wnd_draw.cpp:66 ../src/gui2/main_wnd_draw.cpp:146
+#: ../src/gui2/main_wnd_draw.cpp:206
 msgid "Update"
 msgstr "Обновить"
 
-#: ../src/gui2/main_wnd_draw.cpp:37
+#: ../src/gui2/main_wnd_draw.cpp:51
+msgid "Use this mode if the main one does not work correctly"
+msgstr "Используйте этот режим, если основной работает некорректно"
+
+#: ../src/gui2/main_wnd_draw.cpp:42
 msgid "Work in programs running by admin"
 msgstr "Работать в программах, запущенных от администратора"
 
@@ -265,9 +312,6 @@ msgstr "Работать в программах, запущенных от ад
 #~ msgid "Error while initing app: "
 #~ msgstr "Ошибка инициализации программы: "
 
-#~ msgid "Extended word separation"
-#~ msgstr "Расширенное разделение слов"
-
 #~ msgid "Flags set"
 #~ msgstr "Набор флагов"
 
@@ -283,9 +327,6 @@ msgstr "Работать в программах, запущенных от ад
 #~ msgstr ""
 #~ "Запретить другим программам перехватывать клавиатуру (может вызывать "
 #~ "проблемы)"
-
-#~ msgid "Reload config"
-#~ msgstr "Перезагрузить конфиг"
 
 #~ msgid "Remap CapsLock as F24"
 #~ msgstr "Переназначить CapsLock как F24"
@@ -340,9 +381,6 @@ msgstr "Работать в программах, запущенных от ад
 
 #~ msgid "Set"
 #~ msgstr "Изменить"
-
-#~ msgid "Set layout"
-#~ msgstr "Установить раскладку"
 
 #~ msgid "Several words"
 #~ msgstr "Несколько слов"

@@ -19,7 +19,6 @@ namespace Notific {
 			if (p == Period::Month) return LOC("Every month");
 			if (p == Period::Year) return LOC("Every year");
 			if (p == Period::OneTime) return LOC("One time");
-			if (p == Period::NDays) return LOC("Days");
 			return "Error";
 		}
 
@@ -152,7 +151,7 @@ namespace Notific {
 					char buf[100];
 					auto title = PeriodName(period);
 					if (period == Period::NDays) {
-						StrUtils::FormatTo(buf, "{} {}", days_period, PeriodName(Period::NDays));
+						StrUtils::Sprintf(buf, LOC("Every %d days"), days_period);
 						title = buf;
 					}
 
@@ -173,7 +172,7 @@ namespace Notific {
 
 						//if(ImGui::InputInt(LOC("Days"), &day_period, 1,
 						ImGui::SetNextItemWidth(ImGui::CalcTextSize("1111").x * 4);
-						if (ImGui::InputInt(PeriodName(Period::NDays), &days_period, 1, 10)) {
+						if (ImGui::InputInt(LOC("Days"), &days_period, 1, 10)) {
 							correct_days_period();
 							period = Period::NDays;
 							changes = true;

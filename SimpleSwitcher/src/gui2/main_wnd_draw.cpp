@@ -71,7 +71,7 @@ void MainWindow::DrawFrameActual() {
 			{
 				UStr items[] = { LOC("Disabled"), LOC("Only for several words correction"), LOC("Always") };
 				Clamp(conf_gui()->separate_ext_mode, 0, std::ssize(items)-1);
-				if (ImGui::Combo(LOC("Extended word seperation"), &conf_gui()->separate_ext_mode, items, std::size(items))) {
+				if (ImGui::Combo(LOC("Extended word separation"), &conf_gui()->separate_ext_mode, items, std::size(items))) {
 					SaveApplyGuiConfig();
 				}
 				ImGui::SetItemTooltip((UStr)u8"%s\n%s: ']}' - 'ъЪ'", 
@@ -83,7 +83,7 @@ void MainWindow::DrawFrameActual() {
 				SaveApplyGuiConfig();
 				ApplyAcessebil();
 			}
-			ImGui::SetItemTooltip(LOC("Disable sticking after 5 shift and others"));
+			ImGui::SetItemTooltip(LOC("Disable sticking after 5 Shift and others"));
 
 			if (ImGui::Checkbox(LOC("Clear text format on Ctrl-C"), &conf_gui()->fClipboardClearFormat)) {
 				SaveApplyGuiConfig();
@@ -129,7 +129,7 @@ void MainWindow::DrawFrameActual() {
 				ImGui::TextLinkOpenURL("SimpleSwitcher.json", config_path.c_str());
 				ImGui::SameLine();
 
-				if (ImGui::Button("Reload")) {
+				if (ImGui::Button(LOC("Reload"))) {
 					Reinit(!cfg_details::ReloadGuiConfig());
 				}
 			}
@@ -209,7 +209,7 @@ void MainWindow::DrawFrameActual() {
 			}
 
 			{
-				if (ImGui::Button(LOC("Remainder"))) {
+				if (ImGui::Button(LOC("Reminder"))) {
 					show_main_wind(1);
 				}
 			}

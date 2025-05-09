@@ -63,7 +63,7 @@ public:
 };
 
 namespace details {
-	inline CMainWorker* g_worker;
+	inline CMainWorker* g_worker; // one-time write
 }
 
 inline CMainWorker* Worker() { return details::g_worker; }

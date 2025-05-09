@@ -83,7 +83,7 @@ inline const char* GetGuiTextForHk(HotKeyType hk) {
 	case hk_toUpperSelected: return LOC("Selected text to UPPER/lower");
 	case hk_ToggleEnabled: return LOC("Enable/Disable");
 	case hk_ShowMainWindow: return LOC("Show/hide main window");
-	case hk_ShowRemainderWnd: return LOC("Show/hide remainder");
+	case hk_ShowRemainderWnd: return LOC("Show/hide Reminder");
 	case hk_InsertWithoutFormat: return LOC("Paste text without formatting");
 	}
 	return "Error";

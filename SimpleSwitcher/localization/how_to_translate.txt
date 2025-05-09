@@ -1,23 +1,29 @@
-﻿1. Get last updates
+﻿Note: 'ru' must be replaced with requred language.
+
+1. Get last updates
 git pull
 
-2. Actualize english strings (file mess.pot)
+2. Actualize english strings (file messages.pot)
 collect_messages.cmd
 
-3. Translate mess.pot
+3. Create or update ru.po file.
+Create: init ru
+Update: Use poedit (!!!delete all YELLOW translations!!!!)
 
-	[optional] Initialize *.po. Example 
-	init fr
-	
-	[optional] auto-transalte po
-	auto_translate.py fr
-	
-	Install poedit https://poedit.net/ or any program you like.
-	Generate *.po (text) file for needed language.
+4. Translate ru.po
 
-4. Add language to program (if not already added)
-src\res\myres.rc - add link to mo file.
-src\gui\main_gui.cpp - supportTranslations  - add to list language.
+Methon 1.
+flat.py ru
+Translate content of flat.txt with any online translator e.x. DeepL
+flat_apply.py ru
+
+Methon 2.
+Translate with https://poedit.net/ or any program you like
+
+
+5. Add language (if not already added)
+a) add to res.rc
+b) add to main_wnd_draw.cpp std::array {"English", "Russian", "Hebrew"}
 
 
 
