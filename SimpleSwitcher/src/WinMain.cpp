@@ -21,8 +21,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	IFS_LOG(update_cur_dir());
 	LOG_ANY("Start program {}", SW_VERSION);
 
-	CMainWorker worker;
-	worker.Init();
+	CMainWorker::Inst().Init();
 
 	ApplyLocalization();
 	ApplyAcessebil();

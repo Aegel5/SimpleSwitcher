@@ -40,11 +40,11 @@ class CMainWorker {
 			m_thread.join();
 	}
 
-	void ReStart() {
-		StopAndWait();
-		m_queue.Reinitialize();
-		m_thread = std::thread(std::bind(&CMainWorker::WorkerInt, this));
-	}
+	//void ReStart() {
+	//	StopAndWait();
+	//	m_queue.Reinitialize();
+	//	m_thread = std::thread(std::bind(&CMainWorker::WorkerInt, this));
+	//}
 
 public:
 	WorkerImplement* WorkerImpl() { return worker_impl.get(); }
@@ -60,11 +60,12 @@ public:
 		m_queue.PostMsg(std::move(msg), delay);
 	}
 
+	static CMainWorker& Inst() {
+		static CMainWorker inst;
+		return inst;
+	}
+
 };
 
-namespace details {
-	inline CMainWorker* g_worker; // one-time write
-}
-
-inline CMainWorker* Worker() { return details::g_worker; }
+inline CMainWorker* Worker() { return &CMainWorker::Inst(); }
 inline WorkerImplement* WorkerImpl() { return Worker()->WorkerImpl(); }

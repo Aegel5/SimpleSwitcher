@@ -45,9 +45,8 @@ void CMainWorker::WorkerInt()
 }
 
 void CMainWorker::Init() {
-	details::g_worker = this;
 	worker_impl = MAKE_UNIQUE(worker_impl);
-	ReStart();
+	m_thread = std::thread(std::bind(&CMainWorker::WorkerInt, this));
 }
 
 
