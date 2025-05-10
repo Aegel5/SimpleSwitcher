@@ -35,10 +35,76 @@ void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-static int wantFrameDelay = MAX_FOR(wantFrameDelay);
+static int g_wantFrameDelay = std::numeric_limits<int>::max();
 void ImWantNewFrameWithDelay(int ms) {
-	if (ms < wantFrameDelay) wantFrameDelay = ms;
+	if (ms < g_wantFrameDelay) 
+		g_wantFrameDelay = ms;
 }
+static bool ImWaitNewFrame(){
+
+	MSG msg;
+
+	auto proc = [&msg]() {
+		::TranslateMessage(&msg);
+		::DispatchMessage(&msg);
+		auto need_redraw = msg.message == WM_PAINT || !ImGui::GetIO().Ctx->InputEventsQueue.empty();
+		if (need_redraw) {
+			ImWantNewFrameWithDelay(0);
+		}
+	};
+
+	auto peek = [&]() {
+		while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
+			if (msg.message == WM_QUIT) return false;
+			proc();
+		}
+		return true;
+	};
+
+	while (true) {
+
+		// DRAW NOW
+		{
+			static int framesToDraw = 3;
+
+			if (g_wantFrameDelay <= 0)
+				framesToDraw = 3;
+
+			if (framesToDraw > 0) {
+				framesToDraw--;
+				if (!peek()) return false;
+				g_wantFrameDelay = std::numeric_limits<int>::max(); // clear before every frame process
+				return true;
+			}
+		}
+
+		// INFINITY WAIT
+		if (g_wantFrameDelay == std::numeric_limits<int>::max()) {
+			if (GetMessage(&msg, 0, 0, 0) <= 0) { return false; } proc();
+			continue;
+		}
+
+		// TIMED WAIT
+		{
+			using namespace std::chrono;
+			auto start = steady_clock::now();
+			auto ourDelay = g_wantFrameDelay;
+			auto res = ::MsgWaitForMultipleObjectsEx(0, NULL, ourDelay, QS_ALLINPUT, MWMO_INPUTAVAILABLE | MWMO_ALERTABLE);
+			if (res == WAIT_TIMEOUT) {
+				ImWantNewFrameWithDelay(0);
+			}
+			else {
+				// some messages while waiting
+				if (!peek()) return false; // can decrease g_wantFrameDelay
+				int waited = duration_cast<milliseconds>(steady_clock::now() - start).count();
+				int remains_to_wait = ourDelay - waited; // can be negative - but it ok
+				ImWantNewFrameWithDelay(remains_to_wait);
+			}
+		}
+	}
+}
+
+static std::function wnd_handler = [](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {return false;};
 
 // Main code
 int StartGui(bool show, bool err_conf)
@@ -92,23 +158,40 @@ int StartGui(bool show, bool err_conf)
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
-
 	MainWindow mainWindow(show, err_conf);
 	Notific::Notificator notif;
 	WinTimer timer;
 	TrayIcon trayIcon;
-
 	timer.CycleTimer([&]() {
 		if (notif.Process()) {
 			ImWantNewFrameWithDelay(0);
 		}
 		}, 2000);
 
-	auto GuiStep = [&]() {
+	wnd_handler = [&](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+
+		if (msg == WM_ShowWindow) {
+			int mode = wParam;
+			if (mode) notif.ShowHide();
+			else mainWindow.ShowHide();
+			ImWantNewFrameWithDelay(0);
+			return true;
+		}
+
+		if (msg == WM_LayNotif) {
+			trayIcon.Update((HKL)wParam);
+			return true;
+		}
+
+		return false;
+	};
+
+	while(ImWaitNewFrame()) {
+
 		// Handle window being minimized or screen locked
 		if (g_SwapChainOccluded && g_pSwapChain->Present(0, DXGI_PRESENT_TEST) == DXGI_STATUS_OCCLUDED) {
 			::Sleep(10);
-			return;
+			continue;
 		}
 		g_SwapChainOccluded = false;
 
@@ -132,88 +215,7 @@ int StartGui(bool show, bool err_conf)
 		//HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
 		g_SwapChainOccluded = hr == DXGI_STATUS_OCCLUDED;
 
-		};
-
-
-	MSG msg;
-
-	auto ProcessMessage = [&]() {
-
-		if (msg.message == WM_ShowWindow) {
-			int mode = msg.wParam;
-			if (mode) notif.ShowHide();
-			else mainWindow.ShowHide();
-			return true;
-		}
-
-		if (msg.message == WM_LayNotif) {
-			trayIcon.Update((HKL)msg.wParam);
-			return false;
-		}
-
-		::TranslateMessage(&msg);
-		::DispatchMessage(&msg);
-		return msg.message == WM_PAINT || !ctx->InputEventsQueue.empty();
-
-		};
-
-
-	auto Cycle = [&]() {
-
-		int framesToDraw = 3;
-
-		auto proc = [&]() {
-			if (ProcessMessage()) {
-				framesToDraw = 3;
-			}
-			};
-
-		auto peek = [&]() {
-			while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
-				if (msg.message == WM_QUIT) return false;
-				proc();
-			}
-			return true;
-			};
-
-		while (true) {
-			if (framesToDraw > 0) {
-				framesToDraw--;
-				if (!peek()) return;
-			}
-			else {
-				if (wantFrameDelay == MAX_FOR(wantFrameDelay)) {
-					if (GetMessage(&msg, 0, 0, 0) <= 0) { return; }	proc();
-				}
-				else {
-					if (wantFrameDelay <= 0) {
-						framesToDraw = 3;
-					}
-					else {
-						TimePoint start;
-						start.SetNow();
-						auto res = ::MsgWaitForMultipleObjectsEx(0, NULL, wantFrameDelay, QS_ALLINPUT, MWMO_INPUTAVAILABLE | MWMO_ALERTABLE);
-						if (res == WAIT_TIMEOUT) {
-							framesToDraw = 3;
-						}
-						else {
-							if (!peek()) return;
-							if (framesToDraw == 0) {
-								// continue  wait
-								wantFrameDelay = std::max(wantFrameDelay - start.DeltToNowMs(), 0);
-							}
-						}
-					}
-				}
-				continue;
-			}
-
-			wantFrameDelay = MAX_FOR(wantFrameDelay); // очищаем каждый фрейм, следующая итерация может заново поставить, если нужно.
-			GuiStep();
-		}
-	};
-
-	Cycle();
+	}
 
     // Cleanup
     ImGui_ImplDX11_Shutdown();
@@ -296,6 +298,9 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	if (wnd_handler(hWnd, msg, wParam, lParam))
+		return true;
+
     if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
         return true;
 
