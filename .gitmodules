@@ -1,0 +1,4 @@
+[submodule "SimpleSwitcher/extern/imgui"]
+	path = SimpleSwitcher/extern/imgui
+	url = https://github.com/Aegel5/imgui
+	branch = docking
