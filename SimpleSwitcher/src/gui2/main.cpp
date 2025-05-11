@@ -36,7 +36,7 @@ void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 static int g_wantFrameDelay = std::numeric_limits<int>::max();
-void ImWantNewFrameWithDelay(int ms) {
+void ImWantFrameWithDelay(int ms) {
 	if (ms < g_wantFrameDelay) 
 		g_wantFrameDelay = ms;
 }
@@ -47,9 +47,10 @@ static bool ImWaitNewFrame(){
 	auto proc = [&msg]() {
 		::TranslateMessage(&msg);
 		::DispatchMessage(&msg);
-		auto need_redraw = msg.message == WM_PAINT || !ImGui::GetIO().Ctx->InputEventsQueue.empty();
+		auto need_redraw = msg.message == WM_PAINT 
+			|| !ImGui::GetIO().Ctx->InputEventsQueue.empty(); // TODO: instead call ImWantFrameWithDelay(0) when push_back in queue.
 		if (need_redraw) {
-			ImWantNewFrameWithDelay(0);
+			ImWantFrameWithDelay(0);
 		}
 	};
 
@@ -65,10 +66,10 @@ static bool ImWaitNewFrame(){
 
 		// DRAW NOW
 		{
-			static int framesToDraw = 3;
+			static int framesToDraw = 3; // TODO: instead add ImWantFrameWithDelay(0) in right places in core ImGui.
 
 			if (g_wantFrameDelay <= 0)
-				framesToDraw = 3;
+				framesToDraw = 3; 
 
 			if (framesToDraw > 0) {
 				framesToDraw--;
@@ -91,14 +92,14 @@ static bool ImWaitNewFrame(){
 			auto ourDelay = g_wantFrameDelay;
 			auto res = ::MsgWaitForMultipleObjectsEx(0, NULL, ourDelay, QS_ALLINPUT, MWMO_INPUTAVAILABLE | MWMO_ALERTABLE);
 			if (res == WAIT_TIMEOUT) {
-				ImWantNewFrameWithDelay(0);
+				ImWantFrameWithDelay(0);
 			}
 			else {
 				// some messages while waiting
 				if (!peek()) return false; // can decrease g_wantFrameDelay
 				int waited = duration_cast<milliseconds>(steady_clock::now() - start).count();
 				int remains_to_wait = ourDelay - waited; // can be negative - but it ok
-				ImWantNewFrameWithDelay(remains_to_wait);
+				ImWantFrameWithDelay(remains_to_wait);
 			}
 		}
 	}
@@ -164,7 +165,7 @@ int StartGui(bool show, bool err_conf)
 	TrayIcon trayIcon;
 	timer.CycleTimer([&]() {
 		if (notif.Process()) {
-			ImWantNewFrameWithDelay(0);
+			ImWantFrameWithDelay(0);
 		}
 		}, 2000);
 
@@ -174,7 +175,7 @@ int StartGui(bool show, bool err_conf)
 			int mode = wParam;
 			if (mode) notif.ShowHide();
 			else mainWindow.ShowHide();
-			ImWantNewFrameWithDelay(0);
+			ImWantFrameWithDelay(0);
 			return true;
 		}
 
@@ -203,7 +204,7 @@ int StartGui(bool show, bool err_conf)
 		mainWindow.DrawFrame();
 		notif.Draw();
 		if (notif.IsVisible()) 
-			ImWantNewFrameWithDelay(500); // for timer display
+			ImWantFrameWithDelay(500); // for timer display
 
 		// Rendering
 		ImGui::Render();

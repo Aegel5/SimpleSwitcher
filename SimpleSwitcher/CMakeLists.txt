@@ -32,6 +32,10 @@ list(FILTER all_implement_units EXCLUDE REGEX ".*/old/.*")
 
 file(GLOB_RECURSE extern_files  extern/*.cpp )
 list(FILTER extern_files EXCLUDE REGEX ".*binary_to_compressed_c.cpp")
+list(FILTER extern_files EXCLUDE REGEX ".*/backends/.*")
+list(FILTER extern_files EXCLUDE REGEX ".*/examples/.*")
+list(APPEND extern_files extern/imgui/backends/imgui_impl_dx11.cpp)
+list(APPEND extern_files extern/imgui/backends/imgui_impl_win32.cpp)
 set_source_files_properties(${extern_files} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 
 #file(GLOB_RECURSE all_interface_modules  
@@ -54,9 +58,9 @@ target_link_libraries(SimpleSwitcher PRIVATE "Imm32.lib" "Psapi.lib" freetype "d
 
 target_include_directories(SimpleSwitcher PRIVATE "src/libtools")
 target_include_directories(SimpleSwitcher PRIVATE "extern")
-target_include_directories(SimpleSwitcher PRIVATE "extern/iamgui")
-target_include_directories(SimpleSwitcher PRIVATE "extern/iamgui/misc/cpp")
-target_include_directories(SimpleSwitcher PRIVATE "extern/iamgui/backends")
+target_include_directories(SimpleSwitcher PRIVATE "extern/imgui")
+target_include_directories(SimpleSwitcher PRIVATE "extern/imgui/misc/cpp")
+target_include_directories(SimpleSwitcher PRIVATE "extern/imgui/backends")
 target_include_directories(SimpleSwitcher PRIVATE "src") 
 target_include_directories(SimpleSwitcher PRIVATE "${freetype_SOURCE_DIR}/include")
 
