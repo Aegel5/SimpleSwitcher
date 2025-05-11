@@ -55,7 +55,7 @@ public:
 
 		if (ImGui::BeginCombo(title.c_str(), key_str.c_str(), ImGuiComboFlags_HeightLarge | ImGuiComboFlags_NoArrowButton)) {
 
-			ImWantFrameWithDelay(60);
+			ImWantFrameWithDelay(0.060f);
 
 			popup_open = true;
 

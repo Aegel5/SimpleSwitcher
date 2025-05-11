@@ -35,10 +35,9 @@ void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-static int g_wantFrameDelay = std::numeric_limits<int>::max();
-void ImWantFrameWithDelay(int ms) {
-	if (ms < g_wantFrameDelay) 
-		g_wantFrameDelay = ms;
+static float g_wantFrameDelay = FLT_MAX;
+void ImWantFrameWithDelay(float seconds) {
+	if (seconds < g_wantFrameDelay)	g_wantFrameDelay = seconds;
 }
 static bool ImWaitNewFrame(){
 
@@ -74,13 +73,13 @@ static bool ImWaitNewFrame(){
 			if (framesToDraw > 0) {
 				framesToDraw--;
 				if (!peek()) return false;
-				g_wantFrameDelay = std::numeric_limits<int>::max(); // clear before every frame process
+				g_wantFrameDelay = FLT_MAX; // clear before every frame process
 				return true;
 			}
 		}
 
 		// INFINITY WAIT
-		if (g_wantFrameDelay == std::numeric_limits<int>::max()) {
+		if (g_wantFrameDelay == FLT_MAX) {
 			if (GetMessage(&msg, 0, 0, 0) <= 0) { return false; } proc();
 			continue;
 		}
@@ -89,16 +88,15 @@ static bool ImWaitNewFrame(){
 		{
 			using namespace std::chrono;
 			auto start = steady_clock::now();
-			auto ourDelay = g_wantFrameDelay;
-			auto res = ::MsgWaitForMultipleObjectsEx(0, NULL, ourDelay, QS_ALLINPUT, MWMO_INPUTAVAILABLE | MWMO_ALERTABLE);
+			auto res = ::MsgWaitForMultipleObjectsEx(0, NULL, g_wantFrameDelay * 1000, QS_ALLINPUT, MWMO_INPUTAVAILABLE | MWMO_ALERTABLE);
 			if (res == WAIT_TIMEOUT) {
 				ImWantFrameWithDelay(0);
 			}
 			else {
 				// some messages while waiting
+				duration<float> waited = steady_clock::now() - start;
+				auto remains_to_wait = g_wantFrameDelay - waited.count(); // can be negative - but it ok
 				if (!peek()) return false; // can decrease g_wantFrameDelay
-				int waited = duration_cast<milliseconds>(steady_clock::now() - start).count();
-				int remains_to_wait = ourDelay - waited; // can be negative - but it ok
 				ImWantFrameWithDelay(remains_to_wait);
 			}
 		}
@@ -204,7 +202,7 @@ int StartGui(bool show, bool err_conf)
 		mainWindow.DrawFrame();
 		notif.Draw();
 		if (notif.IsVisible()) 
-			ImWantFrameWithDelay(500); // for timer display
+			ImWantFrameWithDelay(0.5f); // for timer display
 
 		// Rendering
 		ImGui::Render();
