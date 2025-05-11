@@ -208,6 +208,9 @@ TStatus WorkerImplement::ProcessRevert(ContextRevert&& ctxRevert)
 		WaitOtherLay(prevLay);
 	}
 
+	if (m_sTopProcName == L"notepad.exe" && IsWindows11OrGreater())
+		Sleep(15);
+
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT))
 	{
 		InputSender::SendKeys(ctxRevert.keylist);
