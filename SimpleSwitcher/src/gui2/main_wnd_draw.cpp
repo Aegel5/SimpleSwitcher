@@ -168,6 +168,8 @@ void MainWindow::DrawFrameActual() {
 					show_demo_window = true;
 			}
 
+
+
 			//{
 			//	if (ImGui::Checkbox(LOC("Optimize GUI"), &optmz)) {
 			//		SaveConfigWith([this](auto p) {p->optimize_gui = optmz; });
@@ -212,6 +214,38 @@ void MainWindow::DrawFrameActual() {
 				if (ImGui::Button(LOC("Reminder"))) {
 					show_main_wind(1);
 				}
+			}
+
+			if (ImGui::CollapsingHeader("Scancode remap")) {
+
+				if (!remap_open) {
+					remap_open = true;
+					IFS_LOG(remap.FromRegistry());
+				}
+
+				auto edit = [&](auto vk, auto vk2, UStr title) {
+					TKeyCode remapped;
+					remap.GetRemapedKey(vk, remapped);
+					bool val = remapped == vk2;
+					if (ImGui::Checkbox(title, &val)) {
+						IFS_LOG(remap.FromRegistry());
+						if (val) {
+							remap.PutRemapKey(vk, vk2);
+						}
+						else {
+							remap.DelRemapKey(vk);
+						}
+						IFS_LOG(remap.ToRegistry());
+						IFS_LOG(remap.FromRegistry());
+					}
+					};
+
+				edit(VK_CAPITAL, VK_F24, LOC("Remap CapsLock as F24"));
+				edit(VK_SCROLL, VK_F23, LOC("Remap ScrollLock as F23"));
+
+			}
+			else {
+				remap_open = false;
 			}
 
 		}

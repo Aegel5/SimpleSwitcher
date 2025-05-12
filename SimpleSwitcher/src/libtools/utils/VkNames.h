@@ -9,6 +9,7 @@ enum {
 	VKE_V = 0x56,
 	VKE_C = 67,
 	VKE_BREAK = VK_PAUSE,
+	VKE_ALT = VK_MENU,
 
 	VKE_MAX = 2048,
 	VKE_WIN = VKE_MAX - 1,

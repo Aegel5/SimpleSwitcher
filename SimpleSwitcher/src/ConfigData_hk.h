@@ -69,6 +69,9 @@ inline std::generator<CHotKey> GetHk_Defaults(HotKeyType hk) {
 	case hk_InsertWithoutFormat:
 		co_yield CHotKey(VK_CONTROL, VK_SHIFT, VKE_V);
 		co_return;
+	case hk_EmulateCapsLock:
+		co_yield CHotKey(VKE_ALT, VK_F24);
+		co_return;
 	}
 }
 

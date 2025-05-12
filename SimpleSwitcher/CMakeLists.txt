@@ -47,6 +47,7 @@ set_source_files_properties(${extern_files} PROPERTIES SKIP_PRECOMPILE_HEADERS O
 #    ${all_interface_modules}
 #)
 
+set(CMAKE_CXX_SCAN_FOR_MODULES off)
 set(CMAKE_CXX_STANDARD 23)
 
 add_executable (SimpleSwitcher WIN32)

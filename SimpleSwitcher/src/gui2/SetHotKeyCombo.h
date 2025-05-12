@@ -27,10 +27,9 @@ class SetHotKeyCombo {
 	void SetKey(CHotKey k, bool apl = true) {
 		if (key.Compare(k, CHotKey::COMPARE_STRICK_MODIFIER)) return;
 		key = k;
-		key_str = StrUtils::Convert(key.ToString());
+		key_str = StrUtils::Convert(hotkeys->ToString());
 		if (apl) {
 			hotkeys->key() = key;
-			conf_gui()->hotkeysList[0].keys.key() = key;
 			SaveApplyGuiConfig();
 		}
 	}

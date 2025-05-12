@@ -25,6 +25,8 @@ class MainWindow : public ImGuiUtils::WindowHelper {
 	std::vector<std::pair<string, HKL>> menu_lays;
 	ImVec2 startsize{ 544.0, 544.0 / 1.12 };
 	Images::ShaderResource background = MAKE_SHARED(background);
+	BufScanMap remap;
+	bool remap_open = false;
 public:
 	bool IsVisible() { return show_wnd; }
 private:
