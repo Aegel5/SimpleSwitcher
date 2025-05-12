@@ -3,8 +3,8 @@ class SetHotKeyCombo {
 
 	std::string title;
 	std::vector<std::string> defaults;
-	CHotKey key;
 	std::string key_str; // cache
+	std::string key_str_all; 
 	bool popup_open = false;
 	CHotKeyList* hotkeys;
 
@@ -24,14 +24,19 @@ class SetHotKeyCombo {
 		}
 		return 1;
 	}
-	void SetKey(CHotKey k, bool apl = true) {
-		if (key.Compare(k, CHotKey::COMPARE_STRICK_MODIFIER)) return;
-		key = k;
-		key_str = StrUtils::Convert(hotkeys->ToString());
-		if (apl) {
-			hotkeys->key() = key;
-			SaveApplyGuiConfig();
-		}
+	const CHotKey& cur_key() {
+		return hotkeys->key();
+	}
+	void build_strings() {
+		key_str = StrUtils::Convert(hotkeys->key().ToString());
+		key_str_all = StrUtils::Convert(hotkeys->ToString());
+	}
+	void SetKey(CHotKey k) {
+		if (cur_key().Compare(k, CHotKey::COMPARE_STRICK_MODIFIER)) return;
+		hotkeys->key() = k;
+		SaveApplyGuiConfig();
+		build_strings();
+
 	}
 	void Init() {
 		if (hook.IsInvalid()) {
@@ -44,7 +49,7 @@ public:
 		for (const CHotKey& it : def) {
 			defaults.push_back(StrUtils::Convert(it.ToString()));
 		}
-		SetKey(hotkeys->key(),false);
+		build_strings();
 	}
 	void Draw() {
 
@@ -52,7 +57,7 @@ public:
 
 		ImGui::SetNextItemWidth(w.x + ImGui::GetStyle().FramePadding.x * 2.f);
 
-		if (ImGui::BeginCombo(title.c_str(), key_str.c_str(), ImGuiComboFlags_HeightLarge | ImGuiComboFlags_NoArrowButton)) {
+		if (ImGui::BeginCombo(title.c_str(), key_str_all.c_str(), ImGuiComboFlags_HeightLarge | ImGuiComboFlags_NoArrowButton)) {
 
 			ImWantFrameWithDelay(0.060f);
 
@@ -107,20 +112,21 @@ public:
 			}
 
 			{
-				bool val = key.GetKeyup();
+				
+				bool val = cur_key().GetKeyup();
 				if (ImGui::Checkbox("KEYUP", &val)) {
-					if (val) key.SetDouble(false);
-					auto k = key;
+					auto k = cur_key();
+					if (val) k.SetDouble(false);
 					k.SetKeyup(val);
 					SetKey(k);
 				}
 			}
 
 			{
-				bool val = key.IsDouble();
+				bool val = cur_key().IsDouble();
 				if (ImGui::Checkbox(LOC("Double-tapping"), &val)) {
-					if (val) key.SetKeyup(false);
-					auto k = key;
+					auto k = cur_key();
+					if (val) k.SetKeyup(false);
 					k.SetDouble(val);
 					SetKey(k);
 				}
