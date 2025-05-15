@@ -17,20 +17,20 @@ is_notel = False
 is_clean = False
 ver_suff = ''
 for arg in sys.argv[1:]:
-    if arg == "/publish":        is_publ = True
-    elif arg == "/debug":        is_debug = True
-    elif arg == "/notel":        is_notel = True
-    elif arg == "/dev":        ver_suff = '_dev'
-    elif arg == "/clean":        is_clean = True
-    else :
-        print(f"unknown arg {arg}")
-        exit(1)
+	if arg == "/publish":		is_publ = True
+	elif arg == "/debug":		is_debug = True
+	elif arg == "/notel":		is_notel = True
+	elif arg == "/dev":		ver_suff = '_dev'
+	elif arg == "/clean":		is_clean = True
+	else :
+		print(f"unknown arg {arg}")
+		exit(1)
 if ver_suff != '': is_notel = True
 if is_publ: is_clean = True
 
 if is_publ:
-    # pip install PyGithub
-    from github import Github
+	# pip install PyGithub
+	from github import Github
 
 
 curpath = pathlib.Path(__file__).parent.resolve()
@@ -55,32 +55,32 @@ package_build_folder = pathlib.Path("package_build")
 
 
 def run(exe, arg):
-    cmd = f'{exe} {arg}'
-    print(cmd)
-    
-    #subprocess.run([exe, arg], capture_output=True, check=True, shell=True)
-    os.system(cmd)
+	cmd = f'{exe} {arg}'
+	print(cmd)
+	
+	#subprocess.run([exe, arg], capture_output=True, check=True, shell=True)
+	os.system(cmd)
 
 def build_localization():
-    loc_folder = curpath / "SimpleSwitcher" / "localization"
-    for root, dirs, files in os.walk(loc_folder):
-        for file in files:
-            if file.endswith(".po"):      
-                path = os.path.join(root, file)
-                path_mo = path.replace(".po", ".mo")
-                run(loc_folder / "gnuwin32" / "msgfmt.exe", f"-o {path_mo} {path}")
-                print(f"build {path}")
+	loc_folder = curpath / "SimpleSwitcher" / "localization"
+	for root, dirs, files in os.walk(loc_folder):
+		for file in files:
+			if file.endswith(".po"):	  
+				path = os.path.join(root, file)
+				path_mo = path.replace(".po", ".mo")
+				run(loc_folder / "gnuwin32" / "msgfmt.exe", f"-o {path_mo} {path}")
+				print(f"build {path}")
 
-    
+	
 build_localization()  
 
 def delfold(fold):
-    def remove_readonly(func, path, excinfo):
-        # Функция для обработки ошибок при удалении файлов
-        os.chmod(path, 0o777)  # Изменяем права доступа к файлу
-        func(path)  # Повторяем попытку удаления
-    if os.path.exists(fold): 
-        shutil.rmtree(fold, onerror=remove_readonly) 
+	def remove_readonly(func, path, excinfo):
+		# Функция для обработки ошибок при удалении файлов
+		os.chmod(path, 0o777)  # Изменяем права доступа к файлу
+		func(path)  # Повторяем попытку удаления
+	if os.path.exists(fold): 
+		shutil.rmtree(fold, onerror=remove_readonly) 
   
 if is_clean: delfold(package_build_folder)  # Полная пересборка!
 
@@ -91,47 +91,50 @@ assets = []
 
 def build(subfold, is64):
 
-    to_build = subfold
+	to_build = subfold
 
-    suff = ("_x32" if not is64 else "_x64")
-    subfold += suff
+	suff = ("_x32" if not is64 else "_x64")
+	subfold += suff
 
-    print(f'*** BUILD {subfold} ***');
+	print(f'*** BUILD {subfold} ***');
 
-    result_dir = result_dir_root / subfold
-    result_dir.mkdir(parents=True, exist_ok=True) 
+	result_dir = result_dir_root / subfold
+	result_dir.mkdir(parents=True, exist_ok=True) 
 
-    path = package_build_folder / subfold
-    path.mkdir(parents=True, exist_ok=True)
+	path = package_build_folder / subfold
+	path.mkdir(parents=True, exist_ok=True)
    
-    rel_name = "Debug" if is_debug else "Release"
-    release_folder = path / rel_name
-    delfold(release_folder) # ensure we get only builded now binares
-    
-    cmake_path = "cmake.exe"
-    
-    #cmake_path_2 = r"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
-    #if os.path.isfile(cmake_path_2):cmake_path = cmake_path_2
-        
-    run(cmake_path, f'-G "Visual Studio 17 2022"  {" " if is64 else "-A Win32"} -DCMAKE_BUILD_TYPE={rel_name} ./{to_build} -B {path}')
-    run(cmake_path, f'--build {path} --config {rel_name}')
-    #run(cmake_path, f'--build {path} --parallel --config {rel_name}')
+	rel_name = "Debug" if is_debug else "Release"
+	release_folder = path / rel_name
+	delfold(release_folder) # ensure we get only builded now binares
+	
+	cmake_path = "cmake.exe"
+	
+	#cmake_path_2 = r"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+	#if os.path.isfile(cmake_path_2):cmake_path = cmake_path_2
+		
+	run(cmake_path, f'-G "Visual Studio 17 2022"  {" " if is64 else "-A Win32"} -DCMAKE_BUILD_TYPE={rel_name} ./{to_build} -B {path}')
+	run(cmake_path, f'--build {path} --config {rel_name}')
+	#run(cmake_path, f'--build {path} --parallel --config {rel_name}')
 
-    tocopy = ['.exe', '.dll']
-    for root, dirs, files in os.walk(release_folder):
-        for file in files:
-            for ext in tocopy:
-                if file.endswith(ext):    
-                    file2 = file
-                    print("copy ", file2)
-                    shutil.copy(os.path.join(root, file), os.path.join(result_dir, file2))
-            
-    print("Copy bin files")
-    shutil.copytree("SimpleSwitcher/bin_files", result_dir, dirs_exist_ok=True)
+	tocopy = ['.exe', '.dll']
+	for root, dirs, files in os.walk(release_folder):
+		for file in files:
+			for ext in tocopy:
+				if file.endswith(ext):	
+					file2 = file
+					print("copy ", file2)
+					result_path = os.path.join(result_dir, file2)
+					shutil.copy(os.path.join(root, file), result_path)
+					check_sum_util = curpath / "SimpleSwitcher" / "cert" / "checksum.exe"
+					run(check_sum_util, f"sha256 {result_path} toFile")
+			
+	print("Copy bin files")
+	shutil.copytree("SimpleSwitcher/bin_files", result_dir, dirs_exist_ok=True)
 
-    zippath = result_dir_root / f"SimpleSwitcher{suff}_{curv2}"
-    shutil.make_archive(zippath, 'zip', result_dir) 
-    assets.append(str(zippath) + ".zip")
+	zippath = result_dir_root / f"SimpleSwitcher{suff}_{curv2}"
+	shutil.make_archive(zippath, 'zip', result_dir) 
+	assets.append(str(zippath) + ".zip")
   
 
 build("SimpleSwitcher", is64=False)
@@ -139,43 +142,43 @@ build("SimpleSwitcher", is64=True)
 
 
 def publish():
-    print('*** publish release ***')  
-    
-    tok = Path("D:/yy/data.txt").read_text() 
-    g = Github(tok)
-    
-    repo = g.get_repo("aegel5/SimpleSwitcher")
-    rel_message = "## Changes\n- incremental build"
-    
-    last_r = repo.get_latest_release()
-    all_download = 0
-    for ii in last_r.get_assets():
-        all_download += ii.download_count
-    print(f"last release was downloaded {all_download} times")
-    if all_download <= 1 and last_r.body == rel_message:
-        print("DEL PREV RELEASE")
-        last_r.delete_release()
-    
-    last_com = repo.get_branch("master").commit
-    print(last_com)
-    newrel = repo.create_git_tag_and_release(curv2, curv2, release_name=f"SimpleSwitcher {curv2}", release_message=rel_message, object=last_com.sha, type="commit")
-    for ass in assets:
-        newrel.upload_asset(ass)
+	print('*** publish release ***')  
+	
+	tok = Path("D:/yy/data.txt").read_text() 
+	g = Github(tok)
+	
+	repo = g.get_repo("aegel5/SimpleSwitcher")
+	rel_message = "## Changes\n- incremental build"
+	
+	last_r = repo.get_latest_release()
+	all_download = 0
+	for ii in last_r.get_assets():
+		all_download += ii.download_count
+	print(f"last release was downloaded {all_download} times")
+	if all_download <= 1 and last_r.body == rel_message:
+		print("DEL PREV RELEASE")
+		last_r.delete_release()
+	
+	last_com = repo.get_branch("master").commit
+	print(last_com)
+	newrel = repo.create_git_tag_and_release(curv2, curv2, release_name=f"SimpleSwitcher {curv2}", release_message=rel_message, object=last_com.sha, type="commit")
+	for ass in assets:
+		newrel.upload_asset(ass)
 
-    if not is_notel:
-        bot_token = Path("D:/yy/tok.txt").read_text() 
-        msg = f'Новая версия! {curv2}  <a href="https://github.com/Aegel5/SimpleSwitcher/releases">Скачать</a>'
-        url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
-        # Create the payload as a dictionary
-        payload = { 'chat_id': '-1002391595712',    'text': msg,    'parse_mode': 'HTML' }
-        # Convert the payload to JSON format
-        json_payload = json.dumps(payload)
-        # Send the request to the Telegram API
-        response = requests.post(url, data=json_payload, headers={'Content-Type': 'application/json'})
-        # Print the response from Telegram
-        print(response.json())
-    
+	if not is_notel:
+		bot_token = Path("D:/yy/tok.txt").read_text() 
+		msg = f'Новая версия! {curv2}  <a href="https://github.com/Aegel5/SimpleSwitcher/releases">Скачать</a>'
+		url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+		# Create the payload as a dictionary
+		payload = { 'chat_id': '-1002391595712',	'text': msg,	'parse_mode': 'HTML' }
+		# Convert the payload to JSON format
+		json_payload = json.dumps(payload)
+		# Send the request to the Telegram API
+		response = requests.post(url, data=json_payload, headers={'Content-Type': 'application/json'})
+		# Print the response from Telegram
+		print(response.json())
+	
 if is_publ:  
-    publish()    
+	publish()	
 
 print("\n***DONE***")
