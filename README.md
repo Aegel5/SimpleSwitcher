@@ -32,7 +32,7 @@ Simple Switcher поставляется в portable виде (не требуе
   - `Python`. Можно выбрать опцию "добавить в PATH" для удобного запуска скриптов из командной строки.
 - Скачать исходники.
   - Открыть командную строку (cmd.exe) и перейти в каталог, где будет храниться код программы.
-  - Выполнить команду `git clone https://github.com/Aegel5/SimpleSwitcher.git` или же просто скачать zip архив.
+  - Выполнить команду `git clone --recurse-submodules https://github.com/Aegel5/SimpleSwitcher.git`.
 - Запустить скрипт `build.py`
 - Собранная версия будет в папке `package_build/OUT`
 
