@@ -114,6 +114,8 @@ def build(subfold, is64):
 	xArch = "x86" if not is64 else "x64"
 
 	env = get_vc_env(xArch)
+	for e in env:
+		os.putenv(e, env[e])
 
 	to_build = subfold
 	suff = f"_{xArch}"
@@ -130,8 +132,8 @@ def build(subfold, is64):
 	release_folder = path
 	delfold(release_folder) # ensure we get only builded now binares
 	
-	subprocess.run(['cmake', f'--preset {xArch}-release', f'-B{path}', f'{curpath / to_build}'], env=env)
-	subprocess.run(f'cmake --build "{path}"', env=env)
+	subprocess.run(['cmake', f'--preset {xArch}-release', f'-B{path}', f'{curpath / to_build}'])
+	subprocess.run(f'cmake --build "{path}"')
 
 	tocopy = ['.exe', '.dll']
 	for root, dirs, files in os.walk(release_folder):
