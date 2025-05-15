@@ -20,6 +20,14 @@ static const int c_nCommonWaitMtx = 30000;
 static const LPCWSTR c_wszTaskName = L"SimpleSwitcherTask";
 const static TChar c_sRegRunValue[] = L"SimpleSwitcher";
 
+inline const char* GET_SW_VERSION() {
+#ifdef PUBLIC_RELEASE
+	return SW_VERSION;
+#endif
+	static std::string ver{ SW_VERSION + "_U"s };
+	return ver.c_str();
+}
+
 
 
 

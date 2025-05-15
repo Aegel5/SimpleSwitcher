@@ -19,7 +19,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	setlocale(LC_ALL, "en_US.utf8");
 	IFS_LOG(update_cur_dir());
-	LOG_ANY("Start program {}", SW_VERSION);
+	LOG_ANY("Start program {}", GET_SW_VERSION());
 
 	CMainWorker::Inst().Init();
 

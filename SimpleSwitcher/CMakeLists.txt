@@ -50,6 +50,10 @@ set_source_files_properties(${extern_files} PROPERTIES SKIP_PRECOMPILE_HEADERS O
 set(CMAKE_CXX_SCAN_FOR_MODULES off)
 set(CMAKE_CXX_STANDARD 23)
 
+IF(PUBLIC_RELEASE)
+    ADD_DEFINITIONS(-DPUBLIC_RELEASE)
+ENDIF(PUBLIC_RELEASE)
+
 add_executable (SimpleSwitcher WIN32)
 target_sources(SimpleSwitcher    PRIVATE    ${extern_files}  ${all_implement_units} src/res/res.rc)
 target_precompile_headers(SimpleSwitcher PRIVATE src/sw-base.h)

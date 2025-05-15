@@ -39,20 +39,20 @@ print(f"curpath is {curpath}");
 os.chdir(curpath)
 
 # пропатчим версию
+
 ver_path_1 = curpath / "SimpleSwitcher/src/ver.txt"
 ver_path_2 = curpath / "SimpleSwitcher/src/ver.h"
 
 ver_num = int(Path(ver_path_1).read_text())
-ver_num+=1
+
+if is_publ:	ver_num+=1
+
 Path(ver_path_1).write_text(str(ver_num))
 
-ver_custom = ''
-if not is_publ: ver_custom = ' USER'
-curv2 = f'6.{ver_num:03}{ver_suff}{ver_custom}'
+curv2 = f'6.{ver_num:03}{ver_suff}'
 Path(ver_path_2).write_text(f'static const char* SW_VERSION = "{curv2}";')
 
 package_build_folder = curpath / "package_build"
-
 
 def run(exe, arg):
 	cmd = f'"{exe}" {arg}'
@@ -131,8 +131,12 @@ def build(subfold, is64):
    
 	release_folder = path
 	delfold(release_folder) # ensure we get only builded now binares
-	
-	subprocess.run(['cmake', f'--preset {xArch}-release', f'-B{path}', f'{curpath / to_build}'])
+
+	publ_define = ""
+	if(is_publ):
+		publ_define = "-DPUBLIC_RELEASE=ON"	
+
+	subprocess.run(['cmake', f'--preset {xArch}-release', f'-B{path}', publ_define, f'{curpath / to_build}'])
 	subprocess.run(f'cmake --build "{path}"')
 
 	tocopy = ['.exe', '.dll']

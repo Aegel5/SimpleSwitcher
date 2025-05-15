@@ -167,8 +167,8 @@ namespace cfg_details {
 			res = false;
 		}
 		else {
-			if (conf_gui()->config_version != SW_VERSION) {
-				conf_gui()->config_version = SW_VERSION;
+			if (conf_gui()->config_version != GET_SW_VERSION()) {
+				conf_gui()->config_version = GET_SW_VERSION();
 				SaveGuiConfig();
 			}
 		}
@@ -204,7 +204,7 @@ inline void ApplyLocalization() {
 
 inline void SetLogLevel_info(TLogLevel logLevel) {
 	SetLogLevel(logLevel);
-	LOG_ANY("Log level now {}. ver={}", (int)logLevel, SW_VERSION);
+	LOG_ANY("Log level now {}. ver={}", (int)logLevel, GET_SW_VERSION());
 	for (const auto& it : conf_get_unsafe()->layouts_info.info) { // todo print config
 		LOG_ANY("have lay {}. enabled={}", (void*)it.layout, it.enabled);
 	}

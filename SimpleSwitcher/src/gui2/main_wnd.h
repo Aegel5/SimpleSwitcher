@@ -115,7 +115,7 @@ public:
 		//auto scale = WinUtils::GetDpiMainMonScale2() * 1.2f;
 		InitImGui(scale);
 		title = std::format(
-			"SimpleSwitcher {}{}{}###main_wnd", SW_VERSION,
+			"SimpleSwitcher {}{}{}###main_wnd", GET_SW_VERSION(),
 			Utils::IsSelfElevated() ? " Administrator" : "",
 			Utils::IsDebug() ? " DEBUG" : "");
 		check_add_to_auto = autostart_get();
