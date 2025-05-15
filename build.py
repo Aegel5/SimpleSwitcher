@@ -51,15 +51,16 @@ if not is_publ: ver_custom = ' USER'
 curv2 = f'6.{ver_num:03}{ver_suff}{ver_custom}'
 Path(ver_path_2).write_text(f'static const char* SW_VERSION = "{curv2}";')
 
-package_build_folder = pathlib.Path("package_build")
+package_build_folder = curpath / "package_build"
 
 
 def run(exe, arg):
-	cmd = f'{exe} {arg}'
+	cmd = f'"{exe}" {arg}'
 	print(cmd)
 	
 	#subprocess.run([exe, arg], capture_output=True, check=True, shell=True)
 	os.system(cmd)
+
 
 def build_localization():
 	loc_folder = curpath / "SimpleSwitcher" / "localization"
@@ -89,11 +90,33 @@ delfold(result_dir_root)
 
 assets = []
 
+def get_vc_env(arch='x64'):
+    # Path to vcvarsall.bat - adjust this path based on your Visual Studio installation
+    vcvars_path = r"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
+    
+    # Command to run vcvarsall.bat and then output environment variables
+    command = f'"{vcvars_path}" {arch} && set'
+    
+    # Run the command in a shell and capture output
+    result = subprocess.run(command, shell=True, capture_output=True, text=True)
+    
+    env = {}
+    for line in result.stdout.splitlines():
+        key_value = line.split('=', 1)
+        if len(key_value) == 2:
+            key, value = key_value
+            env[key] = value
+    return env
+
+
 def build(subfold, is64):
 
-	to_build = subfold
+	xArch = "x86" if not is64 else "x64"
 
-	suff = ("_x32" if not is64 else "_x64")
+	env = get_vc_env(xArch)
+
+	to_build = subfold
+	suff = f"_{xArch}"
 	subfold += suff
 
 	print(f'*** BUILD {subfold} ***');
@@ -104,18 +127,11 @@ def build(subfold, is64):
 	path = package_build_folder / subfold
 	path.mkdir(parents=True, exist_ok=True)
    
-	rel_name = "Debug" if is_debug else "Release"
-	release_folder = path / rel_name
+	release_folder = path
 	delfold(release_folder) # ensure we get only builded now binares
 	
-	cmake_path = "cmake.exe"
-	
-	#cmake_path_2 = r"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
-	#if os.path.isfile(cmake_path_2):cmake_path = cmake_path_2
-		
-	run(cmake_path, f'-G "Visual Studio 17 2022"  {" " if is64 else "-A Win32"} -DCMAKE_BUILD_TYPE={rel_name} ./{to_build} -B {path}')
-	run(cmake_path, f'--build {path} --config {rel_name}')
-	#run(cmake_path, f'--build {path} --parallel --config {rel_name}')
+	subprocess.run(['cmake', f'--preset {xArch}-release', f'-B{path}', f'{curpath / to_build}'], env=env)
+	subprocess.run(f'cmake --build "{path}"', env=env)
 
 	tocopy = ['.exe', '.dll']
 	for root, dirs, files in os.walk(release_folder):
@@ -128,6 +144,7 @@ def build(subfold, is64):
 					shutil.copy(os.path.join(root, file), result_path)
 					check_sum_util = curpath / "SimpleSwitcher" / "cert" / "checksum.exe"
 					run(check_sum_util, f"sha256 {result_path} toFile")
+		break
 			
 	print("Copy bin files")
 	shutil.copytree("SimpleSwitcher/bin_files", result_dir, dirs_exist_ok=True)
