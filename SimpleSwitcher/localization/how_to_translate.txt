@@ -15,7 +15,7 @@ Update: Use poedit (!!!delete all YELLOW translations!!!!)
 Methon 1.
 flat.py ru
 Translate content of flat.txt with any online translator e.x. DeepL
-flat_apply.py ru
+flat_apply.py
 
 Methon 2.
 Translate with https://poedit.net/ or any program you like

@@ -15,6 +15,7 @@ is_debug = False
 is_publ = False
 is_notel = False
 is_clean = False
+is_inc_ver = False
 ver_suff = ''
 for arg in sys.argv[1:]:
 	if arg == "/publish":		is_publ = True
@@ -22,11 +23,14 @@ for arg in sys.argv[1:]:
 	elif arg == "/notel":		is_notel = True
 	elif arg == "/dev":		ver_suff = '_dev'
 	elif arg == "/clean":		is_clean = True
+	elif arg == "/ver":		is_inc_ver = True    
 	else :
 		print(f"unknown arg {arg}")
 		exit(1)
 if ver_suff != '': is_notel = True
-if is_publ: is_clean = True
+if is_publ: 
+    is_clean = True
+    is_inc_vec = True
 
 if is_publ:
 	# pip install PyGithub
@@ -45,7 +49,7 @@ ver_path_2 = curpath / "SimpleSwitcher/src/ver.h"
 
 ver_num = int(Path(ver_path_1).read_text())
 
-if is_publ:	ver_num+=1
+if is_inc_vec:	ver_num+=1
 
 Path(ver_path_1).write_text(str(ver_num))
 
@@ -61,19 +65,6 @@ def run(exe, arg):
 	#subprocess.run([exe, arg], capture_output=True, check=True, shell=True)
 	os.system(cmd)
 
-
-def build_localization():
-	loc_folder = curpath / "SimpleSwitcher" / "localization"
-	for root, dirs, files in os.walk(loc_folder):
-		for file in files:
-			if file.endswith(".po"):	  
-				path = os.path.join(root, file)
-				path_mo = path.replace(".po", ".mo")
-				run(loc_folder / "gnuwin32" / "msgfmt.exe", f"-o {path_mo} {path}")
-				print(f"build {path}")
-
-	
-build_localization()  
 
 def delfold(fold):
 	def remove_readonly(func, path, excinfo):
