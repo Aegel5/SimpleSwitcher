@@ -44,12 +44,12 @@ os.chdir(curpath)
 
 # пропатчим версию
 
-ver_path_1 = curpath / "SimpleSwitcher/src/ver.txt"
-ver_path_2 = curpath / "SimpleSwitcher/src/ver.h"
+ver_path_1 = curpath / "src/ver.txt"
+ver_path_2 = curpath / "src/ver.h"
 
 ver_num = int(Path(ver_path_1).read_text())
 
-if is_inc_vec:	ver_num+=1
+if is_inc_ver:	ver_num+=1
 
 Path(ver_path_1).write_text(str(ver_num))
 
@@ -127,7 +127,7 @@ def build(subfold, is64):
 	if(is_publ):
 		publ_define = "-DPUBLIC_RELEASE=ON"	
 
-	subprocess.run(['cmake', f'--preset {xArch}-release', f'-B{path}', publ_define, f'{curpath / to_build}'])
+	subprocess.run(['cmake', f'--preset {xArch}-release', f'-B{path}', publ_define, curpath])
 	subprocess.run(f'cmake --build "{path}"')
 
 	tocopy = ['.exe', '.dll']
@@ -139,12 +139,12 @@ def build(subfold, is64):
 					print("copy ", file2)
 					result_path = os.path.join(result_dir, file2)
 					shutil.copy(os.path.join(root, file), result_path)
-					check_sum_util = curpath / "SimpleSwitcher" / "cert" / "checksum.exe"
+					check_sum_util = curpath / "cert" / "checksum.exe"
 					run(check_sum_util, f"sha256 {result_path} toFile")
 		break
 			
 	print("Copy bin files")
-	shutil.copytree("SimpleSwitcher/bin_files", result_dir, dirs_exist_ok=True)
+	shutil.copytree(curpath / "bin_files", result_dir, dirs_exist_ok=True)
 
 	zippath = result_dir_root / f"SimpleSwitcher{suff}_{curv2}"
 	shutil.make_archive(zippath, 'zip', result_dir) 
