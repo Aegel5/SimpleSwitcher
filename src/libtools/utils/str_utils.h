@@ -268,4 +268,10 @@ namespace StrUtils
 		*res.out = 0;
 	}
 
+	inline UView GetLine(const string& s) {
+		auto i = s.find("\n");
+		if (i == -1) return { s.c_str(), s.length() };
+		return { s.c_str(), (size_t)i };
+	}
+
 }
