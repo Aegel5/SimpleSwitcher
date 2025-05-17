@@ -156,6 +156,7 @@ namespace Notific {
 							if (ImGui::Selectable(PeriodName(p), p == period)) {
 								period = p;
 								changes = true;
+								SetupNextActivate();
 							}
 							};
 						add(Period::OneTime);
@@ -168,6 +169,7 @@ namespace Notific {
 							correct_days_period();
 							period = Period::NDays;
 							changes = true;
+							SetupNextActivate();
 						}
 					}
 				}
