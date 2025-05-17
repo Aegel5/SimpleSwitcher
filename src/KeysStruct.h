@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 
+
 enum TKeyType : TUInt8
 {
 	KEYTYPE_NONE,
@@ -14,6 +15,10 @@ enum TKeyType : TUInt8
 
 	KEYTYPE_COMMAND_CLEAR,
 	KEYTYPE_COMMAND_NO_CLEAR,
+};
+
+struct TKeyTypeData {
+	bool space_on_extended = false; // всегда space если extended separation.
 };
 
 using TScanCode = WORD;
@@ -43,6 +48,7 @@ using TKeyRevert = std::vector<TKeyBaseInfo>;
 struct TKeyHookInfo{
 	TKeyBaseInfo key;
 	TKeyType type = TKeyType::KEYTYPE_NONE;
+	TKeyTypeData data;
 	bool is_last_revert = false;
 };
 

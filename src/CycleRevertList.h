@@ -37,7 +37,7 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 
 	// сначала объеденим все одинаковые сохраняя индексы старта слов.
 
-	struct ZippData { int i; TKeyType type; bool is_last_revert = false; };
+	struct ZippData { int i; const TKeyHookInfo* p; TKeyType type; bool is_last_revert = false; };
 	std::vector<ZippData> zipped;
 	zipped.reserve(8);
 	{
@@ -48,7 +48,7 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 			auto type = cur.type;
 
 			if (prev->is_last_revert) { 
-				zipped.emplace_back(i, type, true);
+				zipped.emplace_back(i, &cur, type, true);
 				continue;
 			}
 
@@ -63,7 +63,7 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 				return type != prev->type;
 				};
 			if (check()) {
-				zipped.emplace_back(i, type);
+				zipped.emplace_back(i, &cur, type);
 			}
 		}
 	}
@@ -81,6 +81,10 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 	for (int i = -1; auto & it : zipped) {
 		i++;
 		auto check = [&]() -> bool {
+			// it.type должен иметь актуальный тип, так как используется на следующих итерациях.
+			if (can_separate_posible && it.p->data.space_on_extended) {
+				it.type = KEYTYPE_SPACE;
+			}
 			if (it.type == KEYTYPE_LETTER_OR_SPACE) {
 				// не разделяем слово без надобности.
 				it.type = (i > 0 && i < std::ssize(zipped) - 1 && Utils::is_all(KEYTYPE_LETTER, zipped[i - 1].type, zipped[i + 1].type))
@@ -191,7 +195,7 @@ public: void SetSeparateLast() {
 	if (!m_symbolList.empty())
 		m_symbolList.back().is_last_revert = true;
 }
-public: void AddKeyToList(TKeyType type, TScanCode_Ext scan_code, bool is_shift, TKeyCode vk = 0) {
+public: void AddKeyToList(TKeyType type, TKeyTypeData data, TScanCode_Ext scan_code, bool is_shift, TKeyCode vk = 0) {
 	ClearGenerated();
 
 	lastadd.SetNow();
@@ -210,6 +214,7 @@ public: void AddKeyToList(TKeyType type, TScanCode_Ext scan_code, bool is_shift,
 	if (is_shift) 
 		key.key.shift_key = VK_LSHIFT;
 	key.type = type;
+	key.data = data;
 
 	m_symbolList.push_back(key);
 }

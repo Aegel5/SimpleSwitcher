@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& scan, HKL lay){
+inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& scan, HKL lay, TKeyTypeData& data){
 
 	bool is_shift = key.HasMod(VK_SHIFT);
 
@@ -107,6 +107,9 @@ inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& s
 			}
 		}
 		if (!have_changes) {
+			if (curSymbol == L'-') {
+				data.space_on_extended = true; // '-' всегда является пробелом, если extended separation
+			}
 			return have_letter ? KEYTYPE_LETTER_OR_SPACE : KEYTYPE_SPACE;
 		}
 		if (!have_letter) {

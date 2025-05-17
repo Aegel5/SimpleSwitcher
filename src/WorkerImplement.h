@@ -79,7 +79,7 @@ public:
 			TKeyType type = KEYTYPE_LETTER;
 			// Пока сделаем супер-простое разделение
 			if (StrUtils::IsSpace(c)) type = KEYTYPE_SPACE;
-			m_cycleList.AddKeyToList(type, {}, TestFlag(mods, 0x1), code);
+			m_cycleList.AddKeyToList(type, {}, {}, TestFlag(mods, 0x1), code);
 		}
 
 		RevertText(hk_RevertAllRecentText, true);

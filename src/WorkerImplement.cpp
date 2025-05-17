@@ -24,8 +24,8 @@ void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 		}
 		return; // пропуск.
 	}
-
-	TKeyType type = AnalizeTyped(cur_hotkey, vkCode, scan_ext, topWndInfo2.lay);
+	TKeyTypeData data;
+	TKeyType type = AnalizeTyped(cur_hotkey, vkCode, scan_ext, topWndInfo2.lay, data);
 
 	switch (type) {
 	case KEYTYPE_BACKSPACE:
@@ -35,7 +35,7 @@ void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 	}
 	default:
 	{
-		m_cycleList.AddKeyToList(type, scan_ext, cur_hotkey.HasMod(VK_SHIFT));
+		m_cycleList.AddKeyToList(type, data, scan_ext, cur_hotkey.HasMod(VK_SHIFT));
 		break;
 	}
 	case KEYTYPE_COMMAND_NO_CLEAR:
