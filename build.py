@@ -44,17 +44,19 @@ os.chdir(curpath)
 
 # пропатчим версию
 
-ver_path_1 = curpath / "src/ver.txt"
-ver_path_2 = curpath / "src/ver.h"
+ver_path = curpath / "src" / "ver.h"
+ver_cont = Path(ver_path).read_text()
+curv2 = re.search(r'\"(.*)\"', ver_cont).group(1)
 
-ver_num = int(Path(ver_path_1).read_text())
+if is_inc_ver:	
+	ver_num = int(re.search(r'\.(\d+)', curv2).group(1))
+	ver_num+=1
+	old_v2 = curv2
+	curv2 = f'6.{ver_num:03}{ver_suff}'
+	ver_cont = ver_cont.replace(old_v2, curv2, 1)
+	Path(ver_path).write_text(ver_cont)
 
-if is_inc_ver:	ver_num+=1
 
-Path(ver_path_1).write_text(str(ver_num))
-
-curv2 = f'6.{ver_num:03}{ver_suff}'
-Path(ver_path_2).write_text(f'static const char* SW_VERSION = "{curv2}";')
 
 package_build_folder = curpath / "package_build"
 
