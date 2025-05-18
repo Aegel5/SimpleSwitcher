@@ -1,5 +1,5 @@
 ﻿namespace details {
-	static const char* SW_VERSION = "6.501";
+	static const char* SW_VERSION = "6.502";
 }
 
 inline const char* GET_SW_VERSION() {
