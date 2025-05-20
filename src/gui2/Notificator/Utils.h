@@ -87,15 +87,26 @@ namespace Notific {
 			if (ImGui::IsWindowAppearing()) {
 				// todo - store local time in windows for cache
 			}
-			for (int i = 1; i <= time.MaxDay(); i++) {
+			auto wday = weekday(year(time.y) / month(time.m) / day(1));
+			int to_skip = wday.iso_encoding() - 1;
+			auto btn_w = ImGui::CalcTextSize("000").x;
+			for (int i = 1 - to_skip; i <= time.MaxDay(); i++) {
 				StrUtils::Sprintf(buf, "%d", i);
-				if (((i - 1) % 7) != 0) ImGui::SameLine();
+				if (((i - (1 - to_skip)) % 7) != 0) 
+					ImGui::SameLine();
+				if (i < 1) {
+					// skip
+					set_ID(i);
+					ImGui::Button("", {btn_w , 0});
+					continue;
+				}
+
 				bool pop = false;
 				if (time.d == i) {
 					pop = true;
 					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.300f, 0.697f, 0.601f, 1.000f));
 				}
-				if (ImGui::Button(buf, { ImGui::CalcTextSize("000").x, 0 })) {
+				if (ImGui::Button(buf, {btn_w , 0 })) {
 					time.d = i;
 					edit = true;
 				}
