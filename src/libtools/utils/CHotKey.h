@@ -30,7 +30,7 @@ public:
 				if (CompareKeys(k, key, !TestFlag(flags, ADDKEY_NO_STRICK_MODS_CHECK))) {
 					if (IsCommonMods(k) && !IsCommonMods(key)) {
 						// rewrite common key
-						Remove(k);
+						RemoveFirst(k);
 						break;
 					}
 					else {
@@ -48,22 +48,28 @@ public:
 		Simple_Append(key);
 		return *this;
 	}
-	bool Remove(TKeyCode key, bool strick_modifier = true) {
+	bool RemoveFirst(TKeyCode key, bool strick_modifier = true) {
+
 		if (size == 0)
 			return false;
+
 		bool found = false;
+
 		for (int i = 0; i < size; i++) {
-			if (CompareKeys(key, keys[i], strick_modifier)) {
-				found = true;
-				keys[i] = 0;
-				continue;
+			if (!found){
+				if (CompareKeys(key, keys[i], strick_modifier)) {
+					found = true;
+				}
 			}
-			if (found) {
+			else {
 				keys[i - 1] = keys[i];
 			}
 		}
-		if (found)
+
+		if (found) {
 			--size;
+			keys[size] = 0;
+		}
 		return found;
 
 	}
@@ -78,7 +84,7 @@ public:
 				}
 			}
 			if (k) {
-				Remove(k);
+				RemoveFirst(k);
 			}
 		} while (k);
 	}

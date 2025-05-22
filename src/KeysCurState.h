@@ -98,7 +98,7 @@ public:
 			all_keys[vkCode].SetNow();
 		}
 		else {
-			one_value.Remove(vkCode);
+			one_value.RemoveFirst(vkCode);
 			if (all_keys.erase(vkCode) == 0) {
 				LOG_WARN(L"Key was already upped {}", CHotKey::ToString(vkCode));
 			}
@@ -118,7 +118,7 @@ private:
 		for (auto it : to_del) {
 			LOG_WARN(L"delete key because it not down now {}", CHotKey::ToString(it));
 			all_keys.erase(it);
-			one_value.Remove(it);
+			one_value.RemoveFirst(it);
 		}
 	}
 };

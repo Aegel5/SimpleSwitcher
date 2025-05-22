@@ -71,6 +71,8 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		curKeys.Update(vkCode, curKeyState); // сразу обновляем
 		const auto& curk = curKeys.GetOneValueHotKey();
 
+		LOG_ANY(L"curk={}", curk.ToString());
+
 		int check_disabled_status = -1;
 
 		auto check_is_our_key = [&check_disabled_status, cfg](const CHotKey& k1, const CHotKey& k2) {
@@ -109,9 +111,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 							msg_hotkey.hk = hk;
 						}
 					}
-				}
-
-				if (key.GetKeyup()) {
+				}else{
 					possible_hk_up = curk;
 					msg_type.hk = hk; // уведомим, что это наша клавиша.
 				}
