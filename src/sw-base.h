@@ -9,6 +9,7 @@
 #include <windows.h>
 #include <Winuser.h>
 #include <Psapi.h>
+#include <mmsystem.h>
 
 // std
 #include <stdlib.h>
@@ -39,6 +40,7 @@
 #include <future>
 #include <random>
 //#include <flat_map>
+#include <ranges>
 
 #include "imgui.h"
 #include "imgui_sugar.hpp"
@@ -60,6 +62,7 @@
 #include "utils/TimePoint.h"
 #include "utils/win_utils.h"
 #include "utils/ImGuiUtils.h"
+#include "utils/rand.h"
 
 
 // base
@@ -70,6 +73,7 @@
 
 
 // core-worker-utils
+#include "SoundManager.h"
 #include "InjectSkipper.h"
 #include "KeysStruct.h"
 #include "InputSender.h"
@@ -85,6 +89,7 @@
 #include "WorkerImplement.h"
 #include "Hooker.h"
 #include "HookerThread.h"
+
 
 
 

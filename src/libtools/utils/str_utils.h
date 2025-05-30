@@ -273,5 +273,18 @@ namespace StrUtils
 		if (i == -1) return { s.c_str(), s.length() };
 		return { s.c_str(), (size_t)i };
 	}
+	inline bool EqualsCI(const std::string& a, const std::string& b) {
+		// Быстрый путь: если длины не совпадают — строки не равны
+		if (a.size() != b.size()) return false;
+
+		// Используем std::equal с кастомным предикатом
+		return std::equal(
+			a.begin(), a.end(),
+			b.begin(),
+			[](char c1, char c2) {
+				return std::tolower(static_cast<unsigned char>(c1)) == std::tolower(static_cast<unsigned char>(c2));
+			}
+		);
+	}
 
 }

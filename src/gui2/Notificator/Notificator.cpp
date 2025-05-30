@@ -22,7 +22,9 @@ namespace nlohmann {
 		point,
 		nextActivate,
 		enabled,
-		days_period
+		days_period,
+		wnd_top,
+		play_sound
 	)
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(

@@ -27,6 +27,9 @@ namespace Notific {
 		string name = LOC("<Name>");
 		bool enabled = true;
 
+		bool wnd_top = true;
+		bool play_sound = false;
+
 		DateTime nextActivate;
 		DateTime point;
 		DateTime lastQuick;
@@ -250,6 +253,17 @@ namespace Notific {
 			}
 
 			ImGui::EndChild();
+
+			if (ImGui::BeginPopupContextItem("ctx_menu")) {
+				if (ImGui::Checkbox(LOC("Play sound"), &play_sound)) {
+					changes = true;
+				}
+				if (ImGui::Checkbox(LOC("Bring window to top"), &wnd_top)) {
+					changes = true;
+				}
+				ImGui::EndPopup();
+			}
+
 			ImGui::PopID();
 			ImGui::PopStyleVar();
 

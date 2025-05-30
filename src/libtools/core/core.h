@@ -16,6 +16,7 @@ using SView = std::wstring_view;
 using UView = std::string_view;
 using std::wstring;
 using std::string;
+using std::vector;
 using namespace std::string_literals;
 
 using SpanByte = std::span<std::byte>;

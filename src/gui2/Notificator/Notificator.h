@@ -68,6 +68,9 @@ namespace Notific {
 
 			for (auto& it : all_entries()) {
 				if (it.IsTrigger()) {
+					if (it.play_sound) {
+						SoundManager::Inst().PlayRandom();
+					}
 					bool val = true;
 					ImGuiUtils::ToCenter(true);
 					ImGui::Begin(LOC("Event!"), &val, ImGuiWindowFlags_NoSavedSettings| ImGuiWindowFlags_AlwaysAutoResize);
@@ -75,13 +78,16 @@ namespace Notific {
 						HWND hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
 						if (hwnd != 0 && last_hwnd != hwnd) {
 							last_hwnd = hwnd;
-							IFW_LOG(SetWindowPos(last_hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE));
+							if (it.wnd_top) {
+								IFW_LOG(SetWindowPos(last_hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE));
+							}
 							//IFW_LOG(SetForegroundWindow(last_hwnd));
 						}
 					}
 
 					ImGui::TextWrapped(it.name.c_str());
 					if (ImGui::Button(LOC("Got it!"))) {
+						SoundManager::Inst().StopAllSound();
 						it.SetupNextActivate();
 						SaveRequest();
 					}
