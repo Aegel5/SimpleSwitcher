@@ -30,9 +30,10 @@ namespace Notific {
 		bool wnd_top = true;
 		bool play_sound = false;
 
-		DateTime nextActivate;
-		DateTime point;
-		DateTime lastQuick;
+		DateTime nextActivate{};
+		DateTime point{};
+		DateTime lastQuick{};
+		DateTime lastStartPlaySound{};
 
 		void correct_days_period() {
 			days_period = std::clamp(days_period, 1, 1000);

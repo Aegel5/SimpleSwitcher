@@ -69,7 +69,10 @@ namespace Notific {
 			for (auto& it : all_entries()) {
 				if (it.IsTrigger()) {
 					if (it.play_sound) {
-						SoundManager::Inst().PlayRandom();
+						if (it.lastStartPlaySound != it.nextActivate) {
+							it.lastStartPlaySound = it.nextActivate;
+							SoundManager::Inst().PlayRandom();
+						}
 					}
 					bool val = true;
 					ImGuiUtils::ToCenter(true);

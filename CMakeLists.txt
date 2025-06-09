@@ -1,7 +1,4 @@
-﻿# CMakeList.txt : CMake project for cpp_test_test2, include source and define
-# project specific logic here.
-#
-cmake_minimum_required (VERSION 3.28)
+﻿cmake_minimum_required (VERSION 3.28)
 project(SimpleSwitcher VERSION 1.0 LANGUAGES CXX)
 
  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -21,7 +18,6 @@ endif()
 
 file(GLOB_RECURSE all_implement_units  
 src/*.cpp 
-src/simpleswitcher.manifest
 )
 #message(all_implement_units=${all_implement_units})
 list(FILTER all_implement_units EXCLUDE REGEX ".*/old/.*")
@@ -55,7 +51,12 @@ IF(PUBLIC_RELEASE)
 ENDIF(PUBLIC_RELEASE)
 
 add_executable (SimpleSwitcher WIN32)
-target_sources(SimpleSwitcher    PRIVATE    ${extern_files}  ${all_implement_units} src/res/res.rc)
+target_sources(SimpleSwitcher    PRIVATE    
+${extern_files}
+${all_implement_units}
+src/res/res.rc
+src/simpleswitcher.manifest
+)
 target_precompile_headers(SimpleSwitcher PRIVATE src/sw-base.h)
 
 
