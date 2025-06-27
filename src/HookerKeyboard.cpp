@@ -46,6 +46,11 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			LOG_ANY(L"k->vkCode > 255: {}", k->vkCode);
 		}
 
+		if (k->vkCode == 0) {
+			LOG_ANY(L"skip vk 0");
+			return 0;
+		}
+
 		if (scan_code == 541) {
 			LOG_ANY(L"skip bugged lctrl");
 			return 0;
@@ -71,7 +76,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		curKeys.Update(vkCode, curKeyState); // сразу обновляем
 		const auto& curk = curKeys.GetOneValueHotKey();
 
-		LOG_ANY(L"curk={}", curk.ToString());
+		curKeys.DebugPrint();
 
 		int check_disabled_status = -1;
 

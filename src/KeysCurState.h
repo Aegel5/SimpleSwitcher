@@ -48,6 +48,17 @@ public:
 
 	}
 
+	void DebugPrint() {
+		if (GetLogLevel() < LOG_LEVEL_2) 
+			return;
+		wstring str;
+		for (const auto& key : EnumVk()) {
+			str += CHotKey::ToString(key);
+			str += L" ";
+		}
+		LOG_ANY(L"all={}, one_value={}", str, one_value.ToString());
+	}
+
 	void Update(TKeyCode vkCode, KeyState curKeyState) {
 
 		CheckOk();
