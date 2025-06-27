@@ -30,9 +30,10 @@ for arg in sys.argv[1:]:
 if ver_suff != '': is_notel = True
 if is_publ: 
     is_clean = True
-    is_inc_vec = True
+    
+is_upload_github = is_publ and False
 
-if is_publ:
+if is_upload_github:
 	# pip install PyGithub
 	from github import Github
 
@@ -153,7 +154,7 @@ def build(subfold, is64):
 	assets.append(str(zippath) + ".zip")
   
 
-build("SimpleSwitcher", is64=False)
+#build("SimpleSwitcher", is64=False)
 build("SimpleSwitcher", is64=True)
 
 
@@ -194,7 +195,7 @@ def publish():
 		# Print the response from Telegram
 		print(response.json())
 	
-if is_publ:  
+if is_upload_github:  
 	publish()	
 
 print("\n***DONE***")
