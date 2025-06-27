@@ -46,9 +46,7 @@ static bool ImWaitNewFrame(){
 	auto proc = [&msg]() {
 		::TranslateMessage(&msg);
 		::DispatchMessage(&msg);
-		auto need_redraw = msg.message == WM_PAINT 
-			|| !ImGui::GetIO().Ctx->InputEventsQueue.empty(); // TODO: instead call ImWantFrameWithDelay(0) when push_back in InputEventsQueue.
-		if (need_redraw) {
+		if (msg.message == WM_PAINT) {
 			ImWantFrameWithDelay(0);
 		}
 	};
