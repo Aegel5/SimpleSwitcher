@@ -46,9 +46,6 @@ static bool ImWaitNewFrame(){
 	auto proc = [&msg]() {
 		::TranslateMessage(&msg);
 		::DispatchMessage(&msg);
-		if (msg.message == WM_PAINT) {
-			ImWantFrameWithDelay(0);
-		}
 	};
 
 	auto peek = [&]() {
