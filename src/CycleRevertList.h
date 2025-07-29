@@ -7,13 +7,18 @@ class CycleRevertList {
 	static const int c_maxWordRevert = 7;
 	static const int c_nMaxLettersSave = 90;
 	std::deque<TKeyHookInfo> m_symbolList; // просто список всего, что сейчас набрано.
-	int iCurrentWord = -1;
+	static const int c_lastCorrectedInf = 9999999;
+	int iLastCorrected = c_lastCorrectedInf;
 	TimePoint lastadd;
 
 public:
 	void DeleteLastSymbol() {
-		if (!m_symbolList.empty())
+		if (!m_symbolList.empty()) {
+			bool move_last = m_symbolList.back().is_last_revert;
 			m_symbolList.pop_back();
+			if (move_last && !m_symbolList.empty())
+				m_symbolList.back().is_last_revert = true;
+		}
 		ClearGenerated();
 	}
 	bool HasAnySymbol() const { return !m_symbolList.empty(); }
@@ -30,7 +35,7 @@ public:
 		}
 	}
 private: void ClearGenerated() {
-	iCurrentWord = -1;
+	iLastCorrected = c_lastCorrectedInf;
 }
 
 private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
@@ -123,6 +128,9 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 	if (words.size() > c_maxWordRevert) {
 		words.resize(c_maxWordRevert);
 	}
+
+	std::reverse(words.begin(), words.end());
+
 	return words;
 
 }
@@ -148,45 +156,49 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 		return keyList;
 	}
 
-	if (iCurrentWord >= ssize(words)) {
-		iCurrentWord = words.size() - 1;
-	}
+	/*
+* Новый экспериментальный алгоритм:
+* храним индекс первой буквы последнего изменнного слова.
+* если запрос на изменение последнего слова - просто меняем последнее слово.
+* если запрос "изменить все" - меняем все.
+* если запрос "несколько слов" - то ищем слово, начинающееся с индекса < сохраненного, если такого нет - то меняем последнее слово.
+*/
+	int prev_correct = iLastCorrected;
 
-	int iStartFrom = -1;
-
-	keyList.needLanguageChange = iCurrentWord == -1 || iCurrentWord == words.size() - 1;
-
-	if (typeRevert == hk_RevertAllRecentText) { 		// простой алгоритм от позиции предыдущего реверта
-		iStartFrom = ssize(m_symbolList) - 1;
-		for (int i = ssize(m_symbolList) - 2; i >= 0; --i) { 
-			if (m_symbolList[i].is_last_revert) 
+	if (typeRevert == hk_RevertAllRecentText) {
+		keyList.needLanguageChange = true;
+		iLastCorrected = words[0];
+		for (int i = ssize(m_symbolList) - 2; i >= 0; --i) {
+			if (m_symbolList[i].is_last_revert) {
+				iLastCorrected = i+1;
 				break;
-			iStartFrom = i;
-		}
-		iCurrentWord = -1;
-	}
-	else {
-
-		if (typeRevert == hk_RevertLastWord || words.size() == 1) {
-			keyList.needLanguageChange = true;
-			iStartFrom = words[0];
-			iCurrentWord = iCurrentWord == -1 ? 0 : -1;
-		}
-		else {
-			if (iCurrentWord == words.size()-1) {
-				// сделаем последний revert чтобы вернуть исходное состояние
-				iStartFrom = words[iCurrentWord];
-				iCurrentWord = -1;
 			}
-			else {
-				iCurrentWord++;
-				iStartFrom = words[iCurrentWord];
+		}
+	}
+	else if (typeRevert == hk_RevertLastWord) {
+		keyList.needLanguageChange = true;
+		iLastCorrected = words[words.size() - 1];
+	}
+	else { // несколько слов
+		if (words[0] >= iLastCorrected) {
+			iLastCorrected = c_lastCorrectedInf; // все слова уже изменили, сбрасываем на начало.
+		}
+		keyList.needLanguageChange = iLastCorrected == c_lastCorrectedInf;
+		for (int i = words.size() - 1; i >= 0; i--) {
+			if (words[i] < iLastCorrected) {
+				iLastCorrected = words[i];
+				break;
 			}
 		}
 	}
 
-	for (int i = iStartFrom; i < ssize(m_symbolList); ++i) {
+
+	for (int i = iLastCorrected; i < ssize(m_symbolList); ++i) {
 		keyList.keys.push_back(m_symbolList[i].key);
+	}
+
+	if (prev_correct == iLastCorrected) {
+		iLastCorrected = c_lastCorrectedInf; // происходит отмена предыдущего реверт, сбрасываемся на начало.
 	}
 
 	return keyList;
