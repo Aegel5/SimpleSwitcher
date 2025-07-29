@@ -13,21 +13,15 @@ import json
 
 is_debug = False
 is_publ = False
-is_notel = False
+is_notel = True
 is_clean = False
-is_inc_ver = False
-ver_suff = ''
 for arg in sys.argv[1:]:
 	if arg == "/publish":		is_publ = True
 	elif arg == "/debug":		is_debug = True
-	elif arg == "/notel":		is_notel = True
-	elif arg == "/dev":		ver_suff = '_dev'
 	elif arg == "/clean":		is_clean = True
-	elif arg == "/ver":		is_inc_ver = True    
 	else :
 		print(f"unknown arg {arg}")
 		exit(1)
-if ver_suff != '': is_notel = True
 if is_publ: 
     is_clean = True
     
@@ -48,16 +42,6 @@ os.chdir(curpath)
 ver_path = curpath / "src" / "ver.h"
 ver_cont = Path(ver_path).read_text()
 curv2 = re.search(r'\"(.*)\"', ver_cont).group(1)
-
-if is_inc_ver:	
-	ver_num = int(re.search(r'\.(\d+)', curv2).group(1))
-	ver_num+=1
-	old_v2 = curv2
-	curv2 = f'6.{ver_num:03}{ver_suff}'
-	ver_cont = ver_cont.replace(old_v2, curv2, 1)
-	Path(ver_path).write_text(ver_cont)
-
-
 
 package_build_folder = curpath / "package_build"
 
