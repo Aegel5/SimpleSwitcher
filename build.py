@@ -14,7 +14,7 @@ import json
 is_debug = False
 is_publ = False
 is_notel = True
-is_clean = False
+is_clean = True
 for arg in sys.argv[1:]:
 	if arg == "/publish":		is_publ = True
 	elif arg == "/debug":		is_debug = True
