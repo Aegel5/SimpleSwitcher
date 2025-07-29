@@ -36,16 +36,20 @@ inline std::generator<CHotKey> GetHk_Defaults(HotKeyType hk) {
 	case hk_RevertLastWord:
 		co_yield CHotKey(VK_CAPITAL);
 		co_yield CHotKey(VK_PAUSE);
+		co_yield CHotKey(VK_F24);
 		co_return;
 	case hk_RevertSeveralWords:
 		co_yield CHotKey(VK_SHIFT, VK_CAPITAL);
 		co_yield CHotKey(VK_SHIFT, VK_PAUSE);
+		co_yield CHotKey(VK_SHIFT, VK_F24);
 		co_return;
 	case hk_RevertAllRecentText:
 		co_yield CHotKey{ VK_CONTROL, VK_CAPITAL };
+		co_yield CHotKey(VK_CONTROL, VK_F24);
 		co_return;
 	case hk_RevertSelelected:
 		co_yield CHotKey{ VK_CONTROL, VK_CAPITAL };
+		co_yield CHotKey(VK_CONTROL, VK_F24);
 		co_return;
 	case hk_CycleSwitchLayout:
 		co_yield CHotKey(VKE_WIN, VK_SPACE);
