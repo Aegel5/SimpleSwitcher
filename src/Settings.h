@@ -26,6 +26,7 @@ public:
 		add(hk_CycleSwitchLayout);
 		add(hk_EmulateCapsLock);
 		add(hk_toUpperSelected);
+		add(hk_InvertCaseSelected);
 		add(hk_ToggleEnabled,true);
 		add(hk_ShowMainWindow,true);
 		add(hk_ShowRemainderWnd);

@@ -82,6 +82,17 @@ void toUpper(std::wstring& buf) {
     }
 }
 
+void InvertCase(std::wstring& buf) {
+	for (auto& c : buf) {
+		if (std::iswupper(c)) {
+			c = std::towlower(c);
+		}
+		else {
+			c = std::towupper(c);
+		}
+	}
+}
+
 TStatus WorkerImplement::GetClipStringCallback() {
 	LOG_ANY(L"GetClipStringCallback");
 
@@ -98,9 +109,13 @@ TStatus WorkerImplement::GetClipStringCallback() {
 	else {
 		if (m_lastRevertRequest == hk_RevertSelelected) {
             ClipboardToSendData(data);
-        } else if(m_lastRevertRequest == hk_toUpperSelected) {
+        } else if(m_lastRevertRequest == hk_toUpperSelected || m_lastRevertRequest == hk_InvertCaseSelected) {
 
-			toUpper(data);
+			if (m_lastRevertRequest == hk_toUpperSelected)
+				toUpper(data);
+			else
+				InvertCase(data);
+
             m_clipWorker.setString(data);
 
 			IFS_LOG(ProcessRevert({.flags = SW_CLIENT_CTRLV }));
@@ -111,7 +126,7 @@ TStatus WorkerImplement::GetClipStringCallback() {
 					Sleep(20); // подождем немного, чтобы не перезатереть наши данные восстановлением буфера.
             }
 			
-        }
+		}
 	}
 
 	if (needResotore) {
@@ -374,7 +389,7 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 	//if (!allow_do_revert)
 	//	RETURN_SUCCESS;
 
-	if (Utils::is_in(typeRevert, hk_RevertSelelected, hk_toUpperSelected)) {
+	if (Utils::is_in(typeRevert, hk_RevertSelelected, hk_toUpperSelected, hk_InvertCaseSelected)) {
 		LOG_ANY(L"save buff");
 		m_savedClipData = m_clipWorker.getCurString();
 		RequestWaitClip(CLRMY_GET_FROM_CLIP);

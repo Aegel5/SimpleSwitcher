@@ -9,6 +9,7 @@
 	hk_CycleSwitchLayout,
 	hk_EmulateScrollLock,
 	hk_toUpperSelected,
+	hk_InvertCaseSelected,
 	hk_ToggleEnabled,
 	hk_ShowMainWindow,
 	hk_ShowRemainderWnd,
@@ -57,6 +58,7 @@ inline std::generator<CHotKey> GetHk_Defaults(HotKeyType hk) {
 		co_yield CHotKey(VK_SHIFT).SetDouble();
 		co_return;
 	case hk_toUpperSelected:
+	case hk_InvertCaseSelected:
 		co_yield CHotKey(VK_SCROLL);
 		co_yield CHotKey(VK_PAUSE);
 		co_return;
@@ -88,6 +90,7 @@ inline const char* GetGuiTextForHk(HotKeyType hk) {
 	case hk_CycleSwitchLayout: return  LOC("Cyclic layout change");
 	case hk_EmulateCapsLock: return LOC("Generate CapsLock");
 	case hk_toUpperSelected: return LOC("Selected text to UPPER/lower");
+	case hk_InvertCaseSelected: return LOC("iNVERT cASE for selected text");
 	case hk_ToggleEnabled: return LOC("Enable/Disable");
 	case hk_ShowMainWindow: return LOC("Show/hide main window");
 	case hk_ShowRemainderWnd: return LOC("Show/hide Reminder");
