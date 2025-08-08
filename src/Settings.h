@@ -84,6 +84,7 @@ public:
     bool force_DbgMode              = false;
     bool fClipboardClearFormat = false;
     bool disableAccessebility    = false;
+	bool ShowLangsInTrayMenu = true;
     static constexpr UStr showFlags_OriginalFlags = "Original Flags";
     static constexpr UStr showFlags_AppIcon = "Application Icon";
     static constexpr UStr showFlags_Nothing = "Nothing";

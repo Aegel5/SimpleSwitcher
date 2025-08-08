@@ -32,22 +32,24 @@ public:
 			bool has_notif = false;
 			for (const auto& it : Notific::g_notif->SordedEntries()) {
 				has_notif = true;
-				res.push_back({ .name = it });
+				res.push_back({ .name = it, .callback = []() { show_main_wind(1); } });
 			}
 			if (has_notif) {
 				res.push_back({ .is_separator = true });
 			}
 
 			// layouts
-			for (const auto& it : conf_get_unsafe()->layouts_info.info) {
-				auto lay = it.layout;
-				res.push_back({ .name = StrUtils::Convert(Utils::GetNameForHKL(lay)), .callback = [lay]() {Worker()->PostMsg([lay](auto w) {w->SetNewLay(lay); }); } });
+			if (conf_get_unsafe()->ShowLangsInTrayMenu) {
+				for (const auto& it : conf_get_unsafe()->layouts_info.info) {
+					auto lay = it.layout;
+					res.push_back({ .name = StrUtils::Convert(Utils::GetNameForHKL(lay)), .callback = [lay]() {Worker()->PostMsg([lay](auto w) {w->SetNewLay(lay); }); } });
+				}
+				res.push_back({ .is_separator = true });
 			}
-			res.push_back({ .is_separator = true });
 
 			// menu
-			res.push_back({ .name = LOC("Show"), .callback = [this]() { show_main_wind(); } });
-			res.push_back({ .name = LOC("Enable"), .callback = [this]() { try_toggle_enable(); }, .is_checkbox = true, .edit_val = g_enabled.IsEnabled() });
+			res.push_back({ .name = LOC("Show"), .callback = []() { show_main_wind(); } });
+			res.push_back({ .name = LOC("Enable"), .callback = []() { try_toggle_enable(); }, .is_checkbox = true, .edit_val = g_enabled.IsEnabled() });
 			res.push_back({ .name = LOC("Exit"), .callback = []() { PostQuitMessage(0); } });
 			return res;
 			});

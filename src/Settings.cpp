@@ -112,7 +112,8 @@ namespace nlohmann {
 			win_hotkey_cycle_lang,
 			theme,
 			background,
-			gui_lang
+			gui_lang,
+			ShowLangsInTrayMenu
 		)
 }
 
