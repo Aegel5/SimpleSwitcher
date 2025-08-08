@@ -195,5 +195,23 @@ namespace Notific {
 
 			ImGui::End();
 		}
+
+		std::generator<string> SordedEntries() {
+			std::multimap<DateTime, string> res;
+			for (const auto& it : all_entries()) {
+				if (it.IsIsFutureAndEnabled()) {
+					auto delt = DeltToNow(it.nextActivate);
+					char buf[100];
+					DeltToHuman(buf, delt);
+					auto line = StrUtils::GetLine(it.name);
+					res.insert({ it.nextActivate, std::format("{} {}", line, buf) });
+				}
+			}
+			for (const auto& it : res) {
+				co_yield it.second;
+			}
+		}
+
 	};
+	inline Notificator* g_notif = nullptr;
 }

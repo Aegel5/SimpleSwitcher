@@ -49,7 +49,7 @@ namespace Notific {
 
 		DateTime Unset() { return {}; }
 
-		bool IsIsFutureAndEnabled() { return enabled && nextActivate > Now(); }
+		bool IsIsFutureAndEnabled() const { return enabled && nextActivate > Now(); }
 		void SetupNextActivate() {
 
 			auto now = Now();
@@ -200,26 +200,7 @@ namespace Notific {
 
 				char buf[100];
 				auto delt = DeltToNow(nextActivate);
-				auto days = std::chrono::duration_cast<std::chrono::days>(delt);
-				if (days.count() >= 1) {
-					StrUtils::Sprintf(buf, "%d days", days.count());
-				}
-				else {
-					auto hh = std::chrono::duration_cast<std::chrono::hours>(delt);
-					delt -= hh;
-					auto mm = std::chrono::duration_cast<std::chrono::minutes>(delt);
-					delt -= mm;
-					auto ss = std::chrono::duration_cast<std::chrono::seconds>(delt);
-					if (hh.count() >= 1) {
-						StrUtils::Sprintf(buf, "%d hours %d minutes", (int)hh.count(), (int)mm.count());
-					}
-					else {
-						if (mm.count() >= 1)
-							StrUtils::Sprintf(buf, "%d minutes", (int)mm.count());
-						else
-							StrUtils::Sprintf(buf, "%d sec", (int)ss.count());
-					}
-				}
+				DeltToHuman(buf, delt);
 				ImGui::SameLine();
 				ImGui::Text(buf);
 			}

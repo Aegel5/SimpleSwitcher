@@ -71,7 +71,8 @@ private:
 			for (int i = 0; auto & it : Inst->last_menu) {
 				i++;
 				if (i == LOWORD(wParam)) {
-					it.callback();
+					if(it.callback)
+						it.callback();
 					break;
 				}
 			}

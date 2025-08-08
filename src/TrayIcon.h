@@ -2,6 +2,8 @@
 
 #include "utils/WinTray.h"
 #include "IconManager.h"
+#include "gui2/Notificator/Notificator.h"
+
 class TrayIcon {
 	HKL curlay = 0;
 	uint64_t last_lay_cnt = 0;
@@ -25,11 +27,25 @@ public:
 		tray.OnDouble([this]() { show_main_wind(); });
 		tray.OnCreateMenu([this]() {
 			std::vector<WinTray::TrayItem> res;
+
+			// notif
+			bool has_notif = false;
+			for (const auto& it : Notific::g_notif->SordedEntries()) {
+				has_notif = true;
+				res.push_back({ .name = it });
+			}
+			if (has_notif) {
+				res.push_back({ .is_separator = true });
+			}
+
+			// layouts
 			for (const auto& it : conf_get_unsafe()->layouts_info.info) {
 				auto lay = it.layout;
 				res.push_back({ .name = StrUtils::Convert(Utils::GetNameForHKL(lay)), .callback = [lay]() {Worker()->PostMsg([lay](auto w) {w->SetNewLay(lay); }); } });
 			}
 			res.push_back({ .is_separator = true });
+
+			// menu
 			res.push_back({ .name = LOC("Show"), .callback = [this]() { show_main_wind(); } });
 			res.push_back({ .name = LOC("Enable"), .callback = [this]() { try_toggle_enable(); }, .is_checkbox = true, .edit_val = g_enabled.IsEnabled() });
 			res.push_back({ .name = LOC("Exit"), .callback = []() { PostQuitMessage(0); } });

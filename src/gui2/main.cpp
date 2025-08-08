@@ -154,6 +154,7 @@ int StartGui(bool show, bool err_conf)
 
 	MainWindow mainWindow(show, err_conf);
 	Notific::Notificator notif;
+	Notific::g_notif = &notif;
 	WinTimer timer;
 	TrayIcon trayIcon;
 	timer.CycleTimer([&]() {
