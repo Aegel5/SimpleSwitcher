@@ -51,6 +51,7 @@ inline void SetStyle() {
 
 	style.FrameRounding = 3.0f;
 	style.TabRounding = 5.0f;
+	style.FrameBorderSize = 1;
 
 	if (cfg->theme == "Light") { ImGui::StyleColorsLight(); }
 	if (cfg->theme == "Dark") { ImGui::StyleColorsDark(); }
@@ -187,55 +188,10 @@ inline void SetStyle() {
 		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 
-
-
-
-
-
 	}
 	else  { 
 		ImGui::StyleColorsLight(); }
 }
-
-inline void InitImGui(float scale) {
-
-	ImGuiIO& io = ImGui::GetIO();
-	ImGuiStyle& style = ImGui::GetStyle();
-	style.ScaleAllSizes(scale);
-	static ImVector<ImWchar> ranges;
-	{
-		ImFontGlyphRangesBuilder builder;
-		builder.AddRanges(io.Fonts->GetGlyphRangesCyrillic()); // Add one of the default ranges
-		static const ImWchar ranges_additional[] =
-		{
-			//0x1, 0xFFFF,
-			0x0590, 0x05FF, 0xFB1D, 0xFB4F, // hebrew
-			0,
-		};
-		builder.AddRanges(ranges_additional);
-		//builder.AddText((const char*)u8"×");
-		builder.BuildRanges(&ranges);
-
-
-		float size = std::floorf(18.0f * scale);
-		ImFont* fnt = 0;
-		//fnt = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", size, 0, ranges.Data);
-		if (!fnt) {
-			auto data = WinUtils::GetResource(L"font2");
-			if(data.empty()) std::abort();
-			ImFontConfig cfg{};
-			cfg.FontDataOwnedByAtlas = false;
-			io.Fonts->AddFontFromMemoryTTF(data.data(), data.size(), std::floorf(size*0.92f), &cfg, ranges.Data);
-		}
-	}
-
-
-	style.FrameRounding = 3;
-	style.FrameBorderSize = 1;
-
-	SetStyle();
-}
-
 
 
 

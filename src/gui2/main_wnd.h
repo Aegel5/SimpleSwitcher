@@ -112,8 +112,6 @@ public:
 		apply_background();
 		IFS_LOG(autoCom.Init());
 		auto scale = ImGui::GetPlatformIO().Monitors[0].DpiScale * 1.2f;
-		//auto scale = WinUtils::GetDpiMainMonScale2() * 1.2f;
-		InitImGui(scale);
 		title = std::format(
 			"SimpleSwitcher {}{}{}###main_wnd", GET_SW_VERSION(),
 			Utils::IsSelfElevated() ? " Administrator" : "",

@@ -6,9 +6,6 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
-// todo - disable copy to InputEventsTrail
-//      - ImGuiWantFrameDelay(type, 50ms)
-// proposal - ImGuiHasAnyInputToProcess
 
 #include "imgui_internal.h"
 #include "imgui.h"
@@ -35,10 +32,6 @@ void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-static float g_wantFrameDelay = FLT_MAX;
-void ImWantFrameWithDelay(float seconds) {
-	if (seconds < g_wantFrameDelay)	g_wantFrameDelay = seconds;
-}
 static bool ImWaitNewFrame(){
 
 	MSG msg;
@@ -103,8 +96,9 @@ static std::function wnd_handler = [](HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 // Main code
 int StartGui(bool show, bool err_conf)
 {
-    // Create application window
-    //ImGui_ImplWin32_EnableDpiAwareness();
+    // Make process DPI aware and obtain main monitor scale
+    ImGui_ImplWin32_EnableDpiAwareness();
+	float main_scale = ImGui_ImplWin32_GetDpiScaleForMonitor(::MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY));
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
     ::RegisterClassExW(&wc);
     HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Dear ImGui DirectX11 Example", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
@@ -137,11 +131,16 @@ int StartGui(bool show, bool err_conf)
 	io.ConfigViewportsNoDefaultParent = true;
 	//io.ConfigDockingAlwaysTabBar = true;
 	//io.ConfigDockingTransparentPayload = true;
-	//io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleFonts;     // FIXME-DPI: Experimental. THIS CURRENTLY DOESN'T WORK AS EXPECTED. DON'T USE IN USER APP!
-	//io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleViewports; // FIXME-DPI: Experimental.
 
 	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-	ImGuiStyle& style = ImGui::GetStyle();
+	SetStyle();
+
+	// Setup scaling
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.ScaleAllSizes(main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
+    style.FontScaleDpi = main_scale;        // Set initial font scale. (using io.ConfigDpiScaleFonts=true makes this unnecessary. We leave both here for documentation purpose)
+    io.ConfigDpiScaleFonts = true;          // [Experimental] Automatically overwrite style.FontScaleDpi in Begin() when Monitor DPI changes. This will scale fonts but _NOT_ scale sizes/padding for now.
+    io.ConfigDpiScaleViewports = true;      // [Experimental] Scale Dear ImGui and Platform Windows when Monitor DPI changes.
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
 		style.WindowRounding = 0.0f;
@@ -151,6 +150,16 @@ int StartGui(bool show, bool err_conf)
     // Setup Platform/Renderer backends
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
+
+    // Load Fonts
+	ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\tahoma.ttf", 20);
+	if (!font) {
+		auto data = WinUtils::GetResource(L"font2");
+		if (data.empty()) std::abort();
+		ImFontConfig cfg{};
+		cfg.FontDataOwnedByAtlas = false;
+		io.Fonts->AddFontFromMemoryTTF(data.data(), data.size(), std::floorf(17), &cfg);
+	}
 
 	MainWindow mainWindow(show, err_conf);
 	Notific::Notificator notif;
@@ -200,15 +209,25 @@ int StartGui(bool show, bool err_conf)
 		if (notif.IsVisible()) 
 			ImWantFrameWithDelay(0.5f); // for timer display
 
-		// Rendering
-		ImGui::Render();
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
+        // Rendering
+        ImGui::Render();
+		//ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+        //const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
+        //g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
+        //g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
+        //ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-		// Present
-		HRESULT hr = g_pSwapChain->Present(1, 0);   // Present with vsync
-		//HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
-		g_SwapChainOccluded = hr == DXGI_STATUS_OCCLUDED;
+        // Update and Render additional Platform Windows
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+        }
+
+        // Present
+        HRESULT hr = g_pSwapChain->Present(1, 0);   // Present with vsync
+        //HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
+        g_SwapChainOccluded = (hr == DXGI_STATUS_OCCLUDED);
 
 	}
 
@@ -279,10 +298,6 @@ void CleanupRenderTarget()
     if (g_mainRenderTargetView) { g_mainRenderTargetView->Release(); g_mainRenderTargetView = nullptr; }
 }
 
-#ifndef WM_DPICHANGED
-#define WM_DPICHANGED 0x02E0 // From Windows SDK 8.1+ headers
-#endif
-
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -314,15 +329,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
         ::PostQuitMessage(0);
         return 0;
-	case WM_DPICHANGED:
-        if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DpiEnableScaleViewports)
-        {
-			//const int dpi = HIWORD(wParam);
-			//printf("WM_DPICHANGED to %d (%.0f%%)\n", dpi, (float)dpi / 96.0f * 100.0f);
-			const RECT* suggested_rect = (RECT*)lParam;
-			::SetWindowPos(hWnd, nullptr, suggested_rect->left, suggested_rect->top, suggested_rect->right - suggested_rect->left, suggested_rect->bottom - suggested_rect->top, SWP_NOZORDER | SWP_NOACTIVATE);
-		}
-		break;
     }
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
