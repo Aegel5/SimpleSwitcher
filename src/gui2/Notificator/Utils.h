@@ -138,13 +138,46 @@ namespace Notific {
 				}
 			}
 
-			if (ImGui::InputInt("year", &time.y, 1, 10)) {
-				Clamp(time.y, 1900, 2200);
-				edit = true;
-				time.FixDay();
+			ImGui::Separator();
+
+			btn_w = ImGui::CalcTextSize("_Jan_").x;
+			for (int i = 1; i <= 12; i++) {
+				bool pop = false;
+				if (i == time.m) {
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.300f, 0.697f, 0.601f, 1.000f));
+					pop = true;
+				}
+				UStr name = 0;
+				if (i == 1) name = "Jan";
+				if (i == 2) name = "Feb";
+				if (i == 3) name = "Mar";
+				if (i == 4) name = "Apr";
+				if (i == 5) name = "May";
+				if (i == 6) name = "Jun";
+				if (i == 7) name = "Jul";
+				if (i == 8) name = "Aug";
+				if (i == 9) name = "Sep";
+				if (i == 10) name = "Oct";
+				if (i == 11) name = "Nov";
+				if (i == 12) name = "Dec";
+				if((i-1)%4 != 0) ImGui::SameLine();
+				if (ImGui::Button(name, { btn_w , 0 })) {
+					time.m = i;
+					edit = true;
+					time.FixDay();
+				}
+				if (pop) {
+					ImGui::PopStyleColor();
+				}
 			}
 
-			if (ImGui::SliderInt("month", &time.m, 1, 12)) {
+			//if (ImGui::SliderInt("month", &time.m, 1, 12)) {
+			//	edit = true;
+			//	time.FixDay();
+			//}
+
+			if (ImGui::InputInt("year", &time.y, 1, 10)) {
+				Clamp(time.y, 1900, 2200);
 				edit = true;
 				time.FixDay();
 			}
