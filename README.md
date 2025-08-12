@@ -23,7 +23,7 @@ Simple Switcher - переключатель клавиатуры ⌨️ для 
 Для получения последней версии нужно сбилдить из исходного кода (требуется `Visual Studio 2022`).
 
 Также можно скачать: 
-- Последняя develop версия: https://github.com/Aegel5/SimpleSwitcher/releases
+- Последняя 6.x версия: https://github.com/Aegel5/SimpleSwitcher/releases
 - Последняя 5.x (стабильная) версия: https://github.com/Aegel5/SimpleSwitcher/releases/tag/5.394
 - Последняя 3.x (scancode remap для любых клавиш): https://github.com/Aegel5/SimpleSwitcher/releases/tag/3.0.0.8
 
