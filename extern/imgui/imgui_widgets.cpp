@@ -1,4 +1,4 @@
-// dear imgui, v1.92.2 WIP
+// dear imgui, v1.92.2b
 // (widgets code)
 
 /*
@@ -5070,7 +5070,6 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             }
             else if (strcmp(buf, state->TextToRevertTo.Data) != 0)
             {
-                /* SS_PATCH_IMGUI
                 apply_new_text = state->TextToRevertTo.Data;
                 apply_new_text_length = state->TextToRevertTo.Size - 1;
 
@@ -5078,7 +5077,6 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
                 // Push records into the undo stack so we can CTRL+Z the revert operation itself
                 value_changed = true;
                 stb_textedit_replace(state, state->Stb, state->TextToRevertTo.Data, state->TextToRevertTo.Size - 1);
-                */
             }
         }
 
@@ -8892,6 +8890,7 @@ void ImGui::EndMenuBar()
 
     PopClipRect();
     PopID();
+    IM_MSVC_WARNING_SUPPRESS(6011); // Static Analysis false positive "warning C6011: Dereferencing NULL pointer 'window'"
     window->DC.MenuBarOffset.x = window->DC.CursorPos.x - window->Pos.x; // Save horizontal position so next append can reuse it. This is kinda equivalent to a per-layer CursorPos.
 
     // FIXME: Extremely confusing, cleanup by (a) working on WorkRect stack system (b) not using a Group confusingly here.
