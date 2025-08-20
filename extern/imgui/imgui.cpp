@@ -4861,10 +4861,14 @@ bool ImGui::IsItemHovered(ImGuiHoveredFlags flags)
         // but once unlocked on a given item we also moving.
         //if (g.HoverDelayTimer >= delay && (g.HoverDelayTimer - g.IO.DeltaTime < delay || g.MouseStationaryTimer - g.IO.DeltaTime < g.Style.HoverStationaryDelay)) { IMGUI_DEBUG_LOG("HoverDelayTimer = %f/%f, MouseStationaryTimer = %f\n", g.HoverDelayTimer, delay, g.MouseStationaryTimer); }
         if ((flags & ImGuiHoveredFlags_Stationary) != 0 && g.HoverItemUnlockedStationaryId != hover_delay_id)
-            return false;
+        {
+            ImWantFrameWithDelay(delay); return false;
+        } // SS_PATCH_IMGUI
 
         if (g.HoverItemDelayTimer < delay)
-            return false;
+        {
+            ImWantFrameWithDelay(delay - g.HoverItemDelayTimer); return false;
+        } // SS_PATCH_IMGUI
     }
 
     return true;

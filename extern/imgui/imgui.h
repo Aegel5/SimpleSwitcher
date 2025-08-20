@@ -375,6 +375,12 @@ struct ImTextureRef
 };
 IM_MSVC_RUNTIME_CHECKS_RESTORE
 
+// SS_PATCH_IMGUI
+inline float g_wantFrameDelay = FLT_MAX;
+inline void ImWantFrameWithDelay(float seconds) {
+    if (seconds < g_wantFrameDelay)	g_wantFrameDelay = seconds;
+}
+
 //-----------------------------------------------------------------------------
 // [SECTION] Dear ImGui end-user API functions
 // (Note that ImGui:: being a namespace, you can add extra ImGui:: functions in your own separate file. Please don't modify imgui source files!)
