@@ -192,6 +192,16 @@ void MainWindow::DrawFrameActual() {
 			}
 
 			{
+				int val = conf_gui()->quick_press_ms;
+				if (ImGui::InputInt(LOC("Double tap interval ms"), &val)) {
+					val = std::clamp(val, 0, 1000);
+					conf_gui()->quick_press_ms = val;
+					SaveApplyGuiConfig();
+				}
+
+			}
+
+			{
 				ImGuiUtils::Combo(LOC("Background"), conf_gui()->background,
 					[this]()-> std::generator<UStr> {
 						co_yield "None";
