@@ -113,7 +113,8 @@ namespace nlohmann {
 			theme,
 			background,
 			gui_lang,
-			ShowLangsInTrayMenu
+			ShowLangsInTrayMenu,
+			ShowReminderInTrayMenu
 		)
 }
 

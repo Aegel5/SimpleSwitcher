@@ -85,6 +85,7 @@ public:
     bool fClipboardClearFormat = false;
     bool disableAccessebility    = false;
 	bool ShowLangsInTrayMenu = true;
+	bool ShowReminderInTrayMenu = true;
     static constexpr UStr showFlags_OriginalFlags = "Original Flags";
     static constexpr UStr showFlags_AppIcon = "Application Icon";
     static constexpr UStr showFlags_Nothing = "Nothing";

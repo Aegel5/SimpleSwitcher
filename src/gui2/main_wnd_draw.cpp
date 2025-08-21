@@ -258,6 +258,15 @@ void MainWindow::DrawFrameActual() {
 				remap_open = false;
 			}
 
+			if (ImGui::CollapsingHeader(LOC("Tray Menu"))) {
+				if (ImGui::Checkbox(LOC("Show languages"), &conf_gui()->ShowLangsInTrayMenu)) {
+					SaveApplyGuiConfig();
+				}
+				if (ImGui::Checkbox(LOC("Show Reminder entries"), &conf_gui()->ShowReminderInTrayMenu)) {
+					SaveApplyGuiConfig();
+				}
+			}
+
 		}
 
 		with_TabItem(LOC("About")) {
