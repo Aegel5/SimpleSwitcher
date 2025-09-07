@@ -149,9 +149,9 @@ namespace StrUtils
 	}
 
 	// utf8 - incorrect todo lib
-	//inline void ToLower(std::string& str) {
-	//	std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
-	//}
+	inline void ToLowerUnsafe(std::string& str) {
+		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
+	}
 	//inline void ToUpper(std::string& str) {
 	//	std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::toupper(c); });
 	//}
