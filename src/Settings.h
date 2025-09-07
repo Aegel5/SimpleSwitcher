@@ -101,7 +101,7 @@ public:
 	string gui_lang = "Russian";
 
     std::vector< CHotKeySet> hotkeysList;
-    std::vector< RunProgramInfo> run_programs = { {.path = L"example: calc.exe"} };
+    std::vector< RunProgramInfo> run_programs;
 
     LayoutInfoList layouts_info;
 
