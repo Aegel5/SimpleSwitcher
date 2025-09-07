@@ -35,7 +35,9 @@ void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 	}
 	default:
 	{
-		m_cycleList.AddKeyToList(type, data, scan_ext, cur_hotkey.HasMod(VK_SHIFT));
+		bool is_shift = cur_hotkey.HasMod(VK_SHIFT);
+		if (keyData.is_caps) is_shift = !is_shift;
+		m_cycleList.AddKeyToList(type, data, scan_ext, is_shift);
 		break;
 	}
 	case KEYTYPE_COMMAND_NO_CLEAR:

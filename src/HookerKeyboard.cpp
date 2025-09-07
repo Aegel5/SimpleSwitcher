@@ -26,9 +26,12 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		bool isExtended = TestFlag(k->flags, LLKHF_EXTENDED);
 		bool is_pressed = !TestFlag(k->flags, LLKHF_UP);
 		auto scan_code = k->scanCode;
+		int iscaps = -1;
+		if (curKeyState == KEY_STATE_DOWN) iscaps = Utils::IsCapslockEnabled() ? 1 : 0;
+		msg_type.is_caps = iscaps == 1;
 
 		LOG_ANY(
-			L"KEY_MSG: {}({:x}) {},scan=0x{:x},inject={},low_inject={},altdown={},syskey={},extended={},is_pressed={},flags=0x{:b}",
+			L"KEY_MSG: {}({:x}) {},scan=0x{:x},inject={},low_inject={},altdown={},syskey={},extended={},is_pressed={},flags=0x{:b},caps={}",
 			CHotKey::ToString(vkCode),
 			vkCode,
 			(curKeyState == KEY_STATE_UP ? L"UP" : L"DOWN"),
@@ -39,7 +42,8 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			isSysKey,
 			isExtended,
 			is_pressed,
-			k->flags
+			k->flags,
+			iscaps
 		);
 
 		if (k->vkCode > 255) {

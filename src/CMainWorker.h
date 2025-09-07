@@ -5,6 +5,7 @@ struct Message_KeyType {
 	TScanCode_Ext scan_ext;
 	HotKeyType hk = hk_NULL;
 	KeyState keyState = KEY_STATE_NONE;
+	bool is_caps = false;
 };
 
 struct Message_Hotkey {

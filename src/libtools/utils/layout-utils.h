@@ -189,6 +189,9 @@ namespace Utils
 		return 0;
 	}
 
+	inline bool IsCapslockEnabled() {
+		return (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
+	}
 }
 
 

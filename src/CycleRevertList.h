@@ -223,8 +223,7 @@ public: void AddKeyToList(TKeyType type, TKeyTypeData data, TScanCode_Ext scan_c
 	else {
 		key.key.scan_code = scan_code;
 	}
-	if (is_shift) 
-		key.key.shift_key = VK_LSHIFT;
+	key.key.is_shift = is_shift;
 	key.type = type;
 	key.data = data;
 

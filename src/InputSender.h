@@ -40,8 +40,8 @@ public:
 	}
 	void AddScanCode(const TKeyBaseInfo& key, KeyState keyState = KEY_STATE_DOWN)
 	{
-		if (key.shift_key != 0) {
-			Add(key.shift_key, keyState);
+		if (key.is_shift) {
+			Add(VK_LSHIFT, keyState);
 		}
 
 		if (key.scan_code.scan == 0) {
@@ -102,9 +102,10 @@ public:
 		InputSender inputSender;
 
 		LOG_ANY(L"Send {} keys", sendData.size());
-
-		for (const auto& key : sendData)
+		bool isCaps = Utils::IsCapslockEnabled(); // todo: get from thread with queue?
+		for (auto key : sendData)
 		{
+			if (isCaps) key.revert_shift();
 			inputSender.AddPressBase(key);
 		}
 

@@ -73,7 +73,7 @@ private:
 		BOOL res = GlobalUnlock(lock);
 		DWORD dwerr = GetLastError();
 
-		LOG_ANY(L"unlock put res={}, err={}", res, dwerr);
+		LOG_ANY(L"unlock PUT res={}, err={}", res, dwerr);
 		LOG_ANY_4(L"putted text data='{}'",sTextDst);
 
 		//m_clipboardOurPut = true;

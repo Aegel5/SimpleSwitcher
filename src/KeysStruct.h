@@ -39,7 +39,8 @@ struct TScanCode_Ext {
 struct TKeyBaseInfo {
 	TKeyCode vk_code = 0;
 	TScanCode_Ext scan_code;
-	TKeyCode shift_key = 0;
+	bool is_shift = false;
+	void revert_shift() { is_shift = !is_shift; }
 	auto operator<=>(const TKeyBaseInfo&) const = default;
 };
 
