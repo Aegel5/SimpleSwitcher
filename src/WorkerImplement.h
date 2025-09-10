@@ -82,15 +82,15 @@ public:
 			m_cycleList.AddKeyToList(type, {}, {}, TestFlag(mods, 0x1), code);
 		}
 
-		RevertText(hk_RevertAllRecentText, true);
+		RevertText(hk_RevertAllRecentText, true, true);
 		if (clear_alfter_selected) {
 			m_cycleList.Clear();
 		}
 	}
 
-	void RevertText(HotKeyType typeRevert, bool no_backs = false) {
+	void RevertText(HotKeyType typeRevert, bool no_backs = false, bool always_full_text = false) {
 		auto nextLng = getNextLang();
-		auto to_revert = m_cycleList.FillKeyToRevert(typeRevert);
+		auto to_revert = m_cycleList.FillKeyToRevert(typeRevert, always_full_text);
 		if (to_revert.keys.empty()) {
 			LOG_ANY(L"nothing to revert. skip");
 			return;

@@ -141,7 +141,7 @@ struct RevertKeysData {
 	bool needLanguageChange = false;
 };
 
-public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
+public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert, bool always_full_text = false) {
 
 	RevertKeysData keyList;
 
@@ -165,7 +165,11 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 */
 	int prev_correct = iLastCorrected;
 
-	if (typeRevert == hk_RevertAllRecentText) {
+	if (always_full_text) {
+		iLastCorrected = words[0];
+		keyList.needLanguageChange = true;
+	}
+	else if (typeRevert == hk_RevertAllRecentText) {
 		keyList.needLanguageChange = true;
 		iLastCorrected = words[0];
 		for (int i = ssize(m_symbolList) - 2; i >= 0; --i) {
@@ -192,8 +196,7 @@ public: RevertKeysData FillKeyToRevert(HotKeyType typeRevert) {
 		}
 	}
 
-
-	for (int i = iLastCorrected; i < ssize(m_symbolList); ++i) {
+	for (int i = always_full_text ? 0 : iLastCorrected; i < ssize(m_symbolList); ++i) {
 		keyList.keys.push_back(m_symbolList[i].key);
 	}
 
