@@ -21,10 +21,11 @@ class SetHotKeyCombo {
 			if (!isInjected) {
 				last_type = { kStruct->vkCode, GetKeyState(wParam) };
 			}
+			return 1;
 		}
-		return 1;
+		return CallNextHookEx(0, nCode, wParam, lParam);
 	}
-	const CHotKey& cur_key() {
+	const CHotKey& cur_key() {							
 		return hotkeys->key();
 	}
 	void build_strings() {
@@ -132,6 +133,13 @@ public:
 				}
 			}
 
+			{
+
+			}
+
+			if (!WinUtils::IsCurrentProcessActive()) {
+				ImGui::CloseCurrentPopup();
+			}
 
 			ImGui::EndCombo();
 		}

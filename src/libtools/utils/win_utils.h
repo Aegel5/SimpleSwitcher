@@ -49,6 +49,23 @@ namespace WinUtils {
 		return { (std::byte*)pData, resourceSize };
 
 	}
+	inline bool IsCurrentProcessActive()
+	{
+		// Получаем дескриптор активного (foreground) окна
+		HWND foregroundWindow = GetForegroundWindow();
+		if (foregroundWindow == NULL)
+			return false;
+
+		// Получаем PID процесса, которому принадлежит активное окно
+		DWORD foregroundProcessId = 0;
+		GetWindowThreadProcessId(foregroundWindow, &foregroundProcessId);
+
+		// Получаем PID текущего процесса
+		DWORD currentProcessId = GetCurrentProcessId();
+
+		// Сравниваем PID
+		return (foregroundProcessId == currentProcessId);
+	}
 }
 
 
