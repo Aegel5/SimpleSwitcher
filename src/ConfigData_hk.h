@@ -77,6 +77,7 @@ inline std::generator<CHotKey> GetHk_Defaults(HotKeyType hk) {
 		co_return;
 	case hk_EmulateCapsLock:
 		co_yield CHotKey(VKE_ALT, VK_F24);
+		co_yield CHotKey(VKE_ALT, VK_CAPITAL);
 		co_return;
 	}
 }
