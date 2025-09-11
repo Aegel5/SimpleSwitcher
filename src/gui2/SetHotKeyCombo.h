@@ -7,6 +7,7 @@ class SetHotKeyCombo {
 	std::string key_str_all; 
 	bool popup_open = false;
 	CHotKeyList* hotkeys;
+	int iCurrentHk = 0;
 
 	inline static bool left_right = false;
 	//inline static std::atomic< std::pair<DWORD, KeyState>> last_type = {};
@@ -25,21 +26,31 @@ class SetHotKeyCombo {
 		}
 		return CallNextHookEx(0, nCode, wParam, lParam);
 	}
-	const CHotKey& cur_key() {							
-		return hotkeys->key();
+	const CHotKey& cur_key() {	
+		return hotkeys->keys[iCurrentHk];
+	}
+	void Reinit(int newIndex = -1) {
+		hotkeys->DeleteEmpty();
+		if (iCurrentHk >= hotkeys->keys.size()) iCurrentHk = 0;
+		if (newIndex != -1) {
+			iCurrentHk = newIndex;
+			if (iCurrentHk >= hotkeys->keys.size()) hotkeys->keys.resize(iCurrentHk + 1);
+		}
+		build_strings();
+		state.Clear();
 	}
 	void build_strings() {
-		key_str = StrUtils::Convert(hotkeys->key().ToString());
+		key_str = StrUtils::Convert(cur_key().ToString());
 		key_str_all = StrUtils::Convert(hotkeys->ToString());
 	}
 	void SetKey(CHotKey k) {
 		if (cur_key().Compare(k, CHotKey::COMPARE_STRICK_MODIFIER)) return;
-		hotkeys->key() = k;
+		hotkeys->keys[iCurrentHk] = k;
 		SaveApplyGuiConfig();
 		build_strings();
 
 	}
-	void Init() {
+	void InitHooks() {
 		if (hook.IsInvalid()) {
 			hook = SetWindowsHookEx(WH_KEYBOARD_LL, &LowLevelKeyboardProc, 0, 0);
 		}
@@ -50,7 +61,7 @@ public:
 		for (const CHotKey& it : def) {
 			defaults.push_back(StrUtils::Convert(it.ToString()));
 		}
-		build_strings();
+		Reinit();
 	}
 	void Draw() {
 
@@ -65,7 +76,7 @@ public:
 			popup_open = true;
 
 			if (ImGui::IsWindowAppearing()) {
-				Init();
+				InitHooks();
 				ImGui::SetKeyboardFocusHere();
 			}
 
@@ -134,7 +145,12 @@ public:
 			}
 
 			{
-
+				ImGui::SameLine();
+				UStr t = iCurrentHk == 0 ? " 1 " : " 2 ";
+				ImGuiUtils::SetCursorToRightForButton(t);
+				if (ImGui::Button(t)) {
+					Reinit(iCurrentHk ^ 1);
+				}
 			}
 
 			if (!WinUtils::IsCurrentProcessActive()) {
@@ -147,6 +163,7 @@ public:
 			if (popup_open) {
 				popup_open = false;
 				hook.Cleanup();
+				Reinit();
 			}
 		}
 	}

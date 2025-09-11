@@ -10,6 +10,16 @@ struct CHotKeyList {
         return false;
     }
 
+	int size() {
+		return keys.size();
+	}
+
+	void DeleteEmpty() {
+		for (int i = std::ssize(keys) - 1; i >= 1; i--) {
+			if (keys[i].IsEmpty()) Utils::RemoveAt(keys, i);
+		}
+	}
+
     bool Empty() {
         for (const auto& k : keys) {
             if (!k.IsEmpty())

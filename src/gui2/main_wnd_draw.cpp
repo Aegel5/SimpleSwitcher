@@ -280,8 +280,7 @@ void MainWindow::DrawFrameActual() {
 
 	{
 		auto text = LOC("Close to tray");
-		float w = ImGui::CalcTextSize(text).x + ImGui::GetStyle().FramePadding.x*2.f + ImGui::GetStyle().ItemSpacing.x;
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - w);
+		ImGuiUtils::SetCursorToRightForButton(text);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetContentRegionAvail().y - ImGui::GetFrameHeightWithSpacing()); // todo use child_wnd
 		if (ImGui::Button(text)) { show_wnd = false; }
 	}

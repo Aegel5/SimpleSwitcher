@@ -57,6 +57,12 @@ namespace ImGuiUtils {
 		}
 	}
 
+	inline void SetCursorToRightForButton(UStr text) {
+		float w = ImGui::CalcTextSize(text).x + ImGui::GetStyle().FramePadding.x * 2.f + ImGui::GetStyle().ItemSpacing.x;
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - w);
+		//ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetContentRegionAvail().y - ImGui::GetFrameHeightWithSpacing()); // todo use child_wnd
+	}
+
 
 	//inline float ButtonRightFrom(UStr text, int& new_offset, int w =0, float offset = 0) { // temporary solution
 	//	auto cur = ImGui::GetCursorPos();
