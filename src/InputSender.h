@@ -101,11 +101,14 @@ public:
 
 		InputSender inputSender;
 
+		//bool isCaps = Utils::IsCapslockEnabled(); // get from thread with queue!
+		//LOG_ANY(L"Send {} keys. caps: {}", sendData.size(), isCaps);
+
 		LOG_ANY(L"Send {} keys", sendData.size());
-		bool isCaps = Utils::IsCapslockEnabled(); // todo: get from thread with queue?
+
 		for (auto key : sendData)
 		{
-			if (isCaps) key.revert_shift();
+			//if (isCaps) key.revert_shift();
 			inputSender.AddPressBase(key);
 		}
 

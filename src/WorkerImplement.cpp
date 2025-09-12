@@ -36,7 +36,10 @@ void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 	default:
 	{
 		bool is_shift = cur_hotkey.HasMod(VK_SHIFT);
-		if (keyData.is_caps) is_shift = !is_shift;
+
+		// todo: так это не работает. Нужно добавлять Shift только буквам (сложно) или временно включать/отключать capslock.
+		//if (keyData.is_caps) is_shift = !is_shift; 
+
 		m_cycleList.AddKeyToList(type, data, scan_ext, is_shift);
 		break;
 	}
