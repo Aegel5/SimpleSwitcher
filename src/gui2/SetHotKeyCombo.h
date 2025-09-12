@@ -30,14 +30,20 @@ class SetHotKeyCombo {
 		return hotkeys->keys[iCurrentHk];
 	}
 	void Reinit(int newIndex = -1) {
-		hotkeys->DeleteEmpty();
+		auto was_changes = hotkeys->DeleteEmpty();
 		if (iCurrentHk >= hotkeys->keys.size()) iCurrentHk = 0;
 		if (newIndex != -1) {
 			iCurrentHk = newIndex;
-			if (iCurrentHk >= hotkeys->keys.size()) hotkeys->keys.resize(iCurrentHk + 1);
+			if (iCurrentHk >= hotkeys->keys.size()) {
+				hotkeys->keys.resize(iCurrentHk + 1);
+				was_changes = true;
+			}
 		}
 		build_strings();
 		state.Clear();
+		if (was_changes) {
+			SaveApplyGuiConfig();
+		}
 	}
 	void build_strings() {
 		key_str = StrUtils::Convert(cur_key().ToString());

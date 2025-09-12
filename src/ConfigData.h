@@ -14,10 +14,21 @@ struct CHotKeyList {
 		return keys.size();
 	}
 
-	void DeleteEmpty() {
-		for (int i = std::ssize(keys) - 1; i >= 1; i--) {
-			if (keys[i].IsEmpty()) Utils::RemoveAt(keys, i);
+	bool DeleteEmpty() {
+		for (int i = 0; i < size(); i++) {
+			if (!keys[i].IsEmpty()) {
+				if(i != 0) std::swap(keys[0], keys[i]);
+				break;
+			}
 		}
+		bool found = false;
+		for (int i = size() - 1; i >= 1; i--) {
+			if (keys[i].IsEmpty()) {
+				Utils::RemoveAt(keys, i);
+				found = true;
+			}
+		}
+		return found;
 	}
 
     bool Empty() {
