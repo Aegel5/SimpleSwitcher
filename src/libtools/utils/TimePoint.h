@@ -2,6 +2,7 @@
 	// h, min, s, ms
 	std::chrono::time_point<std::chrono::steady_clock> time{};
 public:
+	auto operator<=>(const TimePoint& other) const = default;
 	static TimePoint Now() {
 		TimePoint res;
 		res.SetNow();

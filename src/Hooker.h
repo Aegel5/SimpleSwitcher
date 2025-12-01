@@ -12,6 +12,7 @@ public: class HookerKeyboard {
 		CurStateWrapper curKeys;
 		TKeyCode disable_up = 0;
 		CHotKey possible_hk_up;
+		public: TimePoint last_mouse_click_time;
 
 	public:
 		LRESULT CALLBACK LowLevelKeyboardProc(
@@ -58,6 +59,7 @@ private: inline static HookerKeyboard hookerKeyb;
 				// nothing
 			}
 			else {
+				hookerKeyb.last_mouse_click_time.SetNow();
 				Worker()->PostMsg(Message_ClearWorlds{});
 			}
 		}

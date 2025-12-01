@@ -70,8 +70,8 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				return 0;
 		}
 
-		CHotKey possible;
-		std::swap(possible, possible_hk_up); // сразу очищаем
+		CHotKey possible_up;
+		std::swap(possible_up, possible_hk_up); // сразу очищаем
 
 		msg_type.vkCode = vkCode;
 		msg_type.scan_ext = { (TScanCode)scan_code, isExtended };
@@ -122,6 +122,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 					}
 				}else{
 					possible_hk_up = curk;
+					//LOG_ANY_4("new possible_hk_up {}", possible_hk_up);
 					msg_type.hk = hk; // уведомим, что это наша клавиша.
 				}
 			}
@@ -161,9 +162,9 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			else {
 				// ищем наш хот-кей.
 				// даже если нашли, up никогда не запрещаем.
-				if (!possible.IsEmpty()) {
+				if (!possible_up.IsEmpty()) {
 					for (const auto& [hk, key] : cfg->All_hot_keys()) {
-						if (!check_is_our_key(key, possible)) continue;
+						if (!check_is_our_key(key, possible_up)) continue;
 						double_exists |= key.IsDouble();
 						if (key.GetKeyup()) {
 							msg_hotkey.hotkey = key;
@@ -187,14 +188,22 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			Worker()->PostMsg(std::move(msg_type));
 		}
 		if (msg_hotkey.hk != hk_NULL) {
-			int delay = 0;
-			if (!msg_hotkey.hotkey.IsDouble() && double_exists) {
-				delay = cfg->quick_press_ms; // придется подождать.
-				msg_hotkey.delayed_from = GetTickCount64();
-			}
 
-			LOG_ANY(L"post {} {}. has_double {}", msg_hotkey.hotkey.ToString(), (int)msg_hotkey.hk, double_exists);
-			Worker()->PostMsg(std::move(msg_hotkey), delay);
+			if (msg_hotkey.hotkey.GetKeyup() && last_mouse_click_time > curKeys.StartOfLastHotKey()) {
+				// Possible Ctrl+Click in IDE
+				LOG_ANY(L"HotKey {} was canceled by mouse click", msg_hotkey.hotkey.ToString());
+			}
+			else {
+
+				int delay = 0;
+				if (!msg_hotkey.hotkey.IsDouble() && double_exists) {
+					delay = cfg->quick_press_ms; // придется подождать.
+					msg_hotkey.delayed_from = GetTickCount64();
+				}
+
+				LOG_ANY(L"post {} {}. has_double {}", msg_hotkey.hotkey.ToString(), (int)msg_hotkey.hk, double_exists);
+				Worker()->PostMsg(std::move(msg_hotkey), delay);
+			}
 		}
 		if (res && (g_enabled.IsEnabled() || msg_hotkey.hk == hk_ToggleEnabled))
 			return 1; // запрет

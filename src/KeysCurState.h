@@ -8,12 +8,17 @@ class CurStateWrapper {
 	CHotKey multi_value; 
 	TKeyCode vk_last_down = 0;
 	TimePoint last_down_time;
+	TimePoint hotkey_start_time;
 	bool is_hold = false;
 	int cnt_quick_press = 0;
 	TKeyCode possible_vk_quick = 0;
 	void Clear() {
 	}
 public:
+
+	const TimePoint& StartOfLastHotKey() {
+		return hotkey_start_time;
+	}
 
 	bool IsDouble() const { return cnt_quick_press & 1; }
 	bool IsHold() {	return is_hold;	}
@@ -62,6 +67,10 @@ public:
 	void Update(TKeyCode vkCode, KeyState curKeyState) {
 
 		CheckOk();
+
+		if (all_keys.empty() && curKeyState == KeyState::KEY_STATE_DOWN) {
+			hotkey_start_time.SetNow();
+		}
 
 		is_hold = false;
 		if (curKeyState == KeyState::KEY_STATE_UP) {
