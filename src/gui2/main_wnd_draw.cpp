@@ -93,7 +93,7 @@ void MainWindow::DrawFrameActual() {
 			{
 				bool val = GetLogLevel() > LOG_LEVEL_DISABLE;
 				if (ImGui::Checkbox(LOC("Enable debug log"), &val)) {
-					SetLogLevel_info(val ? conf_gui()->logLevel : LOG_LEVEL_DISABLE);
+					SetLogLevel_print_info(val ? conf_gui()->logLevel : LOG_LEVEL_DISABLE);
 				}
 			}
 

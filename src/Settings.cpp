@@ -150,7 +150,7 @@ namespace cfg_details {
 			cfg.NormalizePaths();
 
 			if (cfg.force_DbgMode) {
-				SetLogLevel_info(cfg.logLevel);
+				SetLogLevel_print_info(cfg.logLevel);
 			}
 
 
@@ -166,9 +166,16 @@ namespace cfg_details {
 
 
 	TStatus Save_conf(const ProgramConfig& gui) {
-		try {
-			auto path = ProgramConfig::GetPath_Conf();
 
+		auto path = ProgramConfig::GetPath_Conf();
+		std::ofstream outp(path, std::ios::binary);
+		IFS_RET(Save_conf_To_Stream(outp, gui));
+
+		RETURN_SUCCESS;
+	}
+
+	TStatus Save_conf_To_Stream(std::ostream& outp, const ProgramConfig& gui) {
+		try {
 			json data = gui;
 			json hk_json;
 
@@ -181,7 +188,6 @@ namespace cfg_details {
 
 			data["hotkeys"] = hk_json;
 
-			std::ofstream outp(path, std::ios::binary);
 			outp << std::setw(2) << data << std::endl;
 
 		}
