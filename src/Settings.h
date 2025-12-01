@@ -209,7 +209,9 @@ inline void ApplyLocalization() {
 inline void SetLogLevel_print_info(TLogLevel logLevel) {
 	SetLogLevel(logLevel);
 
-	LOG_ANY("Log level now {}. ver={}", (int)logLevel, GET_SW_VERSION());
+	LOG_ANY("Log level now {}. ver: {}", (int)logLevel, GET_SW_VERSION());
+	LOG_ANY("Is Admin: {}", Utils::IsSelfElevated());
+	LOG_ANY("IsWindows11OrGreater: {}", IsWindows11OrGreater());
 
 	if (GetLogLevel() >= LOG_LEVEL_2) {
 		std::ostringstream buffer;
