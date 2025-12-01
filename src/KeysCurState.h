@@ -118,9 +118,16 @@ public:
 private:
 
 	void CheckOk() {
+
+		// Это убираем, так как не понятно, нужно ли, а проблемы может доставлять...
+
+		/*
+
 		std::vector<TKeyCode> to_del;
 		for (const auto& it : all_keys) {
 			if (it.second.DeltToNow() > 10s) {
+
+				// Нужен thread queue??
 				if (!(GetAsyncKeyState(it.first) & 0x8000)) { // TODO: не понятно как это работает в remote сценарии....
 					to_del.push_back(it.first);
 				}
@@ -131,5 +138,7 @@ private:
 			all_keys.erase(it);
 			one_value.RemoveFirst(it);
 		}
+
+		*/
 	}
 };
