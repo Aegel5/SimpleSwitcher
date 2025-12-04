@@ -70,7 +70,7 @@ assets = []
 
 def get_vc_env(arch='x64'):
     # Path to vcvarsall.bat - adjust this path based on your Visual Studio installation
-    vcvars_path = r"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
+    vcvars_path = r"C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvarsall.bat"
     
     # Command to run vcvarsall.bat and then output environment variables
     command = f'"{vcvars_path}" {arch} && set'
