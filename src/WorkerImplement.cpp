@@ -13,12 +13,13 @@ void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 		return; // не очищаем текущий буфер нажатых клавиш так как они могут быть частью наших хот-кеев
 	}
 
-	if (keyData.hk != hk_NULL) { // это событие down для нашей hot key up. https://github.com/Aegel5/SimpleSwitcher/issues/70
-		if (!IsNeedSavedWords(keyData.hk)) {
-			ClearAllWords();
-		}
-		return; // пропуск.
-	}
+	//if (keyData.hk != hk_NULL) { // это событие down для нашей hot key up. 
+	//	if (!IsNeedSavedWords(keyData.hk)) {
+	//		ClearAllWords();
+	//	}
+	//	return; // пропуск.
+	//}
+
 	TKeyTypeData data;
 	TKeyType type = AnalizeTyped(cur_hotkey, vkCode, scan_ext, topWndInfo2.lay, data);
 
@@ -480,6 +481,8 @@ TStatus WorkerImplement::AnalizeTopWnd() {
 }
 
 TStatus WorkerImplement::FixCtrlAlt() {
+
+	ClearAllWords();
 
 	auto key = keyData.hotkey;
 

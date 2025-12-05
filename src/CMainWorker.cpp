@@ -20,12 +20,7 @@ void CMainWorker::WorkerInt()
 			}
 			else if constexpr (std::is_same_v<T, Message_Hotkey>) {
 				workerImpl.keyData = std::move(arg);
-				if (arg.fix_ralt) {
-					workerImpl.FixCtrlAlt();
-				}
-				else {
-					workerImpl.ProcessOurHotKey();
-				}
+				workerImpl.ProcessOurHotKey();
 			}
 			else if constexpr (std::is_same_v<T, Message_ChangeForeg>) {
 				workerImpl.ChangeForeground(arg.hwnd);

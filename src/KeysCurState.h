@@ -14,19 +14,21 @@ class CurStateWrapper {
 	TKeyCode possible_vk_quick = 0;
 public:
 
-	void Clear() {
-		all_keys.clear();
-		one_value.Clear();
-		vk_last_down = 0;
-		is_hold = false;
-		cnt_quick_press = 0;
-		possible_vk_quick = 0;
-	}
+	//void Clear() {
+	//	all_keys.clear();
+	//	one_value.Clear();
+	//	vk_last_down = 0;
+	//	is_hold = false;
+	//	cnt_quick_press = 0;
+	//	possible_vk_quick = 0;
+	//}
 
-	 auto AllKeys() {
-		 vector<TKeyCode> keys;
-		 for (auto k : all_keys) keys.push_back(k.first);
-		 return keys;
+	auto AllKeys() {
+		vector<TKeyCode> keys;
+		for (const auto& k : all_keys) {
+			keys.push_back(k.first);
+		}
+		return keys;
 	}
 
 	const TimePoint& StartOfLastHotKey() {

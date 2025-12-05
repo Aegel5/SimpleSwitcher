@@ -14,6 +14,7 @@
 	hk_ShowMainWindow,
 	hk_ShowRemainderWnd,
 	hk_InsertWithoutFormat,
+	hk_Fix_RAlt,
 
 	hk_hotkeys_end,
 

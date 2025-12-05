@@ -10,12 +10,12 @@ class Hooker {
 
 public:
 	void ClearAllKeys() {
-		hookerKeyb.curKeys.Clear();
+		hookerKeyb = {}; // пересоздаем весь рабочий state.
 		Worker()->PostMsg(Message_ClearWorlds{});
 	}
 
 public: class HookerKeyboard {
-		public: CurStateWrapper curKeys;
+		CurStateWrapper curKeys;
 		TKeyCode disable_up = 0;
 		CHotKey possible_hk_up;
 		public: TimePoint last_mouse_click_time;

@@ -8,6 +8,14 @@ namespace Utils
 		cont.erase(cont.begin() + i);
 	}
 
+	template <typename T> inline void RemoveFirst(T& v, auto&& element_to_remove) {
+		auto it = std::find(v.begin(), v.end(), element_to_remove);
+		// Если нашли — удаляем
+		if (it != v.end()) {
+			v.erase(it);
+		}
+	}
+
 	inline TStatus IsElevated(HANDLE hProc, bool& res)
 	{
 		res = false;

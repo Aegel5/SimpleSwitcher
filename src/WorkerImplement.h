@@ -171,6 +171,11 @@ public:
 		auto hk = keyData.hk;
 		const auto& key = keyData.hotkey;
 
+		if (hk == hk_Fix_RAlt) {
+			FixCtrlAlt();
+			return;
+		}
+
 		if (keyData.delayed_from != 0 && keyData.delayed_from <= m_lastHotKeyTime) {
 			LOG_ANY(L"skip hotkey {} possible was double press", key.ToString());
 			return;
@@ -202,6 +207,10 @@ public:
 			Sleep(5);
 		}
 
+		if (!IsNeedSavedWords(hk)) {
+			ClearAllWords();
+		}
+
 		IFS_LOG(NeedRevert(hk));
 	}
 
@@ -210,7 +219,7 @@ public:
 
 	void UpAllKeys() {
 
-		auto& keys = keyData.cur_down;
+		auto& keys = keyData.cur_keys_down;
 		if (keys.size() == 0) return;
 
 		LOG_ANY(L"UpAllKeys {}", (int)keys.size());
