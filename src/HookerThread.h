@@ -3,10 +3,6 @@
 #include <thread>
 #include "CMainWorker.h"
 
-#ifdef __WXMSW__
-#include "wx/msw/private.h"
-#endif
-
 class CoreWorker {
 
     std::thread core_work;
@@ -23,6 +19,8 @@ class CoreWorker {
 		IFW_LOG(AddClipboardFormatListener(m_hWnd));
 		//IFW_LOG(ChangeWindowMessageFilterEx(hWnd, WM_LayNotif, MSGFLT_ALLOW, 0));
 
+		IFW_LOG(WTSRegisterSessionNotification(m_hWnd, 0));
+
 		Hooker hooker;
 		IFS_LOG(hooker.StartHook());
 
@@ -30,6 +28,12 @@ class CoreWorker {
 		while (GetMessage(&msg, NULL, 0, 0) > 0) {
 			if (msg.message == WM_CLIPBOARDUPDATE) {
 				Worker()->PostMsg([](auto w) {w->CliboardChanged(); });
+			}
+			else if (msg.message == WM_WTSSESSION_CHANGE) {
+				LOG_ANY("WM_WTSSESSION_CHANGE {}", (int)msg.wParam);
+				if (msg.wParam == WTS_SESSION_UNLOCK || msg.wParam == WTS_SESSION_LOCK) {
+					hooker.ClearAllKeys();
+				}
 			}
 		}
 	}

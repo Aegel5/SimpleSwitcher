@@ -3,16 +3,11 @@
 void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 {
 	TKeyCode vkCode = keyData.vkCode;
-	KeyState curKeyState = keyData.keyState;
 	auto scan_ext = keyData.scan_ext;
 
-	m_curStateWrap.Update(vkCode, curKeyState);
-	const auto& cur_hotkey = m_curStateWrap.GetOneValueHotKey();
+	const auto& cur_hotkey = keyData.cur_hotKey;
 
 	LOG_ANY(L"ProcessKeyMsg {} curState={}", CHotKey::ToString(vkCode), cur_hotkey.ToString());
-
-	if (curKeyState != KEY_STATE_DOWN)
-		return;
 
 	if (CHotKey::IsKnownMods(vkCode)) {
 		return; // не очищаем текущий буфер нажатых клавиш так как они могут быть частью наших хот-кеев
@@ -280,6 +275,8 @@ HKL WorkerImplement::getNextLang () {
 };
 
 
+
+
 TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 
 	m_lastRevertRequest = typeRevert;
@@ -294,7 +291,7 @@ TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
 	// --------------- skip
 
 	// Сбросим сразу все клавиши для программы. Будет двойной (или даже тройной и более) up, но пока что это не проблема... 
-	m_curStateWrap.UpAllKeys();
+	UpAllKeys();
 
 	if (typeRevert == hk_ToggleEnabled) {
 		try_toggle_enable();
@@ -482,7 +479,9 @@ TStatus WorkerImplement::AnalizeTopWnd() {
 	RETURN_SUCCESS;
 }
 
-TStatus WorkerImplement::FixCtrlAlt(CHotKey key) {
+TStatus WorkerImplement::FixCtrlAlt() {
+
+	auto key = keyData.hotkey;
 
 	IFS_RET(AnalizeTopWnd());
 
@@ -492,7 +491,7 @@ TStatus WorkerImplement::FixCtrlAlt(CHotKey key) {
 	auto curLay = CurLay();
 
 	// сбросим любые нажатые клавиши
-	m_curStateWrap.UpAllKeys();
+	UpAllKeys();
 
 	HKL temp = 0;
 	bool just_send = false;

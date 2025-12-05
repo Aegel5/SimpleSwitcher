@@ -4,7 +4,7 @@ struct Message_KeyType {
 	TKeyCode   vkCode = 0;
 	TScanCode_Ext scan_ext;
 	HotKeyType hk = hk_NULL;
-	KeyState keyState = KEY_STATE_NONE;
+	CHotKey cur_hotKey;
 	bool is_caps = false;
 };
 
@@ -13,6 +13,7 @@ struct Message_Hotkey {
 	CHotKey hotkey;
 	HotKeyType hk = hk_NULL;
 	ULONGLONG delayed_from = 0;
+	vector<TKeyCode> cur_down; // все текущие нажатые.
 };
 
 struct Message_ChangeForeg {

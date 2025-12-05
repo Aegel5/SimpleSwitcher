@@ -131,7 +131,7 @@ public:
 		}
 	}
 
-	TStatus FixCtrlAlt(CHotKey key);
+	TStatus FixCtrlAlt();
 
 	void SetNewLay(HKL lay) {
 
@@ -166,7 +166,7 @@ public:
 		}
 	}
 
-	void ProcessOurHotKey(const Message_Hotkey& keyData) {
+	void ProcessOurHotKey() {
 
 		auto hk = keyData.hk;
 		const auto& key = keyData.hotkey;
@@ -208,6 +208,31 @@ public:
 	HKL CurLay() { return topWndInfo2.lay; }
 	TStatus ProcessRevert(ContextRevert&& ctxRevert);
 
+	void UpAllKeys() {
+
+		auto& keys = keyData.cur_down;
+		if (keys.size() == 0) return;
+
+		LOG_ANY(L"UpAllKeys {}", (int)keys.size());
+
+		InputSender inputSender;
+		if (std::any_of(keys.begin(), keys.end(), [](auto x) {
+			return x == VK_LMENU || x == VK_LWIN;
+			})) {
+			// если нажата только клавиша alt - то ее простое отжатие даст хрень - нужно отжать ее еще раз
+			//inputSender.Add(VK_LMENU, KEY_STATE_DOWN);
+			//inputSender.Add(VK_LMENU, KEY_STATE_UP); 	
+			inputSender.Add(VK_CAPITAL, KEY_STATE_UP);
+		}
+
+		for (const auto& key : keys) {
+			inputSender.Add(key, KEY_STATE_UP);
+		}
+
+		inputSender.Send();
+
+	}
+
 private:
 
 	ULONGLONG m_lastHotKeyTime = 0;
@@ -223,8 +248,9 @@ private:
 	HotKeyType m_lastRevertRequest = hk_NULL;
 	//std::wstring m_sSelfExeName;
 	CycleRevertList m_cycleList;
-	CurStateWrapper m_curStateWrap;
 	bool clear_alfter_selected = false;
+
+	public: Message_Hotkey keyData;
 };
 
 

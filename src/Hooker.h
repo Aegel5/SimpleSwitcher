@@ -8,13 +8,18 @@ class Hooker {
 	CAutoHWINEVENTHOOK hHookEventGlobal;
 	CAutoHWINEVENTHOOK hHookEventGlobalSwitchDesk;
 
+public:
+	void ClearAllKeys() {
+		hookerKeyb.curKeys.Clear();
+		Worker()->PostMsg(Message_ClearWorlds{});
+	}
+
 public: class HookerKeyboard {
-		CurStateWrapper curKeys;
+		public: CurStateWrapper curKeys;
 		TKeyCode disable_up = 0;
 		CHotKey possible_hk_up;
 		public: TimePoint last_mouse_click_time;
 
-	public:
 		LRESULT CALLBACK LowLevelKeyboardProc(
 			_In_  int nCode,
 			_In_  WPARAM wParam,
@@ -32,17 +37,18 @@ private: inline static HookerKeyboard hookerKeyb;
 		return hookerKeyb.LowLevelKeyboardProc(nCode, wParam, lParam);
 	}
 
-	static void CALLBACK WinEventProc_SwitchDesk(
-		HWINEVENTHOOK hWinEventHook,
-		DWORD event,
-		HWND hwnd,
-		LONG idObject,
-		LONG idChild,
-		DWORD dwEventThread,
-		DWORD dwmsEventTime
-	) {
-		Worker()->PostMsg(Message_ClearWorlds{});
-	}
+	//static void CALLBACK WinEventProc_SwitchDesk(
+	//	HWINEVENTHOOK hWinEventHook,
+	//	DWORD event,
+	//	HWND hwnd,
+	//	LONG idObject,
+	//	LONG idChild,
+	//	DWORD dwEventThread,
+	//	DWORD dwmsEventTime
+	//) {
+	//	LOG_ANY("WinEventProc_SwitchDesk");
+	//	Worker()->PostMsg(Message_ClearWorlds{});
+	//}
 
 
 	static void CALLBACK WinEventProc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {

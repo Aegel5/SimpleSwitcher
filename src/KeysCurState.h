@@ -5,16 +5,29 @@
 class CurStateWrapper {
 	std::map<TKeyCode, TimePoint> all_keys;
 	CHotKey one_value; 
-	CHotKey multi_value; 
+	//CHotKey multi_value; 
 	TKeyCode vk_last_down = 0;
 	TimePoint last_down_time;
 	TimePoint hotkey_start_time;
 	bool is_hold = false;
 	int cnt_quick_press = 0;
 	TKeyCode possible_vk_quick = 0;
-	void Clear() {
-	}
 public:
+
+	void Clear() {
+		all_keys.clear();
+		one_value.Clear();
+		vk_last_down = 0;
+		is_hold = false;
+		cnt_quick_press = 0;
+		possible_vk_quick = 0;
+	}
+
+	 auto AllKeys() {
+		 vector<TKeyCode> keys;
+		 for (auto k : all_keys) keys.push_back(k.first);
+		 return keys;
+	}
 
 	const TimePoint& StartOfLastHotKey() {
 		return hotkey_start_time;
@@ -31,27 +44,7 @@ public:
 		}
 	}
 
-	void UpAllKeys() {
 
-		if (Size() == 0) return;
-
-		InputSender inputSender;
-		if (IsDownNow(VK_LMENU) || IsDownNow(VK_LWIN)) {
-			// если нажата только клавиша alt - то ее простое отжатие даст хрень - нужно отжать ее еще раз
-			//inputSender.Add(VK_LMENU, KEY_STATE_DOWN);
-			//inputSender.Add(VK_LMENU, KEY_STATE_UP); 	
-			inputSender.Add(VK_CAPITAL, KEY_STATE_UP);
-		}
-		for (const auto& key : EnumVk()) {
-			inputSender.Add(key, KEY_STATE_UP);
-		}
-
-		inputSender.Send();
-
-		// считаем, что для системы теперь все отжато, поэтому просто чистим.
-		Clear();
-
-	}
 
 	void DebugPrint() {
 		if (GetLogLevel() < LOG_LEVEL_2) 

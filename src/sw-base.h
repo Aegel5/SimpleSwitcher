@@ -11,6 +11,11 @@
 #include <Psapi.h>
 #include <mmsystem.h>
 
+
+#include <wtsapi32.h>
+#pragma comment(lib, "Wtsapi32.lib")
+
+
 // std
 #include <stdlib.h>
 #include <assert.h>
