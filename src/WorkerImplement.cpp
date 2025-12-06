@@ -275,143 +275,6 @@ HKL WorkerImplement::getNextLang () {
     return lay;
 };
 
-
-
-
-TStatus WorkerImplement::NeedRevert(HotKeyType typeRevert) {
-
-	m_lastRevertRequest = typeRevert;
-
-	LOG_ANY("Hotkey start {}({})", HotKeyTypeName(typeRevert), (int)typeRevert);
-
-	if (!g_enabled.IsEnabled() && typeRevert != hk_ToggleEnabled) {
-		LOG_ANY("Skip hk because disabled");
-		RETURN_SUCCESS;
-	}
-
-	// --------------- skip
-
-	// Сбросим сразу все клавиши для программы. Будет двойной (или даже тройной и более) up, но пока что это не проблема... 
-	UpAllKeys();
-
-	if (typeRevert == hk_ToggleEnabled) {
-		try_toggle_enable();
-		ClearAllWords();
-		RETURN_SUCCESS;
-	}
-
-	//bool allow_do_revert = true;
-
-	GETCONF;
-
-	//if (m_sTopProcName == m_sSelfExeName) {
-	//	LOG_ANY(L"Skip hotkey in self program");
-	//	allow_do_revert = false;
-	//}
-
-	if (TestFlag(typeRevert, hk_RunProgram_flag)) {
-		int i = typeRevert;
-		ResetFlag(i, hk_RunProgram_flag);
-		if (i >= cfg->run_programs.size()) {
-			return SW_ERR_UNKNOWN;
-		}
-		const auto& it = cfg->run_programs[i];
-		auto path = it.path;
-		PathUtils::NormalizeDelims(path);
-		LOG_ANY(L"run program {} {}", path.c_str(), it.args.c_str());
-
-		procstart::CreateProcessParm parm;
-		parm.sExe = path.c_str();
-		parm.sCmd = it.args.c_str();
-
-		// todo - use proxy process for unelevated.
-		//parm.admin = it.elevated ? TSWAdmin::SW_ADMIN_ON : TSWAdmin::SW_ADMIN_OFF;
-
-		parm.mode = procstart::SW_CREATEPROC_SHELLEXE;
-		CAutoHandle hProc;
-		IFS_RET(procstart::SwCreateProcess(parm, hProc));
-
-		RETURN_SUCCESS;
-	}
-
-	if (typeRevert == hk_ShowMainWindow) {
-		show_main_wind();
-		RETURN_SUCCESS;
-	}
-
-	if (typeRevert == hk_ShowRemainderWnd) {
-		show_main_wind(1);
-		RETURN_SUCCESS;
-	}
-
-
-	if (Utils::is_in(typeRevert, hk_EmulateCapsLock, hk_EmulateScrollLock)) {
-		TKeyCode k = (typeRevert == hk_EmulateCapsLock) ? VK_CAPITAL : VK_SCROLL;
-		InputSender::SendVkKey(k);
-		RETURN_SUCCESS;
-	}
-
-	if (typeRevert == hk_InsertWithoutFormat) {
-		IFS_RET(m_clipWorker.ClipboardClearFormat());
-		CHotKey ctrlv(VK_CONTROL, VKE_V);
-		InputSender::SendWithPause(ctrlv);
-		RETURN_SUCCESS;
-	}
-
-
-	// CHANGE LAYOUT WITHOUT REVERT
-
-	IFS_RET(AnalizeTopWnd());
-
-	if (typeRevert == hk_CycleSwitchLayout) {
-		IFS_RET(ProcessRevert({ .lay = getNextLang(), .flags = SW_CLIENT_SetLang }));
-		RETURN_SUCCESS;
-	}
-
-	if (TestFlag(typeRevert, hk_SetLayout_flag)) {
-
-		int i = typeRevert;
-		ResetFlag(i, hk_SetLayout_flag);
-
-		GETCONF;
-
-		auto info = cfg->layouts_info.GetLayoutIndex(i);
-		if (info == nullptr) {
-			LOG_WARN(L"not found hot key for set layout");
-			RETURN_SUCCESS;
-		}
-
-		IFS_RET(ProcessRevert({.lay = info->layout , .flags = SW_CLIENT_SetLang | SW_CLIENT_NO_WAIT_LANG }));
-
-		RETURN_SUCCESS;
-	}
-
-
-	// REVERT AND CHANGE LAYOUT
-
-	//if (!allow_do_revert)
-	//	RETURN_SUCCESS;
-
-	if (Utils::is_in(typeRevert, hk_RevertSelelected, hk_toUpperSelected, hk_InvertCaseSelected)) {
-		LOG_ANY(L"save buff");
-		m_savedClipData = m_clipWorker.getCurString();
-		RequestWaitClip(CLRMY_GET_FROM_CLIP);
-		IFS_RET(ProcessRevert({ .flags = SW_CLIENT_CTRLC }));
-		RETURN_SUCCESS;
-	}
-
-	// ---------------classic revert---------------
-
-	if (!Utils::is_in(typeRevert, hk_RevertLastWord, hk_RevertSeveralWords, hk_RevertAllRecentText)) {
-		IFS_RET(SW_ERR_UNKNOWN, L"Unknown typerevert {}", (int)typeRevert);
-	}
-
-	RevertText(typeRevert);
-
-	RETURN_SUCCESS;
-}
-
-
 void WorkerImplement::SwitchLangByEmulate(HKL lay) {
 
 	GETCONF;
@@ -480,11 +343,7 @@ TStatus WorkerImplement::AnalizeTopWnd() {
 	RETURN_SUCCESS;
 }
 
-TStatus WorkerImplement::FixCtrlAlt() {
-
-	ClearAllWords();
-
-	auto key = keyData.hotkey;
+TStatus WorkerImplement::FixCtrlAlt(CHotKey key) {
 
 	IFS_RET(AnalizeTopWnd());
 
@@ -492,9 +351,6 @@ TStatus WorkerImplement::FixCtrlAlt() {
 
 	auto lay = cfg->fixRAlt_lay_;
 	auto curLay = CurLay();
-
-	// сбросим любые нажатые клавиши
-	UpAllKeys();
 
 	HKL temp = 0;
 	bool just_send = false;

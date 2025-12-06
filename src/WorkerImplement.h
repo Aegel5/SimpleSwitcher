@@ -38,7 +38,6 @@ public:
 	}
 
 	void ClearAllWords() { m_cycleList.Clear(); }
-	TStatus NeedRevert(HotKeyType typeRevert);
 	TStatus AnalizeTopWnd();
 	void SwitchLangByEmulate(HKL lay);
 	void CliboardChanged();
@@ -131,7 +130,7 @@ public:
 		}
 	}
 
-	TStatus FixCtrlAlt();
+	TStatus FixCtrlAlt(CHotKey key);
 
 	void SetNewLay(HKL lay) {
 
@@ -166,15 +165,10 @@ public:
 		}
 	}
 
-	void ProcessOurHotKey() {
+	void ProcessOurHotKey(Message_Hotkey&& keyData) {
 
 		auto hk = keyData.hk;
 		const auto& key = keyData.hotkey;
-
-		if (hk == hk_Fix_RAlt) {
-			FixCtrlAlt();
-			return;
-		}
 
 		if (keyData.delayed_from != 0 && keyData.delayed_from <= m_lastHotKeyTime) {
 			LOG_ANY(L"skip hotkey {} possible was double press", key.ToString());
@@ -211,15 +205,133 @@ public:
 			ClearAllWords();
 		}
 
-		IFS_LOG(NeedRevert(hk));
+		m_lastRevertRequest = hk;
+
+		LOG_ANY("Hotkey start {}({})", HotKeyTypeName(hk), (int)hk);
+
+		if (!g_enabled.IsEnabled() && hk != hk_ToggleEnabled) {
+			LOG_ANY("Skip hk because disabled");
+			return;
+		}
+
+		// Сбросим сразу все клавиши для программы. Будет двойной (или даже тройной и более) up, но пока что это не проблема... 
+		UpAllKeys(keyData.cur_keys_down);
+
+		if (hk == hk_Fix_RAlt) {
+			FixCtrlAlt(keyData.hotkey);
+			return;
+		}
+
+		if (hk == hk_ToggleEnabled) {
+			try_toggle_enable();
+			return;
+		}
+
+		if (hk == hk_ShowMainWindow) {
+			show_main_wind();
+			return;
+		}
+
+		if (hk == hk_ShowRemainderWnd) {
+			show_main_wind(1);
+			return;
+		}
+
+		auto process = [this, hk, cfg]() -> TStatus {
+
+			if (TestFlag(hk, hk_RunProgram_flag)) {
+				int i = hk;
+				ResetFlag(i, hk_RunProgram_flag);
+				if (i >= cfg->run_programs.size()) {
+					return SW_ERR_UNKNOWN;
+				}
+				const auto& it = cfg->run_programs[i];
+				auto path = it.path;
+				PathUtils::NormalizeDelims(path);
+				LOG_ANY(L"run program {} {}", path.c_str(), it.args.c_str());
+
+				procstart::CreateProcessParm parm;
+				parm.sExe = path.c_str();
+				parm.sCmd = it.args.c_str();
+
+				// todo - use proxy process for unelevated.
+				//parm.admin = it.elevated ? TSWAdmin::SW_ADMIN_ON : TSWAdmin::SW_ADMIN_OFF;
+
+				parm.mode = procstart::SW_CREATEPROC_SHELLEXE;
+				CAutoHandle hProc;
+				IFS_RET(procstart::SwCreateProcess(parm, hProc));
+
+				RETURN_SUCCESS;
+			}
+
+			if (Utils::is_in(hk, hk_EmulateCapsLock, hk_EmulateScrollLock)) {
+				TKeyCode k = (hk == hk_EmulateCapsLock) ? VK_CAPITAL : VK_SCROLL;
+				InputSender::SendVkKey(k);
+				RETURN_SUCCESS;
+			}
+
+			if (hk == hk_InsertWithoutFormat) {
+				IFS_RET(m_clipWorker.ClipboardClearFormat());
+				CHotKey ctrlv(VK_CONTROL, VKE_V);
+				InputSender::SendWithPause(ctrlv);
+				RETURN_SUCCESS;
+			}
+
+			// CHANGE LAYOUT WITHOUT REVERT
+
+			IFS_RET(AnalizeTopWnd());
+
+			if (hk == hk_CycleSwitchLayout) {
+				IFS_RET(ProcessRevert({ .lay = getNextLang(), .flags = SW_CLIENT_SetLang }));
+				RETURN_SUCCESS;
+			}
+
+			if (TestFlag(hk, hk_SetLayout_flag)) {
+
+				int i = hk;
+				ResetFlag(i, hk_SetLayout_flag);
+
+				auto info = cfg->layouts_info.GetLayoutIndex(i);
+				if (info == nullptr) {
+					LOG_WARN(L"not found hot key for set layout");
+					RETURN_SUCCESS;
+				}
+
+				IFS_RET(ProcessRevert({ .lay = info->layout , .flags = SW_CLIENT_SetLang | SW_CLIENT_NO_WAIT_LANG }));
+
+				RETURN_SUCCESS;
+			}
+
+
+			// REVERT AND CHANGE LAYOUT
+
+			if (Utils::is_in(hk, hk_RevertSelelected, hk_toUpperSelected, hk_InvertCaseSelected)) {
+				LOG_ANY(L"save buff");
+				m_savedClipData = m_clipWorker.getCurString();
+				RequestWaitClip(CLRMY_GET_FROM_CLIP);
+				IFS_RET(ProcessRevert({ .flags = SW_CLIENT_CTRLC }));
+				RETURN_SUCCESS;
+			}
+
+			// ---------------classic revert---------------
+
+			if (!Utils::is_in(hk, hk_RevertLastWord, hk_RevertSeveralWords, hk_RevertAllRecentText)) {
+				IFS_RET(SW_ERR_UNKNOWN, L"Unknown typerevert {}", (int)hk);
+			}
+
+			RevertText(hk);
+
+			RETURN_SUCCESS;
+			};
+
+		IFS_LOG(process());
 	}
 
 	HKL CurLay() { return topWndInfo2.lay; }
 	TStatus ProcessRevert(ContextRevert&& ctxRevert);
 
-	void UpAllKeys() {
+	void UpAllKeys(const vector<TKeyCode>& keys) {
 
-		auto& keys = keyData.cur_keys_down;
 		if (keys.size() == 0) return;
 
 		LOG_ANY(L"UpAllKeys {}", (int)keys.size());
@@ -258,8 +370,6 @@ private:
 	//std::wstring m_sSelfExeName;
 	CycleRevertList m_cycleList;
 	bool clear_alfter_selected = false;
-
-	public: Message_Hotkey keyData;
 };
 
 

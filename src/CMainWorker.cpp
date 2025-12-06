@@ -19,8 +19,7 @@ void CMainWorker::WorkerInt()
 				workerImpl.ProcessKeyMsg(arg);
 			}
 			else if constexpr (std::is_same_v<T, Message_Hotkey>) {
-				workerImpl.keyData = std::move(arg);
-				workerImpl.ProcessOurHotKey();
+				workerImpl.ProcessOurHotKey(std::move(arg));
 			}
 			else if constexpr (std::is_same_v<T, Message_ChangeForeg>) {
 				workerImpl.ChangeForeground(arg.hwnd);

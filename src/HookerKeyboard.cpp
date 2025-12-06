@@ -208,7 +208,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			// https://github.com/Aegel5/SimpleSwitcher/issues/70
 			// на наши хоткеи не заходим, не важно up или double или полное совпадение
 			// если они хотят очистить буфер - должны делать сами
-			// если они состоят из одной буквы или shift + буквы - такое не поддерживаем.
+			// если они состоят из одной буквы или shift + буквы - не важно - все равно запрет происходит.
 			!is_our_key 
 			&& curKeyState == KeyState::KEY_STATE_DOWN 
 			) {
