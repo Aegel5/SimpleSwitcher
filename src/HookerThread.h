@@ -19,7 +19,11 @@ class CoreWorker {
 		IFW_LOG(AddClipboardFormatListener(m_hWnd));
 		//IFW_LOG(ChangeWindowMessageFilterEx(hWnd, WM_LayNotif, MSGFLT_ALLOW, 0));
 
-		IFW_LOG(WTSRegisterSessionNotification(m_hWnd, 0));
+		auto session_notif_reg = WTSRegisterSessionNotification(m_hWnd, 0);
+		IFW_LOG(session_notif_reg);
+		if (!session_notif_reg) {
+			auto timer_session_register = SetTimer(m_hWnd, 5, 20000, NULL);
+		}
 
 		Hooker hooker;
 		IFS_LOG(hooker.StartHook());
@@ -35,6 +39,21 @@ class CoreWorker {
 					hooker.ClearAllKeys();
 				}
 			}
+			else if (msg.message == WM_TIMER) {
+				auto timerId = msg.wParam;
+				if (timerId == 5) {
+					IFW_LOG(KillTimer(m_hWnd, timerId));
+					if (!session_notif_reg) {
+						LOG_ANY("Register by timer");
+						session_notif_reg = WTSRegisterSessionNotification(m_hWnd, 0);
+						IFW_LOG(session_notif_reg);
+					}
+				}
+			}
+		}
+
+		if (session_notif_reg) {
+			IFW_LOG(WTSUnRegisterSessionNotification(m_hWnd));
 		}
 	}
 
