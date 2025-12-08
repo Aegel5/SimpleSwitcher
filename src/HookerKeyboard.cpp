@@ -109,7 +109,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			return false;
 			};
 
-		bool is_our_key = false;
+		bool is_our_key_down = false;
 
 		if (curKeyState == KeyState::KEY_STATE_DOWN) {
 			if (curk.IsEmpty())
@@ -117,7 +117,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			int need_disable = 0;
 			for (const auto& [hk, key] : cfg->All_hot_keys()) { // всегда полный обход всего цикла
 				if (!check_is_our_key(key, curk)) continue;
-				is_our_key = true;
+				is_our_key_down = true;
 				double_exists |= key.IsDouble();
 				if (!key.GetKeyup()) {
 
@@ -139,7 +139,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				}
 			}
 			if (need_disable) {
-				possible_hk_up.Clear(); 
+				possible_hk_up.Clear();  // не поддерживаем одновременно хоткей на up and down (down в приоритете).
 				request_disable();
 			}
 			else {
@@ -209,14 +209,14 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			// на наши хоткеи не заходим, не важно up или double или полное совпадение
 			// если они хотят очистить буфер - должны делать сами
 			// если они состоят из одной буквы или shift + буквы - не важно - все равно запрет происходит.
-			!is_our_key 
+			!is_our_key_down 
 			&& curKeyState == KeyState::KEY_STATE_DOWN 
 			) {
 			if (!curk.IsEmpty()) {
 				Worker()->PostMsg(Message_KeyType{
 					.vkCode = vkCode,
 					.scan_ext = { (TScanCode)scan_code, isExtended },
-					.cur_hotKey = curk,
+					.cur_hotKey = curk, // без учета disabled, но не критично
 					.is_caps = iscaps == 1,
 					});
 			}
