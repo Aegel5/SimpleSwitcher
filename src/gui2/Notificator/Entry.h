@@ -31,7 +31,7 @@ namespace Notific {
 		bool play_sound = false;
 
 		DateTime nextActivate{};
-		DateTime point{};
+		DateTime point{}; // reference point
 		DateTime lastQuick{};
 		DateTime lastStartPlaySound{};
 

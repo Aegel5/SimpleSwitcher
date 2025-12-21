@@ -96,7 +96,19 @@ namespace Notific {
 					}
 					ImGui::SameLine();
 					if (ImGui::Button(LOC("Remain me tomorow..."))) {
-						it.SetActivate(Now() + days(1));
+
+						SoundManager::Inst().StopAllSound();
+
+						// Алгоритм следующий: берем первую дату > now() со временем 00:00, затем устанавливаем время из reference point
+						// важно делать это по local времени.
+
+						auto dt = NowLocal() + days(1);
+						auto ref_point = LocalConvert(it.point);
+						auto time = ref_point - std::chrono::floor<days>(ref_point);
+						auto res = std::chrono::floor<days>(dt) + time;
+						auto res_utc = LocalConvert(res);
+
+						it.SetActivate(res_utc);
 						SaveRequest();
 					}
 
