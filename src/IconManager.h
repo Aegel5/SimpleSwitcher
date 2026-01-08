@@ -6,14 +6,17 @@ class IconMgr {
 	using Bundle = std::vector<Images::ImageIcon>;
 	std::map<wstring, Bundle> icons;
 
-	const Bundle& GetBundle(TStr contry_id, bool is_gray = false) {
+	const Bundle& GetBundle(TStr local_id_, bool is_gray = false) {
+
+		wstring local_id = local_id_;
+		StrUtils::ToLower(local_id);
 
 		namespace fs = std::filesystem;
 
 		GETCONF;
 
 		auto folder_name = StrUtils::Convert(cfg->flagsSet);
-		wstring key = std::format(L"{}$&{}{}", contry_id, folder_name, is_gray ? L"$%^&!" : L"");
+		wstring key = std::format(L"{}$&{}{}", local_id, folder_name, is_gray ? L"$%^&!" : L"");
 
 		auto it = icons.find(key);
 		if (it != icons.end()) {
@@ -24,24 +27,47 @@ class IconMgr {
 
 		auto dir = flagFold / folder_name;
 		if (fs::is_directory(dir)) {
-			for (const auto& entry : fs::directory_iterator(dir)) {
-				if (entry.is_regular_file()) {
-					auto p = entry.path();
-					auto name = p.filename().wstring();
-					StrUtils::ToUpper(name);
-					if (name.starts_with(contry_id)) {
-						auto cur = Images::LoadImageFromFile(p.string().c_str());
-						if (cur->IsOk()) {
-							bndl.push_back(cur);
+
+			auto search = [&](const auto& id) {
+				for (const auto& entry : fs::directory_iterator(dir)) {
+
+					if (!entry.is_directory()) 
+						continue;
+
+					auto name = entry.path().filename().wstring();
+					StrUtils::ToLower(name);
+
+					if (name != id) continue;
+
+					for (const auto& entry2 : fs::directory_iterator(entry)) {
+						if (entry2.is_regular_file()) {
+							auto cur = Images::LoadImageFromFile(entry2.path().string().c_str());
+							if (cur->IsOk()) {
+								bndl.push_back(cur);
+							}
 						}
 					}
 				}
-			}
-		}
+				};
 
-		if (is_gray) {
-			for (auto& it : bndl) {
-				Images::SetBrightness(it, 0.8f);
+			search(local_id);
+
+			if (bndl.empty()) {
+				// ничего не нашли, попробуем поискать только по языку.
+				auto pos = local_id.find(L'-');
+				if (pos != std::wstring::npos) {
+					SView id_lang{ local_id.data(), pos };
+					search(id_lang);
+				}
+			}
+
+			// todo поиск только по региону
+
+
+			if (is_gray) {
+				for (auto& it : bndl) {
+					Images::SetBrightness(it, 0.8f);
+				}
 			}
 		}
 

@@ -68,35 +68,19 @@ public:
 		if (curlay == 0) {
 			curlay = Utils::GetFocusedWndInfo().lay;
 		}
-		wstring id;
-		{
-			WORD langid = LOWORD(curlay);
 
-			TCHAR buf[512];
-			buf[0] = 0;
+		auto id  = Utils::GetNameForHKL_simple(curlay);
+		LOG_ANY(L"mainguid new layout: {}, name={}", (void*)lay, id);
 
-			int flag = LOCALE_SNAME;
-			int len = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, std::ssize(buf));
-			IFW_LOG(len != 0);
-
-			auto len_str = wcslen(buf);
-			if (len_str >= 2) {
-				TStr name = buf + len_str - 2;
-				id = name;
-				StrUtils::ToUpper(id);
-				LOG_ANY(L"mainguid new layout: {}, name={}", (void*)lay, id);
+		if (!id.empty()) {
+			auto icon = IconMgr::Inst().GetIcon(id.c_str(), GetSize(), !g_enabled.IsEnabled());
+			if (icon->IsOk()) {
+				tray.SetIcon(icon->hicon);
+				return;
 			}
 		}
-		if (id.empty()) {
-			tray.SetIcon(app_icon);
-			return;
-		}
-		auto icon = IconMgr::Inst().GetIcon(id.c_str(), GetSize(), !g_enabled.IsEnabled());
-		if (!icon->IsOk()) {
-			tray.SetIcon(app_icon);
-			return;
-		}
 
-		tray.SetIcon(icon->hicon);
+		// fallback
+		tray.SetIcon(app_icon);
 	}
 };

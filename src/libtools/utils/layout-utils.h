@@ -26,9 +26,8 @@ namespace Utils
 		TCHAR buf[512];
 		buf[0] = 0;
 
-		int flag = IsWindowsVistaOrGreater() ? LOCALE_SNAME : LOCALE_SLANGUAGE;
-		int len = GetLocaleInfo(MAKELCID(langid, SORT_DEFAULT), flag, buf, std::ssize(buf));
-		IFW_LOG(len != 0);
+		int len = LCIDToLocaleName(langid, buf, std::ssize(buf), 0);
+		IFW_LOG(len > 0);
 
 		if (len == 0) {
 			return L"Unknown";
