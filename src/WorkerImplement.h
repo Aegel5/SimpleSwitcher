@@ -165,6 +165,34 @@ public:
 		}
 	}
 
+	TStatus RunProcess(HotKeyType hk) {
+
+		GETCONF;
+
+		int i = hk;
+		ResetFlag(i, hk_RunProgram_flag);
+		if (i >= cfg->run_programs.size()) {
+			return SW_ERR_UNKNOWN;
+		}
+		const auto& it = cfg->run_programs[i];
+		auto path = it.path;
+		PathUtils::NormalizeDelims(path);
+		LOG_ANY(L"run program {} {}", path.c_str(), it.args.c_str());
+
+		procstart::CreateProcessParm parm;
+		parm.sExe = path.c_str();
+		parm.sCmd = it.args.c_str();
+
+		// todo - use proxy process for unelevated.
+		//parm.admin = it.elevated ? TSWAdmin::SW_ADMIN_ON : TSWAdmin::SW_ADMIN_OFF;
+
+		parm.mode = procstart::SW_CREATEPROC_SHELLEXE;
+		CAutoHandle hProc;
+		IFS_RET(procstart::SwCreateProcess(parm, hProc));
+
+		RETURN_SUCCESS;
+	}
+
 	void ProcessOurHotKey(Message_Hotkey&& keyData) {
 
 		auto hk = keyData.hk;
@@ -216,13 +244,7 @@ public:
 			return;
 		}
 
-		// Сбросим сразу все клавиши для программы. Будет двойной (или даже тройной и более) up, но пока что это не проблема... 
-		UpAllKeys(keyData.cur_keys_down);
-
-		if (hk == hk_Fix_RAlt) {
-			FixCtrlAlt(keyData.hotkey);
-			return;
-		}
+		Fix_AltOrWin(keyData.cur_keys_down);
 
 		if (hk == hk_ToggleEnabled) {
 			try_toggle_enable();
@@ -239,38 +261,27 @@ public:
 			return;
 		}
 
+		if (TestFlag(hk, hk_RunProgram_flag)) {
+			IFS_LOG(RunProcess(hk));
+			return;
+		}
+
+		// Если нам нужно самим что-то вводить, то сбросим сразу все клавиши для системы. 
+		// Будет двойной (или даже тройной и более) up, но пока что это не проблема... 
+		UpAllKeys(keyData.cur_keys_down);
+
+		if (hk == hk_Fix_RAlt) {
+			FixCtrlAlt(keyData.hotkey);
+			return;
+		}
+
+		if (Utils::is_in(hk, hk_EmulateCapsLock, hk_EmulateScrollLock)) {
+			TKeyCode k = (hk == hk_EmulateCapsLock) ? VK_CAPITAL : VK_SCROLL;
+			InputSender::SendVkKey(k);
+			return;
+		}
+
 		auto process = [this, hk, cfg]() -> TStatus {
-
-			if (TestFlag(hk, hk_RunProgram_flag)) {
-				int i = hk;
-				ResetFlag(i, hk_RunProgram_flag);
-				if (i >= cfg->run_programs.size()) {
-					return SW_ERR_UNKNOWN;
-				}
-				const auto& it = cfg->run_programs[i];
-				auto path = it.path;
-				PathUtils::NormalizeDelims(path);
-				LOG_ANY(L"run program {} {}", path.c_str(), it.args.c_str());
-
-				procstart::CreateProcessParm parm;
-				parm.sExe = path.c_str();
-				parm.sCmd = it.args.c_str();
-
-				// todo - use proxy process for unelevated.
-				//parm.admin = it.elevated ? TSWAdmin::SW_ADMIN_ON : TSWAdmin::SW_ADMIN_OFF;
-
-				parm.mode = procstart::SW_CREATEPROC_SHELLEXE;
-				CAutoHandle hProc;
-				IFS_RET(procstart::SwCreateProcess(parm, hProc));
-
-				RETURN_SUCCESS;
-			}
-
-			if (Utils::is_in(hk, hk_EmulateCapsLock, hk_EmulateScrollLock)) {
-				TKeyCode k = (hk == hk_EmulateCapsLock) ? VK_CAPITAL : VK_SCROLL;
-				InputSender::SendVkKey(k);
-				RETURN_SUCCESS;
-			}
 
 			if (hk == hk_InsertWithoutFormat) {
 				IFS_RET(m_clipWorker.ClipboardClearFormat());
@@ -339,14 +350,6 @@ public:
 		LOG_ANY(L"UpAllKeys {}", (int)keys.size());
 
 		InputSender inputSender;
-		if (std::any_of(keys.begin(), keys.end(), [](auto x) {
-			return x == VK_LMENU || x == VK_LWIN;
-			})) {
-			// если нажата только клавиша alt - то ее простое отжатие даст хрень - нужно отжать ее еще раз
-			//inputSender.Add(VK_LMENU, KEY_STATE_DOWN);
-			//inputSender.Add(VK_LMENU, KEY_STATE_UP); 	
-			inputSender.Add(VK_CAPITAL, KEY_STATE_UP);
-		}
 
 		for (const auto& key : keys) {
 			inputSender.Add(key, KEY_STATE_UP);
@@ -354,6 +357,26 @@ public:
 
 		inputSender.Send();
 
+	}
+
+
+	void Fix_AltOrWin(const vector<TKeyCode>& keys) {
+
+		// если хоткей вида Win + X и мы задисейблили клавишу X для системы, то произойдет появление меню
+		// сделаем хак чтобы этого не было.
+
+		if (keys.size() == 0) return;
+
+		if (!std::any_of(keys.begin(), keys.end(), [](auto x) {
+			return x == VK_LMENU || x == VK_LWIN;
+			})) {
+			return;
+		}
+
+		LOG_ANY(L"FixAltOrWin {}", (int)keys.size());
+		InputSender inputSender;
+		inputSender.Add(VK_CAPITAL, KEY_STATE_UP);
+		inputSender.Send();
 	}
 
 private:

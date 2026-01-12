@@ -5,12 +5,14 @@ void InputSender::Send()
 	if (list.empty())
 		return;
 
-	for (auto& i : list)
-	{
+	LOG_ANY(L"start our inject");
+
+	for (auto& i : list) {
 		LOG_ANY(L"SEND {} {}", TestFlag(i.ki.dwFlags, KEYEVENTF_KEYUP) ? L"UP" : L"DW", CHotKey::ToString(i.ki.wVk));
 	}
 
 	{
+		// todo: пропускать только то, что было нажато, а не все подряд (если набрано не с клавиатуры - может быть рассинхронизация).
 		InjectSkipper::LocSkipper loc;
 		IFW_LOG(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size()); // синхронно вызывается наш хук.
 	}

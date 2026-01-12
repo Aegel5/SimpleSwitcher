@@ -30,7 +30,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		if (Utils::IsDebug() && !g_enabled.TryEnable()) {
 			auto hk = conf_get_unsafe()->GetHk(hk_ToggleEnabled).keys.key();
 			for (auto& it : hk) if (it == VKE_WIN) it = VK_LWIN;
-			InputSender::SendHotKey(hk);
+			//InputSender::SendHotKey(hk);
+			{
+				InputSender is;
+				is.AddDownVk(hk);
+				is.Send();
+			}
+			Sleep(10);
+			{
+				InputSender is;
+				is.AddUpVk(hk);
+				is.Send();
+			}
 			Sleep(50);
 		}
 		g_enabled.TryEnable();

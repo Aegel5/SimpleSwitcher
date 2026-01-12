@@ -8,7 +8,6 @@ class InjectSkipper {
 public:
 	struct LocSkipper {
 		LocSkipper() { 
-			LOG_ANY(L"start our inject");
 			InjectSkipper::Inst().is_our_send = true; 
 		}
 		~LocSkipper() { 
