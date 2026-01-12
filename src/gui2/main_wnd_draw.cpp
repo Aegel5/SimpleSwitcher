@@ -220,6 +220,18 @@ void MainWindow::DrawFrameActual() {
 				}
 			}
 
+			//{
+			//	ImGui::SameLine();
+			//	int val = 70;
+			//	//float width = ImGui::CalcTextSize("000").x
+			//	//	+ ImGui::GetFrameHeight() * 2.0f // Место под кнопки + и -
+			//	//	+ ImGui::GetStyle().FramePadding.x * 2.0f
+			//	//	+ ImGui::GetStyle().ItemInnerSpacing.x * 2.0f;
+			//	ImGui::SetNextItemWidth(ImGui::GetFrameHeight() * 3.5f);
+			//	if (ImGui::InputInt("##ALPHA_ID", &val)) {
+			//	}
+			//}
+
 			{
 				if (ImGui::Button(LOC("Reminder"))) {
 					show_main_wind(1);

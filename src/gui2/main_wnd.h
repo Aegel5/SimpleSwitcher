@@ -51,11 +51,15 @@ private:
 		auto p = PathUtils::GetPath_folder_noLower2() / "Background" / name;
 		auto img = Images::LoadImageFromFile(p.string().c_str());
 		if (!img->IsOk()) { background->clear();  return; }
-		auto parts = StrUtils::Split(name, '@');
-		int alp = -1;
-		if (parts.size() > 1 && StrUtils::ToInt(parts[0], alp) && alp >= 0 && alp <= 100) {
-			Images::SetAlphaFactor(img, alp * 0.01f);
+		int alp = 70;
+		std::smatch match;
+		if (std::regex_search(name, match, std::regex(R"(@(\d+))"))) {
+			int alp_ = std::stoi(match[1].str());
+			if (alp_ >= 0 && alp_ <= 100) {
+				alp = alp_;
+			}
 		}
+		Images::SetAlphaFactor(img, alp * 0.01f);
 		background = Images::ImageToShaderConsume(img);
 	}
 	void update_flags() { flagsSets = { std::from_range, IconMgr::Inst().ScanFlags() }; IconMgr::Inst().ClearCache(); }
