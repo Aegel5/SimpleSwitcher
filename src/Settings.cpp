@@ -111,10 +111,11 @@ namespace nlohmann {
 			quick_press_ms,
 			win_hotkey_cycle_lang,
 			theme,
-			background,
+			ui_skin,
 			gui_lang,
 			ShowLangsInTrayMenu,
-			ShowReminderInTrayMenu
+			ShowReminderInTrayMenu,
+			useBritishFlag
 		)
 }
 

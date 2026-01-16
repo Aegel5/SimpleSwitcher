@@ -50,14 +50,19 @@ class IconMgr {
 				}
 				};
 
-			search(local_id);
+			if (cfg->useBritishFlag && (local_id == L"en" || local_id.starts_with(L"en-"))) {
+				search(L"en-gb"s);
+			}
+			else {
+				search(local_id);
 
-			if (bndl.empty()) {
-				// ничего не нашли, попробуем поискать только по языку.
-				auto pos = local_id.find(L'-');
-				if (pos != std::wstring::npos) {
-					SView id_lang{ local_id.data(), pos };
-					search(id_lang);
+				if (bndl.empty()) {
+					// ничего не нашли, попробуем поискать только по языку.
+					auto pos = local_id.find(L'-');
+					if (pos != std::wstring::npos) {
+						SView id_lang{ local_id.data(), pos };
+						search(id_lang);
+					}
 				}
 			}
 

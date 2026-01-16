@@ -69,6 +69,14 @@ void MainWindow::DrawFrameActual() {
 			}
 
 			{
+				if (ImGui::Checkbox(LOC("Use the British flag for the English language"), &conf_gui()->useBritishFlag)) {
+					SaveApplyGuiConfig();
+					update_flags();
+					new_layout_request();
+				}
+			}
+
+			{
 				UStr items[] = { LOC("Disabled"), LOC("Only for several words correction"), LOC("Always") };
 				Clamp(conf_gui()->separate_ext_mode, 0, std::ssize(items)-1);
 				if (ImGui::Combo(LOC("Extended word separation"), &conf_gui()->separate_ext_mode, items, std::size(items))) {
@@ -98,22 +106,20 @@ void MainWindow::DrawFrameActual() {
 			}
 
 			{
-				ImGuiUtils::Combo(LOC("Theme"), conf_gui()->theme,
-					std::array {"Dark", "Light", "Classic", "Ocean", "Dark Relax"},
+				ImGuiUtils::Combo(LOC("UI Color"), conf_gui()->theme,
+					std::array {
+					"Dark", "Light", "Classic", "Ocean", "Dark Relax"
+				},
 					[]() {
 						SaveApplyGuiConfig();
 						SetStyle();
 					}
 				);
 
-				//ImGui::SameLine();
-				//if (ImGui::Button(LOC("Styles..."))) {
-				//	ShowStyleEditor ^= 1;
-				//}
 			}
 
 			{
-				ImGuiUtils::Combo("GUI language", conf_gui()->gui_lang,
+				ImGuiUtils::Combo("UI Language", conf_gui()->gui_lang,
 					std::array {"English", "Russian", "Hebrew"},
 					[this]() {
 						SaveApplyGuiConfig();
@@ -131,6 +137,12 @@ void MainWindow::DrawFrameActual() {
 
 				if (ImGui::Button(LOC("Reload"))) {
 					Reinit(!cfg_details::ReloadGuiConfig());
+				}
+			}
+
+			{
+				if (ImGui::Button(LOC("Reminder"))) {
+					show_main_wind(1);
 				}
 			}
 
@@ -170,11 +182,32 @@ void MainWindow::DrawFrameActual() {
 
 
 
+			{
+				ImGuiUtils::Combo(LOC("UI Skin"), conf_gui()->ui_skin,
+					[this]()-> std::generator<UStr> {
+						co_yield "None";
+						for (const auto& it : backgrounds) co_yield it.c_str();
+					},
+					[this] {
+						SaveApplyGuiConfig();
+						apply_background();
+					},
+					ImGuiComboFlags_HeightLargest
+				);
+
+				ImGui::SameLine();
+				with_ID("UPD_SKIN") {
+					if (ImGui::Button(LOC("Update"))) {
+						update_backg();
+					}
+				}
+			}
+
 			//{
-			//	if (ImGui::Checkbox(LOC("Optimize GUI"), &optmz)) {
-			//		SaveConfigWith([this](auto p) {p->optimize_gui = optmz; });
+			//	ImGui::SameLine();
+			//	if (ImGui::Button(LOC("Styles..."))) {
+			//		ShowStyleEditor ^= 1;
 			//	}
-			//	ImGui::SetItemTooltip(LOC("Unload gui completely when closed to tray (actual for old PC)"));
 			//}
 
 			{
@@ -201,24 +234,9 @@ void MainWindow::DrawFrameActual() {
 
 			}
 
-			{
-				ImGuiUtils::Combo(LOC("Background"), conf_gui()->background,
-					[this]()-> std::generator<UStr> {
-						co_yield "None";
-						for (const auto& it : backgrounds) co_yield it.c_str();
-					},
-					[this] {
-						SaveApplyGuiConfig();
-						apply_background();
-					},
-					ImGuiComboFlags_HeightLargest
-				);
 
-				ImGui::SameLine();
-				if (ImGui::Button(LOC("Update"))) {
-					update_backg();
-				}
-			}
+
+
 
 			//{
 			//	ImGui::SameLine();
@@ -232,11 +250,7 @@ void MainWindow::DrawFrameActual() {
 			//	}
 			//}
 
-			{
-				if (ImGui::Button(LOC("Reminder"))) {
-					show_main_wind(1);
-				}
-			}
+
 
 			if (ImGui::CollapsingHeader("Scancode remap")) {
 
@@ -279,6 +293,7 @@ void MainWindow::DrawFrameActual() {
 				}
 			}
 
+
 		}
 
 		with_TabItem(LOC("About")) {
@@ -286,8 +301,9 @@ void MainWindow::DrawFrameActual() {
 			//ImGui::TextLinkOpenURL("Telegram", "https://t.me/simple_switcher");
 		}
 
-
 		ImGui::EndTabBar();
+
+
 	}
 
 	{
@@ -297,25 +313,7 @@ void MainWindow::DrawFrameActual() {
 		if (ImGui::Button(text)) { show_wnd = false; }
 	}
 
-	if (background->IsOk()) {
-
-
-		//auto w = background->img.width;
-		//auto h = background->img.height;
-		auto size = ImGui::GetWindowSize();
-		auto h = size.y;
-		auto w = background->img.width * size.y / background->img.height;
-		auto x = size.x - w;
-		//ImGui::SetCursorPos({ x,0 });
-		//ImGui::Image((ImTextureID)(intptr_t)background->pTexture, ImVec2(background->img.width, background->img.height));
-		ImVec2 window_pos = ImGui::GetWindowPos();
-		ImVec2 min = window_pos;
-		min.x += x;
-		ImVec2 max = min;
-		max.x += w;
-		max.y += h;
-		ImGui::GetForegroundDrawList()->AddImage((ImTextureID)(intptr_t)background->pTexture, min, max);
-	}
+	DrawSkin();
 
 	ImGui::End();
 }

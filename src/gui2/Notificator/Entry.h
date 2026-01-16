@@ -180,13 +180,13 @@ namespace Notific {
 
 
 
-				{
-					auto text = (const char*)u8"x";
-					auto w = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.x;
-					//float w = ImGui::CalcTextSize(text).x + ImGui::GetStyle().FramePadding.x * 2.f + ImGui::GetStyle().ItemSpacing.x;
-					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - w);
-					if (ImGui::Button(text, {w,0})) { changes = 10; }
-				}
+				//{
+				//	auto text = (const char*)u8"x";
+				//	auto w = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.x;
+				//	//float w = ImGui::CalcTextSize(text).x + ImGui::GetStyle().FramePadding.x * 2.f + ImGui::GetStyle().ItemSpacing.x;
+				//	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - w);
+				//	if (ImGui::Button(text, {w,0})) { changes = 10; }
+				//}
 
 				ImGui::EndMenuBar();
 			}
@@ -210,16 +210,21 @@ namespace Notific {
 					SetPoint({});
 					changes = true;
 				}
-				if (Utils::IsDebug()) {
+				//if (Utils::IsDebug()) {
 					ImGui::SameLine();
 					if (ImGui::Button("+10 sec")) {
 						SetQuick(10s);
 						changes = true;
 					}
-				}
+				//}
 				ImGui::SameLine();
 				if (ImGui::Button("+1 min")) {
 					SetQuick(1min);
+					changes = true;
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("+5 min")) {
+					SetQuick(5min);
 					changes = true;
 				}
 				ImGui::SameLine();
@@ -242,6 +247,9 @@ namespace Notific {
 				}
 				if (ImGui::Checkbox(LOC("Bring window to top"), &wnd_top)) {
 					changes = true;
+				}
+				if (ImGui::Selectable(LOC("Delete"))) {
+					changes = 10;
 				}
 				ImGui::EndPopup();
 			}

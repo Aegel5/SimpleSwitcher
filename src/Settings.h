@@ -97,8 +97,9 @@ public:
     int separate_ext_mode = 0; // 1 - several words, 2 - several + last
     CHotKey win_hotkey_cycle_lang { VK_LMENU, VK_SHIFT };
 	std::string theme = "Light";
-	string background = "";
+	string ui_skin = "";
 	string gui_lang = "Russian";
+	bool useBritishFlag = false;
 
     std::vector< CHotKeySet> hotkeysList;
     std::vector< RunProgramInfo> run_programs;

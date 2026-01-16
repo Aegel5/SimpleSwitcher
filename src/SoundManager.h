@@ -8,12 +8,16 @@ class SoundManager {
 
 	static void Play(string file, std::chrono::duration<float> period) {
 
+		LOG_ANY("Start play {}", file);
+
 		auto start = std::chrono::steady_clock::now();
 
 		while (allow_play && std::chrono::steady_clock::now() - start < period) {
 			PlaySound(StrUtils::Convert(file).c_str(), NULL, SND_FILENAME);
 			Sleep(500);
 		}
+
+		LOG_ANY("Stop play {}", file);
 
 	}
 	std::future<void> task;
