@@ -54,7 +54,7 @@ private:
 		if (!img->IsOk()) { background->clear();  return; }
 		int alp = 70;
 		std::smatch match;
-		if (std::regex_search(name, match, std::regex(R"(@A(\d+))"))) {
+		if (std::regex_search(name, match, std::regex(R"(@ALPHA(\d+))"))) {
 			int alp_ = std::stoi(match[1].str());
 			if (alp_ >= 0 && alp_ <= 100) {
 				alp = alp_;
@@ -62,7 +62,7 @@ private:
 		}
 		Images::SetAlphaFactor(img, alp * 0.01f);
 		background = Images::ImageToShaderConsume(img);
-		bg_fill = name.contains("@FILL");
+		bg_fill = name.contains("@STRETCH");
 	}
 	void update_flags() { 
 		flagsSets = { std::from_range, IconMgr::Inst().ScanFlags() }; 
