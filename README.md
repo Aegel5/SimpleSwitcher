@@ -105,9 +105,7 @@ flags
     {
         "args": "",
         "elevated": false,
-        "hotkey": [
-            "LWin + C"
-        ],
+        "hotkey": "LWin + C",
         "path": "calc.exe"
     }
 ]
