@@ -124,7 +124,7 @@ namespace cfg_details {
 	TStatus LoadConfig(ProgramConfig& cfg) {
 		try {
 
-			auto p = PathUtils::GetPath_folder_noLower2() / "SimpleSwitcher.json";
+			auto p = ProgramConfig::GetPath_Conf();
 			if (!std::filesystem::is_regular_file(p)) {
 				// конфиг файла еще нет - считаем что загружены конфигом по-умолчанию.
 				RETURN_SUCCESS;
