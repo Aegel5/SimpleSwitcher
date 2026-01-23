@@ -10,12 +10,21 @@ class TrayIcon {
 	WinTray tray;
 	HICON app_icon = 0;
 	Vec_i2 GetSize() {
-		int iconWidth = GetSystemMetrics(SM_CXSMICON);
-		int iconHeight = GetSystemMetrics(SM_CYSMICON);
-		int bigIconWidth = GetSystemMetrics(SM_CXICON);
-		int bigIconHeight = GetSystemMetrics(SM_CYICON);
-		auto scale = WinUtils::GetDpiMainMonScale();
-		return{ RoundToInt(iconWidth * scale.x), RoundToInt(iconHeight * scale.y) };
+
+		UINT dpi = GetDpiForSystem();
+
+		// Получаем ширину и высоту малой иконки (для трея) с учетом DPI
+		int iconWidth = GetSystemMetricsForDpi(SM_CXSMICON, dpi);
+		int iconHeight = GetSystemMetricsForDpi(SM_CYSMICON, dpi);
+
+		return { iconWidth, iconHeight };
+
+		//int iconWidth = GetSystemMetrics(SM_CXSMICON);
+		//int iconHeight = GetSystemMetrics(SM_CYSMICON);
+		//int bigIconWidth = GetSystemMetrics(SM_CXICON);
+		//int bigIconHeight = GetSystemMetrics(SM_CYICON);
+		//auto scale = WinUtils::GetDpiMainMonScale();
+		//return{ RoundToInt(iconWidth * scale.x), RoundToInt(iconHeight * scale.y) };
 	}
 public:
 	WinTray& TrayHandler() {
