@@ -1,4 +1,4 @@
-# ![изображение](https://github.com/user-attachments/assets/a36dfe16-5318-4463-b4c0-c76029dfe742) SimpleSwitcher 
+﻿# ![изображение](https://github.com/user-attachments/assets/a36dfe16-5318-4463-b4c0-c76029dfe742) SimpleSwitcher 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/alexzh2/SimpleSwitcher?style=plastic)
 ![GitHub all releases](https://img.shields.io/github/downloads/alexzh2/SimpleSwitcher/total?style=plastic)
 ![GitHub last commit](https://img.shields.io/github/last-commit/alexzh2/SimpleSwitcher?style=plastic)
@@ -78,7 +78,7 @@ flags
 - Поддерживаемые форматы: PNG (рекомендуется), JPG, BMP
 - Поддерживаются папка с файлами разного размера. В случае если на одну локаль будет найдено несколько флагов разного размера - выбирается наиболее подходящий.
 - Название папки должно совпадать с идентификатора локали в формате BCP-47 (язык-регион) или с идентификатором языка, если регион не важен.
-- Размер - любой, но рекомендуется добавлять 16x16 для обычного dpi и 32x32 или выше для high dpi.
+- Размер - любой, но рекомендуется добавлять 16x16 и (24x24, 32x32) для high dpi.
 
 ## Отключение Ctrl + LAlt как RAlt на расширенных раскладках
 Подробнее: https://github.com/Aegel5/SimpleSwitcher/issues/54
