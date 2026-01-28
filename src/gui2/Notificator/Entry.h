@@ -237,6 +237,11 @@ namespace Notific {
 					SetQuick(30min);
 					changes = true;
 				}
+				ImGui::SameLine();
+				if (ImGui::Button("+1 day")) {
+					SetQuick(std::chrono::days(1));
+					changes = true;
+				}
 			}
 
 			ImGui::EndChild();

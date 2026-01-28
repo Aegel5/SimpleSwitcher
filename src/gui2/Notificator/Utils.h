@@ -76,16 +76,25 @@ namespace Notific {
 	}
 
 	inline void DeltToHuman(auto& buf, auto delt) {
-		auto days = std::chrono::duration_cast<std::chrono::days>(delt);
+		auto days = duration_cast<std::chrono::days>(delt);
 		if (days.count() >= 1) {
-			StrUtils::Sprintf(buf, "%d days", days.count());
+			if (days.count() >= 4) {
+				auto rounded_days = duration_cast<std::chrono::days>(
+					delt + hours(12)
+				);
+				StrUtils::Sprintf(buf, "%d days", rounded_days.count());
+			}
+			else {
+				auto hours = duration_cast<std::chrono::hours>(delt % std::chrono::days(1));
+				StrUtils::Sprintf(buf, "%d days %d hours", days.count(), hours.count());
+			}
 		}
 		else {
-			auto hh = std::chrono::duration_cast<std::chrono::hours>(delt);
+			auto hh = duration_cast<hours>(delt);
 			delt -= hh;
-			auto mm = std::chrono::duration_cast<std::chrono::minutes>(delt);
+			auto mm = duration_cast<minutes>(delt);
 			delt -= mm;
-			auto ss = std::chrono::duration_cast<std::chrono::seconds>(delt);
+			auto ss = duration_cast<seconds>(delt);
 			if (hh.count() >= 1) {
 				StrUtils::Sprintf(buf, "%d hours %d minutes", (int)hh.count(), (int)mm.count());
 			}
