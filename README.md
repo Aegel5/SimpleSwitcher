@@ -20,16 +20,16 @@ Simple Switcher - переключатель клавиатуры ⌨️ для 
 
 ## Download & Install
 
-Для получения последней версии нужно сбилдить из исходного кода (требуется `Visual Studio 2022`).
+Для получения последней версии нужно сбилдить из исходного кода (требуется `Visual Studio 2026`).
 
 Также можно скачать: 
 - Последняя 6.x версия: https://github.com/Aegel5/SimpleSwitcher/releases
-- Последняя 5.x (стабильная) версия: https://github.com/Aegel5/SimpleSwitcher/releases/tag/5.394
+- Последняя 5.x версия: https://github.com/Aegel5/SimpleSwitcher/releases/tag/5.394
 - Последняя 3.x (scancode remap для любых клавиш): https://github.com/Aegel5/SimpleSwitcher/releases/tag/3.0.0.8
 
 ## Сборка из исходного кода:
  - Скачать zip-архив master ветки.
- - Установить `Visual Studio 2022`. Необходим компонент C++.
+ - Установить `Visual Studio 2026`. Необходим компонент C++.
  - Открыть проект как ПАПКУ в Visual Studio. Cбилдить `x64 Release` конфигурацию. Файл будет: `out\x64-release\SimpleSwitcher.exe`. Флаги подкидываются вручную.
  - [Опционально] Установить python и выполнить build.py. Полностью собранный пакет будет в папке `package_build/OUT`
 
