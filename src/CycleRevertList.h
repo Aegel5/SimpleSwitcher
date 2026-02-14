@@ -4,7 +4,7 @@
 
 class CycleRevertList {
 
-	static const int c_maxWordRevert = 15;
+	// static const int c_maxWordRevert = 15; // https://github.com/Aegel5/SimpleSwitcher/issues/95
 	static const int c_nMaxLettersSave = 90;
 	std::deque<TKeyHookInfo> m_symbolList; // просто список всего, что сейчас набрано.
 	static const int c_lastCorrectedInf = 9999999;
@@ -125,9 +125,9 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 
 	std::reverse(words.begin(), words.end());
 
-	if (words.size() > c_maxWordRevert) {
-		words.resize(c_maxWordRevert);
-	}
+	//if (words.size() > c_maxWordRevert) {
+	//	words.resize(c_maxWordRevert);
+	//}
 
 	std::reverse(words.begin(), words.end());
 
