@@ -4,7 +4,7 @@
 
 class CycleRevertList {
 
-	static const int c_maxWordRevert = 7;
+	static const int c_maxWordRevert = 15;
 	static const int c_nMaxLettersSave = 90;
 	std::deque<TKeyHookInfo> m_symbolList; // просто список всего, что сейчас набрано.
 	static const int c_lastCorrectedInf = 9999999;

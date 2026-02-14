@@ -153,13 +153,17 @@ void MainWindow::DrawFrameActual() {
 			for (int i = -1; auto & it : hotbox) {
 				it.Draw();
 			}
-			ImGui::SeparatorText(LOC("Language layouts"));
-			if (ImGui::BeginPopupContextItem("lay_upd")) {
+
+			ImGui::BeginChild("Bottom Panel", ImVec2(0, 0));
+
+			if (ImGui::BeginPopupContextWindow("lay_upd")) {
 				if (ImGui::MenuItem(LOC("Update"))) {
 					SyncLays();
 				}
 				ImGui::EndPopup();
 			}
+
+			ImGui::SeparatorText(LOC("Language layouts"));
 			for (int i = -1; auto & it : conf_gui()->layouts_info.info) {
 				i++;
 				with_ID(i+20) {
@@ -170,6 +174,8 @@ void MainWindow::DrawFrameActual() {
 				ImGui::SameLine();
 				layout_hotkeys[i].Draw();
 			}
+
+			ImGui::EndChild();
 
 		}
 
