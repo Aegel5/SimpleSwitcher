@@ -239,7 +239,7 @@ public:
 			Sleep(5);
 		}
 
-		if (!IsNeedSavedWords(hk)) {
+		if (!IsNeedSavedWords(hk) && !Utils::is_in(hk, hk_EmulateCapsLock, hk_EmulateScrollLock)) {
 			ClearAllWords();
 		}
 
