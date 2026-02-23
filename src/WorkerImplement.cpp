@@ -9,6 +9,8 @@ void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 
 	LOG_ANY(L"ProcessKeyMsg {} curState={}", CHotKey::ToString(vkCode), cur_hotkey.ToString());
 
+	m_is_last_caps = keyData.is_caps; // сохраним последнее известное значение. Нажатие caps по идее должно нам привести сюда.
+
 	if (CHotKey::IsKnownMods(vkCode)) {
 		return; // не очищаем текущий буфер нажатых клавиш так как они могут быть частью наших хот-кеев
 	}
@@ -20,10 +22,20 @@ void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 	//	return; // пропуск.
 	//}
 
-	TKeyTypeData data;
-	TKeyType type = AnalizeTyped(cur_hotkey, vkCode, scan_ext, topWndInfo2.lay, data);
+	TKeyBaseInfo key {
+		.vk_code = vkCode,
+		.scan_code = scan_ext,
+		.is_shift = cur_hotkey.HasMod(VK_SHIFT),
+		.is_caps = keyData.is_caps,
+	};
+	auto get_lay = [this] {
+		CheckCurLay(); // попробуем добавить получение текущей раскладки на каждое нажатие для более точного определения символа (ради capslock handle).
+		return topWndInfo2.lay;
+	};
+	key.type = AnalizeTyped(cur_hotkey, vkCode, scan_ext, get_lay, key);
 
-	switch (type) {
+	switch (key.type) {
+
 	case KEYTYPE_BACKSPACE:
 	{
 		m_cycleList.DeleteLastSymbol();
@@ -36,7 +48,7 @@ void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 		// todo: так это не работает. Нужно добавлять Shift только буквам (сложно) или временно включать/отключать capslock.
 		//if (keyData.is_caps) is_shift = !is_shift; 
 
-		m_cycleList.AddKeyToList(type, data, scan_ext, is_shift);
+		m_cycleList.AddKeyToList(key);
 		break;
 	}
 	case KEYTYPE_COMMAND_NO_CLEAR:
@@ -229,7 +241,7 @@ TStatus WorkerImplement::ProcessRevert(ContextRevert&& ctxRevert)
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT))
 	{
-		InputSender::SendKeys(ctxRevert.keylist);
+		InputSender::SendKeys(ctxRevert.keylist, m_is_last_caps);
 	}
 
 	if (TestFlag(ctxRevert.flags, SW_CLIENT_CTRLC))

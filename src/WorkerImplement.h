@@ -73,16 +73,24 @@ public:
 				continue;
 			}
 			BYTE mods = HIBYTE(res);
-			BYTE code = LOBYTE(res);
+			BYTE vk_code = LOBYTE(res);
 
 			TKeyType type = KEYTYPE_LETTER;
 			// Пока сделаем супер-простое разделение
 			if (StrUtils::IsSpace(c)) type = KEYTYPE_SPACE;
-			m_cycleList.AddKeyToList(type, {}, {}, TestFlag(mods, 0x1), code);
+
+			TKeyBaseInfo key{
+				.vk_code = vk_code,
+				.scan_code = {},
+				.is_shift = TestFlag(mods, 0x1),
+				.is_caps = m_is_last_caps,
+				.type = type
+			};
+			m_cycleList.AddKeyToList(key);
 		}
 
 		RevertText(hk_RevertAllRecentText, true, true);
-		if (clear_alfter_selected) {
+		if (m_clear_alfter_selected) {
 			m_cycleList.Clear();
 		}
 	}
@@ -206,7 +214,7 @@ public:
 
 		GETCONF;
 
-		clear_alfter_selected = hk == hk_RevertSelelected;
+		m_clear_alfter_selected = hk == hk_RevertSelelected;
 
 		if (IsNeedSavedWords(hk) && !m_cycleList.HasAnySymbol()) {
 			bool found = false;
@@ -394,7 +402,8 @@ private:
 	HotKeyType m_lastRevertRequest = hk_NULL;
 	//std::wstring m_sSelfExeName;
 	CycleRevertList m_cycleList;
-	bool clear_alfter_selected = false;
+	bool m_clear_alfter_selected = false;
+	bool m_is_last_caps = false;
 };
 
 

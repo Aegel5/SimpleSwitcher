@@ -17,10 +17,6 @@ enum TKeyType : TUInt8
 	KEYTYPE_COMMAND_NO_CLEAR,
 };
 
-struct TKeyTypeData {
-	bool space_on_extended = false; // всегда space если extended separation.
-};
-
 using TScanCode = WORD;
 
 struct TScanCode_Ext {
@@ -35,24 +31,25 @@ struct TScanCode_Ext {
 	auto operator<=>(const TScanCode_Ext&) const = default;
 };
 
-// базовая структура для хранения нажатия одной клавиши.
+// Базовая НЕЗАВИСИМАЯ (т.е. не зависит от символов слева или справа) структура для хранения нажатия одной клавиши.
 struct TKeyBaseInfo {
+
 	TKeyCode vk_code = 0;
-	TScanCode_Ext scan_code;
+	TScanCode_Ext scan_code; // имеет приоритет над vk_code
 	bool is_shift = false;
-	void revert_shift() { is_shift = !is_shift; }
+	bool is_caps = false;
+	//bool is_letter = false;
+	TKeyType type = TKeyType::KEYTYPE_NONE;
+	bool space_on_extended = false; // всегда space если extended separation.
+
+	void revert_shift_for_letter() {
+		is_shift = !is_shift;
+	}
+
 	auto operator<=>(const TKeyBaseInfo&) const = default;
 };
 
 using TKeyRevert = std::vector<TKeyBaseInfo>;
-
-struct TKeyHookInfo{
-	TKeyBaseInfo key;
-	TKeyType type = TKeyType::KEYTYPE_NONE;
-	TKeyTypeData data;
-	bool is_last_revert = false;
-};
-
 
 enum KeyState
 {

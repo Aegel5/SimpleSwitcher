@@ -97,14 +97,11 @@ public:
 		AddScanCode(key, KEY_STATE_DOWN);
 		AddScanCode(key, KEY_STATE_UP);
 	}
-	static void SendKeys(const TKeyRevert& sendData) {
+	static void SendKeys(const TKeyRevert& sendData, bool is_now_caps) {
 
 		InputSender inputSender;
 
-		//bool isCaps = Utils::IsCapslockEnabled(); // get from thread with queue!
-		//LOG_ANY(L"Send {} keys. caps: {}", sendData.size(), isCaps);
-
-		LOG_ANY(L"Send {} keys", sendData.size());
+		LOG_ANY("Send {} keys. is_now_caps: {}", sendData.size(), is_now_caps);
 
 		for (auto key : sendData)
 		{

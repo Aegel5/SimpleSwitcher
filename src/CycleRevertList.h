@@ -4,6 +4,11 @@
 
 class CycleRevertList {
 
+	struct TKeyHookInfo {
+		TKeyBaseInfo key;
+		bool is_last_revert = false;
+	};
+
 	// static const int c_maxWordRevert = 15; // https://github.com/Aegel5/SimpleSwitcher/issues/95
 	static const int c_nMaxLettersSave = 90;
 	std::deque<TKeyHookInfo> m_symbolList; // просто список всего, что сейчас набрано.
@@ -50,7 +55,7 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 		TKeyHookInfo* prev = &stumb;
 		for (int i = 0; i < m_symbolList.size(); prev = &m_symbolList[i], i++) {
 			const auto& cur = m_symbolList[i];
-			auto type = cur.type;
+			auto type = cur.key.type;
 
 			if (prev->is_last_revert) { 
 				zipped.emplace_back(i, &cur, type, true);
@@ -65,7 +70,7 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 
 				if(Utils::is_in(type, KEYTYPE_CUSTOM, KEYTYPE_LETTER_OR_CUSTOM)) return true;
 
-				return type != prev->type;
+				return type != prev->key.type;
 				};
 			if (check()) {
 				zipped.emplace_back(i, &cur, type);
@@ -87,7 +92,7 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 		i++;
 		auto check = [&]() -> bool {
 			// it.type должен иметь актуальный тип, так как используется на следующих итерациях.
-			if (can_separate_posible && it.p->data.space_on_extended) {
+			if (can_separate_posible && it.p->key.space_on_extended) {
 				it.type = KEYTYPE_SPACE;
 			}
 			if (it.type == KEYTYPE_LETTER_OR_SPACE) {
@@ -210,7 +215,7 @@ public: void SetSeparateLast() {
 	if (!m_symbolList.empty())
 		m_symbolList.back().is_last_revert = true;
 }
-public: void AddKeyToList(TKeyType type, TKeyTypeData data, TScanCode_Ext scan_code, bool is_shift, TKeyCode vk = 0) {
+public: void AddKeyToList(const TKeyBaseInfo& key) {
 	ClearGenerated();
 
 	lastadd.SetNow();
@@ -219,18 +224,7 @@ public: void AddKeyToList(TKeyType type, TKeyTypeData data, TScanCode_Ext scan_c
 		m_symbolList.pop_front();
 	}
 
-	TKeyHookInfo key;
-	if (vk != 0) {
-		key.key.vk_code = vk;
-	}
-	else {
-		key.key.scan_code = scan_code;
-	}
-	key.key.is_shift = is_shift;
-	key.type = type;
-	key.data = data;
-
-	m_symbolList.push_back(key);
+	m_symbolList.push_back({.key = key});
 }
 
 };

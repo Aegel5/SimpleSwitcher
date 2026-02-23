@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& scan, HKL lay, TKeyTypeData& data){
+inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& scan, const auto& get_lay, TKeyBaseInfo& data){
 
 	bool is_shift = key.HasMod(VK_SHIFT);
 
@@ -45,7 +45,13 @@ inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& s
 		return KEYTYPE_COMMAND_NO_CLEAR;
 	}
 
+	if (vk >= VK_F1 && vk <= VK_F24) {
+		return KEYTYPE_COMMAND_CLEAR;
+	}
+
 	GETCONF;
+
+	HKL lay = get_lay();
 
 	bool isBadMapping = true; // numpad problem
 	if (scan.to_vk_or_def(lay) == vk) {
