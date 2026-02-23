@@ -86,7 +86,8 @@ namespace nlohmann {
 		path,
 		args,
 		elevated,
-		hotkey
+		hotkey,
+		delay
 	)
 
 

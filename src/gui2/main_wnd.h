@@ -19,6 +19,7 @@ class MainWindow : public ImGuiUtils::WindowHelper {
 	std::vector<SetHotKeyCombo> hotbox;
 	std::vector<SetHotKeyCombo> layout_hotkeys;
 	std::vector<SetHotKeyCombo> layout_win_hotkeys;
+	std::vector<SetHotKeyCombo> run_programs_hks;
 	COM::CAutoCOMInitialize autoCom;
 	std::vector<string> flagsSets;
 	std::vector<string> backgrounds;
@@ -114,6 +115,7 @@ private:
 		}
 	}
 	void DrawFrameActual();
+	void Draw_run_tab();
 public:
 	MainWindow(bool show, bool conf_err) {
 		show_wnd = show;

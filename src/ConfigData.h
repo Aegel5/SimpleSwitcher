@@ -69,10 +69,11 @@ struct LayoutInfo {
 };
 
 struct RunProgramInfo {
-    wstring path;
-    wstring args;
+    string path;
+    string args;
     CHotKeyList hotkey;
     bool elevated = false;
+	int delay = 0;
 };
 
 

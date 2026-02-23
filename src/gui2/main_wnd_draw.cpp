@@ -302,6 +302,8 @@ void MainWindow::DrawFrameActual() {
 
 		}
 
+		Draw_run_tab();
+
 		with_TabItem(LOC("About")) {
 			ImGui::TextLinkOpenURL("Github", "https://github.com/Aegel5/SimpleSwitcher");
 			//ImGui::TextLinkOpenURL("Telegram", "https://t.me/simple_switcher");

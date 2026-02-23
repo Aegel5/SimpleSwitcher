@@ -173,7 +173,7 @@ public:
 		}
 	}
 
-	TStatus RunProcess(HotKeyType hk) {
+	TStatus RunProcess(HotKeyType hk, bool after_wait=false) {
 
 		GETCONF;
 
@@ -183,13 +183,22 @@ public:
 			return SW_ERR_UNKNOWN;
 		}
 		const auto& it = cfg->run_programs[i];
-		auto path = it.path;
-		PathUtils::NormalizeDelims(path);
-		LOG_ANY(L"run program {} {}", path.c_str(), it.args.c_str());
+
+		if (it.delay > 0 && !after_wait) {
+			Worker()->PostMsg([hk](auto p) {p->RunProcess(hk,true); }, it.delay);
+			RETURN_SUCCESS;
+		}
+
+		auto wpath = StrUtils::Convert(it.path);
+		auto wargs = StrUtils::Convert(it.args);
+
+		PathUtils::NormalizeDelims(wpath);
+
+		LOG_ANY(L"run program {} {}", wpath.c_str(), wargs.c_str());
 
 		procstart::CreateProcessParm parm;
-		parm.sExe = path.c_str();
-		parm.sCmd = it.args.c_str();
+		parm.sExe = wpath.c_str();
+		parm.sCmd = wargs.c_str();
 
 		// todo - use proxy process for unelevated.
 		//parm.admin = it.elevated ? TSWAdmin::SW_ADMIN_ON : TSWAdmin::SW_ADMIN_OFF;

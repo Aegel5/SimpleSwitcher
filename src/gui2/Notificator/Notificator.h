@@ -164,7 +164,7 @@ namespace Notific {
 				}
 
 
-				if (ImGui::Button("+", { ImGui::GetFrameHeight(),0 })) {
+				if (ImGuiUtils::PlusButton()) {
 					settings.folders.emplace_back();
 					SaveRequest();
 				}
@@ -194,7 +194,7 @@ namespace Notific {
 								SaveRequest();
 							}
 						}
-						if (ImGui::Button("+", { ImGui::GetFrameHeight(),0 })) {
+						if (ImGuiUtils::PlusButton()) {
 							auto& res = folder.list.emplace_back();
 							res.SetPoint(Now());
 							SaveRequest();

@@ -34,6 +34,10 @@ namespace ImGuiUtils {
 		}
 	};
 
+	inline bool PlusButton() {
+		return (ImGui::Button("+", { ImGui::GetFrameHeight(),0 }));
+	}
+
 	inline void Combo(UStr name, string& data, auto&& choices, auto&& apply, ImGuiComboFlags flags = 0) {
 		if (ImGui::BeginCombo(name, data.c_str(), flags)) {
 			if constexpr (std::is_invocable_v<DECLTYPE_DECAY(choices)>) {
