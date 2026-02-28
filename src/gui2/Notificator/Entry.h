@@ -15,7 +15,7 @@ namespace Notific {
 
 		Period period = Period::Month;
 
-		UStr PeriodName(Period p) {
+		UStr PeriodNameLOC(Period p) {
 			if (p == Period::Month) return LOC("Every month");
 			if (p == Period::Year) return LOC("Every year");
 			if (p == Period::OneTime) return LOC("One time");
@@ -145,10 +145,13 @@ namespace Notific {
 				}
 				{
 					char buf[100];
-					auto title = PeriodName(period);
+					UStr title = 0;
 					if (period == Period::NDays) {
 						StrUtils::Sprintf(buf, LOC("Every %d days"), days_period);
 						title = buf;
+					}
+					else {
+						title = PeriodNameLOC(period);
 					}
 
 					if (ImGui::Button(title)) {
@@ -157,7 +160,7 @@ namespace Notific {
 					with_Popup("menu2") {
 					//if (ImGui::BeginMenu(title)) {
 						auto add = [&](Period p) {
-							if (ImGui::Selectable(PeriodName(p), p == period)) {
+							if (ImGui::Selectable(PeriodNameLOC(p), p == period)) {
 								period = p;
 								changes = true;
 								SetupNextActivate();
