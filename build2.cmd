@@ -1,0 +1,1 @@
+dotnet run --project SimpleSwitcherBuild/SimpleSwitcherBuild.csproj -c Release 
