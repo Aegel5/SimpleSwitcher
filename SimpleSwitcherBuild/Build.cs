@@ -1,11 +1,14 @@
 ﻿
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+
+string GetCurPath([CallerFilePath] string path = "") => Path.GetDirectoryName(path);
 
 Console.WriteLine("Start build");
 
-var curpath = Path.GetFullPath(Path.Combine(ProgramUtils.FindOurPath("SimpleSwitcherBuild"), ".."));
+var curpath = Path.GetFullPath(Path.Combine(GetCurPath(), ".."));
 
-Console.WriteLine($"Current path: {curpath}");
+Console.WriteLine($"SimpleSwitcher dir: {curpath}");
 
 string curv2 = "unknown"; 
 
