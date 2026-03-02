@@ -80,11 +80,22 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		const auto& curk = curKeys.GetOneValueHotKey();
 
 		auto request_disable = [&]() {
+
 			auto isDown = curKeyState == KEY_STATE_DOWN;
+
 			if (isDown) {
 				if (curk.ValueKey() != vkCode) {
 					LOG_ANY("CRITICAL: urk.ValueKey() != vkCode");
 				}
+
+				// https://github.com/Aegel5/SimpleSwitcher/issues/97
+				// пока исправление не добаляем.
+				// 
+				//if (Utils::is_in(vkCode, VK_SHIFT, VK_LSHIFT, VK_RSHIFT, VK_CONTROL, VK_LCONTROL, VK_RCONTROL)) {
+				//	LOG_ANY(L"Skip disable key={} for shift or ctrl", CHotKey::ToString(vkCode));
+				//	return;
+				//}
+
 				disable_up = vkCode; // up тоже будет в будущем запрещать.
 			}
 			else {
