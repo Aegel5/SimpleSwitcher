@@ -68,13 +68,7 @@ void MainWindow::DrawFrameActual() {
 				}
 			}
 
-			{
-				if (ImGui::Checkbox(LOC("Use the British flag for the English language"), &conf_gui()->useBritishFlag)) {
-					SaveApplyGuiConfig();
-					update_flags();
-					new_layout_request();
-				}
-			}
+
 
 			{
 				UStr items[] = { LOC("Disabled"), LOC("Only for several words correction"), LOC("Always") };
@@ -231,6 +225,14 @@ void MainWindow::DrawFrameActual() {
 			}
 
 			{
+				if (ImGui::Checkbox(LOC("Use the British flag for the English language"), &conf_gui()->useBritishFlag)) {
+					SaveApplyGuiConfig();
+					update_flags();
+					new_layout_request();
+				}
+			}
+
+			{
 				int val = conf_gui()->quick_press_ms;
 				if (ImGui::InputInt(LOC("Double tap interval ms"), &val)) {
 					val = std::clamp(val, 0, 1000);
@@ -314,12 +316,13 @@ void MainWindow::DrawFrameActual() {
 
 	}
 
-	{
-		auto text = LOC("Close to tray");
-		ImGuiUtils::SetCursorToRightForButton(text);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetContentRegionAvail().y - ImGui::GetFrameHeightWithSpacing()); // todo use child_wnd
-		if (ImGui::Button(text)) { show_wnd = false; }
-	}
+	// глючит
+	//{
+	//	auto text = LOC("Close to tray");
+	//	ImGuiUtils::SetCursorToRightForButton(text);
+	//	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetContentRegionAvail().y - ImGui::GetFrameHeightWithSpacing()); // todo use child_wnd
+	//	if (ImGui::Button(text)) { show_wnd = false; }
+	//}
 
 	DrawSkin();
 
