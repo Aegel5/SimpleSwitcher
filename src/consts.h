@@ -20,6 +20,7 @@ static const int c_nCommonWaitMtx = 30000;
 static const LPCWSTR c_wszTaskName = L"SimpleSwitcherTask";
 const static TChar c_sRegRunValue[] = L"SimpleSwitcher";
 
+const inline ULONG_PTR c_MyInjectedId = (ULONG_PTR)(GetCurrentProcessId() ^ 0xACE1F345AABBCCDD);
 
 
 

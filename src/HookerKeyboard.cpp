@@ -48,6 +48,11 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			iscaps
 		);
 
+		if (k->dwExtraInfo == c_MyInjectedId) {
+			LOG_ANY(L"skip our keys");
+			return;
+		}
+
 		if (k->vkCode > 255) {
 			LOG_ANY(L"k->vkCode > 255: {}", k->vkCode);
 		}
@@ -65,11 +70,6 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		if (is_low_inject && cfg->SkipLowLevelInjectKeys) {
 			LOG_ANY(L"skip low_inject");
 			return;
-		}
-
-		if (isInjected) {
-			if (InjectSkipper::Inst().IsSkipInject())
-				return;
 		}
 
 		CHotKey possible_up;

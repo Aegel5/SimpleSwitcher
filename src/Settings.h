@@ -91,7 +91,7 @@ public:
     static constexpr UStr showFlags_AppIcon = "Application Icon";
     static constexpr UStr showFlags_Nothing = "Nothing";
     string flagsSet = "Square";
-    bool SkipAllInjectKeys = false;
+    //bool SkipAllInjectKeys = false;
     bool SkipLowLevelInjectKeys = false;
     bool AlternativeLayoutChange = false;
     TUInt32 quick_press_ms = 280;

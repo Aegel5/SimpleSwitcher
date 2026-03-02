@@ -11,11 +11,13 @@ void InputSender::Send()
 		LOG_ANY(L"SEND {} {}", TestFlag(i.ki.dwFlags, KEYEVENTF_KEYUP) ? L"UP" : L"DW", CHotKey::ToString(i.ki.wVk));
 	}
 
-	{
-		// todo: пропускать только то, что было нажато, а не все подряд (если набрано не с клавиатуры - может быть рассинхронизация).
-		InjectSkipper::LocSkipper loc;
-		IFW_LOG(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size()); // синхронно вызывается наш хук.
-	}
+	IFW_LOG(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size());
+
+	//{
+	//	// todo: пропускать только то, что было нажато, а не все подряд (если набрано не с клавиатуры - может быть рассинхронизация).
+	//	InjectSkipper::LocSkipper loc;
+	//	IFW_LOG(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size()); // синхронно вызывается наш хук.
+	//}
 
 	//bool doPause = false;
 

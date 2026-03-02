@@ -100,7 +100,7 @@ namespace nlohmann {
 			flagsSet,
 			disableInPrograms,
 			logLevel,
-			SkipAllInjectKeys,
+			//SkipAllInjectKeys,
 			SkipLowLevelInjectKeys,
 			AlternativeLayoutChange,
 			config_version,
