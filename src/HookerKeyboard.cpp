@@ -96,7 +96,10 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				//	return;
 				//}
 
-				disable_up = vkCode; // up тоже будет в будущем запрещать.
+
+				// Попробуем пока вообще без запрета UP во избежания ошибок.
+				// https://github.com/Aegel5/SimpleSwitcher/issues/97
+				// disable_up = vkCode; // up тоже будет в будущем запрещать.
 			}
 			else {
 				disable_up = 0;
@@ -123,6 +126,10 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		bool is_our_key_down = false;
 
 		if (curKeyState == KeyState::KEY_STATE_DOWN) {
+
+			// на любое новое нажатие сбрасываем ожидание запрета на UP во избежание ошибок.
+			disable_up = 0;
+
 			if (curk.IsEmpty())
 				return;
 			int need_disable = 0;
