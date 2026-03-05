@@ -52,6 +52,11 @@ void MainWindow::Draw_run_tab() {
 				ImGui::Text("hkey ");
 				ImGui::SameLine();
 				run_programs_hks[i].Draw();
+				ImGui::SameLine();
+				if (ImGui::Button(LOC("Run now"))) {
+					auto hk = (HotKeyType)(hk_RunProgram_flag | i);
+					Worker()->PostMsg([hk](auto p) {p->RunProcess(hk); });
+				}
 
 				ImGui::EndChild();
 			}
