@@ -50,25 +50,25 @@ IF(PUBLIC_RELEASE)
     ADD_DEFINITIONS(-DPUBLIC_RELEASE)
 ENDIF(PUBLIC_RELEASE)
 
-add_executable (SimpleSwitcher WIN32)
-target_sources(SimpleSwitcher    PRIVATE    
+add_executable (${CMAKE_PROJECT_NAME} WIN32)
+target_sources(${CMAKE_PROJECT_NAME}    PRIVATE    
 ${extern_files}
 ${all_implement_units}
 src/res/res.rc
-src/simpleswitcher.manifest
+src/manifest.manifest
 )
-target_precompile_headers(SimpleSwitcher PRIVATE src/sw-base.h)
+target_precompile_headers(${CMAKE_PROJECT_NAME} PRIVATE src/sw-base.h)
 
 
-target_link_libraries(SimpleSwitcher PRIVATE "Imm32.lib" "Psapi.lib" freetype "d3d11.lib" "d3dcompiler.lib" "dxgi.lib")
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE "Imm32.lib" "Psapi.lib" freetype "d3d11.lib" "d3dcompiler.lib" "dxgi.lib")
 
-target_include_directories(SimpleSwitcher PRIVATE "src/libtools")
-target_include_directories(SimpleSwitcher PRIVATE "extern")
-target_include_directories(SimpleSwitcher PRIVATE "extern/imgui")
-target_include_directories(SimpleSwitcher PRIVATE "extern/imgui/misc/cpp")
-target_include_directories(SimpleSwitcher PRIVATE "extern/imgui/backends")
-target_include_directories(SimpleSwitcher PRIVATE "src") 
-target_include_directories(SimpleSwitcher PRIVATE "${freetype_SOURCE_DIR}/include")
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "src/libtools")
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "extern")
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "extern/imgui")
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "extern/imgui/misc/cpp")
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "extern/imgui/backends")
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "src") 
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "${freetype_SOURCE_DIR}/include")
 
 
 
