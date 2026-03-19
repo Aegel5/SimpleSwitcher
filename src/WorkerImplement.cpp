@@ -1,5 +1,4 @@
-﻿#include "sw-base.h"
-
+﻿
 void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 {
 	TKeyCode vkCode = keyData.vkCode;

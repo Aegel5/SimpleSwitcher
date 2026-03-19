@@ -1,5 +1,4 @@
-﻿#include "sw-base.h"
-#include "Settings.h"
+﻿#include "Settings.h"
 #include "json.hpp"
 
 using json = nlohmann::json;

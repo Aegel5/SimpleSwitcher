@@ -1,74 +1,93 @@
-﻿cmake_minimum_required (VERSION 3.28)
-project(SimpleSwitcher VERSION 1.0 LANGUAGES CXX)
-
- set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-
-if (NOT TARGET freetype)
-    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-	set(SKIP_INSTALL_ALL ON CACHE INTERNAL "" FORCE) # disable Freetype install
-	set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "" FORCE)
-    set(FT_DISABLE_BROTLI ON CACHE BOOL "" FORCE)
-    set(FT_DISABLE_PNG ON CACHE BOOL "" FORCE)
-    message(STATUS "Fetching freetype")
-    include(FetchContent)
-    FetchContent_Declare(freetype GIT_REPOSITORY https://github.com/freetype/freetype GIT_TAG VER-2-13-3)
-    FetchContent_MakeAvailable(freetype)
-endif()
+﻿cmake_minimum_required (VERSION 4.0)
 
 
-file(GLOB_RECURSE all_implement_units  
-src/*.cpp 
-)
-#message(all_implement_units=${all_implement_units})
-list(FILTER all_implement_units EXCLUDE REGEX ".*/old/.*")
-
-
-#set_source_files_properties(src/res/res.rc PROPERTIES LANGUAGE RC)
-
-
-file(GLOB_RECURSE extern_files  extern/*.cpp )
-list(FILTER extern_files EXCLUDE REGEX ".*binary_to_compressed_c.cpp")
-list(FILTER extern_files EXCLUDE REGEX ".*/backends/.*")
-list(FILTER extern_files EXCLUDE REGEX ".*/examples/.*")
-list(APPEND extern_files extern/imgui/backends/imgui_impl_dx11.cpp)
-list(APPEND extern_files extern/imgui/backends/imgui_impl_win32.cpp)
-set_source_files_properties(${extern_files} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
-
-#file(GLOB_RECURSE all_interface_modules  
-#src/*.ixx 
-#)
-#target_sources(SimpleSwitcher
-#  PUBLIC
-#    FILE_SET all_my_modules TYPE CXX_MODULES FILES
-#    ${all_interface_modules}
-#)
-
-set(CMAKE_CXX_SCAN_FOR_MODULES off)
+#set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 set(CMAKE_CXX_STANDARD 23)
-
 IF(PUBLIC_RELEASE)
     ADD_DEFINITIONS(-DPUBLIC_RELEASE)
 ENDIF(PUBLIC_RELEASE)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+add_compile_options(/utf-8)
 
+# Project
+project(SimpleSwitcher VERSION 1.0 LANGUAGES CXX)
 add_executable (${CMAKE_PROJECT_NAME} WIN32)
-target_sources(${CMAKE_PROJECT_NAME}    PRIVATE    
-${extern_files}
-${all_implement_units}
-src/res/res.rc
-src/manifest.manifest
-)
-target_precompile_headers(${CMAKE_PROJECT_NAME} PRIVATE src/sw-base.h)
-
-
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE "Imm32.lib" "Psapi.lib" freetype "d3d11.lib" "d3dcompiler.lib" "dxgi.lib")
-
+target_sources(${CMAKE_PROJECT_NAME}  PRIVATE src/manifest.manifest src/res/res.rc)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "src/libtools")
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "extern")
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "extern/imgui")
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "extern/imgui/misc/cpp")
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "extern/imgui/backends")
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "src") 
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "${freetype_SOURCE_DIR}/include")
+target_precompile_headers(${CMAKE_PROJECT_NAME} PRIVATE src/precompl.h)
+#target_sources(${CMAKE_PROJECT_NAME} PRIVATE FILE_SET CXX_MODULE_HEADER_UNITS  FILES src/precompl.h)
+block()
+	file(GLOB_RECURSE src CONFIGURE_DEPENDS src/*.cpp ) # CONFIGURE_DEPENDS - искать новые файлы при билде.
+	list(FILTER src EXCLUDE REGEX ".*/old/.*")
+	target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${src})
+	#file(GLOB_RECURSE src_modules CONFIGURE_DEPENDS  "src/*.cppm" "src/*.ixx" )
+	#if(src_modules)
+	#	 target_sources(${CMAKE_PROJECT_NAME} PRIVATE FILE_SET CXX_MODULES FILES ${src_modules})
+	#	 set_source_files_properties(${src_modules} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
+	#endif()
+	target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "src") 
+
+endblock()
+
+# ImguiLib
+block()
+	add_library(ImguiLib OBJECT)
+	file(GLOB_RECURSE src  imgui/*.cpp )
+	list(FILTER src EXCLUDE REGEX ".*binary_to_compressed_c.cpp")
+	list(FILTER src EXCLUDE REGEX ".*/backends/.*")
+	list(FILTER src EXCLUDE REGEX ".*/examples/.*")
+	list(APPEND src imgui/backends/imgui_impl_dx11.cpp)
+	list(APPEND src imgui/backends/imgui_impl_win32.cpp)
+	target_sources(ImguiLib PRIVATE ${src})
+	target_include_directories(ImguiLib PUBLIC "imgui") # PUBLIC - автоматически прокидываем дальше
+	# подключаем freetype
+	block()
+		set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+		set(SKIP_INSTALL_ALL ON CACHE INTERNAL "" FORCE) 
+		set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "" FORCE)
+		set(FT_DISABLE_BROTLI ON CACHE BOOL "" FORCE)
+		set(FT_DISABLE_PNG ON CACHE BOOL "" FORCE)
+		message(STATUS "Fetching freetype")
+		include(FetchContent)
+		FetchContent_Declare(freetype GIT_REPOSITORY https://github.com/freetype/freetype GIT_TAG VER-2-13-3)
+		FetchContent_MakeAvailable(freetype)
+		target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE freetype)
+		target_include_directories(ImguiLib PRIVATE "${freetype_SOURCE_DIR}/include")
+	endblock()
+	target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ImguiLib)
+	target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE "d3d11.lib" "d3dcompiler.lib" "dxgi.lib")
+endblock()
+
+# ExternLib
+block()
+	file(GLOB_RECURSE src  extern/*.cpp )
+	if(src)
+		add_library(ExternLib OBJECT)
+		target_sources(ExternLib PRIVATE ${src})
+		target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ExternLib)
+	endif()
+	target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "extern")
+endblock()
+
+# LibUnits
+block()
+	file(GLOB_RECURSE src1 CONFIGURE_DEPENDS "lib_units/*.cpp" )
+	file(GLOB_RECURSE headers CONFIGURE_DEPENDS "lib_units/*.h" )
+	file(GLOB_RECURSE src2 CONFIGURE_DEPENDS  "lib_units/*.cppm" )
+	if(src1 OR src2)
+		add_library(LibUnits OBJECT)
+		target_sources(LibUnits PRIVATE ${src1})
+		target_sources(LibUnits PRIVATE  FILE_SET CXX_MODULES FILES ${src2})
+	else()
+		add_library(LibUnits INTERFACE)
+	endif()
+	target_sources(LibUnits INTERFACE ${headers})
+	target_include_directories(LibUnits INTERFACE "lib_units")
+	target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE LibUnits)
+endblock()
+
+
+
 
 
 

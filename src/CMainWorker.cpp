@@ -1,5 +1,4 @@
-﻿#include "sw-base.h"
-
+﻿
 
 void CMainWorker::WorkerInt()
 {

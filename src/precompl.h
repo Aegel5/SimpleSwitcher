@@ -49,7 +49,7 @@
 
 #include "imgui.h"
 #include "imgui_sugar.hpp"
-#include "imgui_stdlib.h"
+#include "misc/cpp/imgui_stdlib.h"
 
 // утилиты
 #include "core/inc_all.h"
