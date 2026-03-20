@@ -27,7 +27,7 @@ void MainWindow::Draw_run_tab() {
 				ImGui::Text("path ");
 				ImGui::SameLine();
 				ImGui::SetNextItemWidth(-1.0f);
-				if (ImGui::InputText(LOC("##path"), &it.path)) {
+				if (ImGui::InputText("##path", &it.path)) {
 					changes = true;
 				}
 
@@ -35,7 +35,7 @@ void MainWindow::Draw_run_tab() {
 				ImGui::Text("args ");
 				ImGui::SameLine();
 				ImGui::SetNextItemWidth(-1.0f);
-				if (ImGui::InputText(LOC("##args"), &it.args)) {
+				if (ImGui::InputText("##args", &it.args)) {
 					changes = true;
 				}
 
