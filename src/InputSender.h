@@ -36,8 +36,6 @@ public:
 		if (state == KEY_STATE_UP)
 			SetFlag(cur.ki.dwFlags, KEYEVENTF_KEYUP);
 
-		cur.ki.dwExtraInfo = c_MyInjectedId;
-
 		list.push_back(cur);
 	}
 	void AddScanCode(const TKeyBaseInfo& key, KeyState keyState = KEY_STATE_DOWN)

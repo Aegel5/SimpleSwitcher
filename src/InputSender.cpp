@@ -8,6 +8,7 @@ void InputSender::Send()
 	LOG_ANY(L"start our inject");
 
 	for (auto& i : list) {
+		i.ki.dwExtraInfo = c_MyInjectedId;
 		LOG_ANY(L"SEND {} {}", TestFlag(i.ki.dwFlags, KEYEVENTF_KEYUP) ? L"UP" : L"DW", CHotKey::ToString(i.ki.wVk));
 	}
 
