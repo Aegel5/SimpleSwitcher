@@ -2,7 +2,7 @@
 
 void MainWindow::Draw_run_tab() {
 
-	with_TabItem(LOC("Run")) {
+	with_TabItem(LOC("Commands")) {
 
 		if (run_programs_hks.empty()) {
 			std::vector<CHotKey> def_list = {};
