@@ -227,28 +227,22 @@ namespace StrUtils
 		}
 	}
 
-	namespace details {
-		inline auto converter() {
-			using convert_typeX = std::codecvt_utf8<wchar_t>;
-			return std::wstring_convert<convert_typeX, wchar_t> {};
-		}
+	// Из string в wstring (UTF-8 -> UTF-16)
+	inline std::wstring Convert(std::string_view str) {
+		if (str.empty()) return {};
+		int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), NULL, 0);
+		std::wstring wstrTo(size_needed, 0);
+		MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), &wstrTo[0], size_needed);
+		return wstrTo;
 	}
 
-	inline std::string Convert(TStr wstr) {
-		using convert_typeX = std::codecvt_utf8<wchar_t>;
-		std::wstring_convert<convert_typeX, wchar_t> converterX;
-		return converterX.to_bytes(wstr);
-	}
-	inline std::wstring Convert(UStr str) { return details::converter().from_bytes(str); }
-
-	inline std::string Convert(const std::wstring& wstr) {
-		return Convert(wstr.c_str());
-	}
-
-	inline std::wstring Convert(const std::string& str) {
-		using convert_typeX = std::codecvt_utf8<wchar_t>;
-		std::wstring_convert<convert_typeX, wchar_t> converterX;
-		return converterX.from_bytes(str);
+	// Из wstring в string (UTF-16 -> UTF-8)
+	inline std::string Convert(std::wstring_view wstr) {
+		if (wstr.empty()) return {};
+		int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), NULL, 0, NULL, NULL);
+		std::string strTo(size_needed, 0);
+		WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
+		return strTo;
 	}
 
 	inline bool IsSpace(wchar_t c) {
