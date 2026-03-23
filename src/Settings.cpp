@@ -84,9 +84,11 @@ namespace nlohmann {
 		RunProgramInfo,
 		path,
 		args,
+		snippet,
 		elevated,
 		hotkey,
-		delay
+		delay,
+		enabled
 	)
 
 

@@ -11,6 +11,8 @@ class TrayIcon {
 	HICON app_icon = 0;
 	Vec_i2 GetSize() {
 
+		
+
 		UINT dpi = GetDpiForSystem();
 
 		// Получаем ширину и высоту малой иконки (для трея) с учетом DPI

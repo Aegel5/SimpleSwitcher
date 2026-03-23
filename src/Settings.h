@@ -202,6 +202,7 @@ inline auto conf_gui() { return cfg_details::conf_gui();}
 inline void SaveApplyGuiConfig() {
 	cfg_details::ApplyGuiConfig();
 	cfg_details::SaveGuiConfig();
+	
 }
 
 inline void ApplyLocalization() {

@@ -89,6 +89,15 @@ public:
 		AddDownVk(key);
 		AddUpVk(key);
 	}
+	void AddUnicodePress(wchar_t symbol) {
+		INPUT cur = {};
+		cur.type = INPUT_KEYBOARD;
+		cur.ki.wScan = symbol;
+		cur.ki.dwFlags = KEYEVENTF_UNICODE;
+		list.push_back(cur);
+		cur.ki.dwFlags |= KEYEVENTF_KEYUP;
+		list.push_back(cur);
+	}
 	static void SendHotKey(const CHotKey& key) {
 		InputSender is;
 		is.AddPressVk(key);

@@ -17,7 +17,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "src/libtools")
 target_precompile_headers(${CMAKE_PROJECT_NAME} PRIVATE src/precompl.h)
 #target_sources(${CMAKE_PROJECT_NAME} PRIVATE FILE_SET CXX_MODULE_HEADER_UNITS  FILES src/precompl.h)
 block()
-	file(GLOB_RECURSE src CONFIGURE_DEPENDS src/*.cpp ) # CONFIGURE_DEPENDS - искать новые файлы при билде.
+	file(GLOB_RECURSE src CONFIGURE_DEPENDS "src/*.cpp" "src/*.h" ) # CONFIGURE_DEPENDS - искать новые файлы при билде.
 	list(FILTER src EXCLUDE REGEX ".*/old/.*")
 	target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${src})
 	#file(GLOB_RECURSE src_modules CONFIGURE_DEPENDS  "src/*.cppm" "src/*.ixx" )

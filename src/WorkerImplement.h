@@ -184,8 +184,22 @@ public:
 		}
 		const auto& it = cfg->run_programs[i];
 
+		if (!it.enabled) {
+			RETURN_SUCCESS;
+		}
+
 		if (it.delay > 0 && !after_wait) {
 			Worker()->PostMsg([hk](auto p) {p->RunProcess(hk,true); }, it.delay);
+			RETURN_SUCCESS;
+		}
+
+		if (it.snippet.size() != 0) {
+			auto str = StrUtils::Convert(it.snippet);
+			InputSender is;
+			for (auto c : str) {
+				is.AddUnicodePress(c);
+			}
+			is.Send();
 			RETURN_SUCCESS;
 		}
 

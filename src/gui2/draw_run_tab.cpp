@@ -11,51 +11,86 @@ void MainWindow::Draw_run_tab() {
 			}
 		}
 
+		float _label_width = ImGui::CalcTextSize("snippet").x + ImGui::GetStyle().ItemSpacing.x;
+
 		int to_del = -1;
 		bool changes = false;
 		for (int i = -1; auto& it : conf_gui()->run_programs) {
 			i++;
 			with_ID(i + 12344) {
 				ImGui::BeginChild("", {}, ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_Borders | ImGuiChildFlags_AutoResizeY);
+				float label_width = _label_width + ImGui::GetCursorPosX();
 				if (ImGui::BeginPopupContextWindow("ctx_menu")) {
 					if (ImGui::Selectable(LOC("Delete"))) {
 						to_del = i;
 					}
 					ImGui::EndPopup();
 				}
+
+				// enabled
+				{
+					//ImGui::AlignTextToFramePadding();
+					//ImGui::Text("enabled");
+					//ImGui::SameLine(label_width);
+					//ImGui::SetNextItemWidth(-1.0f);
+					if (ImGui::Checkbox("enabled", &it.enabled)) {
+						changes = true;
+					}
+				}
+
+				// run now
+				{
+					ImGui::SameLine();
+					if (ImGui::Button(LOC("Run now"))) {
+						auto hk = (HotKeyType)(hk_RunProgram_flag | i);
+						Worker()->PostMsg([hk](auto p) {p->RunProcess(hk); });
+					}
+				}
+
+
 				ImGui::AlignTextToFramePadding();
-				ImGui::Text("path ");
-				ImGui::SameLine();
+				ImGui::Text("path");
+				ImGui::SameLine(label_width);
 				ImGui::SetNextItemWidth(-1.0f);
 				if (ImGui::InputText("##path", &it.path)) {
 					changes = true;
 				}
 
 				ImGui::AlignTextToFramePadding();
-				ImGui::Text("args ");
-				ImGui::SameLine();
+				ImGui::Text("args   ");
+				ImGui::SameLine(label_width);
 				ImGui::SetNextItemWidth(-1.0f);
 				if (ImGui::InputText("##args", &it.args)) {
 					changes = true;
 				}
 
 				ImGui::AlignTextToFramePadding();
-				ImGui::Text("delay");
-				ImGui::SameLine();
+				ImGui::Text("snippet");
+				ImGui::SameLine(label_width);
 				ImGui::SetNextItemWidth(-1.0f);
-				if (ImGui::InputInt("##delay", &it.delay)) {
-					it.delay = std::clamp(it.delay, 0, 10000);
+				if (ImGui::InputText("##snippet", &it.snippet)) {
 					changes = true;
 				}
 
-				ImGui::AlignTextToFramePadding();
-				ImGui::Text("hkey ");
-				ImGui::SameLine();
-				run_programs_hks[i].Draw();
-				ImGui::SameLine();
-				if (ImGui::Button(LOC("Run now"))) {
-					auto hk = (HotKeyType)(hk_RunProgram_flag | i);
-					Worker()->PostMsg([hk](auto p) {p->RunProcess(hk); });
+				// hkey
+				{
+					ImGui::AlignTextToFramePadding();
+					ImGui::Text("hkey ");
+					ImGui::SameLine(label_width);
+					run_programs_hks[i].Draw();
+				}
+
+				// delay
+				{
+					ImGui::SameLine();
+					ImGui::AlignTextToFramePadding();
+					ImGui::Text("delay");
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(-1.0f);
+					if (ImGui::InputInt("##delay", &it.delay)) {
+						it.delay = std::clamp(it.delay, 0, 10000);
+						changes = true;
+					}
 				}
 
 				ImGui::EndChild();
