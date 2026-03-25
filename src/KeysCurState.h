@@ -6,12 +6,27 @@ class CurStateWrapper {
 	std::map<TKeyCode, TimePoint> all_keys;
 	CHotKey one_value; 
 	//CHotKey multi_value; 
-	TKeyCode vk_last_down = 0;
-	TimePoint last_down_time;
 	TimePoint hotkey_start_time;
-	bool is_hold = false;
-	int cnt_quick_press = 0;
-	TKeyCode possible_vk_quick = 0;
+
+	// double
+	int double_cnt {};
+	TKeyCode last_down_vk {};
+	TimePoint last_down_time{};
+
+	// hold
+	TKeyCode last_down_vk_clear_up{};
+	bool is_hold{};
+
+	//struct Event {
+	//	TKeyCode vk{};
+	//	bool isDown{};
+	//	TimePoint time{};
+	//};
+	//Event events[2];
+
+
+
+
 public:
 
 	//void Clear() {
@@ -23,7 +38,7 @@ public:
 	//	possible_vk_quick = 0;
 	//}
 
-	auto AllKeys() {
+	auto AllKeys()const {
 		vector<TKeyCode> keys;
 		for (const auto& k : all_keys) {
 			keys.push_back(k.first);
@@ -31,16 +46,20 @@ public:
 		return keys;
 	}
 
-	const TimePoint& StartOfLastHotKey() {
+	const TimePoint& StartOfLastHotKey()const {
 		return hotkey_start_time;
 	}
 
-	bool IsDouble() const { return cnt_quick_press >= 1; }
-	bool IsHold() {	return is_hold;	}
-	const CHotKey& GetOneValueHotKey() { return one_value; }
-	int Size() { return all_keys.size(); }
-	bool IsDownNow(TKeyCode vk) { return all_keys.contains(vk); }
-	std::generator<TKeyCode> EnumVk() {
+	bool IsHold() const { return is_hold; }
+	bool IsDouble() const { return last_down_vk_clear_up != 0 && double_cnt != 0; } // проверяем четность, чтобы 3-е нажатие не дало hit, а 4-е дало.
+	int DoubleCnt() const {
+		return double_cnt;
+	}
+
+	const CHotKey& GetOneValueHotKey()const { return one_value; }
+	int Size() const { return all_keys.size(); }
+	bool IsDownNow(TKeyCode vk) const { return all_keys.contains(vk); }
+	std::generator<TKeyCode> EnumVk() const {
 		for (const auto& it : all_keys) {
 			co_yield it.first;
 		}
@@ -48,7 +67,7 @@ public:
 
 
 
-	void DebugPrint() {
+	void DebugPrint() const {
 		if (GetLogLevel() < LOG_LEVEL_2) 
 			return;
 		wstring str;
@@ -59,58 +78,33 @@ public:
 		LOG_ANY(L"all={}, one_value={}", str, one_value.ToString());
 	}
 
-	void Update(TKeyCode vkCode, KeyState curKeyState) {
-
-		CheckOk();
-
-		if (all_keys.empty() && curKeyState == KeyState::KEY_STATE_DOWN) {
-			hotkey_start_time.SetNow();
-		}
+	void Update(TKeyCode vkCode, bool isDown) {
 
 		is_hold = false;
-		if (curKeyState == KeyState::KEY_STATE_UP) {
 
-			// QUICK PRESS
-			if (vkCode == vk_last_down) {
-				possible_vk_quick = vkCode;
+		if (isDown) {
+			if (all_keys.empty()) {
+				hotkey_start_time.SetToNow(); // todo: добавить очистку.
+			}
+			if (vkCode == last_down_vk_clear_up) {
+				is_hold = true;
+			}
+			if (!is_hold && vkCode == last_down_vk && last_down_time.DeltToNowMs() <= conf_get_unsafe()->quick_press_ms) {
+				double_cnt++;
 			}
 			else {
-				possible_vk_quick = 0;
-				cnt_quick_press = 0;
+				double_cnt = 0;
 			}
-
-			vk_last_down = 0;
+			last_down_vk_clear_up = last_down_vk = vkCode;
+			last_down_time.SetToNow();
+		}else{
+			last_down_vk_clear_up = 0; // любой up сбрасывает hold.
 		}
-		else {
-
-			// QUICK PRESS
-			{
-				bool ok_quick = false;
-				if (possible_vk_quick == vkCode) {
-					// снова нажали ту же клавишу, теперь проверим время.
-					if (last_down_time.DeltToNowMs() <= conf_get_unsafe()->quick_press_ms) {
-						// засчитываем за срабатывание
-						ok_quick = true;
-					}
-				}
-				if (ok_quick) 
-					cnt_quick_press++;
-				else 
-					cnt_quick_press = 0; // что-то пошло не так.
-				possible_vk_quick = 0; // очищаем в любом случае.
-			}
-
-			// HOLD
-			is_hold = vk_last_down == vkCode && vkCode != 0;
-			vk_last_down = vkCode;
-			last_down_time.SetNow();
-		}
-
 
 		// update stores
-		if (curKeyState == KEY_STATE_DOWN) {
+		if (isDown) {
 			one_value.Add(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
-			all_keys[vkCode].SetNow();
+			all_keys[vkCode].SetToNow();
 		}
 		else {
 			one_value.RemoveFirst(vkCode);
@@ -118,6 +112,9 @@ public:
 				LOG_WARN(L"Key was already upped {}", CHotKey::ToString(vkCode));
 			}
 		}
+
+		//events[0] = events[1];
+		//events[1] = { vkCode, isDown, TimePoint::Now() };
 	}
 private:
 

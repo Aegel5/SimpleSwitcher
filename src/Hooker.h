@@ -65,7 +65,7 @@ private: inline static HookerKeyboard hookerKeyb;
 				// nothing
 			}
 			else {
-				hookerKeyb.last_mouse_click_time.SetNow();
+				hookerKeyb.last_mouse_click_time.SetToNow();
 				Worker()->PostMsg(Message_ClearWorlds{});
 			}
 		}

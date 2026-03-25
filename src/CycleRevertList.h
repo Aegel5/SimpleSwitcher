@@ -218,7 +218,7 @@ public: void SetSeparateLast() {
 public: void AddKeyToList(const TKeyBaseInfo& key) {
 	ClearGenerated();
 
-	lastadd.SetNow();
+	lastadd.SetToNow();
 
 	while (m_symbolList.size() >= c_nMaxLettersSave) {
 		m_symbolList.pop_front();

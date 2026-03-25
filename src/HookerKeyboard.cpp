@@ -30,7 +30,8 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		bool is_pressed = !TestFlag(k->flags, LLKHF_UP);
 		auto scan_code = k->scanCode;
 		int iscaps = -1;
-		if (curKeyState == KEY_STATE_DOWN) iscaps = Utils::IsCapslockEnabled() ? 1 : 0;
+		bool isDown = curKeyState == KEY_STATE_DOWN;
+		if (isDown) iscaps = Utils::IsCapslockEnabled() ? 1 : 0;
 
 		LOG_ANY(
 			L"KEY_MSG: {}({:x}) {},scan=0x{:x},inject={},low_inject={},altdown={},syskey={},extended={},is_pressed={},flags=0x{:b},caps={}",
@@ -76,12 +77,10 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		std::swap(possible_up, possible_hk_up); // сразу очищаем
 
 		if (curKeys.Size() == 0) { disable_up = 0; } // все отпущено, ничего запрещать не надо.
-		curKeys.Update(vkCode, curKeyState); // сразу обновляем
+		curKeys.Update(vkCode, isDown); // сразу обновляем
 		const auto& curk = curKeys.GetOneValueHotKey();
 
 		auto request_disable = [&]() {
-
-			auto isDown = curKeyState == KEY_STATE_DOWN;
 
 			if (isDown) {
 				if (curk.ValueKey() != vkCode) {
@@ -146,7 +145,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 					if (prior > need_disable) {
 						need_disable = prior;
 
-						if (!curKeys.IsHold()) { 
+						if (!curKeys.IsHold()) {
 							msg_hotkey.hotkey = key;
 							msg_hotkey.hk = hk;
 						}
@@ -208,17 +207,23 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			}
 			else {
 
-				int delay = 0;
-				if (!msg_hotkey.hotkey.IsDouble() && double_exists) {
-					delay = cfg->quick_press_ms; // придется подождать.
-					msg_hotkey.delayed_from = GetTickCount64();
+				if (msg_hotkey.hotkey.IsDouble() && curKeys.DoubleCnt() > 1) {
+					LOG_ANY(L"skip double cnt {}", curKeys.DoubleCnt());
 				}
+				else {
 
-				LOG_ANY(L"post {} {}. has_double {}", msg_hotkey.hotkey.ToString(), (int)msg_hotkey.hk, double_exists);
-				msg_hotkey.cur_keys_down = curKeys.AllKeys(); // todo curKey_no_disabled?
-				if(need_disable_event)
-					Utils::RemoveFirst(msg_hotkey.cur_keys_down, vkCode); // удалим то что запретили, так как поднимать их не нужно.
-				Worker()->PostMsg(std::move(msg_hotkey), delay);
+					int delay = 0;
+					if (!msg_hotkey.hotkey.IsDouble() && double_exists) {
+						delay = cfg->quick_press_ms; // придется подождать.
+						msg_hotkey.delayed_from = GetTickCount64();
+					}
+
+					LOG_ANY(L"post {} {}. has_double {}", msg_hotkey.hotkey.ToString(), (int)msg_hotkey.hk, double_exists);
+					msg_hotkey.cur_keys_down = curKeys.AllKeys(); // todo curKey_no_disabled?
+					if (need_disable_event)
+						Utils::RemoveFirst(msg_hotkey.cur_keys_down, vkCode); // удалим то что запретили, так как поднимать их не нужно.
+					Worker()->PostMsg(std::move(msg_hotkey), delay);
+				}
 			}
 		}
 
