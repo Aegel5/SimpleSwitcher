@@ -117,7 +117,7 @@ namespace StrUtils
 		//}
 
 		try {
-			res = (DECLTYPE_DECAY(res))std::stoull(val, 0, base);
+			res = (TYPE_OF(res))std::stoull(val, 0, base);
 			return true;
 		}
 		catch (std::exception) {
