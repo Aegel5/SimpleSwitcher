@@ -3,7 +3,13 @@
 // Класс для отслеживания текущего состояния нажатых клавиш
 
 class CurStateWrapper {
-	std::map<TKeyCode, TimePoint> all_keys;
+
+	struct KeyInfo {
+		TimePoint time{};
+		bool hasPhisic{};
+		bool hasEmulated{}; // храним чтобы понимать, можно ли проверять через GetKeyAsync()
+	};
+	std::map<TKeyCode, KeyInfo> all_keys;
 	CHotKey one_value; 
 	//CHotKey multi_value; 
 	TimePoint hotkey_start_time;
@@ -59,11 +65,13 @@ public:
 	const CHotKey& GetOneValueHotKey()const { return one_value; }
 	int Size() const { return all_keys.size(); }
 	bool IsDownNow(TKeyCode vk) const { return all_keys.contains(vk); }
-	std::generator<TKeyCode> EnumVk() const {
-		for (const auto& it : all_keys) {
-			co_yield it.first;
-		}
-	}
+
+
+	//std::generator<TKeyCode> EnumVk() const {
+	//	for (const auto& it : all_keys) {
+	//		co_yield it.first;
+	//	}
+	//}
 
 
 
@@ -71,14 +79,14 @@ public:
 		if (GetLogLevel() < LOG_LEVEL_2) 
 			return;
 		wstring str;
-		for (const auto& key : EnumVk()) {
-			str += CHotKey::ToString(key);
+		for (const auto& key : all_keys) {
+			str += CHotKey::ToString(key.first);
 			str += L" ";
 		}
 		LOG_ANY(L"all={}, one_value={}", str, one_value.ToString());
 	}
 
-	void Update(TKeyCode vkCode, bool isDown) {
+	void Update(TKeyCode vkCode, bool isDown, bool isInjected) {
 
 		is_hold = false;
 
@@ -104,7 +112,10 @@ public:
 		// update stores
 		if (isDown) {
 			one_value.Add(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
-			all_keys[vkCode].SetToNow();
+			auto [it, inserted] = all_keys.try_emplace(vkCode, KeyInfo{});
+			if (!isInjected) it->second.hasPhisic = true;
+			else it->second.hasEmulated = true;
+			it->second.time = TimePoint::Now();
 		}
 		else {
 			one_value.RemoveFirst(vkCode);
@@ -126,24 +137,17 @@ private:
 
 		// Это убираем, так как не понятно, нужно ли, а проблемы может доставлять...
 
-		/*
+		std::erase_if(all_keys, [this](const auto& item) {
+			auto const& [code, info] = item; // деструктуризация (C++17)
 
-		std::vector<TKeyCode> to_del;
-		for (const auto& it : all_keys) {
-			if (it.second.DeltToNow() > 10s) {
-
-				// Нужен thread queue??
-				if (!(GetAsyncKeyState(it.first) & 0x8000)) { // TODO: не понятно как это работает в remote сценарии....
-					to_del.push_back(it.first);
-				}
+			// Условие удаления: например, если кнопка эмулирована
+			if (info.hasEmulated == false && info.time.DeltToNow()>=10s && !(GetAsyncKeyState(code) & 0x8000)) {
+				LOG_WARN(L"delete key because it not down now {}", CHotKey::ToString(code));
+				one_value.RemoveFirst(code);
+				return true;
 			}
-		}
-		for (auto it : to_del) {
-			LOG_WARN(L"delete key because it not down now {}", CHotKey::ToString(it));
-			all_keys.erase(it);
-			one_value.RemoveFirst(it);
-		}
 
-		*/
+			return false;
+			});
 	}
 };

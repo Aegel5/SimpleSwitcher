@@ -77,7 +77,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		std::swap(possible_up, possible_hk_up); // сразу очищаем
 
 		if (curKeys.Size() == 0) { disable_up = 0; } // все отпущено, ничего запрещать не надо.
-		curKeys.Update(vkCode, isDown); // сразу обновляем
+		curKeys.Update(vkCode, isDown, isInjected); // сразу обновляем
 		const auto& curk = curKeys.GetOneValueHotKey();
 
 		auto request_disable = [&]() {
