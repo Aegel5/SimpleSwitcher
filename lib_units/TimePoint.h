@@ -15,21 +15,12 @@ namespace details {
 	public:
 		bool IsEmpty() { return time == Time{}; }
 		auto operator<=>(const TimePoint& other) const = default;
-		static TimePoint Now() {
-			TimePoint res;	res.time = now();	return res;
-		}
-		static TimePoint MaxValue() {
-			TimePoint res;	res.time = safe_max; return res;
-		}
-		void SetToNow() {
-			*this = Now();
-		}
-		auto DeltToNow() const {
-			return abs(now() - time);
-		}
-		int DeltToNowMs() const {
-			return (int)duration_cast<milliseconds>(DeltToNow()).count();
-		}
+		static TimePoint Now() { TimePoint res;	res.time = now(); return res; }
+		static TimePoint MaxValue() { TimePoint res;	res.time = safe_max; return res; }
+		void SetToNow() { time = now(); }
+		auto DeltTo(TimePoint point) const { return abs(time - point.time); }
+		auto DeltToNow() const { return DeltTo(Now()); }
+		int DeltToNowMs() const { return (int)duration_cast<milliseconds>(DeltToNow()).count(); }
 	private:
 		static Time now() { return steady_clock::now() + 10000h; }
 		Time time{};

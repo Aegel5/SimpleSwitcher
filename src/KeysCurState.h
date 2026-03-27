@@ -9,7 +9,7 @@ class CurStateWrapper {
 		bool hasPhisic{};
 		bool hasEmulated{}; // храним чтобы понимать, можно ли проверять через GetKeyAsync()
 	};
-	std::map<TKeyCode, KeyInfo> all_keys;
+	UnorderedSmallMap<TKeyCode, KeyInfo> all_keys;
 	CHotKey one_value; 
 	//CHotKey multi_value; 
 	TimePoint hotkey_start_time;
@@ -44,12 +44,8 @@ public:
 	//	possible_vk_quick = 0;
 	//}
 
-	auto AllKeys()const {
-		vector<TKeyCode> keys;
-		for (const auto& k : all_keys) {
-			keys.push_back(k.first);
-		}
-		return keys;
+	auto AllKeys() const {
+		return all_keys | std::views::keys | std::ranges::to<std::vector>();
 	}
 
 	const TimePoint& StartOfLastHotKey()const {
@@ -65,13 +61,6 @@ public:
 	const CHotKey& GetOneValueHotKey()const { return one_value; }
 	int Size() const { return all_keys.size(); }
 	bool IsDownNow(TKeyCode vk) const { return all_keys.contains(vk); }
-
-
-	//std::generator<TKeyCode> EnumVk() const {
-	//	for (const auto& it : all_keys) {
-	//		co_yield it.first;
-	//	}
-	//}
 
 
 
@@ -91,6 +80,7 @@ public:
 		is_hold = false;
 
 		if (isDown) {
+			CheckOk();
 			if (all_keys.empty()) {
 				hotkey_start_time.SetToNow(); // todo: добавить очистку.
 			}
@@ -112,7 +102,7 @@ public:
 		// update stores
 		if (isDown) {
 			one_value.Add(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
-			auto [it, inserted] = all_keys.try_emplace(vkCode, KeyInfo{});
+			auto [it, inserted] = all_keys.try_emplace(vkCode);
 			if (!isInjected) it->second.hasPhisic = true;
 			else it->second.hasEmulated = true;
 			it->second.time = TimePoint::Now();
@@ -135,13 +125,12 @@ private:
 		// https://github.com/Aegel5/SimpleSwitcher/issues/91
 		// Возможно придется вернуть.
 
-		// Это убираем, так как не понятно, нужно ли, а проблемы может доставлять...
-
-		std::erase_if(all_keys, [this](const auto& item) {
+		// Различные непонятные состояния. например потери сообщений в очереди.
+		all_keys.erase_if([this, now = TimePoint::Now()](const auto& item) {
 			auto const& [code, info] = item; // деструктуризация (C++17)
 
 			// Условие удаления: например, если кнопка эмулирована
-			if (info.hasEmulated == false && info.time.DeltToNow()>=10s && !(GetAsyncKeyState(code) & 0x8000)) {
+			if (info.hasEmulated == false && info.time.DeltTo(now)>=10s && !(GetAsyncKeyState(code) & 0x8000)) {
 				LOG_WARN(L"delete key because it not down now {}", CHotKey::ToString(code));
 				one_value.RemoveFirst(code);
 				return true;

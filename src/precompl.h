@@ -53,6 +53,7 @@
 
 // unit-utils
 #include "TimePoint.h"
+#include "UnorderedSmallMap.h"
 
 // утилиты
 #include "core/inc_all.h"

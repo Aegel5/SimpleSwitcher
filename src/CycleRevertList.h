@@ -128,13 +128,13 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 
 	}
 
-	std::reverse(words.begin(), words.end());
+
 
 	//if (words.size() > c_maxWordRevert) {
+	// 	std::reverse(words.begin(), words.end());
 	//	words.resize(c_maxWordRevert);
+	// 	std::reverse(words.begin(), words.end());
 	//}
-
-	std::reverse(words.begin(), words.end());
 
 	return words;
 
