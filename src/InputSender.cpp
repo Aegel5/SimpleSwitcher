@@ -9,7 +9,7 @@ void InputSender::Send()
 
 	for (auto& i : list) {
 		i.ki.dwExtraInfo = c_MyInjectedId;
-		LOG_ANY(L"SEND {} {}", TestFlag(i.ki.dwFlags, KEYEVENTF_KEYUP) ? L"UP" : L"DW", CHotKey::ToString(i.ki.wVk));
+		LOG_ANY("SEND {} {}", TestFlag(i.ki.dwFlags, KEYEVENTF_KEYUP) ? "UP" : "DW", CHotKey::ToString(i.ki.wVk));
 	}
 
 	IFW_LOG(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) == list.size());

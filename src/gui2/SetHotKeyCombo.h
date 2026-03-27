@@ -46,8 +46,8 @@ class SetHotKeyCombo {
 		}
 	}
 	void build_strings() {
-		key_str = StrUtils::Convert(cur_key().ToString());
-		key_str_all = StrUtils::Convert(hotkeys->ToString());
+		key_str = cur_key().ToString();
+		key_str_all = hotkeys->ToString();
 	}
 	void SetKey(CHotKey k) {
 		if (cur_key().Compare(k, CHotKey::COMPARE_STRICK_MODIFIER)) return;
@@ -65,7 +65,7 @@ class SetHotKeyCombo {
 public:
 	SetHotKeyCombo(std::string title, auto&& def, CHotKeyList* hotkeys) : title(std::move(title)), hotkeys(hotkeys) {
 		for (const CHotKey& it : def) {
-			defaults.push_back(StrUtils::Convert(it.ToString()));
+			defaults.push_back(it.ToString());
 		}
 		Reinit();
 	}
@@ -109,7 +109,7 @@ public:
 				if (is_current)
 					found = true;
 				if (ImGui::Selectable(it.c_str(), is_current)) {
-					SetKey(CHotKey::FromString(StrUtils::Convert(it)));
+					SetKey(CHotKey::FromString(it));
 				}
 
 			}

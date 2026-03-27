@@ -6,7 +6,7 @@ void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 
 	const auto& cur_hotkey = keyData.cur_hotKey;
 
-	LOG_ANY(L"ProcessKeyMsg {} curState={}", CHotKey::ToString(vkCode), cur_hotkey.ToString());
+	LOG_ANY("ProcessKeyMsg {} curState={}", CHotKey::ToString(vkCode), cur_hotkey.ToString());
 
 	m_is_last_caps = keyData.is_caps; // сохраним последнее известное значение. Нажатие caps по идее должно нам привести сюда.
 
@@ -313,7 +313,7 @@ void WorkerImplement::SwitchLangByEmulate(HKL lay) {
 		return;
 	}
 
-	LOG_ANY(L"Emulate with {}", altshift.ToString());
+	LOG_ANY("Emulate with {}", altshift.ToString());
 
 	InputSender::SendHotKey(altshift);
 

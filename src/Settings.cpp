@@ -36,7 +36,7 @@ namespace nlohmann {
 
 	void from_json(const json& j, CHotKey& p) {
 		if (j.is_string()) {
-			p = CHotKey::FromString(StrUtils::Convert(j.get_ref<const std::string&>()));
+			p = CHotKey::FromString(j.get_ref<const std::string&>());
 		}
 	}
 	void to_json(json& j, const CHotKeyList& p) {

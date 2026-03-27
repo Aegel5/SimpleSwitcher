@@ -67,12 +67,12 @@ public:
 	void DebugPrint() const {
 		if (GetLogLevel() < LOG_LEVEL_2) 
 			return;
-		wstring str;
+		string str;
 		for (const auto& key : all_keys) {
 			str += CHotKey::ToString(key.first);
-			str += L" ";
+			str += " ";
 		}
-		LOG_ANY(L"all={}, one_value={}", str, one_value.ToString());
+		LOG_ANY("all={}, one_value={}", str, one_value.ToString());
 	}
 
 	void Update(TKeyCode vkCode, bool isDown, bool isInjected) {
@@ -110,7 +110,7 @@ public:
 		else {
 			one_value.Remove(vkCode);
 			if (all_keys.erase(vkCode) == 0) {
-				LOG_WARN(L"Key was already upped {}", CHotKey::ToString(vkCode));
+				LOG_WARN("Key was already upped {}", CHotKey::ToString(vkCode));
 			}
 		}
 
@@ -131,7 +131,7 @@ private:
 
 			// Условие удаления: например, если кнопка эмулирована
 			if (info.hasEmulated == false && info.time.DeltTo(now)>=10s && !(GetAsyncKeyState(code) & 0x8000)) {
-				LOG_WARN(L"delete key because it not down now {}", CHotKey::ToString(code));
+				LOG_WARN("delete key because it not down now {}", CHotKey::ToString(code));
 				one_value.Remove(code);
 				return true;
 			}

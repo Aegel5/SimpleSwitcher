@@ -34,10 +34,10 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		if (isDown) iscaps = Utils::IsCapslockEnabled() ? 1 : 0;
 
 		LOG_ANY(
-			L"KEY_MSG: {}({:x}) {},scan=0x{:x},inject={},low_inject={},altdown={},syskey={},extended={},is_pressed={},flags=0x{:b},caps={}",
+			"KEY_MSG: {}({:x}) {},scan=0x{:x},inject={},low_inject={},altdown={},syskey={},extended={},is_pressed={},flags=0x{:b},caps={}",
 			CHotKey::ToString(vkCode),
 			vkCode,
-			(curKeyState == KEY_STATE_UP ? L"UP" : L"DOWN"),
+			(curKeyState == KEY_STATE_UP ? "UP" : "DOWN"),
 			scan_code,
 			isInjected,
 			is_low_inject,
@@ -105,7 +105,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			}
 
 			need_disable_event = true;
-			LOG_ANY(L"Key {} was disabled({})", CHotKey::ToString(vkCode), isDown ? L"down": L"up");
+			LOG_ANY("Key {} was disabled({})", CHotKey::ToString(vkCode), isDown ? "down": "up");
 		};
 
 		curKeys.DebugPrint();
@@ -203,12 +203,12 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 			if (msg_hotkey.hotkey.GetKeyup() && last_mouse_click_time > curKeys.StartOfLastHotKey()) {
 				// Possible Ctrl+Click in IDE
-				LOG_ANY(L"HotKey {} was canceled by mouse click", msg_hotkey.hotkey.ToString());
+				LOG_ANY("HotKey {} was canceled by mouse click", msg_hotkey.hotkey.ToString());
 			}
 			else {
 
 				if (msg_hotkey.hotkey.IsDouble() && curKeys.DoubleCnt() > 1) {
-					LOG_ANY(L"skip double cnt {}", curKeys.DoubleCnt());
+					LOG_ANY("skip double cnt {}", curKeys.DoubleCnt());
 				}
 				else {
 
@@ -218,7 +218,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 						msg_hotkey.delayed_from = GetTickCount64();
 					}
 
-					LOG_ANY(L"post {} {}. has_double {}", msg_hotkey.hotkey.ToString(), (int)msg_hotkey.hk, double_exists);
+					LOG_ANY("post {} {}. has_double {}", msg_hotkey.hotkey.ToString(), (int)msg_hotkey.hk, double_exists);
 					msg_hotkey.cur_keys_down = curKeys.AllKeys(); // todo curKey_no_disabled?
 					if (need_disable_event)
 						Utils::RemoveFirst(msg_hotkey.cur_keys_down, vkCode); // удалим то что запретили, так как поднимать их не нужно.

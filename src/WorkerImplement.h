@@ -230,7 +230,7 @@ public:
 		const auto& key = keyData.hotkey;
 
 		if (keyData.delayed_from != 0 && keyData.delayed_from <= m_lastHotKeyTime) {
-			LOG_ANY(L"skip hotkey {} possible was double press", key.ToString());
+			LOG_ANY("skip hotkey {} possible was double press", key.ToString());
 			return;
 		}
 		m_lastHotKeyTime = GetTickCount64();

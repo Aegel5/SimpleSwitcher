@@ -48,12 +48,12 @@ struct CHotKeyList {
         return keys[0];
     }
 
-    std::wstring ToString() const {
-        std::wstring res;
+    std::string ToString() const {
+        std::string res;
         for (int i = -1; const auto & it : keys) {
             i++;
             if (i != 0) {
-                res += L", ";
+                res += ", ";
             }
             res += it.ToString();
         }

@@ -95,52 +95,52 @@ public:
 	//auto* ModsEnd(this auto&& self) { return self.size <= 1 ? self.ModsBegin() : self.end(); }
 	int Size() const { return size; }
 
-	std::wstring ToString() const {
-		std::wstring s;
+	std::string ToString() const {
+		std::string s;
 		if (size == 0)
 			return s;
 
 		for (int i = 0; i < size; ++i) {
 			AddToString(keys[i], s);
 			if (i != size-1)
-				s += L" + ";
+				s += " + ";
 		}
 		if (m_keyup) {
-			s += L" #up";
+			s += " #up";
 		}
 		if (m_double_press) {
-			s += L" #double";
+			s += " #double";
 		}
 		return s;
 	}
-	static std::wstring ToString(TKeyCode key) {
-		std::wstring s;
+	static std::string ToString(TKeyCode key) {
+		std::string s;
 		AddToString(key, s);
 		return s;
 	}
 	CHotKey& Clear() { SwZeroMemory(*this);	return *this; }
 	CHotKey& SetKeyup(bool val = true) { m_keyup = val;	return *this; }
 	bool GetKeyup() const { return m_keyup; }
-	static CHotKey FromString(SView s) {
+	static CHotKey FromString(UView s) {
 		CHotKey key;
 		if (s.empty())
 			return key;
-		auto sElems = StrUtils::Split(s, L'+');
+		auto sElems = StrUtils::Split(s, '+');
 		for (auto& sCur : sElems) {
-			StrUtils::ToLower(sCur);
-			if (StrUtils::replaceAll(sCur, L"#up", L"")) { key.SetKeyup(true); }
-			if (StrUtils::replaceAll(sCur, L"#double", L"")) { key.SetDouble(true); }
-			StrUtils::trim(sCur);
+			StrUtils::ToLowerUnsafe(sCur);
+			if (StrUtils::replaceAll(sCur, "#up", "")) { key.SetKeyup(true); }
+			if (StrUtils::replaceAll(sCur, "#double", "")) { key.SetDouble(true); }
+			StrUtils::Trim(sCur);
 			TKeyCode kCur = _internal::HotKeyNames::Global().GetCode(sCur.c_str());
 			if (kCur == 0) {
 				auto split = StrUtils::Split(sCur, L'_');
 				if (split.size() == 2) {
-					StrUtils::ToInt(split[1].c_str(), kCur, 16);
+					StrUtils::ToInt(split[1], kCur, 16);
 				}
 			}
 			if (kCur == 0) {
 				key.Clear();
-				LOG_WARN(L"Not found keycode for {}", sCur);
+				LOG_WARN("Not found keycode for {}", sCur);
 				return key;
 			}
 			key.Simple_Append(kCur);
@@ -174,13 +174,13 @@ public:
 	}
 private: 
 	TKeyCode key() const { return keys[size - 1]; }
-	static void AddToString(TKeyCode key, std::wstring& s) {
-		const wchar_t* sName = _internal::HotKeyNames::Global().GetName(key);
+	static void AddToString(TKeyCode key, std::string& s) {
+		const char* sName = _internal::HotKeyNames::Global().GetName(key);
 		if (sName) {
 			s += sName;
 		}
 		else {
-			s += std::format(L"VK_{:x}", key);
+			s += std::format("VK_{:x}", key);
 		}
 	}
 

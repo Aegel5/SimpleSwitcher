@@ -7,6 +7,24 @@
 
 namespace StrUtils
 {
+	inline void Trim(std::string& str) {
+		const char* whitespaces = " \t\n\r\f\v"; // Все стандартные пробельные символы
+
+		// 1. Убираем с конца
+		size_t last = str.find_last_not_of(whitespaces);
+		if (last == std::string::npos) {
+			str.clear(); // Строка состоит только из пробелов
+			return;
+		}
+		str.erase(last + 1);
+
+		// 2. Убираем с начала
+		size_t first = str.find_first_not_of(whitespaces);
+		if (first != 0) {
+			str.erase(0, first);
+		}
+	}
+
 	inline bool isLetter(wchar_t symb) {
 		return std::iswalpha(symb);
 	}
@@ -104,13 +122,15 @@ namespace StrUtils
 	}
 
 
-	inline bool ToInt(const std::string& str, auto& res) {
+	inline bool ToInt(const std::string& str, auto& res, int base_ = 0) {
 		const char* val = str.c_str();
 		int base = 10;
 		if (StrUtils::IsStartWith(val, "0x")) {
 			val += 2;
 			base = 16;
 		}
+
+		if (base_ != 0) base = base_;
 
 		//if (std::from_chars(str, str + std::wcslen(str), res, base)) {
 		//	return true;
@@ -139,6 +159,11 @@ namespace StrUtils
 		catch (std::exception) {
 		}
 		return false;
+	}
+
+	inline void ToLowerUnsafe(std::string& str) {
+		// Работает быстро, но только для английских букв A-Z
+		for (auto& c : str) c = (char)tolower((unsigned char)c);
 	}
 
 	inline void ToLower(std::wstring& str)	{
@@ -188,7 +213,7 @@ namespace StrUtils
 		return res;
 	}
 
-	inline bool replaceAll(std::wstring & s, SView search, SView replace) {
+	inline bool replaceAll(std::string & s, UView search, UView replace) {
 		bool found = false;
 		size_t pos = 0;
 		while ((pos = s.find(search, pos)) != std::string::npos) {
