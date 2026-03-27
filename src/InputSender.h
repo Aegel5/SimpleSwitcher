@@ -63,12 +63,12 @@ public:
 		is.Send();
 	}
 	void AddDownVk(const CHotKey& key) {
-		for (const auto& k : key | std::views::reverse) {
+		for (const auto& k : key ) {
 			Add(k, KEY_STATE_DOWN);
 		}
 	}
 	void AddUpVk(const CHotKey& key) {
-		for (const auto& k : key) {
+		for (const auto& k : key | std::views::reverse) {
 			Add(k, KEY_STATE_UP);
 		}
 	}

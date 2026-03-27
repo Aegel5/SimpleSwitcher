@@ -16,12 +16,8 @@ public:
 		ADDKEY_NO_STRICK_MODS_CHECK = 0b100,
 	};
 	CHotKey& Simple_Append(TKeyCode key) {
-		if (size < c_MAX)
-			++size;
-		for (int i = size - 1; i > 0; i--) {
-			keys[i] = keys[i - 1];
-		}
-		keys[0] = key;
+		if (size < c_MAX) ++size;
+		keys[size - 1] = key;
 		return *this;
 	}
 	CHotKey& Add(TKeyCode key, int flags = ADDKEY_NORMAL) {
@@ -49,27 +45,7 @@ public:
 		Simple_Append(key);
 		return *this;
 	}
-	int Remove_if(auto&& pred) {
-		if (size == 0) return 0;
 
-		// 1. Стандартный алгоритм: сдвигает "выживших" влево, сохраняя порядок.
-		// Возвращает итератор на начало "хвоста" из удаленных элементов.
-		TKeyCode* new_end = std::remove_if(keys, keys + size, pred);
-
-		// 2. Считаем, сколько удалили
-		int new_size = static_cast<int>(new_end - keys);
-		int removed_count = size - new_size;
-
-		// 3. Обнуляем "хвост" (опционально, но полезно для безопасности)
-		for (int i = new_size; i < size; i++) {
-			keys[i] = 0;
-		}
-
-		// 4. Обновляем логический размер
-		size = new_size;
-
-		return removed_count;
-	}
 	bool Remove(TKeyCode key, bool strick_modifier = true) {
 		return Remove_if([key, strick_modifier](auto k) { return CompareKeys(key, k, strick_modifier); }) != 0;
 	}
@@ -82,9 +58,11 @@ public:
 	}
 	//TKeyCode At(int i) { return keys[i]; }
 	bool HasMod(TKeyCode k, bool strick_modifier = false) const {
-		return std::find_if(ModsBegin(), ModsEnd(), [&](const auto& key) {
-			return CompareKeys(k, key, strick_modifier);
-		}) != ModsEnd();
+		for (int i = 0; i < size-1; i++) {
+			if (CompareKeys(k, keys[i], strick_modifier))
+				return true;
+		}
+		return false;
 	}
 	enum TCompareFlags {
 		COMPARE_NORMAL = 0,
@@ -104,17 +82,17 @@ public:
 
 		bool strick_modifier = TestFlag(flags, COMPARE_STRICK_MODIFIER);
 
-		if (!CompareKeys(ValueKey(), other.ValueKey(), strick_modifier))
+		if (!CompareKeys(key(), other.key(), strick_modifier))
 			return false;
-		return CompareIgnoreOrder(keys + 1, other.keys + 1, size - 1, strick_modifier); // todo: is_permutation with beginMods., tostring, fromstring, simple append.
+		return CompareIgnoreOrder(keys, other.keys, size - 1, strick_modifier);
 	}
 	bool IsEmpty() const { return Size() == 0; }
-	TKeyCode ValueKey() const { return keys[0]; }
+	TKeyCode ValueKey() const { return size == 0 ? 0 : key(); }
 
 	auto* begin(this auto&& self) { return self.keys; }
 	auto* end(this auto&& self) { return self.keys + self.size; }
-	auto* ModsBegin(this auto&& self) { return self.keys + 1; }
-	auto* ModsEnd(this auto&& self) { return self.size <= 1 ? self.ModsBegin() : self.end(); }
+	//auto* ModsBegin(this auto&& self) { return self.keys + 1; }
+	//auto* ModsEnd(this auto&& self) { return self.size <= 1 ? self.ModsBegin() : self.end(); }
 	int Size() const { return size; }
 
 	std::wstring ToString() const {
@@ -122,9 +100,9 @@ public:
 		if (size == 0)
 			return s;
 
-		for (int i = size - 1; i >= 0; --i) {
+		for (int i = 0; i < size; ++i) {
 			AddToString(keys[i], s);
-			if (i != 0)
+			if (i != size-1)
 				s += L" + ";
 		}
 		if (m_keyup) {
@@ -140,46 +118,12 @@ public:
 		AddToString(key, s);
 		return s;
 	}
-private: static void AddToString(TKeyCode key, std::wstring& s) {
-		const wchar_t* sName = _internal::HotKeyNames::Global().GetName(key);
-		if (sName) {
-			s += sName;
-		}
-		else {
-			s += std::format(L"VK_{:x}", key);
-		}
-	}
-public: 
-	static bool IsKnownMods(TKeyCode key) { return Utils::is_in(Normalize(key), VK_SHIFT, VK_CONTROL, VK_MENU, VKE_WIN); }
-	static bool IsRightMod(TKeyCode key) { return Utils::is_in(key, VK_RSHIFT, VK_RCONTROL, VK_RMENU, VK_RWIN); }
 	CHotKey& Clear() { SwZeroMemory(*this);	return *this; }
-	bool operator== (const CHotKey& other) = delete;
-	bool operator!= (const CHotKey& other) = delete;
-	//void NormalizeAll() { for (auto& it : *this) it = Normalize(it); }
-
-	static TKeyCode Normalize(TKeyCode key) {
-		switch (key) {
-		case VK_RSHIFT:
-		case VK_LSHIFT:
-			return VK_SHIFT;
-		case VK_RCONTROL:
-		case VK_LCONTROL:
-			return VK_CONTROL;
-		case VK_RMENU:
-		case VK_LMENU:
-			return VK_MENU;
-		case VK_RWIN:
-		case VK_LWIN:
-			return VKE_WIN;
-		default:
-			return key;
-		}
-	}
 	CHotKey& SetKeyup(bool val = true) { m_keyup = val;	return *this; }
 	bool GetKeyup() const { return m_keyup; }
 	static CHotKey FromString(SView s) {
 		CHotKey key;
-		if (s.empty()) 
+		if (s.empty())
 			return key;
 		auto sElems = StrUtils::Split(s, L'+');
 		for (auto& sCur : sElems) {
@@ -203,9 +147,48 @@ public:
 		}
 		return key;
 	}
-	bool Has_left_right() const { return std::any_of(begin(), end(), [](auto v) {return v != Normalize(v); });}
+	bool Has_left_right() const { return std::any_of(begin(), end(), [](auto v) {return v != Normalize(v); }); }
+	bool IsDouble() const { return m_double_press; }
+	auto& SetDouble(bool val = true) { m_double_press = val; return *this; }
+	bool IsEnabled() const { return !m_disabled; }
+	void SetEnabled(bool val = true) { m_disabled = !val; }
+	static bool IsKnownMods(TKeyCode key) { return Utils::is_in(Normalize(key), VK_SHIFT, VK_CONTROL, VK_MENU, VKE_WIN); }
+	static bool IsRightMod(TKeyCode key) { return Utils::is_in(key, VK_RSHIFT, VK_RCONTROL, VK_RMENU, VK_RWIN); }
+	static TKeyCode Normalize(TKeyCode key) {
+		switch (key) {
+		case VK_RSHIFT:
+		case VK_LSHIFT:
+			return VK_SHIFT;
+		case VK_RCONTROL:
+		case VK_LCONTROL:
+			return VK_CONTROL;
+		case VK_RMENU:
+		case VK_LMENU:
+			return VK_MENU;
+		case VK_RWIN:
+		case VK_LWIN:
+			return VKE_WIN;
+		default:
+			return key;
+		}
+	}
+private: 
+	TKeyCode key() const { return keys[size - 1]; }
+	static void AddToString(TKeyCode key, std::wstring& s) {
+		const wchar_t* sName = _internal::HotKeyNames::Global().GetName(key);
+		if (sName) {
+			s += sName;
+		}
+		else {
+			s += std::format(L"VK_{:x}", key);
+		}
+	}
 
-private:
+	bool operator== (const CHotKey& other) = delete;
+	bool operator!= (const CHotKey& other) = delete;
+	//void NormalizeAll() { for (auto& it : *this) it = Normalize(it); }
+
+
 	bool CompareIgnoreOrder(const TKeyCode* list1, const TKeyCode* list2, int size, bool strick_modifier) const {
 		for (int i = 0; i < size; ++i) {
 			TKeyCode k = list1[i];
@@ -247,6 +230,28 @@ private:
 	}
 	static bool IsCommonMods(TKeyCode key) { return Utils::is_in(key, VK_SHIFT, VK_CONTROL, VK_MENU, VKE_WIN); }
 
+	int Remove_if(auto&& pred) {
+		if (size == 0) return 0;
+
+		// 1. Стандартный алгоритм: сдвигает "выживших" влево, сохраняя порядок.
+		// Возвращает итератор на начало "хвоста" из удаленных элементов.
+		TKeyCode* new_end = std::remove_if(keys, keys + size, pred);
+
+		// 2. Считаем, сколько удалили
+		int new_size = static_cast<int>(new_end - keys);
+		int removed_count = size - new_size;
+
+		// 3. Обнуляем "хвост" (опционально, но полезно для безопасности)
+		for (int i = new_size; i < size; i++) {
+			keys[i] = 0;
+		}
+
+		// 4. Обновляем логический размер
+		size = new_size;
+
+		return removed_count;
+	}
+
 //public: TStatus RegisterHk(CAutoHotKeyRegister& registor, HWND hwnd, int id) {
 //		registor.Cleanup();
 //		if (IsEmpty()) RETURN_SUCCESS;
@@ -274,19 +279,17 @@ private:
 //		IFW_RET(registor.Register(hwnd, id, mods, vk));
 //		RETURN_SUCCESS;
 //	}
-public: bool IsDouble() const { return m_double_press; }
-public: auto& SetDouble(bool val = true) { m_double_press = val; return *this; }
-public: bool IsEnabled() const { return !m_disabled; }
-public: void SetEnabled(bool val = true) { m_disabled = !val; }
+
 private:
 	static constexpr int c_MAX = 5;
 	struct {
-		TUInt8 m_keyup : 1 {};
-		TUInt8 m_double_press : 1 {};
-		TUInt8 m_disabled : 1 {};
+		uint8_t m_keyup : 1 {};
+		uint8_t m_double_press : 1 {};
+		uint8_t m_disabled : 1 {};
 	};
-	TUInt8 size = 0;
+	int8_t size = 0;
 	TKeyCode keys[c_MAX] = { 0 };
 };
+
 static_assert(sizeof(CHotKey) == 12);
 
