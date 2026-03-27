@@ -25,12 +25,13 @@ public:
 		return *this;
 	}
 	CHotKey& Add(TKeyCode key, int flags = ADDKEY_NORMAL) {
+
 		if (TestFlag(flags, ADDKEY_CHECK_EXIST)) {
 			for (TKeyCode k : *this) {
 				if (CompareKeys(k, key, !TestFlag(flags, ADDKEY_NO_STRICK_MODS_CHECK))) {
 					if (IsCommonMods(k) && !IsCommonMods(key)) {
 						// rewrite common key
-						RemoveFirst(k);
+						Remove(k);
 						break;
 					}
 					else {
@@ -42,51 +43,35 @@ public:
 		}
 
 		if (TestFlag(flags, ADDKEY_ENSURE_ONE_VALUEKEY) && !CHotKey::IsKnownMods(key)) {
-			RemoveAllNoMods();
+			Remove_if([](auto k) { return !IsKnownMods(k); });
 		}
 
 		Simple_Append(key);
 		return *this;
 	}
-	bool RemoveFirst(TKeyCode key, bool strick_modifier = true) {
+	int Remove_if(auto&& pred) {
+		if (size == 0) return 0;
 
-		if (size == 0)
-			return false;
+		// 1. Стандартный алгоритм: сдвигает "выживших" влево, сохраняя порядок.
+		// Возвращает итератор на начало "хвоста" из удаленных элементов.
+		TKeyCode* new_end = std::remove_if(keys, keys + size, pred);
 
-		bool found = false;
+		// 2. Считаем, сколько удалили
+		int new_size = static_cast<int>(new_end - keys);
+		int removed_count = size - new_size;
 
-		for (int i = 0; i < size; i++) {
-			if (!found){
-				if (CompareKeys(key, keys[i], strick_modifier)) {
-					found = true;
-				}
-			}
-			else {
-				keys[i - 1] = keys[i];
-			}
+		// 3. Обнуляем "хвост" (опционально, но полезно для безопасности)
+		for (int i = new_size; i < size; i++) {
+			keys[i] = 0;
 		}
 
-		if (found) {
-			--size;
-			keys[size] = 0;
-		}
-		return found;
+		// 4. Обновляем логический размер
+		size = new_size;
 
+		return removed_count;
 	}
-	void RemoveAllNoMods() {
-		TKeyCode k = 0;
-		do {
-			k = 0;
-			for (TKeyCode cur : *this) {
-				if (!IsKnownMods(cur)) {
-					k = cur;
-					break;
-				}
-			}
-			if (k) {
-				RemoveFirst(k);
-			}
-		} while (k);
+	bool Remove(TKeyCode key, bool strick_modifier = true) {
+		return Remove_if([key, strick_modifier](auto k) { return CompareKeys(key, k, strick_modifier); }) != 0;
 	}
 	bool HasKey(TKeyCode key, bool strick_modifier) const {
 		for (TKeyCode k : *this) {
@@ -95,15 +80,11 @@ public:
 		}
 		return false;
 	}
-	TKeyCode At(int i) { return keys[i]; }
+	//TKeyCode At(int i) { return keys[i]; }
 	bool HasMod(TKeyCode k, bool strick_modifier = false) const {
-		if (size <= 1)
-			return false;
-		for (int i = 1; i < size; ++i) {
-			if (CompareKeys(k, keys[i], strick_modifier))
-				return true;
-		}
-		return false;
+		return std::find_if(ModsBegin(), ModsEnd(), [&](const auto& key) {
+			return CompareKeys(k, key, strick_modifier);
+		}) != ModsEnd();
 	}
 	enum TCompareFlags {
 		COMPARE_NORMAL = 0,
@@ -123,18 +104,17 @@ public:
 
 		bool strick_modifier = TestFlag(flags, COMPARE_STRICK_MODIFIER);
 
-		if (!CompareKeys(keys[0], other.keys[0], strick_modifier))
+		if (!CompareKeys(ValueKey(), other.ValueKey(), strick_modifier))
 			return false;
-		return CompareIgnoreOrder(keys + 1, other.keys + 1, size - 1, strick_modifier);
+		return CompareIgnoreOrder(keys + 1, other.keys + 1, size - 1, strick_modifier); // todo: is_permutation with beginMods., tostring, fromstring, simple append.
 	}
 	bool IsEmpty() const { return Size() == 0; }
 	TKeyCode ValueKey() const { return keys[0]; }
 
 	auto* begin(this auto&& self) { return self.keys; }
 	auto* end(this auto&& self) { return self.keys + self.size; }
-
-	TKeyCode* ModsBegin() { return keys + 1; }
-	TKeyCode* ModsEnd() { return keys + 1 + (size > 0 ? size - 1 : 0); }
+	auto* ModsBegin(this auto&& self) { return self.keys + 1; }
+	auto* ModsEnd(this auto&& self) { return self.size <= 1 ? self.ModsBegin() : self.end(); }
 	int Size() const { return size; }
 
 	std::wstring ToString() const {
@@ -175,7 +155,7 @@ public:
 	CHotKey& Clear() { SwZeroMemory(*this);	return *this; }
 	bool operator== (const CHotKey& other) = delete;
 	bool operator!= (const CHotKey& other) = delete;
-	void NormalizeAll() { for (auto& it : *this) it = Normalize(it); }
+	//void NormalizeAll() { for (auto& it : *this) it = Normalize(it); }
 
 	static TKeyCode Normalize(TKeyCode key) {
 		switch (key) {
@@ -241,11 +221,11 @@ private:
 		}
 		return true;
 	}
-	void InsertMods(TKeyCode key) {
-		if (size < c_MAX)
-			size++;
-		keys[size-1] = key;
-	}
+	//void InsertMods(TKeyCode key) {
+	//	if (size < c_MAX)
+	//		size++;
+	//	keys[size-1] = key;
+	//}
 
 
 	static bool CompareKeys(TKeyCode k1, TKeyCode k2, bool strick_modifier) {
@@ -267,33 +247,33 @@ private:
 	}
 	static bool IsCommonMods(TKeyCode key) { return Utils::is_in(key, VK_SHIFT, VK_CONTROL, VK_MENU, VKE_WIN); }
 
-public: TStatus RegisterHk(CAutoHotKeyRegister& registor, HWND hwnd, int id) {
-		registor.Cleanup();
-		if (IsEmpty()) RETURN_SUCCESS;
-		UINT mods = MOD_NOREPEAT;
-		UINT vk = ValueKey();
-		for (TKeyCode* k = ModsBegin(); k != ModsEnd(); ++k) {
-			auto norm = Normalize(*k);
-			auto cur = *k;
-			if (cur == VK_SHIFT) {
-				mods |= MOD_SHIFT;
-			}
-			else if (cur == VK_CONTROL) {
-				mods |= MOD_CONTROL;
-			}
-			else if (cur == VK_MENU) {
-				mods |= MOD_ALT;
-			}
-			else if (cur == VKE_WIN) {
-				mods |= MOD_WIN;
-			}
-			else {
-				return SW_ERR_UNSUPPORTED;
-			}
-		}
-		IFW_RET(registor.Register(hwnd, id, mods, vk));
-		RETURN_SUCCESS;
-	}
+//public: TStatus RegisterHk(CAutoHotKeyRegister& registor, HWND hwnd, int id) {
+//		registor.Cleanup();
+//		if (IsEmpty()) RETURN_SUCCESS;
+//		UINT mods = MOD_NOREPEAT;
+//		UINT vk = ValueKey();
+//		for (TKeyCode* k = ModsBegin(); k != ModsEnd(); ++k) {
+//			auto norm = Normalize(*k);
+//			auto cur = *k;
+//			if (cur == VK_SHIFT) {
+//				mods |= MOD_SHIFT;
+//			}
+//			else if (cur == VK_CONTROL) {
+//				mods |= MOD_CONTROL;
+//			}
+//			else if (cur == VK_MENU) {
+//				mods |= MOD_ALT;
+//			}
+//			else if (cur == VKE_WIN) {
+//				mods |= MOD_WIN;
+//			}
+//			else {
+//				return SW_ERR_UNSUPPORTED;
+//			}
+//		}
+//		IFW_RET(registor.Register(hwnd, id, mods, vk));
+//		RETURN_SUCCESS;
+//	}
 public: bool IsDouble() const { return m_double_press; }
 public: auto& SetDouble(bool val = true) { m_double_press = val; return *this; }
 public: bool IsEnabled() const { return !m_disabled; }

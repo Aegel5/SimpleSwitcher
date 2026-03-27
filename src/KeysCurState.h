@@ -108,7 +108,7 @@ public:
 			it->second.time = TimePoint::Now();
 		}
 		else {
-			one_value.RemoveFirst(vkCode);
+			one_value.Remove(vkCode);
 			if (all_keys.erase(vkCode) == 0) {
 				LOG_WARN(L"Key was already upped {}", CHotKey::ToString(vkCode));
 			}
@@ -132,7 +132,7 @@ private:
 			// Условие удаления: например, если кнопка эмулирована
 			if (info.hasEmulated == false && info.time.DeltTo(now)>=10s && !(GetAsyncKeyState(code) & 0x8000)) {
 				LOG_WARN(L"delete key because it not down now {}", CHotKey::ToString(code));
-				one_value.RemoveFirst(code);
+				one_value.Remove(code);
 				return true;
 			}
 
