@@ -127,7 +127,7 @@ public:
 			return key;
 		auto sElems = StrUtils::Split(s, '+');
 		for (auto& sCur : sElems) {
-			StrUtils::ToLowerUnsafe(sCur);
+			//StrUtils::ToLowerUnsafe(sCur);
 			if (StrUtils::replaceAll(sCur, "#up", "")) { key.SetKeyup(true); }
 			if (StrUtils::replaceAll(sCur, "#double", "")) { key.SetDouble(true); }
 			StrUtils::Trim(sCur);
