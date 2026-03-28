@@ -151,14 +151,35 @@ int StartGui(bool show, bool err_conf)
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
-    // Load Fonts
-	ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\tahoma.ttf", 20);
-	if (!font) {
-		auto data = WinUtils::GetResource(L"font2");
-		if (data.empty()) std::abort();
-		ImFontConfig cfg{};
-		cfg.FontDataOwnedByAtlas = false;
-		io.Fonts->AddFontFromMemoryTTF(data.data(), data.size(), std::floorf(17), &cfg);
+	{
+		wchar_t winPath[1000]; winPath[0] = 0;
+		UINT result = GetWindowsDirectoryW(winPath, std::size(winPath));
+		string path;
+		if (result > 0 && result < std::size(winPath)) {
+			path = StrUtils::Convert(winPath);
+			if (path.back() != '\\') path += '\\';
+			path += "Fonts\\"; // Склеиваем всё в Wide-строке
+		}
+		ImFont* font = nullptr;
+
+		if (!font) {
+			font = io.Fonts->AddFontFromFileTTF((path + "segoeui.ttf").c_str(), 24);
+		}
+		if (!font) {
+			font = io.Fonts->AddFontFromFileTTF((path + "tahoma.ttf").c_str(), 20);
+		}
+		if (!font) {
+			auto data = WinUtils::GetResource(L"font2");
+			if (!data.empty()) {
+				ImFontConfig cfg{};
+				cfg.FontDataOwnedByAtlas = false;
+				io.Fonts->AddFontFromMemoryTTF(data.data(), data.size(), std::floorf(17), &cfg);
+			}
+		}
+		// fallback
+		if (!font) {
+			font = io.Fonts->AddFontDefault();
+		}
 	}
 
 	MainWindow mainWindow(show, err_conf);
