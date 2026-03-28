@@ -4,10 +4,15 @@
 #set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 set(CMAKE_CXX_STANDARD 23)
 IF(PUBLIC_RELEASE)
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) # перекрестная оптимизация cpp файлов.
     ADD_DEFINITIONS(-DPUBLIC_RELEASE)
 ENDIF(PUBLIC_RELEASE)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 add_compile_options(/utf-8)
+
+
+
+
 
 # Project
 project(SimpleSwitcher VERSION 1.0 LANGUAGES CXX)
@@ -55,7 +60,7 @@ block()
 		target_include_directories(ImguiLib PRIVATE "${freetype_SOURCE_DIR}/include")
 	endblock()
 	target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ImguiLib)
-	target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE "d3d11.lib" "d3dcompiler.lib" "dxgi.lib")
+	target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE "d3d11.lib"  "dxgi.lib")
 endblock()
 
 # ExternLib
