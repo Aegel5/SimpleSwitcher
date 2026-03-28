@@ -82,12 +82,12 @@ public:
 
 		bool strick_modifier = TestFlag(flags, COMPARE_STRICK_MODIFIER);
 
-		if (!CompareKeys(key(), other.key(), strick_modifier))
+		if (!CompareKeys(ValueKey(), other.ValueKey(), strick_modifier))
 			return false;
 		return CompareIgnoreOrder(keys, other.keys, size - 1, strick_modifier);
 	}
 	bool IsEmpty() const { return Size() == 0; }
-	TKeyCode ValueKey() const { return size == 0 ? 0 : key(); }
+	TKeyCode ValueKey() const { return size == 0 ? 0 : keys[size-1]; }
 
 	auto* begin(this auto&& self) { return self.keys; }
 	auto* end(this auto&& self) { return self.keys + self.size; }
@@ -173,7 +173,7 @@ public:
 		}
 	}
 private: 
-	TKeyCode key() const { return keys[size - 1]; }
+	//TKeyCode key() const { return keys[size - 1]; }
 	static void AddToString(TKeyCode key, std::string& s) {
 		const char* sName = _internal::HotKeyNames::Global().GetName(key);
 		if (sName) {
