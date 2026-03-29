@@ -9,12 +9,9 @@ void MainWindow::DrawFrameActual() {
 	process_helper();
 
 	//ImGuiIO& io = ImGui::GetIO();
-	//static int count = 0;
-	//static TimePoint start = TimePoint::Now();
-	//count++;
 	//// Display FPS in your UI
-	//ImGui::Text("Application average %.3f ms/frame (%.1f FPS), all=(%.1f)",
-	//	1000.0f / io.Framerate, io.Framerate, ((float)start.DeltToNowMs()/count));
+	//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
+	//	1000.0f / io.Framerate, io.Framerate);
 
 	if (ImGui::BeginTabBar("MyTabBar", ImGuiTabBarFlags_None)) {
 

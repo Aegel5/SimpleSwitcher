@@ -31,7 +31,9 @@ void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-static bool ImWaitNewFrame(float minDelay = 0.012f) { // Real FPS would be 64 (1/0.015ms)
+static bool ImWaitNewFrame(float minDelay 
+	= 0.012f // Real FPS would be 64 (1/0.015ms) because of quants on windows
+) { 
 	using namespace std::chrono;
 
 	// 1. SLEEP PHASE: Determine how long to wait before the next frame

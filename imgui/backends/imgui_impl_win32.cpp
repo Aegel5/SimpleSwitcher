@@ -726,7 +726,7 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandlerEx(HWND hwnd, UINT msg, WPA
     ImGui_ImplWin32_Data* bd = ImGui_ImplWin32_GetBackendData(io);
     if (bd == nullptr)
         return 0;
-    ImWantFrameWithDelay(0);// SS_PATCH_IMGUI
+    ImWantFrameWithDelay(msg == WM_NCHITTEST ? 0.1 : 0);// SS_PATCH_IMGUI
     switch (msg)
     {
     case WM_MOUSEMOVE:
@@ -889,6 +889,7 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandlerEx(HWND hwnd, UINT msg, WPA
         }
         return 0;
     case WM_SETCURSOR:
+
         // This is required to restore cursor when transitioning from e.g resize borders to client area.
         if (LOWORD(lParam) == HTCLIENT && ImGui_ImplWin32_UpdateMouseCursor(io, bd->LastMouseCursor))
             return 1;
