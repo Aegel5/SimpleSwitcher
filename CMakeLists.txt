@@ -4,14 +4,11 @@
 #set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 set(CMAKE_CXX_STANDARD 23)
 IF(PUBLIC_RELEASE)
-	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) # перекрестная оптимизация cpp файлов.
+	#set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) # перекрестная оптимизация cpp файлов.
     ADD_DEFINITIONS(-DPUBLIC_RELEASE)
 ENDIF(PUBLIC_RELEASE)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 add_compile_options(/utf-8)
-
-
-
 
 
 # Project
@@ -31,8 +28,17 @@ block()
 	#	 set_source_files_properties(${src_modules} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 	#endif()
 	target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "src") 
-
 endblock()
+
+# Проверка и включение IPO только после объявления project
+include(CheckIPOSupported)
+check_ipo_supported(RESULT ipo_supported OUTPUT ipo_error)
+if(ipo_supported)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+	message("IPO ENABLED")
+else()
+    message(WARNING "IPO is NOT supported: ${ipo_error}")
+endif()
 
 # ImguiLib
 block()

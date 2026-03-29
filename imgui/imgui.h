@@ -376,9 +376,16 @@ struct ImTextureRef
 IM_MSVC_RUNTIME_CHECKS_RESTORE
 
 // SS_PATCH_IMGUI
-inline float g_wantFrameDelay = 0;
+inline float _g_wantFrameDelay = 0.0f;
+/**
+ * Requests a frame update after a specific delay.
+ * If a shorter delay is already requested, this call is ignored.
+ */
 inline void ImWantFrameWithDelay(float seconds) {
-    if (seconds < g_wantFrameDelay)	g_wantFrameDelay = seconds;
+    // Ensure we always take the most immediate update request
+    if (seconds < _g_wantFrameDelay) {
+        _g_wantFrameDelay = seconds;
+    }
 }
 
 //-----------------------------------------------------------------------------

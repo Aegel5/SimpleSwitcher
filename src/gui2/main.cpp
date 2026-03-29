@@ -21,7 +21,6 @@
 ID3D11Device* g_pd3dDevice = nullptr;
 static ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
 static IDXGISwapChain* g_pSwapChain = nullptr;
-static bool                     g_SwapChainOccluded = false;
 static UINT                     g_ResizeWidth = 0, g_ResizeHeight = 0;
 static ID3D11RenderTargetView* g_mainRenderTargetView = nullptr;
 
@@ -32,61 +31,64 @@ void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-static bool ImWaitNewFrame(float minDelay = 0.01666f) {
-
+static bool ImWaitNewFrame(float minDelay = 0.012f) { // Real FPS would be 64 (1/0.015ms)
 	using namespace std::chrono;
 
-	MSG msg;
+	// 1. SLEEP PHASE: Determine how long to wait before the next frame
+	float toWaitSeconds = std::max(_g_wantFrameDelay, minDelay);
 
-	auto proc = [&msg]() {
-		::TranslateMessage(&msg);
-		::DispatchMessage(&msg);
-		};
+	do {
+		auto start = steady_clock::now();
 
-	auto peek = [&]() {
+		// Wait for OS events or timeout (MsgWaitForMultipleObjectsEx uses milliseconds)
+		DWORD res = ::MsgWaitForMultipleObjectsEx(
+			0, NULL,
+			static_cast<DWORD>(toWaitSeconds * 1000.0f),
+			QS_ALLINPUT,
+			MWMO_INPUTAVAILABLE | MWMO_ALERTABLE
+		);
+
+		if (res == WAIT_TIMEOUT) {
+			break; // Wake up: requested delay has passed
+		}
+
+		// 2. MESSAGE PROCESSING: Handle Windows events
+		MSG msg;
 		while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
 			if (msg.message == WM_QUIT) return false;
-			proc();
+			::TranslateMessage(&msg);
+			::DispatchMessage(&msg); // Might trigger UI changes and update _g_wantFrameDelay
 		}
-		return true;
-		};
 
-	123
-
-	// WAIT
-	auto toWait = max(g_wantFrameDelay, minDelay); // wait at last minDelay
-	while(true)	{
-		auto start = steady_clock::now();
-		auto res = ::MsgWaitForMultipleObjectsEx(0, NULL, toWait * 1000, QS_ALLINPUT, MWMO_INPUTAVAILABLE | MWMO_ALERTABLE);
-		if (res == WAIT_TIMEOUT) { 			// Ok, waited
-			break;
+		// Adjust remaining wait time based on time spent processing messages
+		// If DispatchMessage set a shorter delay, respect it
+		duration<float> elapsed = steady_clock::now() - start;
+		toWaitSeconds -= elapsed.count();
+		minDelay -= elapsed.count();
+		if (toWaitSeconds > _g_wantFrameDelay) {
+			// Try to reduce wait time, but not below the remaining minDelay threshol
+			toWaitSeconds = std::max(minDelay, _g_wantFrameDelay);
 		}
-		else {  // we are have some messages during waiting
-			duration<float> waited = steady_clock::now() - start; // take how much we are waited.
-			if (!peek()) return false; // process all messages: can decrease g_wantFrameDelay
-			toWait -= waited.count();
-			if (toWait <= 0) break;
-		}
-	}
 
-	// Ok, time pass. Now prepare to draw
+	} while (toWaitSeconds > 0.001f);
+
+	// 3. BURST PHASE: Ensure a sequence of frames for UI consistency (inertia)
 	{
-		static int framesToDraw = 0; // how much frames we must draw at any trigger for gui consistense (would use 3).
-		if (framesToDraw == 0) {     
-			framesToDraw = 3; // setup new trigger
+		static int framesRemaining = 0;
+
+		// Reset burst counter if we are starting a new interaction cycle
+		if (framesRemaining <= 0) {
+			framesRemaining = 3;
 		}
-		else {
-			// we are already in drawing process
-		}
 
-		framesToDraw--;
+		framesRemaining--;
 
-		g_wantFrameDelay = framesToDraw > 0
-			? 0        // force next frame
-			: 100;      // complete trigger. schedule next after 100 seconds
-
+		// If burst is active, force immediate next frame (0s delay).
+		// Once finished, go into deep sleep (100s delay) until next event.
+		_g_wantFrameDelay = (framesRemaining > 0) ? 0.0f : 100.0f;
 	}
 
+	return true;
 }
 
 static std::function wnd_handler = [](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {return false; };
@@ -207,43 +209,35 @@ int StartGui(bool show, bool err_conf) {
 		};
 
 	while (ImWaitNewFrame()) {
-
-		// Handle window being minimized or screen locked
-		if (g_SwapChainOccluded && g_pSwapChain->Present(0, DXGI_PRESENT_TEST) == DXGI_STATUS_OCCLUDED) {
-			//::Sleep(10); // waiting would in ImWaitNewFrame
-			continue;
-		}
-		g_SwapChainOccluded = false;
-
 		// Start the Dear ImGui frame
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 
+		// UI Logic
 		mainWindow.DrawFrame();
 		notif.Draw();
-		if (notif.IsVisible())
-			ImWantFrameWithDelay(0.5f); // for timer display
+
+		// Timer update if needed
+		if (notif.IsVisible()) {
+			ImWantFrameWithDelay(0.5f);
+		}
 
 		// Rendering
 		ImGui::Render();
-		//ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-		//const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
-		//g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
-		//g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
-		//ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-		// Update and Render additional Platform Windows
+		// Standard DX11 Render calls here...
+		// g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
+		// ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+		// Viewports support
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 		}
 
-		// Present
-		//HRESULT hr = g_pSwapChain->Present(1, 0);   // Present with vsync
-		HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
-		g_SwapChainOccluded = (hr == DXGI_STATUS_OCCLUDED);
-
+		// Present (no vsync needed as ImWaitNewFrame controls the pace)
+		g_pSwapChain->Present(0, 0);
 	}
 
 	// Cleanup
