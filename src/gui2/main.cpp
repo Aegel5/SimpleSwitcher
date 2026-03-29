@@ -32,7 +32,9 @@ void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-static bool ImWaitNewFrame() {
+static bool ImWaitNewFrame(float minDelay = 0.01666f) {
+
+	using namespace std::chrono;
 
 	MSG msg;
 
@@ -49,46 +51,42 @@ static bool ImWaitNewFrame() {
 		return true;
 		};
 
-	while (true) {
+	123
 
-		// DRAW NOW
-		{
-			static int framesToDraw = 3; // TODO: instead add ImWantFrameWithDelay(0) in right places in core ImGui.
-
-			if (g_wantFrameDelay <= 0)
-				framesToDraw = 3;
-
-			if (framesToDraw > 0) {
-				framesToDraw--;
-				if (!peek()) return false;
-				g_wantFrameDelay = FLT_MAX; // clear before every frame process
-				return true;
-			}
+	// WAIT
+	auto toWait = max(g_wantFrameDelay, minDelay); // wait at last minDelay
+	while(true)	{
+		auto start = steady_clock::now();
+		auto res = ::MsgWaitForMultipleObjectsEx(0, NULL, toWait * 1000, QS_ALLINPUT, MWMO_INPUTAVAILABLE | MWMO_ALERTABLE);
+		if (res == WAIT_TIMEOUT) { 			// Ok, waited
+			break;
 		}
-
-		// INFINITY WAIT
-		if (g_wantFrameDelay == FLT_MAX) {
-			if (GetMessage(&msg, 0, 0, 0) <= 0) { return false; } proc();
-			continue;
-		}
-
-		// TIMED WAIT
-		{
-			using namespace std::chrono;
-			auto start = steady_clock::now();
-			auto res = ::MsgWaitForMultipleObjectsEx(0, NULL, g_wantFrameDelay * 1000, QS_ALLINPUT, MWMO_INPUTAVAILABLE | MWMO_ALERTABLE);
-			if (res == WAIT_TIMEOUT) {
-				ImWantFrameWithDelay(0);
-			}
-			else {
-				// some messages while waiting
-				duration<float> waited = steady_clock::now() - start;
-				auto remains_to_wait = g_wantFrameDelay - waited.count(); // can be negative - but it ok
-				if (!peek()) return false; // can decrease g_wantFrameDelay
-				ImWantFrameWithDelay(remains_to_wait);
-			}
+		else {  // we are have some messages during waiting
+			duration<float> waited = steady_clock::now() - start; // take how much we are waited.
+			if (!peek()) return false; // process all messages: can decrease g_wantFrameDelay
+			toWait -= waited.count();
+			if (toWait <= 0) break;
 		}
 	}
+
+	// Ok, time pass. Now prepare to draw
+	{
+		static int framesToDraw = 0; // how much frames we must draw at any trigger for gui consistense (would use 3).
+		if (framesToDraw == 0) {     
+			framesToDraw = 3; // setup new trigger
+		}
+		else {
+			// we are already in drawing process
+		}
+
+		framesToDraw--;
+
+		g_wantFrameDelay = framesToDraw > 0
+			? 0        // force next frame
+			: 100;      // complete trigger. schedule next after 100 seconds
+
+	}
+
 }
 
 static std::function wnd_handler = [](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {return false; };
@@ -212,7 +210,7 @@ int StartGui(bool show, bool err_conf) {
 
 		// Handle window being minimized or screen locked
 		if (g_SwapChainOccluded && g_pSwapChain->Present(0, DXGI_PRESENT_TEST) == DXGI_STATUS_OCCLUDED) {
-			::Sleep(10);
+			//::Sleep(10); // waiting would in ImWaitNewFrame
 			continue;
 		}
 		g_SwapChainOccluded = false;
@@ -242,8 +240,8 @@ int StartGui(bool show, bool err_conf) {
 		}
 
 		// Present
-		HRESULT hr = g_pSwapChain->Present(1, 0);   // Present with vsync
-		//HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
+		//HRESULT hr = g_pSwapChain->Present(1, 0);   // Present with vsync
+		HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
 		g_SwapChainOccluded = (hr == DXGI_STATUS_OCCLUDED);
 
 	}
