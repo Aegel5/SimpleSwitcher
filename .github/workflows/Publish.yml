@@ -36,10 +36,12 @@ jobs:
         shell: pwsh
         run: |
           # Считаем SHA256 для каждого найденного .exe
-          Get-ChildItem "build/Release/*.exe" | ForEach-Object {
-              $hash = Get-FileHash $_.FullName -Algorithm SHA256
-              $hash.Hash | Out-File "$($_.FullName).sha256"
+          cd build/Release
+          Get-ChildItem "*.exe" | ForEach-Object {
+              $h = (Get-FileHash $_.Name -Algorithm SHA256).Hash
+              "$h *$($_.Name)" | Out-File "$($_.Name).sha256" -Encoding ascii
           }
+          cd ../..
           
           # Собираем: exe, их хеши и всё из папки bin_files
           $files = Get-ChildItem "build/Release/*.exe", "build/Release/*.sha256", "bin_files/*"
