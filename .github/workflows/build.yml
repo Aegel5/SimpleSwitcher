@@ -1,4 +1,4 @@
-﻿name: Windows Pre-release
+﻿name: Build
 
 on:
   workflow_dispatch:
@@ -23,7 +23,11 @@ jobs:
           if [ "$LAST_COMMIT" -lt "$LIMIT" ]; then
             echo "::error::Нет свежих коммитов за 25 часов. Прерываю работу."
             exit 1 # Весь Workflow остановится здесь и станет красным
-          fi      
+          fi     
+
+      - name: Get short SHA
+        id: get_sha
+        run: echo "SHA=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT          
 
       # 1. Читаем версию из файла ver.h
       - name: Get version from ver.h
@@ -42,9 +46,16 @@ jobs:
 
       # 2. Сборка (CMake)
       - name: Configure and Build
+        if: github.event_name == 'workflow_dispatch'      
         run: |
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build --config Release
+          
+      - name: Configure and Build
+        if: github.event_name != 'workflow_dispatch'      
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPUBLIC_RELEASE=ON
+          cmake --build build --config Release          
 
       # 3. Хеширование EXE и упаковка в ZIP
       - name: Prepare Artifacts and ZIP
@@ -62,23 +73,31 @@ jobs:
           $files = Get-ChildItem "build/Release/*.exe", "build/Release/*.sha256", "bin_files/*"
           
           # Создаем архив с именем версии
-          $zipName = "latest-build.zip"
+          $zipName = "SimpleSwitcher_v${{ steps.get_version.outputs.VERSION }}.zip"
           Compress-Archive -Path $files.FullName -DestinationPath $zipName -Force
-          
-      # 1. Удаляем старый релиз и тег в GitHub через встроенную утилиту gh
-      - name: Cleanup old preview
-        run: |
-          gh release delete preview --yes --cleanup-tag || true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
 
-      # Публикуем
-      - name: Create Fresh Pre-release
+      # 4. Создание релиза и АВТОМАТИЧЕСКАЯ установка ТЕГА
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: preview
-          name: "Latest Preview Build"
+          tag_name: "v${{ steps.get_version.outputs.VERSION }}-${{ steps.get_sha.outputs.SHA }}"
+          name: "SimpleSwitcher PREVIEW ${{ steps.get_version.outputs.VERSION }} ${{ steps.get_sha.outputs.SHA }}"
+          body: "Релиз собран автоматически"
+          draft: false
           prerelease: true
-          files: latest-build.zip       
+          files: "SimpleSwitcher_v*.zip"
+          # Эта настройка позволяет перезаписывать файлы в существующем теге
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Cleanup old Pre-releases
+        run: |
+          # Получаем список ID только для пре-релизов (поле 'isPrerelease: true')
+          # Сортируем по дате создания (новые сверху) и пропускаем первые 10
+          # Удаляем все остальные
+          gh release list --limit 1000 --json tagName,isPrerelease,createdAt \
+
+            | jq -r '.[] | select(.isPrerelease == true) | .tagName' \
+            | tail -n +11 \
+            | xargs -I {} gh release delete {} --yes --cleanup-tag          

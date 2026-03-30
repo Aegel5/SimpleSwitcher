@@ -5,9 +5,6 @@ project(SimpleSwitcher VERSION 1.0 LANGUAGES CXX)
 # Глобальные настройки
 
 set(CMAKE_CXX_STANDARD 23)
-IF(PUBLIC_RELEASE) 
-	ADD_DEFINITIONS(-DPUBLIC_RELEASE) 
-ENDIF(PUBLIC_RELEASE)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 if(MSVC)
