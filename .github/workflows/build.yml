@@ -13,6 +13,28 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1 # Без этой строки скачается вся история     
+          
+      - name: Cleanup old Pre-releases
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # 1. Получаем список тегов пре-релизов, сортируем (самые новые сверху)
+          # 2. Пропускаем первые 10
+          # 3. Удаляем остальные
+          RELEASES_TO_DELETE=$(gh release list --limit 100 --json tagName,isPrerelease,createdAt \
+
+            | jq -r '. | sort_by(.createdAt) | reverse | .[] | select(.isPrerelease == true) | .tagName' \
+            | tail -n +11)
+
+          if [ -n "$RELEASES_TO_DELETE" ]; then
+            echo "Deleting old pre-releases: $RELEASES_TO_DELETE"
+            for tag in $RELEASES_TO_DELETE; do
+              gh release delete "$tag" --yes --cleanup-tag
+            done
+          else
+            echo "Nothing to delete."
+          fi          
 
       - name: Check activity and exit if stale
         shell: bash
@@ -85,21 +107,11 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: "v${{ steps.get_version.outputs.VERSION }}-${{ steps.vars.outputs.sha_short }}"
-          name: "SimpleSwitcher PREVIEW ${{ steps.get_version.outputs.VERSION }} ${{ steps.vars.outputs.sha_short }}"
-          body: "Релиз собран автоматически"
+          name: "SimpleSwitcher PREVIEW ${{ steps.get_version.outputs.VERSION }}"
+          body: "Релиз собран автоматически ${{ steps.vars.outputs.sha_short }}"
           prerelease: true
           files: "SimpleSwitcher_v*.zip"
           # Эта настройка позволяет перезаписывать файлы в существующем теге
           #make_latest: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Cleanup old Pre-releases
-        run: |
-          # Получаем список ID только для пре-релизов (поле 'isPrerelease: true')
-          # Сортируем по дате создания (новые сверху) и пропускаем первые 10
-          # Удаляем все остальные
-          gh release list --limit 1000 --json tagName,isPrerelease,createdAt \
-            | jq -r '.[] | select(.isPrerelease == true) | .tagName' \
-            | tail -n +11 \
-            | xargs -I {} gh release delete {} --yes --cleanup-tag          
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}       
