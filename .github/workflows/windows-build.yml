@@ -1,8 +1,6 @@
 ﻿name: Windows Pre-release
 
-on:
-  push:
-    branches: [ "master" ]
+on: workflow_dispatch
 
 jobs:
   build:
@@ -51,18 +49,20 @@ jobs:
           $zipName = "latest-build.zip"
           Compress-Archive -Path $files.FullName -DestinationPath $zipName -Force
           
-      - name: Get current date
-        id: date
-        run: echo "NOW=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
+      # 1. Удаляем старый релиз и тег в GitHub через встроенную утилиту gh
+      - name: Cleanup old preview
+        run: |
+          gh release delete preview --yes --cleanup-tag || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
 
-      - name: Update Pre-release Assets
+      # Публикуем
+      - name: Create Fresh Pre-release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: preview
           name: "Latest Preview Build"
-          body: "Последнее обновление: ${{ env.NOW }} (UTC)" # Текст внутри релиза
           prerelease: true
-          files: latest-build.zip
-          make_latest: false # Чтобы не "всплывал" как новый топ-релиз
+          files: latest-build.zip       
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
