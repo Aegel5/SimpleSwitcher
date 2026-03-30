@@ -1,0 +1,33 @@
+﻿name: Windows Pre-release
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Просто билдим с нуля
+      - name: Configure and Build
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --config Release
+
+      # Пакуем в ZIP
+      - name: Create ZIP
+        run: Compress-Archive -Path "build/Release/*.exe" -DestinationPath "latest-build.zip" -Force
+
+      # Публикуем
+      - name: Update Pre-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: preview
+          name: "Latest Preview Build"
+          prerelease: true
+          files: latest-build.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
