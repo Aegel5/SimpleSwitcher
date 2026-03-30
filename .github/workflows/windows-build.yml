@@ -59,5 +59,7 @@ jobs:
           name: "Latest Preview Build"
           prerelease: true
           files: latest-build.zip
+          # ПРИНУДИТЕЛЬНО переставляем тег на текущий коммит
+          force_update_tag: true          
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
