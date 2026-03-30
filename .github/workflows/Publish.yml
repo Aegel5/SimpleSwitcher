@@ -56,7 +56,7 @@ jobs:
         with:
           tag_name: "v${{ steps.get_version.outputs.VERSION }}"
           name: "Version ${{ steps.get_version.outputs.VERSION }}"
-          body: "Релиз собран автоматически из версии в ver.h"
+          body: "Релиз собран автоматически"
           draft: false
           prerelease: false
           files: "release-v*.zip"

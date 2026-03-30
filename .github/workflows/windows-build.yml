@@ -11,15 +11,45 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Просто билдим с нуля
+      # 1. Читаем версию из файла ver.h
+      - name: Get version from ver.h
+        id: get_version
+        shell: pwsh
+        run: |
+          $versionFile = Get-Content "src/ver.h" -Raw
+          if ($versionFile -match 'SW_VERSION\s*=\s*"([^"]+)"') {
+              $ver = $Matches[1]
+              echo "VERSION=$ver" >> $env:GITHUB_OUTPUT
+              Write-Host "Найдена версия: $ver"
+          } else {
+              Write-Error "Ошибка: Не удалось найти версию в файле ver.h"
+              exit 1
+          }
+
+      # 2. Сборка (CMake)
       - name: Configure and Build
         run: |
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build --config Release
 
-      # Пакуем в ZIP
-      - name: Create ZIP
-        run: Compress-Archive -Path "build/Release/*.exe" -DestinationPath "latest-build.zip" -Force
+      # 3. Хеширование EXE и упаковка в ZIP
+      - name: Prepare Artifacts and ZIP
+        shell: pwsh
+        run: |
+          # Считаем SHA256 для каждого найденного .exe
+          cd build/Release
+          Get-ChildItem "*.exe" | ForEach-Object {
+              $h = (Get-FileHash $_.Name -Algorithm SHA256).Hash
+              "$h *$($_.Name)" | Out-File "$($_.Name).sha256" -Encoding ascii
+          }
+          cd ../..
+          
+          # Собираем: exe, их хеши и всё из папки bin_files
+          $files = Get-ChildItem "build/Release/*.exe", "build/Release/*.sha256", "bin_files/*"
+          
+          # Создаем архив с именем версии
+          $zipName = "release-v${{ steps.get_version.outputs.VERSION }}.zip"
+          Compress-Archive -Path $files.FullName -DestinationPath $zipName -Force
 
       # Публикуем
       - name: Update Pre-release
