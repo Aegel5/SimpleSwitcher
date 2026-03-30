@@ -20,18 +20,17 @@ Simple Switcher - переключатель клавиатуры ⌨️ для 
 
 ## Download & Install
 
-Для получения последней версии нужно скачать https://github.com/Aegel5/SimpleSwitcher/releases/tag/preview
-
-Также можно скачать: 
+ℹ️ **Все новые версии (начиная с 6.10.*) собираются на серверах GitHub.** ℹ️ Поэтому нет необходимости собирать программу из исходного кода самостоятельно в целях безопасности — облачная сборка гарантирует чистоту бинарных файлов.
+- Preview версия: https://github.com/Aegel5/SimpleSwitcher/releases/tag/preview
 - Последняя 6.x версия: https://github.com/Aegel5/SimpleSwitcher/releases
 - Последняя 5.x версия: https://github.com/Aegel5/SimpleSwitcher/releases/tag/5.394
 - Последняя 3.x (scancode remap для любых клавиш): https://github.com/Aegel5/SimpleSwitcher/releases/tag/3.0.0.8
 
 ## Сборка из исходного кода
-ℹ️ **Все новые версии (начиная с 6.10.*) собираются на серверах GitHub.** Поэтому нет необходимости собирать программу из исходного кода самостоятельно в целях безопасности — облачная сборка гарантирует чистоту бинарных файлов.
+
  - Скачать zip-архив master ветки.
  - Установить `Visual Studio 2026`. Необходим компонент C++.
- - Открыть проект как ПАПКУ в Visual Studio. Cбилдить `x64 Release` конфигурацию. Файл будет: `out\x64-release\SimpleSwitcher.exe`. Флаги подкидываются вручную.
+ - Открыть проект как ПАПКУ в Visual Studio. Cбилдить `x64 Release` конфигурацию. Файл будет: `out\x64-release\SimpleSwitcher.exe`. Флаги и остальные артефакты подкидываются вручную.
 
 ## Известные ограничения
 - При одновременном назначении (`hotkey` | `hotkey #up`) и `hotkey #double` будет применена задержка 280 ms (параметр конфига `quick_press_ms`)
