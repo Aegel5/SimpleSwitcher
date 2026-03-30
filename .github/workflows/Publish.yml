@@ -1,0 +1,63 @@
+﻿name: Last Release
+
+on:
+  workflow_dispatch: # Запуск только вручную кнопкой
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. Читаем версию из файла ver.h
+      - name: Get version from ver.h
+        id: get_version
+        shell: pwsh
+        run: |
+          $versionFile = Get-Content "src/ver.h" -Raw
+          # Регулярка ищет значение в кавычках после SW_VERSION
+          if ($versionFile -match 'SW_VERSION\s*=\s*"([^"]+)"') {
+              $ver = $Matches[1]
+              echo "VERSION=$ver" >> $env:GITHUB_OUTPUT
+              Write-Host "Найдена версия: $ver"
+          } else {
+              Write-Error "Ошибка: Не удалось найти версию в файле ver.h"
+              exit 1
+          }
+
+      # 2. Сборка (CMake)
+      - name: Configure and Build
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --config Release
+
+      # 3. Хеширование EXE и упаковка в ZIP
+      - name: Prepare Artifacts and ZIP
+        shell: pwsh
+        run: |
+          # Считаем SHA256 для каждого найденного .exe
+          Get-ChildItem "build/Release/*.exe" | ForEach-Object {
+              $hash = Get-FileHash $_.FullName -Algorithm SHA256
+              $hash.Hash | Out-File "$($_.FullName).sha256"
+          }
+          
+          # Собираем: exe, их хеши и всё из папки bin_files
+          $files = Get-ChildItem "build/Release/*.exe", "build/Release/*.sha256", "bin_files/*"
+          
+          # Создаем архив с именем версии
+          $zipName = "release-v${{ steps.get_version.outputs.VERSION }}.zip"
+          Compress-Archive -Path $files.FullName -DestinationPath $zipName -Force
+
+      # 4. Создание релиза и АВТОМАТИЧЕСКАЯ установка ТЕГА
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ steps.get_version.outputs.VERSION }}"
+          name: "Version ${{ steps.get_version.outputs.VERSION }}"
+          body: "Релиз собран автоматически из версии в ver.h"
+          draft: false
+          prerelease: false
+          files: "release-v*.zip"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
