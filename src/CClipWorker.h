@@ -49,6 +49,8 @@ public:
 
 		// Перебираем все доступные форматы в буфере
 		while ((format = EnumClipboardFormats(format)) != 0) {
+			if (!Utils::is_in(format, CF_UNICODETEXT, CF_HDROP, CF_DIB))
+				continue; // скипаем мусор.
 			HANDLE hData = GetClipboardData(format);
 			if (!hData) continue;
 
