@@ -1,4 +1,5 @@
-﻿
+﻿#include "WorkerImplement.h"
+
 void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 {
 	TKeyCode vkCode = keyData.vkCode;
@@ -210,6 +211,162 @@ void WorkerImplement::ChangeForeground(HWND hwnd)
 	}
 	m_dwIdThreadForeground = threadid;
 	m_dwIdProcoreground = procId; 
+}
+
+void WorkerImplement::ProcessOurHotKey(Message_Hotkey&& keyData) {
+
+	auto hk = keyData.hk;
+	const auto& key = keyData.hotkey;
+
+	if (keyData.delayed_from != 0 && keyData.delayed_from <= m_lastHotKeyTime) {
+		LOG_ANY("skip hotkey {} possible was double press", key.ToString());
+		return;
+	}
+	m_lastHotKeyTime = GetTickCount64();
+
+	GETCONF;
+
+	m_clear_alfter_selected = hk == hk_RevertSelelected;
+
+	if (IsNeedSavedWords(hk) && !m_cycleList.HasAnySymbol()) {
+		bool found = false;
+		for (const auto& [hk2, key2] : cfg->All_hot_keys()) {
+			if (!IsNeedSavedWords(hk2) && key.Compare(key2)) {
+				// Есть точно такой же хот-кей, не требующий сохраненных слов, используем его.
+				hk = hk2;
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			LOG_ANY(L"skip hotkey {} because no saved word", (int)hk);
+			return;
+		}
+	}
+
+	if (key.GetKeyup()) {
+		// дадим событию up время на обработку в ОС, так как для нас, она уже поднята 
+		// (т.е. мы ее не поднимаем и она может конфликтовать с тем, что мы собираемся ввести)
+		LOG_ANY(L"pause for #up key");
+		Sleep(5);
+	}
+
+	if (!IsNeedSavedWords(hk) && !Utils::is_in(hk, hk_EmulateCapsLock, hk_EmulateScrollLock)) {
+		ClearAllWords();
+	}
+
+	m_lastRevertRequest = hk;
+
+	LOG_ANY("Hotkey start {}({})", HotKeyTypeName(hk), (int)hk);
+
+	if (!g_enabled.IsEnabled() && hk != hk_ToggleEnabled) {
+		LOG_ANY("Skip hk because disabled");
+		return;
+	}
+
+	Fix_AltOrWin(keyData.cur_keys_down);
+
+	if (hk == hk_ToggleEnabled) {
+		try_toggle_enable();
+		return;
+	}
+
+	if (hk == hk_ShowMainWindow) {
+		show_main_wind();
+		return;
+	}
+
+	if (hk == hk_ShowRemainderWnd) {
+		show_main_wind(1);
+		return;
+	}
+
+	if (TestFlag(hk, hk_RunProgram_flag)) {
+		IFS_LOG(RunProcess(hk));
+		return;
+	}
+
+	// Если нам нужно самим что-то вводить, то сбросим сразу все клавиши для системы. 
+	// Будет двойной (или даже тройной и более) up, но пока что это не проблема... 
+	UpAllKeys(keyData.cur_keys_down);
+
+	if (hk == hk_Fix_RAlt) {
+		FixCtrlAlt(keyData.hotkey);
+		return;
+	}
+
+	if (Utils::is_in(hk, hk_EmulateCapsLock, hk_EmulateScrollLock)) {
+		TKeyCode k = (hk == hk_EmulateCapsLock) ? VK_CAPITAL : VK_SCROLL;
+		InputSender::SendVkKey(k);
+		return;
+	}
+
+	auto process = [this, hk, cfg]() -> TStatus {
+
+		if (hk == hk_InsertWithoutFormat) {
+			IFS_RET(m_clipWorker.ClipboardClearFormat());
+			CHotKey ctrlv(VK_CONTROL, VKE_V);
+			InputSender::SendWithPause(ctrlv);
+			RETURN_SUCCESS;
+		}
+
+		// CHANGE LAYOUT WITHOUT REVERT
+
+		IFS_RET(AnalizeTopWnd());
+
+		if (hk == hk_CycleSwitchLayout) {
+			IFS_RET(ProcessRevert({ .lay = getNextLang(), .flags = SW_CLIENT_SetLang }));
+			RETURN_SUCCESS;
+		}
+
+		if (TestFlag(hk, hk_SetLayout_flag)) {
+
+			int i = hk;
+			ResetFlag(i, hk_SetLayout_flag);
+
+			auto info = cfg->layouts_info.GetLayoutIndex(i);
+			if (info == nullptr) {
+				LOG_WARN(L"not found hot key for set layout");
+				RETURN_SUCCESS;
+			}
+
+			IFS_RET(ProcessRevert({ .lay = info->layout , .flags = SW_CLIENT_SetLang | SW_CLIENT_NO_WAIT_LANG }));
+
+			RETURN_SUCCESS;
+		}
+
+
+		// REVERT AND CHANGE LAYOUT
+
+		if (Utils::is_in(hk, hk_RevertSelelected, hk_toUpperSelected, hk_InvertCaseSelected)) {
+			//m_savedClipData = m_clipWorker.getCurString();
+			RequestWaitClip(CLRMY_GET_FROM_CLIP); // регистрируем запрос.
+			LOG_ANY(L"save buff");
+			m_clipWorker.BackupCurrent();
+			if (m_clipWorker.HasBackup()) {
+				// пулим очистку памяти на всякий случай
+				Worker()->PostMsg([this](auto w) {
+					if ((GetTickCount64() - m_dwLastCtrlCReqvest) > 7000) {
+						m_clipWorker.ClearBackup();
+					}
+				}, 10000);
+			}
+			IFS_RET(ProcessRevert({ .flags = SW_CLIENT_CTRLC }));
+			RETURN_SUCCESS;
+		}
+
+		// ---------------classic revert---------------
+
+		if (!Utils::is_in(hk, hk_RevertLastWord, hk_RevertSeveralWords, hk_RevertAllRecentText)) {
+			IFS_RET(SW_ERR_UNKNOWN, L"Unknown typerevert {}", (int)hk);
+		}
+
+		RevertText(hk);
+
+		RETURN_SUCCESS;
+		};
+
+	IFS_LOG(process());
 }
 
 TStatus WorkerImplement::ProcessRevert(ContextRevert&& ctxRevert)
