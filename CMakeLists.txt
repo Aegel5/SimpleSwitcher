@@ -1,18 +1,39 @@
 ﻿cmake_minimum_required (VERSION 4.0)
+project(SimpleSwitcher VERSION 1.0 LANGUAGES CXX)
 
 
-#set(CMAKE_CXX_SCAN_FOR_MODULES ON)
+# Глобальные настройки
+
 set(CMAKE_CXX_STANDARD 23)
-IF(PUBLIC_RELEASE)
-	#set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE) # перекрестная оптимизация cpp файлов.
-    ADD_DEFINITIONS(-DPUBLIC_RELEASE)
+IF(PUBLIC_RELEASE) 
+	ADD_DEFINITIONS(-DPUBLIC_RELEASE) 
 ENDIF(PUBLIC_RELEASE)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-add_compile_options(/utf-8)
+
+if(MSVC)
+	add_compile_options(/utf-8)
+
+    # 1) Dead Code Elimination (Удаление мертвого кода)
+    # /Gy — разделяет функции на сегменты, чтобы линковщик мог их удалить
+    # /OPT:REF — удаляет функции, на которые нет ссылок
+    add_compile_options($<$<CONFIG:Release>:/Gy>)
+    add_link_options($<$<CONFIG:Release>:/OPT:REF>)
+    # add_link_options($<$<CONFIG:Release>:/OPT:ICF>)
+	# add_link_options($<$<CONFIG:Release>:/INCREMENTAL:NO>) # Оптимизации выше (REF/ICF) НЕ работают, если включена инкрементальная линковка.
+endif()
+
+# Проверка и включение IPO только после объявления project
+include(CheckIPOSupported)
+check_ipo_supported(RESULT ipo_supported OUTPUT ipo_error)
+if(ipo_supported)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+	message("IPO ENABLED")
+else()
+    message(WARNING "IPO is NOT supported: ${ipo_error}")
+endif()
 
 
 # Project
-project(SimpleSwitcher VERSION 1.0 LANGUAGES CXX)
 add_executable (${CMAKE_PROJECT_NAME} WIN32)
 target_sources(${CMAKE_PROJECT_NAME}  PRIVATE src/manifest.manifest src/res/res.rc)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "src/libtools")
@@ -30,15 +51,7 @@ block()
 	target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "src") 
 endblock()
 
-# Проверка и включение IPO только после объявления project
-include(CheckIPOSupported)
-check_ipo_supported(RESULT ipo_supported OUTPUT ipo_error)
-if(ipo_supported)
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
-	message("IPO ENABLED")
-else()
-    message(WARNING "IPO is NOT supported: ${ipo_error}")
-endif()
+
 
 # ImguiLib
 block()
@@ -96,6 +109,8 @@ block()
 	target_include_directories(LibUnits INTERFACE "lib_units")
 	target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE LibUnits)
 endblock()
+
+
 
 
 
