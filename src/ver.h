@@ -8,4 +8,4 @@ inline const char* GET_SW_VERSION() {
 #endif
 	static std::string ver{ details::SW_VERSION + " PREVIEW"s };
 	return ver.c_str();
-}
+} 
