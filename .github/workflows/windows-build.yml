@@ -18,7 +18,7 @@ jobs:
         shell: bash
         run: |
           LAST_COMMIT=$(git log -1 --format=%ct)
-          LIMIT=$(($(date +%s) - 25 * 3600))
+          LIMIT=$(($(date +%s) - 25))
           
           if [ "$LAST_COMMIT" -lt "$LIMIT" ]; then
             echo "::error::Нет свежих коммитов за 25 часов. Прерываю работу."
