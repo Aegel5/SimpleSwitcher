@@ -1,4 +1,4 @@
-﻿name: Last Release
+﻿name: Publish
 
 on:
   workflow_dispatch: # Запуск только вручную кнопкой
@@ -15,7 +15,7 @@ jobs:
         id: get_version
         shell: pwsh
         run: |
-          $versionFile = Get-Content "ver.h" -Raw
+          $versionFile = Get-Content "src/ver.h" -Raw
           if ($versionFile -match 'SW_VERSION\s*=\s*"([^"]+)"') {
               $ver = $Matches[1]
               echo "VERSION=$ver" >> $env:GITHUB_OUTPUT
