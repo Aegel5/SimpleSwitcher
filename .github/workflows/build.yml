@@ -25,9 +25,13 @@ jobs:
             exit 1 # Весь Workflow остановится здесь и станет красным
           fi     
 
-      - name: Get short SHA
-        id: get_sha
-        run: echo "SHA=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT          
+      - name: Set Short SHA
+        id: vars
+        shell: bash
+        run: echo "sha_short=${GITHUB_SHA:0:7}" >> $GITHUB_OUTPUT
+
+      - name: Use Short SHA
+        run: echo "SHA is ${{ steps.vars.outputs.sha_short }}"
 
       # 1. Читаем версию из файла ver.h
       - name: Get version from ver.h
@@ -46,15 +50,15 @@ jobs:
 
       # 2. Сборка (CMake)
       - name: Configure and Build
-        if: github.event_name == 'workflow_dispatch'      
+        if: github.event_name != 'workflow_dispatch'      
         run: |
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build --config Release
           
       - name: Configure and Build
-        if: github.event_name != 'workflow_dispatch'      
+        if: github.event_name == 'workflow_dispatch'      
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPUBLIC_RELEASE=ON
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-DPUBLIC_RELEASE"
           cmake --build build --config Release          
 
       # 3. Хеширование EXE и упаковка в ZIP
@@ -80,14 +84,13 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "v${{ steps.get_version.outputs.VERSION }}-${{ steps.get_sha.outputs.SHA }}"
-          name: "SimpleSwitcher PREVIEW ${{ steps.get_version.outputs.VERSION }} ${{ steps.get_sha.outputs.SHA }}"
+          tag_name: "v${{ steps.get_version.outputs.VERSION }}-${{ steps.vars.outputs.sha_short }}"
+          name: "SimpleSwitcher PREVIEW ${{ steps.get_version.outputs.VERSION }} ${{ steps.vars.outputs.sha_short }}"
           body: "Релиз собран автоматически"
-          draft: false
           prerelease: true
           files: "SimpleSwitcher_v*.zip"
           # Эта настройка позволяет перезаписывать файлы в существующем теге
-          make_latest: true
+          #make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
