@@ -51,14 +51,15 @@ jobs:
           $zipName = "latest-build.zip"
           Compress-Archive -Path $files.FullName -DestinationPath $zipName -Force
           
-      # 1. Принудительно обновляем тег в самом Git
-      - name: Update Tag
+      # 1. Удаляем старый релиз и тег в GitHub через встроенную утилиту gh
+      - name: Cleanup old preview
         run: |
-          git tag -f preview
-          git push -f origin preview          
+          gh release delete preview --yes --cleanup-tag || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
 
       # Публикуем
-      - name: Update Pre-release
+      - name: Create Fresh Pre-release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: preview
