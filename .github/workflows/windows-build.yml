@@ -1,6 +1,9 @@
 ﻿name: Windows Pre-release
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *' # 1:00 UTC каждый день
 
 jobs:
   build:
@@ -8,6 +11,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # Без этой строки скачается вся история     
+
+      - name: Check activity and exit if stale
+        shell: bash
+        run: |
+          LAST_COMMIT=$(git log -1 --format=%ct)
+          LIMIT=$(($(date +%s) - 25 * 3600))
+          
+          if [ "$LAST_COMMIT" -lt "$LIMIT" ]; then
+            echo "::error::Нет свежих коммитов за 25 часов. Прерываю работу."
+            exit 1 # Весь Workflow остановится здесь и станет красным
+          fi      
 
       # 1. Читаем версию из файла ver.h
       - name: Get version from ver.h
