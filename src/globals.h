@@ -6,7 +6,8 @@
 // one-time write...
 inline HWND g_guiHandle = nullptr;
 
-inline TStatus OpenClipboard(CAutoClipBoard& clip) { return clip.Open(g_guiHandle); }
+//inline TStatus OpenClipboard(CAutoClipBoard& clip) { return clip.Open(g_guiHandle); }
+//inline bool OpenClipboard2(CAutoClipBoard& clip) { auto res = OpenClipboard(clip); IFS_LOG(res); return res == SW_ERR_SUCCESS; }
 
 inline EnableHodler g_enabled{};
 // inline std::atomic_bool hk_edit_now = false; // пока не нужно.

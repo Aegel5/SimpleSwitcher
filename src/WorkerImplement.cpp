@@ -60,31 +60,31 @@ void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 	}
 }
 
-TStatus ClipHasTextFormating(bool& fres)
-{
-	fres = false;
-
-	CAutoClipBoard clip;
-	IFS_RET(OpenClipboard(clip));
-
-	UINT format = 0;
-	while (1)
-	{
-		format = EnumClipboardFormats(format);
-		//LOG_ANY(L"Found format %u", format);
-		if (format == 0)
-		{
-			break;
-		}
-		if (format >= 40000)
-		{
-			fres = true;
-			break;
-		}
-	}
-
-	RETURN_SUCCESS;
-}
+//TStatus ClipHasTextFormating(bool& fres)
+//{
+//	fres = false;
+//
+//	CAutoClipBoard clip;
+//	IFS_RET(Open2(clip));
+//
+//	UINT format = 0;
+//	while (1)
+//	{
+//		format = EnumClipboardFormats(format);
+//		//LOG_ANY(L"Found format %u", format);
+//		if (format == 0)
+//		{
+//			break;
+//		}
+//		if (format >= 40000)
+//		{
+//			fres = true;
+//			break;
+//		}
+//	}
+//
+//	RETURN_SUCCESS;
+//}
 
 void toUpper(std::wstring& buf) {
 	auto copy = buf;
@@ -110,7 +110,7 @@ TStatus WorkerImplement::GetClipStringCallback() {
 
 	auto data = m_clipWorker.getCurString();
 
-	bool needResotore = !m_savedClipData.empty();
+	// bool needResotore = !m_savedClipData.empty();
 
 	if (data.empty()) {
         LOG_ANY(L"data empty");
@@ -132,19 +132,21 @@ TStatus WorkerImplement::GetClipStringCallback() {
 
 			IFS_LOG(ProcessRevert({.flags = SW_CLIENT_CTRLV }));
 
-            if (needResotore) {
-                needResotore = data != m_savedClipData;
-				if(needResotore)
-					Sleep(20); // подождем немного, чтобы не перезатереть наши данные восстановлением буфера.
-            }
+    //        if (needResotore) {
+    //            needResotore = data != m_savedClipData;
+				//if(needResotore)
+				//	Sleep(20); // подождем немного, чтобы не перезатереть наши данные восстановлением буфера.
+    //        }
 			
 		}
 	}
 
-	if (needResotore) {
+	if (m_clipWorker.HasBackup()) {
+		Sleep(20); // подождем немного, чтобы не перезатереть наши данные восстановлением буфера.
 		RequestWaitClip(CLRMY_hk_RESTORE); // делаем это только чтобы не вызывалась очистка формата
-        m_clipWorker.setString(m_savedClipData);
-        m_savedClipData.clear();
+		m_clipWorker.Restore();
+        //m_clipWorker.setString(m_savedClipData);
+        //m_savedClipData.clear();
     }
 
 	RETURN_SUCCESS;

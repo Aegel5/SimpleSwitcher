@@ -53,57 +53,57 @@ private:
 	BOOL m_stat = FALSE;
 };
 
-class CAutoHotKeyRegister
-{
-public:
-	BOOL Register(HWND hwnd, int id, UINT mods, DWORD key)
-	{
-		Cleanup();
-		m_hwnd = hwnd;
-		m_id = id;
-		m_res = RegisterHotKey(hwnd, id, mods, key);
-		return m_res;
-	}
-	~CAutoHotKeyRegister()
-	{
-		Cleanup();
-	}
-	void Cleanup()
-	{
-		if (m_res)
-		{
-			UnregisterHotKey(m_hwnd, m_id);
-			m_res = FALSE;
-		}
-	}
-private:
-	BOOL m_res = FALSE;
-	HWND m_hwnd;
-	int m_id;
-};
-
-class CAutoThreadAttach
-{
-public:
-	CAutoThreadAttach(){}
-	TStatus Attach(DWORD id)
-	{
-		threadId = id;
-		res = AttachThreadInput(threadId, GetCurrentThreadId(), TRUE);
-		IFW_RET(res);
-		RETURN_SUCCESS;
-	}
-	~CAutoThreadAttach()
-	{
-		if(res)
-		{
-			IFW_LOG(AttachThreadInput(threadId, GetCurrentThreadId(), FALSE));
-			res = 0;
-		}
-	}
-private:
-	BOOL res = false;
-	DWORD threadId = 0;
-};
+//class CAutoHotKeyRegister
+//{
+//public:
+//	BOOL Register(HWND hwnd, int id, UINT mods, DWORD key)
+//	{
+//		Cleanup();
+//		m_hwnd = hwnd;
+//		m_id = id;
+//		m_res = RegisterHotKey(hwnd, id, mods, key);
+//		return m_res;
+//	}
+//	~CAutoHotKeyRegister()
+//	{
+//		Cleanup();
+//	}
+//	void Cleanup()
+//	{
+//		if (m_res)
+//		{
+//			UnregisterHotKey(m_hwnd, m_id);
+//			m_res = FALSE;
+//		}
+//	}
+//private:
+//	BOOL m_res = FALSE;
+//	HWND m_hwnd;
+//	int m_id;
+//};
+//
+//class CAutoThreadAttach
+//{
+//public:
+//	CAutoThreadAttach(){}
+//	TStatus Attach(DWORD id)
+//	{
+//		threadId = id;
+//		res = AttachThreadInput(threadId, GetCurrentThreadId(), TRUE);
+//		IFW_RET(res);
+//		RETURN_SUCCESS;
+//	}
+//	~CAutoThreadAttach()
+//	{
+//		if(res)
+//		{
+//			IFW_LOG(AttachThreadInput(threadId, GetCurrentThreadId(), FALSE));
+//			res = 0;
+//		}
+//	}
+//private:
+//	BOOL res = false;
+//	DWORD threadId = 0;
+//};
 
 

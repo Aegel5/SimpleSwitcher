@@ -13,9 +13,111 @@ enum EClipRequest
 
 class CClipWorker
 {
+	bool Open(CAutoClipBoard& clip) {
+		auto res = clip.Open();
+		IFS_LOG(res);
+		return res == TStatus::SW_ERR_SUCCESS;
+	}
+	TStatus Open2(CAutoClipBoard& clip) {
+		return clip.Open();
+	}
+
+// ----------------- Backup и восстановление
+
 private:
+	// Карта: ID формата -> бинарные данные
+	std::map<UINT, std::vector<std::uint8_t>> m_backup;
+	const size_t MAX_TOTAL_SIZE = 600 * 1024;
 
+public:
+	bool HasBackup() {
+		return !m_backup.empty();
+	}
+	void ClearBackup() {
+		m_backup.clear();
+	}
+	bool BackupCurrent() {
+		ClearBackup();
 
+		CAutoClipBoard clip;
+		// Предполагаю, что Open() возвращает true при успехе. 
+		// Если Open() возвращает 0 при успехе (как WinAPI), проверьте условие!
+		if (!Open(clip)) return false;
+
+		size_t currentTotalSize = 0;
+		UINT format = 0;
+
+		// Перебираем все доступные форматы в буфере
+		while ((format = EnumClipboardFormats(format)) != 0) {
+			HANDLE hData = GetClipboardData(format);
+			if (!hData) continue;
+
+			size_t dataSize = GlobalSize(hData);
+
+			// Проверяем, не выходим ли за лимит
+			if (dataSize == 0 || (currentTotalSize + dataSize) > MAX_TOTAL_SIZE) {
+				continue;
+			}
+
+			if (void* pData = GlobalLock(hData)) {
+				m_backup[format].assign(
+					static_cast<uint8_t*>(pData),
+					static_cast<uint8_t*>(pData) + dataSize
+				);
+
+				currentTotalSize += dataSize;
+				GlobalUnlock(hData);
+			}
+		}
+
+		return !m_backup.empty();
+	}
+	bool Restore() {
+
+		if (m_backup.empty()) return false;
+
+		CAutoClipBoard clip;
+		if (!Open(clip)) return false;
+
+		// Очистка обязательна перед записью своих форматов
+		if (!EmptyClipboard()) return false;
+
+		bool success = true;
+		for (const auto& [format, data] : m_backup) {
+
+			if (data.empty()) continue; // Пропуск пустых данных
+
+			// Выделяем глобальную память для Windows
+			HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, data.size());
+			if (!hMem) {
+				success = false;
+				continue;
+			}
+
+			// Копируем данные в выделенную память
+			if (void* pDest = GlobalLock(hMem)) {
+				std::memcpy(pDest, data.data(), data.size());
+				GlobalUnlock(hMem);
+
+				// Передаем владение памятью системе
+				if (!SetClipboardData(format, hMem)) {
+					GlobalFree(hMem); // Освобождаем только если Set failed
+					success = false;
+				}
+			}
+			else {
+				GlobalFree(hMem);
+				success = false;
+			}
+		}
+
+		ClearBackup();
+		return success;
+	}
+
+// ------------------ Остальное
+
+private:
 	TStatus GetFromClipBoardOur(std::wstring& data)
 	{
 		LOG_ANY(L"1..");
@@ -47,14 +149,11 @@ private:
             RETURN_SUCCESS;
         }
 		CAutoClipBoard clip;
-		IFS_RET(OpenClipboard(clip));
+		IFS_RET(Open2(clip));
 		IFS_RET(GetFromClipBoardOur(data));
 
 		RETURN_SUCCESS;
 	}
-
-
-
 
 	TStatus PutToClipBoardOur(std::wstring& data)
 	{
@@ -88,7 +187,7 @@ private:
             RETURN_SUCCESS;
 
         CAutoClipBoard clip;
-        IFS_RET(OpenClipboard(clip));
+        IFS_RET(Open2(clip));
         IFS_RET(PutToClipBoardOur(data));
 
         RETURN_SUCCESS;
@@ -124,7 +223,7 @@ public:
         }
 
         CAutoClipBoard clip;
-        IFS_RET(OpenClipboard(clip));
+        IFS_RET(Open2(clip));
 
         UINT format = 0;
         bool fFound = false;
@@ -163,38 +262,7 @@ public:
 
         RETURN_SUCCESS;
     }
- //   tstring TakeData()
-	//{
- //       tstring loc;
- //       { 
-	//		std::unique_lock<std::mutex> lock(mtxClipboardData);
- //           loc = std::move(m_sClipData);
-	//	}
- //       return loc;
-	//}
-	//void MoveToData(tstring& data)
-	//{
-	//	std::unique_lock<std::mutex> lock(mtxClipboardData);
-	//	m_sClipData = std::move(data);
-	//}
-	//TStatus Init()
-	//{
-	//	m_queueClip.StartWorker(std::bind(&CClipWorker::ClipboardWorker, this));
-	//	RETURN_SUCCESS;
-	//}
-	//void PostMsg(ClipMode mode)
-	//{
-	//	TClipMessage msg;
-	//	msg.mode = mode;
-	//	m_queueClip.PostMsg(msg);
-	//}
-	//void PostMsg(ClipMode mode, EClipRequest request)
-	//{
-	//	TClipMessage msg;
-	//	msg.mode = mode;
-	//	msg.request = request;
-	//	m_queueClip.PostMsg(msg);
-	//}
+
 };
 
 

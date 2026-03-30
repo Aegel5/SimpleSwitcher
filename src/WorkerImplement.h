@@ -351,7 +351,8 @@ public:
 
 			if (Utils::is_in(hk, hk_RevertSelelected, hk_toUpperSelected, hk_InvertCaseSelected)) {
 				LOG_ANY(L"save buff");
-				m_savedClipData = m_clipWorker.getCurString();
+				m_clipWorker.BackupCurrent();
+				//m_savedClipData = m_clipWorker.getCurString();
 				RequestWaitClip(CLRMY_GET_FROM_CLIP);
 				IFS_RET(ProcessRevert({ .flags = SW_CLIENT_CTRLC }));
 				RETURN_SUCCESS;
@@ -421,7 +422,7 @@ private:
 	public:std::wstring m_sTopProcName;
 	private:std::wstring m_sTopProcPath;
 	CClipWorker m_clipWorker; 
-	std::wstring m_savedClipData;
+	//std::wstring m_savedClipData;
 	HotKeyType m_lastRevertRequest = hk_NULL;
 	//std::wstring m_sSelfExeName;
 	CycleRevertList m_cycleList;
