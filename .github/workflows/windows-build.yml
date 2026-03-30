@@ -51,20 +51,18 @@ jobs:
           $zipName = "latest-build.zip"
           Compress-Archive -Path $files.FullName -DestinationPath $zipName -Force
           
-      # 1. Удаляем старый релиз и тег в GitHub через встроенную утилиту gh
-      - name: Cleanup old preview
-        run: |
-          gh release delete preview --yes --cleanup-tag || true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
+      - name: Get current date
+        id: date
+        run: echo "NOW=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
-      # Публикуем
-      - name: Create Fresh Pre-release
+      - name: Update Pre-release Assets
         uses: softprops/action-gh-release@v2
         with:
           tag_name: preview
           name: "Latest Preview Build"
+          body: "Последнее обновление: ${{ env.NOW }} (UTC)" # Текст внутри релиза
           prerelease: true
-          files: latest-build.zip       
+          files: latest-build.zip
+          make_latest: false # Чтобы не "всплывал" как новый топ-релиз
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
