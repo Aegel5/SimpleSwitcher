@@ -48,7 +48,7 @@ jobs:
           $files = Get-ChildItem "build/Release/*.exe", "build/Release/*.sha256", "bin_files/*"
           
           # Создаем архив с именем версии
-          $zipName = latest-build.zip
+          $zipName = "latest-build.zip"
           Compress-Archive -Path $files.FullName -DestinationPath $zipName -Force
 
       # Публикуем
