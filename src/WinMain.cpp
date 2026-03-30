@@ -3,7 +3,7 @@
 #include "utils/WinTimer.h"
 
 
-inline TStatus update_cur_dir() {
+inline TStatus update_cur_dir() { 
 	std::wstring dir;
 	IFS_RET(PathUtils::GetPath_folder_noLower(dir));
 	IFW_RET(SetCurrentDirectory(dir.c_str()));
