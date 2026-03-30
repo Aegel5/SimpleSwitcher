@@ -23,8 +23,6 @@ if(MSVC)
 	add_compile_options(/GF)
 endif()
 
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
-
 # Проверка и включение IPO только после объявления project
 include(CheckIPOSupported)
 check_ipo_supported(RESULT ipo_supported OUTPUT ipo_error)
