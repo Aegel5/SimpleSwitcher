@@ -15,12 +15,12 @@ void MainWindow::DrawFrameActual() {
 
 	if (ImGui::BeginTabBar("MyTabBar", ImGuiTabBarFlags_None)) {
 
-		ImGuiTabItemFlags flags = 0;
-		if (loc_details::do_reinit) {
-			loc_details::do_reinit = false;
-			flags |= ImGuiTabItemFlags_SetSelected;
-		}
-		with_TabItem(LOC("Settings"), 0, flags) {
+		//ImGuiTabItemFlags flags = 0;
+		//if (loc_details::do_reinit) {
+		//	loc_details::do_reinit = false;
+		//	flags |= ImGuiTabItemFlags_SetSelected;
+		//}
+		with_TabItem(LOC("Settings"), 0, 0) {
 
 			{
 				bool val = g_enabled.IsEnabled();
@@ -119,13 +119,12 @@ void MainWindow::DrawFrameActual() {
 
 			{
 				ImGuiUtils::Combo("UI Language", conf_gui()->gui_lang,
-					std::array {"English", "Russian", "Hebrew"},
+					std::array {"English", "Russian"},
 					[this]() {
 						SaveApplyGuiConfig();
 						ApplyLocalization();
 						ReinitHk();
-						loc_details::do_reinit = true;
-					}
+						}
 				);
 			}
 

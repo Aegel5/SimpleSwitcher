@@ -20,7 +20,10 @@ if(MSVC)
     add_link_options($<$<CONFIG:Release>:/OPT:REF>)
     # add_link_options($<$<CONFIG:Release>:/OPT:ICF>)
 	# add_link_options($<$<CONFIG:Release>:/INCREMENTAL:NO>) # Оптимизации выше (REF/ICF) НЕ работают, если включена инкрементальная линковка.
+	add_compile_options(/GF)
 endif()
+
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 
 # Проверка и включение IPO только после объявления project
 include(CheckIPOSupported)

@@ -82,6 +82,9 @@ internal class Program {
 				rewriten.Add(file);
 			}
 
+			var header = LocalizationGenerator.GenerateCppFile(name, info.complete);
+			File.WriteAllText(Path.Combine(path, name + ".h"), header);
+
 		}
 
 		foreach (var f_ in Directory.GetFiles(path, "*.json")) {
@@ -89,6 +92,8 @@ internal class Program {
 		}
 
 		Console.WriteLine("To translate: " + to_translate);
+
+
 
 	}
 }

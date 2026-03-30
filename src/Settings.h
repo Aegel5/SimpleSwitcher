@@ -206,7 +206,7 @@ inline void SaveApplyGuiConfig() {
 }
 
 inline void ApplyLocalization() {
-	loc_details::g_loc.Reinit(conf_gui()->gui_lang.c_str());
+	Localization::Reinit(conf_gui()->gui_lang.c_str());
 }
 
 inline void SetLogLevel_print_info(TLogLevel logLevel) {
