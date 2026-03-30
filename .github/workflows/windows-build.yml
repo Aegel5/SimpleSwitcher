@@ -50,6 +50,12 @@ jobs:
           # Создаем архив с именем версии
           $zipName = "latest-build.zip"
           Compress-Archive -Path $files.FullName -DestinationPath $zipName -Force
+          
+      # 1. Принудительно обновляем тег в самом Git
+      - name: Update Tag
+        run: |
+          git tag -f preview
+          git push -f origin preview          
 
       # Публикуем
       - name: Update Pre-release
@@ -58,8 +64,6 @@ jobs:
           tag_name: preview
           name: "Latest Preview Build"
           prerelease: true
-          files: latest-build.zip
-          # ПРИНУДИТЕЛЬНО переставляем тег на текущий коммит
-          force_update_tag: true          
+          files: latest-build.zip       
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
