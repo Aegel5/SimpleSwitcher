@@ -15,8 +15,7 @@ jobs:
         id: get_version
         shell: pwsh
         run: |
-          $versionFile = Get-Content "src/ver.h" -Raw
-          # Регулярка ищет значение в кавычках после SW_VERSION
+          $versionFile = Get-Content "ver.h" -Raw
           if ($versionFile -match 'SW_VERSION\s*=\s*"([^"]+)"') {
               $ver = $Matches[1]
               echo "VERSION=$ver" >> $env:GITHUB_OUTPUT
@@ -59,5 +58,7 @@ jobs:
           draft: false
           prerelease: false
           files: "release-v*.zip"
+          # Эта настройка позволяет перезаписывать файлы в существующем теге
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
