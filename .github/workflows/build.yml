@@ -95,17 +95,18 @@ jobs:
           # Создаем архив с именем версии
           $zipName = "SimpleSwitcher_v${{ steps.get_version.outputs.VERSION }}.zip"
           Compress-Archive -Path $files.FullName -DestinationPath $zipName -Force
-
-      # 4. Создание релиза и АВТОМАТИЧЕСКАЯ установка ТЕГА
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: "v${{ steps.get_version.outputs.VERSION }}-${{ steps.vars.outputs.sha_short }}"
-          name: "SimpleSwitcher ${{ steps.get_version.outputs.VERSION }} PREVIEW"
-          body: "Релиз собран автоматически"
-          prerelease: true
-          files: "SimpleSwitcher_v*.zip"
-          # Эта настройка позволяет перезаписывать файлы в существующем теге
-          #make_latest: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}       
+          
+      - name: Upload Immutable Pre-release
+        shell: bash
+        env: 
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Формируем имя тега в переменную для удобства
+          TAG_NAME="v${{ steps.get_version.outputs.VERSION }}-${{ steps.vars.outputs.sha_short }}"
+          
+          gh release create "$TAG_NAME" \
+            ./SimpleSwitcher_v*.zip \
+            --title "SimpleSwitcher ${{ steps.get_version.outputs.VERSION }} PREVIEW" \
+            --notes "Автоматическая сборка артефакта" \
+            --prerelease \
+            
