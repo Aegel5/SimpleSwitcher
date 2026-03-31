@@ -21,8 +21,7 @@ Simple Switcher - переключатель клавиатуры ⌨️ для 
 ## Download & Install
 
 ℹ️ **Все новые версии (начиная с 6.10.*) собираются на серверах GitHub.** ℹ️ Поэтому нет необходимости собирать программу из исходного кода самостоятельно в целях безопасности — облачная сборка гарантирует чистоту бинарных файлов.
-- Night build Preview версия: https://github.com/Aegel5/SimpleSwitcher/releases/tag/preview
-- Последняя 6.x версия: https://github.com/Aegel5/SimpleSwitcher/releases
+- Последние 6.x (Preview и Release): https://github.com/Aegel5/SimpleSwitcher/releases
 - Последняя 5.x версия: https://github.com/Aegel5/SimpleSwitcher/releases/tag/5.394
 - Последняя 3.x (scancode remap для любых клавиш): https://github.com/Aegel5/SimpleSwitcher/releases/tag/3.0.0.8
 
