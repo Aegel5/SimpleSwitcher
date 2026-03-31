@@ -117,7 +117,7 @@ public:
 			ImGui::Separator();
 
 			ImGui::AlignTextToFramePadding();
-			ImGui::Text(LOC("Press any key..."));
+			ImGui::TextUnformatted(LOC("Press any key..."));
 			ImGui::SameLine();
 			ImGui::Checkbox(LOC("Left right difference"), &left_right);
 			//ImGui::AlignTextToFramePadding();

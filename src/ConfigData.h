@@ -73,9 +73,8 @@ enum class CommandType {
 };
 
 struct RunProgramInfo {
-    string path;
+    string cmd;
     string args;
-	string snippet;
     CHotKeyList hotkey;
     bool elevated = false;
 	int delay = 0;

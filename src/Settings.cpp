@@ -82,9 +82,8 @@ namespace nlohmann {
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 		RunProgramInfo,
-		path,
+		cmd,
 		args,
-		snippet,
 		elevated,
 		hotkey,
 		delay,

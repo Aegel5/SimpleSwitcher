@@ -18,108 +18,116 @@ void MainWindow::Draw_run_tab() {
 		for (int i = -1; auto& it : conf_gui()->run_programs) {
 			i++;
 			with_ID(i + 12344) {
-				ImGui::BeginChild("", {}, ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_Borders | ImGuiChildFlags_AutoResizeY);
-				float label_width = _label_width + ImGui::GetCursorPosX();
-				if (ImGui::BeginPopupContextWindow("ctx_menu")) {
-					if (ImGui::Selectable(LOC("Delete"))) {
-						to_del = i;
-					}
-					ImGui::EndPopup();
-				}
-
-				// enabled
-				{
-					//ImGui::AlignTextToFramePadding();
-					//ImGui::Text("enabled");
-					//ImGui::SameLine(label_width);
-					//ImGui::SetNextItemWidth(-1.0f);
-					if (ImGui::Checkbox(LOC("Enabled"), &it.enabled)) {
-						changes = true;
-					}
-				}
-
-
-
-				// type
-				{
-					ImGui::SameLine();
-					auto text = [](CommandType x) { if (x == CommandType::Run) return LOC("Run process"); return LOC("Snippet"); };
-					if (ImGui::BeginCombo(LOC("Command type"), text(it.type), 0)) {
-						for (auto type : {CommandType::Run, CommandType::Snippet}) {
-							if (ImGui::Selectable(text(type), it.type == type)) {
-								if (it.type != type) {
-									it.type = type;
-									changes = true;
-								}
-							}
+				auto ctx_menu_last_item = [&](bool wnd = false) {
+					if (wnd ? ImGui::BeginPopupContextWindow("ctx_menu"): ImGui::BeginPopupContextItem("ctx_menu")) {
+						if (ImGui::Selectable(LOC("Delete"))) {
+							to_del = i;
 						}
-						ImGui::EndCombo();
+						ImGui::EndPopup();
 					}
-				}
+					};
+				bool open = ImGui::TreeNodeEx("##header", ImGuiTreeNodeFlags_CollapsingHeader, "%s", it.cmd.c_str());
+				ctx_menu_last_item();
+				if(open){
+					ImGui::BeginChild("", {}, ImGuiChildFlags_Borders | ImGuiChildFlags_AutoResizeY);
+					ctx_menu_last_item(true);
+					float label_width = _label_width + ImGui::GetCursorPosX();
 
-				if (it.type == CommandType::Run) {
-
-					ImGui::AlignTextToFramePadding();
-					ImGui::Text("path");
-					ImGui::SameLine(label_width);
-					ImGui::SetNextItemWidth(-1.0f);
-					if (ImGui::InputText("##path", &it.path)) {
-						changes = true;
-					}
-
-					ImGui::AlignTextToFramePadding();
-					ImGui::Text("args   ");
-					ImGui::SameLine(label_width);
-					ImGui::SetNextItemWidth(-1.0f);
-					if (ImGui::InputText("##args", &it.args)) {
-						changes = true;
-					}
-				}
-
-				if (it.type == CommandType::Snippet) {
-					ImGui::AlignTextToFramePadding();
-					ImGui::Text("snippet");
-					ImGui::SameLine(label_width);
-					ImGui::SetNextItemWidth(-1.0f);
-					if (ImGui::InputText("##snippet", &it.snippet)) {
-						changes = true;
-					}
-				}
-
-				// hkey
-				{
-					ImGui::AlignTextToFramePadding();
-					ImGui::Text("hkey ");
-					ImGui::SameLine(label_width);
-					run_programs_hks[i].Draw();
-				}
-
-				if (it.type == CommandType::Run) {
-
-					// run now
+					// enabled
 					{
-						ImGui::SameLine();
-						if (ImGui::Button(LOC("Run now"))) {
-							auto hk = (HotKeyType)(hk_RunProgram_flag | i);
-							Worker()->PostMsg([hk](auto p) {p->RunProcess(hk); });
-						}
-					}
-
-					// delay
-					{
-						ImGui::SameLine();
-						ImGui::AlignTextToFramePadding();
-						ImGui::Text(LOC("delay"));
-						ImGui::SameLine();
-						ImGui::SetNextItemWidth(-1.0f);
-						if (ImGui::InputInt("##delay", &it.delay)) {
-							it.delay = std::clamp(it.delay, 0, 10000);
+						//ImGui::AlignTextToFramePadding();
+						//ImGui::Text("enabled");
+						//ImGui::SameLine(label_width);
+						//ImGui::SetNextItemWidth(-1.0f);
+						if (ImGui::Checkbox(LOC("Enabled"), &it.enabled)) {
 							changes = true;
 						}
 					}
-				}
 
-				ImGui::EndChild();
+
+
+					// type
+					{
+						ImGui::SameLine();
+						auto text = [](CommandType x) { if (x == CommandType::Run) return LOC("Run process"); return LOC("Snippet"); };
+						if (ImGui::BeginCombo(LOC("Command type"), text(it.type), 0)) {
+							for (auto type : { CommandType::Run, CommandType::Snippet }) {
+								if (ImGui::Selectable(text(type), it.type == type)) {
+									if (it.type != type) {
+										it.type = type;
+										changes = true;
+									}
+								}
+							}
+							ImGui::EndCombo();
+						}
+					}
+
+					if (it.type == CommandType::Run) {
+
+						ImGui::AlignTextToFramePadding();
+						ImGui::TextUnformatted("path");
+						ImGui::SameLine(label_width);
+						ImGui::SetNextItemWidth(-1.0f);
+						if (ImGui::InputText("##path", &it.cmd)) {
+							changes = true;
+						}
+
+						ImGui::AlignTextToFramePadding();
+						ImGui::TextUnformatted("args   ");
+						ImGui::SameLine(label_width);
+						ImGui::SetNextItemWidth(-1.0f);
+						if (ImGui::InputText("##args", &it.args)) {
+							changes = true;
+						}
+					}
+
+					if (it.type == CommandType::Snippet) {
+						ImGui::AlignTextToFramePadding();
+						ImGui::TextUnformatted("snippet");
+						ImGui::SameLine(label_width);
+						ImGui::SetNextItemWidth(-1.0f);
+						if (ImGui::InputText("##snippet", &it.cmd)) {
+							changes = true;
+						}
+					}
+
+					// hkey
+					{
+						ImGui::AlignTextToFramePadding();
+						ImGui::TextUnformatted("hkey ");
+						ImGui::SameLine(label_width);
+						run_programs_hks[i].Draw();
+					}
+
+					if (it.type == CommandType::Run) {
+
+						// run now
+						{
+							ImGui::SameLine();
+							if (ImGui::Button(LOC("Run now"))) {
+								auto hk = (HotKeyType)(hk_RunProgram_flag | i);
+								Worker()->PostMsg([hk](auto p) {p->RunProcess(hk); });
+							}
+						}
+
+						// delay
+						{
+							ImGui::SameLine();
+							ImGui::AlignTextToFramePadding();
+							ImGui::Text(LOC("delay"));
+							ImGui::SameLine();
+							ImGui::SetNextItemWidth(-1.0f);
+							if (ImGui::InputInt("##delay", &it.delay)) {
+								it.delay = std::clamp(it.delay, 0, 10000);
+								changes = true;
+							}
+						}
+					}
+
+					ImGui::EndChild();
+
+				}
 			}
 
 		}

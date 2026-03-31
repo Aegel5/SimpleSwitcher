@@ -194,8 +194,8 @@ public:
 		}
 
 		if (it.type == CommandType::Snippet) {
-			if (it.snippet.empty()) RETURN_SUCCESS;
-			auto str = StrUtils::Convert(it.snippet);
+			if (it.cmd.empty()) RETURN_SUCCESS;
+			auto str = StrUtils::Convert(it.cmd);
 			InputSender is;
 			for (auto c : str) {
 				is.AddUnicodePress(c);
@@ -204,7 +204,7 @@ public:
 			RETURN_SUCCESS;
 		}
 
-		auto wpath = StrUtils::Convert(it.path);
+		auto wpath = StrUtils::Convert(it.cmd);
 		auto wargs = StrUtils::Convert(it.args);
 
 		PathUtils::NormalizeDelims(wpath);

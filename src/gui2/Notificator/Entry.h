@@ -197,15 +197,15 @@ namespace Notific {
 
 
 			//ImGui::SameLine();
-			ImGui::Text(next_activ_string.c_str());
-			ImGui::Text("Remains");
+			ImGui::TextUnformatted(next_activ_string.c_str());
+			ImGui::TextUnformatted("Remains");
 			if (IsIsFutureAndEnabled()) {
 
 				char buf[100];
 				auto delt = DeltToNow(nextActivate);
 				DeltToHuman(buf, delt);
 				ImGui::SameLine();
-				ImGui::Text(buf);
+				ImGui::TextUnformatted(buf);
 			}
 			if (period == Period::OneTime) {
 				if (ImGui::Button("Clear")) {

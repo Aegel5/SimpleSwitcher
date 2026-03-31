@@ -85,7 +85,7 @@ private:
 		ImVec2 center = ImGui::GetWindowViewport()->GetCenter();
 		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 		if (ImGui::BeginPopupModal(LOC("Message"), 0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings)) {
-			ImGui::Text(show_message);
+			ImGui::TextUnformatted(show_message);
 			//ImGui::Separator();
 			if (ImGui::Button("OK", ImVec2(ImGui::CalcTextSize("OK").x * 4, 0))) { ImGui::CloseCurrentPopup(); }
 			ImGui::EndPopup();
