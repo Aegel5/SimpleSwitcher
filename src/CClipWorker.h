@@ -47,10 +47,20 @@ public:
 		size_t currentTotalSize = 0;
 		UINT format = 0;
 
+		static UINT f1 = RegisterClipboardFormatW(CFSTR_PREFERREDDROPEFFECT);
+		static UINT f2 = RegisterClipboardFormatW(CFSTR_SHELLIDLIST);
+
 		// Перебираем все доступные форматы в буфере
 		while ((format = EnumClipboardFormats(format)) != 0) {
-			if (!Utils::is_in(format, CF_UNICODETEXT, CF_HDROP, CF_DIB))
+			if (!Utils::is_in(format,
+				CF_UNICODETEXT,
+				CF_HDROP,
+				CF_DIB,
+				f1,
+				f2
+			)) {
 				continue; // скипаем мусор.
+			}
 			HANDLE hData = GetClipboardData(format);
 			if (!hData) continue;
 
