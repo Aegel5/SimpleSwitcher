@@ -193,7 +193,8 @@ public:
 			RETURN_SUCCESS;
 		}
 
-		if (it.snippet.size() != 0) {
+		if (it.type == CommandType::Snippet) {
+			if (it.snippet.empty()) RETURN_SUCCESS;
 			auto str = StrUtils::Convert(it.snippet);
 			InputSender is;
 			for (auto c : str) {

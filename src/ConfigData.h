@@ -68,6 +68,10 @@ struct LayoutInfo {
     CHotKeyList hotkey;
 };
 
+enum class CommandType {
+	Run, Snippet
+};
+
 struct RunProgramInfo {
     string path;
     string args;
@@ -76,6 +80,7 @@ struct RunProgramInfo {
     bool elevated = false;
 	int delay = 0;
 	bool enabled = true;
+	CommandType type = CommandType::Run;
 };
 
 

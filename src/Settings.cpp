@@ -88,7 +88,8 @@ namespace nlohmann {
 		elevated,
 		hotkey,
 		delay,
-		enabled
+		enabled,
+		type
 	)
 
 
