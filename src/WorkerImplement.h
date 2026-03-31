@@ -173,57 +173,7 @@ public:
 		}
 	}
 
-	TStatus RunProcess(HotKeyType hk, bool after_wait=false) {
-
-		GETCONF;
-
-		int i = hk;
-		ResetFlag(i, hk_RunProgram_flag);
-		if (i >= cfg->run_programs.size()) {
-			return SW_ERR_UNKNOWN;
-		}
-		const auto& it = cfg->run_programs[i];
-
-		if (!it.enabled) {
-			RETURN_SUCCESS;
-		}
-
-		if (it.delay > 0 && !after_wait) {
-			Worker()->PostMsg([hk](auto p) {p->RunProcess(hk,true); }, it.delay);
-			RETURN_SUCCESS;
-		}
-
-		if (it.type == CommandType::Snippet) {
-			if (it.cmd.empty()) RETURN_SUCCESS;
-			auto str = StrUtils::Convert(it.cmd);
-			InputSender is;
-			for (auto c : str) {
-				is.AddUnicodePress(c);
-			}
-			is.Send();
-			RETURN_SUCCESS;
-		}
-
-		auto wpath = StrUtils::Convert(it.cmd);
-		auto wargs = StrUtils::Convert(it.args);
-
-		PathUtils::NormalizeDelims(wpath);
-
-		LOG_ANY(L"run program {} {}", wpath.c_str(), wargs.c_str());
-
-		procstart::CreateProcessParm parm;
-		parm.sExe = wpath.c_str();
-		parm.sCmd = wargs.c_str();
-
-		// todo - use proxy process for unelevated.
-		//parm.admin = it.elevated ? TSWAdmin::SW_ADMIN_ON : TSWAdmin::SW_ADMIN_OFF;
-
-		parm.mode = procstart::SW_CREATEPROC_SHELLEXE;
-		CAutoHandle hProc;
-		IFS_RET(procstart::SwCreateProcess(parm, hProc));
-
-		RETURN_SUCCESS;
-	}
+	TStatus RunProcess(HotKeyType hk, bool after_wait=false);
 
 	void ProcessOurHotKey(Message_Hotkey&& keyData);
 

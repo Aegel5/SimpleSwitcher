@@ -1,4 +1,5 @@
 ﻿#include "WorkerImplement.h"
+#include "ParseSnippet.h"
 
 void WorkerImplement::ProcessKeyMsg(const Message_KeyType& keyData)
 {
@@ -211,6 +212,79 @@ void WorkerImplement::ChangeForeground(HWND hwnd)
 	}
 	m_dwIdThreadForeground = threadid;
 	m_dwIdProcoreground = procId; 
+}
+
+namespace {
+	void ProcessSnippet(const string& s) {
+		if (s.empty()) return;
+		auto parts = ParseSnippet(s);
+		InputSender is;
+		for (const auto& it : parts) {
+
+			// VK_CODE
+			if (it.inBrackets) {
+				for (const auto& hk_string : StrUtils::Split(it.text, ',')) {
+					auto hk = CHotKey::FromString(hk_string);
+					is.AddPressVk(hk);
+				}
+				continue;
+			}
+
+			// UNICODE
+			auto str = StrUtils::Convert(it.text);
+			for (auto c : str) {
+				is.AddUnicodePress(c);
+			}
+
+		}
+		is.Send();
+	}
+}
+
+TStatus WorkerImplement::RunProcess(HotKeyType hk, bool after_wait) {
+
+	GETCONF;
+
+	int i = hk;
+	ResetFlag(i, hk_RunProgram_flag);
+	if (i >= cfg->run_programs.size()) {
+		return SW_ERR_UNKNOWN;
+	}
+	const auto& it = cfg->run_programs[i];
+
+	if (!it.enabled) {
+		RETURN_SUCCESS;
+	}
+
+	if (it.delay > 0 && !after_wait) {
+		Worker()->PostMsg([hk](auto p) {p->RunProcess(hk, true); }, it.delay);
+		RETURN_SUCCESS;
+	}
+
+	if (it.type == CommandType::Snippet) {
+		ProcessSnippet(it.cmd);
+		RETURN_SUCCESS;
+	}
+
+	auto wpath = StrUtils::Convert(it.cmd);
+	auto wargs = StrUtils::Convert(it.args);
+
+	PathUtils::NormalizeDelims(wpath);
+
+	LOG_ANY(L"run program {} {}", wpath.c_str(), wargs.c_str());
+
+	procstart::CreateProcessParm parm;
+	parm.sExe = wpath.c_str();
+	parm.sCmd = wargs.c_str();
+
+	// todo - use proxy process for unelevated.
+	//parm.admin = it.elevated ? TSWAdmin::SW_ADMIN_ON : TSWAdmin::SW_ADMIN_OFF;
+
+	parm.mode = procstart::SW_CREATEPROC_SHELLEXE;
+	CAutoHandle hProc;
+	IFS_RET(procstart::SwCreateProcess(parm, hProc));
+
+	RETURN_SUCCESS;
 }
 
 void WorkerImplement::ProcessOurHotKey(Message_Hotkey&& keyData) {

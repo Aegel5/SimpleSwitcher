@@ -82,8 +82,8 @@ public:
 		is.AddUpVk(key);
 		is.Send();
 	}
-	void AddPressVk(const CHotKey& key)
-	{
+	void AddPressVk(const CHotKey& key)	{
+		if (key.Size() == 0) return;
 		AddDownVk(key);
 		AddUpVk(key);
 	}
