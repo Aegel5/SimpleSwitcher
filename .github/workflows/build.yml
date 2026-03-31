@@ -101,8 +101,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: "v${{ steps.get_version.outputs.VERSION }}-${{ steps.vars.outputs.sha_short }}"
-          name: "SimpleSwitcher PREVIEW ${{ steps.get_version.outputs.VERSION }}"
-          body: "Релиз собран автоматически ${{ steps.vars.outputs.sha_short }}"
+          name: "SimpleSwitcher ${{ steps.get_version.outputs.VERSION }} PREVIEW"
+          body: "Релиз собран автоматически"
           prerelease: true
           files: "SimpleSwitcher_v*.zip"
           # Эта настройка позволяет перезаписывать файлы в существующем теге
