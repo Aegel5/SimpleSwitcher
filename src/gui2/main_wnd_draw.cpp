@@ -179,12 +179,6 @@ void MainWindow::DrawFrameActual() {
 
 		with_TabItem(LOC("Expert")) {
 
-			if (Utils::IsDebug()) {
-				if (ImGui::Button("Show demo"))
-					show_demo_window = true;
-			}
-
-
 
 			{
 				ImGuiUtils::Combo(LOC("UI Skin"), conf_gui()->ui_skin,
@@ -313,6 +307,16 @@ void MainWindow::DrawFrameActual() {
 		with_TabItem(LOC("About")) {
 			ImGui::TextLinkOpenURL("Github", "https://github.com/Aegel5/SimpleSwitcher");
 			//ImGui::TextLinkOpenURL("Telegram", "https://t.me/simple_switcher");
+
+			if (Utils::IsDebug()) {
+
+				if (ImGui::Button("Show demo"))
+					show_demo_window = true;
+
+				if (ImGui::Button("Show metrics")) {
+					show_metrics = true;
+				}
+			}
 		}
 
 		ImGui::EndTabBar();

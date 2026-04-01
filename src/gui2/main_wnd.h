@@ -29,6 +29,7 @@ class MainWindow : public ImGuiUtils::WindowHelper {
 	bool bg_fill = false;
 	BufScanMap remap;
 	bool remap_open = false;
+	bool show_metrics = false;
 public:
 	bool IsVisible() { return show_wnd; }
 private:
@@ -159,6 +160,9 @@ public:
 
 		if (show_demo_window) {
 			ImGui::ShowDemoWindow(&show_demo_window);
+		}
+		if (show_metrics) {
+			ImGui::ShowMetricsWindow(&show_metrics);
 		}
 		//if (ShowStyleEditor) {
 		//	ImGui::Begin(LOC("Style editor"), &ShowStyleEditor);
