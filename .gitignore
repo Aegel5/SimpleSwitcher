@@ -7,3 +7,5 @@
 obj
 bin
 *.pdb
+
+build_win7
