@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+// todo: разделить на 2 функции 1: препроцессинг (символ или очистка) 2: реал аналайзинг (может быть lazy).
 inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& scan, const auto& get_lay, TKeyBaseInfo& data){
 
 	bool is_shift = key.HasMod(VK_SHIFT);

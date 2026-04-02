@@ -77,14 +77,14 @@ void MainWindow::DrawFrameActual() {
 
 			{
 				auto text = [](SeparateExtMode x) {
-					if (x == SeparateExtMode::Disabled) return LOC("Base");
+					if (x == SeparateExtMode::Disabled) return LOC("Base (only by spaces)");
 					if (x == SeparateExtMode::PossibleSymb_Always) return LOC("Separate non-letters and potential non-letters (always)");
 					if (x == SeparateExtMode::PossibleSymb_SeveralW) return LOC("Separate non-letters and potential non-letters (several words correction)");
 					if (x == SeparateExtMode::Symbol) return LOC("Separate non-letters");
 					return "Unknown";
 					};
 				auto tips = [](SeparateExtMode x) -> UStr {
-					if (x == SeparateExtMode::Disabled) return LOC("Only separate by spaces");
+					//if (x == SeparateExtMode::Disabled) return LOC("Only separate by spaces");
 					return nullptr;
 					};
 				if (ImGui::BeginCombo(LOC("Word separation"), text(conf_gui()->separate_ext_mode))) {
@@ -197,26 +197,26 @@ void MainWindow::DrawFrameActual() {
 		with_TabItem(LOC("Expert")) {
 
 
-			{
-				ImGuiUtils::Combo(LOC("UI Skin"), conf_gui()->ui_skin,
-					[this]()-> std::generator<UStr> {
-						co_yield "None";
-						for (const auto& it : backgrounds) co_yield it.c_str();
-					},
-					[this] {
-						SaveApplyGuiConfig();
-						apply_background();
-					},
-					ImGuiComboFlags_HeightLargest
-				);
+			//{
+			//	ImGuiUtils::Combo(LOC("UI Skin"), conf_gui()->ui_skin,
+			//		[this]()-> std::generator<UStr> {
+			//			co_yield "None";
+			//			for (const auto& it : backgrounds) co_yield it.c_str();
+			//		},
+			//		[this] {
+			//			SaveApplyGuiConfig();
+			//			apply_background();
+			//		},
+			//		ImGuiComboFlags_HeightLargest
+			//	);
 
-				ImGui::SameLine();
-				with_ID("UPD_SKIN") {
-					if (ImGui::Button(LOC("Update"))) {
-						update_backg();
-					}
-				}
-			}
+			//	ImGui::SameLine();
+			//	with_ID("UPD_SKIN") {
+			//		if (ImGui::Button(LOC("Update"))) {
+			//			update_backg();
+			//		}
+			//	}
+			//}
 
 			//{
 			//	ImGui::SameLine();

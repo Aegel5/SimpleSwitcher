@@ -38,6 +38,7 @@ namespace ImGuiUtils {
 		return (ImGui::Button("+", { ImGui::GetFrameHeight(),0 }));
 	}
 
+	// todo 1: to return bool instead apply 2: invoke on client side 3: new version int -> string.
 	inline void Combo(UStr name, string& data, auto&& choices, auto&& apply, ImGuiComboFlags flags = 0) {
 		if (ImGui::BeginCombo(name, data.c_str(), flags)) {
 			if constexpr (std::is_invocable_v<TYPE_OF(choices)>) {
