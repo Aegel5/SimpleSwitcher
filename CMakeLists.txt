@@ -54,6 +54,19 @@ block()
 endblock()
 
 
+# SHA DEFINE
+block()
+	# 1. Берем хэш из окружения GitHub (GITHUB_SHA есть в рантайме экшена по умолчанию)
+	set(TMP_GIT_HASH $ENV{GITHUB_SHA})
+	# 2. Если пусто (локальная сборка), ставим заглушку "unknown" или пустую строку ""
+	if(NOT TMP_GIT_HASH)
+		set(TMP_GIT_HASH "unknown")
+	endif()
+	# 3. Пробрасываем в C++ (CMake сам добавит кавычки, если значение внутри кавычек в set)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE GIT_COMMIT_HASH="${TMP_GIT_HASH}")
+endblock()
+
+
 
 # ImguiLib
 block()
@@ -75,7 +88,7 @@ block()
 		set(FT_DISABLE_PNG ON CACHE BOOL "" FORCE)
 		message(STATUS "Fetching freetype")
 		include(FetchContent)
-		FetchContent_Declare(freetype GIT_REPOSITORY https://github.com/freetype/freetype GIT_TAG VER-2-13-3)
+		FetchContent_Declare(freetype GIT_REPOSITORY https://github.com/freetype/freetype GIT_TAG VER-2-14-3)
 		FetchContent_MakeAvailable(freetype)
 		target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE freetype)
 		target_include_directories(ImguiLib PRIVATE "${freetype_SOURCE_DIR}/include")

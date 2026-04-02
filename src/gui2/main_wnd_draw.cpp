@@ -322,8 +322,20 @@ void MainWindow::DrawFrameActual() {
 		Draw_run_tab();
 
 		with_TabItem(LOC("About")) {
-			ImGui::TextLinkOpenURL("Github", "https://github.com/Aegel5/SimpleSwitcher");
-			//ImGui::TextLinkOpenURL("Telegram", "https://t.me/simple_switcher");
+
+
+			ImGui::Text("SimpleSwitcher %s", GET_SW_VERSION());
+
+			ImGui::Text("SHA: %s", GIT_COMMIT_HASH);
+
+			ImGui::TextUnformatted(LOC("More info:"));
+
+			ImGui::SameLine();
+
+			ImGui::TextLinkOpenURL("https://github.com/Aegel5/SimpleSwitcher");
+
+			if (ImGui::Button("❤️ Support ❤️")) {
+			}
 
 			if (Utils::IsDebug()) {
 
@@ -334,10 +346,13 @@ void MainWindow::DrawFrameActual() {
 					show_metrics = true;
 				}
 			}
+
+			//ImGui::TextLinkOpenURL("Telegram", "https://t.me/simple_switcher");
+
+
 		}
 
 		ImGui::EndTabBar();
-
 
 	}
 
