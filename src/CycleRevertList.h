@@ -84,8 +84,8 @@ private: std::vector<int> GenerateWords(HotKeyType typeRevert) {
 
 	GETCONF;
 	const auto can_separate_posible =
-		(typeRevert == hk_RevertLastWord && cfg->separate_ext_mode == 2)
-		|| (typeRevert == hk_RevertSeveralWords && cfg->separate_ext_mode > 0);
+		(typeRevert == hk_RevertLastWord && cfg->separate_ext_mode == SeparateExtMode::PossibleSymb_Always)
+		|| (typeRevert == hk_RevertSeveralWords && Utils::is_in(cfg->separate_ext_mode, SeparateExtMode::PossibleSymb_SeveralW, SeparateExtMode::PossibleSymb_Always));
 
 
 	for (int i = -1; auto & it : zipped) {

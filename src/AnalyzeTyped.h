@@ -80,6 +80,10 @@ inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& s
 		return KEYTYPE_LETTER_OR_SPACE; 
 	}
 
+	if (cfg->separate_ext_mode == SeparateExtMode::Disabled) {
+		return Utils::is_in(curSymbol, '\n', ' ', '\t', '\r') ? KEYTYPE_SPACE : KEYTYPE_LETTER;
+	}
+
 	if (cfg->layouts_info.CntLayoutEnabled() <= 3) {
 
 		auto is_letter = [](wchar_t c) {return Utils::is_in(c, L'-', L'_') || StrUtils::isLetter(c); };

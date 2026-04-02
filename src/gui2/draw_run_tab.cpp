@@ -49,7 +49,11 @@ void MainWindow::Draw_run_tab() {
 					// type
 					{
 						ImGui::SameLine();
-						auto text = [](CommandType x) { if (x == CommandType::Run) return LOC("Run process"); return LOC("Snippet"); };
+						auto text = [](CommandType x) { 
+							if (x == CommandType::Run) return LOC("Run process"); 
+							if (x == CommandType::Snippet) return LOC("Snippet"); 
+							return "Unknown";
+							};
 						if (ImGui::BeginCombo(LOC("Command type"), text(it.type), 0)) {
 							for (auto type : { CommandType::Run, CommandType::Snippet }) {
 								if (ImGui::Selectable(text(type), it.type == type)) {

@@ -76,14 +76,31 @@ void MainWindow::DrawFrameActual() {
 
 
 			{
-				UStr items[] = { LOC("Disabled"), LOC("Only for several words correction"), LOC("Always") };
-				Clamp(conf_gui()->separate_ext_mode, 0, std::ssize(items)-1);
-				if (ImGui::Combo(LOC("Extended word separation"), &conf_gui()->separate_ext_mode, items, std::size(items))) {
-					SaveApplyGuiConfig();
+				auto text = [](SeparateExtMode x) {
+					if (x == SeparateExtMode::Disabled) return LOC("Base");
+					if (x == SeparateExtMode::PossibleSymb_Always) return LOC("Separate non-letters and potential non-letters (always)");
+					if (x == SeparateExtMode::PossibleSymb_SeveralW) return LOC("Separate non-letters and potential non-letters (several words correction)");
+					if (x == SeparateExtMode::Symbol) return LOC("Separate non-letters");
+					return "Unknown";
+					};
+				auto tips = [](SeparateExtMode x) -> UStr {
+					if (x == SeparateExtMode::Disabled) return LOC("Only separate by spaces");
+					return nullptr;
+					};
+				if (ImGui::BeginCombo(LOC("Word separation"), text(conf_gui()->separate_ext_mode))) {
+					for (auto type : { SeparateExtMode::Disabled, SeparateExtMode::Symbol,  SeparateExtMode::PossibleSymb_SeveralW, SeparateExtMode::PossibleSymb_Always }) {
+						if (ImGui::Selectable(text(type), conf_gui()->separate_ext_mode == type)) {
+							if (conf_gui()->separate_ext_mode != type) {
+								conf_gui()->separate_ext_mode = type;
+								SaveApplyGuiConfig();
+							}
+						}
+						auto tip = tips(type);
+						if(tip)
+							ImGui::SetItemTooltip(tip);
+					}
+					ImGui::EndCombo();
 				}
-				ImGui::SetItemTooltip((UStr)u8"%s\n%s: ']}' - 'ъЪ'", 
-					LOC("Separate words by keys that can produce both letters and other symbols"),
-					LOC("Example"));
 			}
 
 			if (ImGui::Checkbox(LOC("Disable the accessibility functions"), &conf_gui()->disableAccessebility)) {

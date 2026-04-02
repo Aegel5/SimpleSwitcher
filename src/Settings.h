@@ -3,6 +3,13 @@
 #include "ConfigData.h"
 #include "ConfigData_hk.h"
 
+enum class SeparateExtMode {
+	Disabled = 3,
+	Symbol = 0,
+	PossibleSymb_SeveralW = 1,
+	PossibleSymb_Always = 2,
+};
+
 class ProgramConfig {
 	struct CHotKeySet {
 		HotKeyType hkId = hk_NULL;
@@ -95,7 +102,7 @@ public:
     bool SkipLowLevelInjectKeys = false;
     bool AlternativeLayoutChange = false;
     TUInt32 quick_press_ms = 280;
-    int separate_ext_mode = 0; // 1 - several words, 2 - several + last
+	SeparateExtMode separate_ext_mode = SeparateExtMode::Symbol;
     CHotKey win_hotkey_cycle_lang { VK_LMENU, VK_SHIFT };
 	std::string theme = "Light";
 	string ui_skin = "";
