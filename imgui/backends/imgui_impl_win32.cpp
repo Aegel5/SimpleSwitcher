@@ -726,7 +726,11 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandlerEx(HWND hwnd, UINT msg, WPA
     ImGui_ImplWin32_Data* bd = ImGui_ImplWin32_GetBackendData(io);
     if (bd == nullptr)
         return 0;
-    ImWantFrameWithDelay(msg == WM_NCHITTEST ? 0.1 : 0);// SS_PATCH_IMGUI
+
+    // SS_PATCH_IMGUI
+    if (msg == WM_ERASEBKGND) return 1;
+    ImWantFrameWithDelay(msg == WM_NCHITTEST ? 0.1 : 0);
+
     switch (msg)
     {
     case WM_MOUSEMOVE:

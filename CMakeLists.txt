@@ -3,8 +3,9 @@ project(SimpleSwitcher VERSION 1.0 LANGUAGES CXX)
 
 # Глобальные настройки
 
-if(WIN32)
-add_definitions(-D_WIN32_WINNT=0x0601)
+if(WIN7_COMPAT)
+	add_definitions(-D_WIN32_WINNT=0x0601)
+	add_definitions(-DSS_WIN_7_COMPAT)
 endif()
 
 set(CMAKE_CXX_STANDARD 23)

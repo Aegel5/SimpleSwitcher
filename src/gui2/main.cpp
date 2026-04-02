@@ -271,7 +271,11 @@ bool CreateDeviceD3D(HWND hWnd) {
 	sd.SampleDesc.Count = 1;
 	sd.SampleDesc.Quality = 0;
 	sd.Windowed = TRUE;
-	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+#ifdef SS_WIN_7_COMPAT
+	sd.SwapEffect = DXGI_SWAP_EFFECT_SEQUENTIAL;
+#else
+	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+#endif
 
 	UINT createDeviceFlags = 0;
 	//createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;

@@ -11,7 +11,7 @@ class TrayIcon {
 	HICON app_icon = 0;
 	Vec_i2 GetSize() {
 
-#if _WIN32_WINNT <= 0x0601
+#ifdef SS_WIN_7_COMPAT
 		return { 16,16 };
 #else
 		UINT dpi = GetDpiForSystem();
