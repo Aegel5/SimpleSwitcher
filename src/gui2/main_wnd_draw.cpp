@@ -6,6 +6,9 @@ void MainWindow::DrawFrameActual() {
 	ImGui::SetNextWindowSize(startsize, ImGuiCond_FirstUseEver);
 	ImGui::Begin(title.c_str(), &show_wnd, ImGuiWindowFlags_NoCollapse);
 
+
+	//	});
+
 	process_helper();
 
 	//ImGuiIO& io = ImGui::GetIO();
@@ -145,6 +148,27 @@ void MainWindow::DrawFrameActual() {
 				);
 			}
 
+			if (g_isAura) {
+				ImGuiUtils::Combo(LOC("UI Skin"), conf_gui()->ui_skin,
+					[this]()-> std::generator<UStr> {
+						co_yield "None";
+						for (const auto& it : backgrounds) co_yield it.c_str();
+					},
+					[this] {
+						SaveApplyGuiConfig();
+						apply_background();
+					},
+					ImGuiComboFlags_HeightLargest
+				);
+
+				ImGui::SameLine();
+				with_ID("UPD_SKIN") {
+					if (ImGui::Button(LOC("Update"))) {
+						update_backg();
+					}
+				}
+			}
+
 			{
 				ImGui::AlignTextToFramePadding();
 				ImGui::TextLinkOpenURL("SimpleSwitcher.json", config_path.c_str());
@@ -197,26 +221,7 @@ void MainWindow::DrawFrameActual() {
 		with_TabItem(LOC("Expert")) {
 
 
-			//{
-			//	ImGuiUtils::Combo(LOC("UI Skin"), conf_gui()->ui_skin,
-			//		[this]()-> std::generator<UStr> {
-			//			co_yield "None";
-			//			for (const auto& it : backgrounds) co_yield it.c_str();
-			//		},
-			//		[this] {
-			//			SaveApplyGuiConfig();
-			//			apply_background();
-			//		},
-			//		ImGuiComboFlags_HeightLargest
-			//	);
 
-			//	ImGui::SameLine();
-			//	with_ID("UPD_SKIN") {
-			//		if (ImGui::Button(LOC("Update"))) {
-			//			update_backg();
-			//		}
-			//	}
-			//}
 
 			//{
 			//	ImGui::SameLine();

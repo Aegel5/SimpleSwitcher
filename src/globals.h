@@ -20,4 +20,6 @@ inline void show_main_wind(int mode = 0) {
 inline void ApplyAcessebil() {	AllowAccessibilityShortcutKeys(!conf_get_unsafe()->disableAccessebility);}
 inline bool IsAdminOk() { return Utils::IsSelfElevated() || !conf_get_unsafe()->isMonitorAdmin; }
 
+inline bool g_isAura = false;
+
 

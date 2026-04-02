@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+//#include "imgui_internal.h" 
+
 namespace ImGuiUtils {
 
 	inline void ToCenter(bool always = false) {
@@ -78,5 +80,50 @@ namespace ImGuiUtils {
 	//	if (ImGui::Button(text)) { res = true; }
 	//	ImGui::SetCursorPos(cur);
 	//	return res;
+	//}
+
+	//inline void WindowCustomHeader(const auto* p, auto* b, int f, auto&& func) {
+
+	//	// 1. Создаем окно с пустым заголовком (через ##)
+	//	ImGui::Begin(p, b, f);
+
+	//	ImGuiWindow* window = ImGui::GetCurrentWindow();
+	//	ImGuiStyle& style = ImGui::GetStyle();
+
+	//	// 2. Получаем точные границы заголовка
+	//	ImRect titleBarRect = window->TitleBarRect();
+
+	//	// 3. Вычисляем позицию "1 к 1"
+	//	// Стандартный отступ текста слева = WindowPadding.x
+	//	// Центрирование по вертикали = (ВысотаБара - ВысотаТекста) / 2
+	//	float textHeight = ImGui::GetTextLineHeight();
+	//	float verticalOffset = (titleBarRect.GetHeight() - textHeight) * 0.5f;
+
+	//	// Устанавливаем курсор в экранные координаты заголовка
+	//	ImGui::SetCursorScreenPos(ImVec2(
+	//		titleBarRect.Min.x + style.WindowPadding.x,
+	//		titleBarRect.Min.y + verticalOffset
+	//	));
+
+	//	// 4. РАЗРЕШАЕМ рисование в области заголовка
+	//	// По умолчанию ImGui запрещает рисовать выше основной рабочей области окна.
+	//	ImGui::PushClipRect(titleBarRect.Min, titleBarRect.Max, false);
+
+
+
+	//	// 5. СТАНДАРТНЫЙ ВЫВОД (теперь он попадет в заголовок)
+	//	func();
+
+	//	// Можно добавить и другие стандартные виджеты рядом:
+	//	// ImGui::SameLine(); 
+	//	// if (ImGui::SmallButton("OK")) { ... }
+
+	//	ImGui::PopClipRect();
+
+	//	// 6. ВОЗВРАЩАЕМ курсор в начало контентной области окна
+	//	// Чтобы последующий текст не накладывался на заголовок
+	//	ImGui::SetCursorScreenPos(window->DC.CursorStartPos);
+
+	//	// Обычное содержимое окна
 	//}
 }

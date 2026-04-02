@@ -9,6 +9,8 @@ inline TStatus update_cur_dir() {
 	IFW_RET(SetCurrentDirectory(dir.c_str()));
 	RETURN_SUCCESS;
 }
+
+
 extern int StartGui(bool show, bool);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
@@ -22,6 +24,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	CMainWorker::Inst().Init();
 
+	g_isAura = std::filesystem::is_directory(PathUtils::GetPath_folder_noLower2() / "UI_Skins");
 	ApplyLocalization();
 	ApplyAcessebil();
 
