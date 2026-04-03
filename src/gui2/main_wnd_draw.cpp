@@ -7,8 +7,6 @@ void MainWindow::DrawFrameActual() {
 	ImGui::Begin(title.c_str(), &show_wnd, ImGuiWindowFlags_NoCollapse);
 
 
-	//	});
-
 	process_helper();
 
 	//ImGuiIO& io = ImGui::GetIO();
@@ -340,7 +338,10 @@ void MainWindow::DrawFrameActual() {
 			ImGui::TextLinkOpenURL("https://github.com/Aegel5/SimpleSwitcher");
 
 			if (ImGui::Button("❤️ Support ❤️")) {
+				ImGui::GetPlatformIO().Platform_OpenInShellFn(GImGui, "https://github.com/Aegel5/SimpleSwitcher#donate");
 			}
+
+			ImGui::TextUnformatted("The program develops only thanks to your support! 🤝");
 
 			if (Utils::IsDebug()) {
 

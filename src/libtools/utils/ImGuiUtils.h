@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-//#include "imgui_internal.h" 
-
 namespace ImGuiUtils {
 
 	inline void ToCenter(bool always = false) {
