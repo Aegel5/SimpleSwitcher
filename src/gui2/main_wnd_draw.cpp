@@ -329,7 +329,7 @@ void MainWindow::DrawFrameActual() {
 
 			ImGui::Text("SimpleSwitcher %s", GET_SW_VERSION());
 
-			ImGui::Text("SHA: %s", GIT_COMMIT_HASH);
+			ImGui::Text("Commit SHA: %s", GIT_COMMIT_HASH);
 
 			ImGui::TextUnformatted(LOC("More info:"));
 
