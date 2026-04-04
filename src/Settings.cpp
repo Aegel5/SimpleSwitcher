@@ -117,7 +117,8 @@ namespace nlohmann {
 			gui_lang,
 			ShowLangsInTrayMenu,
 			ShowReminderInTrayMenu,
-			useBritishFlag
+			useBritishFlag,
+			treat_as_letters
 		)
 }
 

@@ -102,6 +102,9 @@ void MainWindow::DrawFrameActual() {
 					}
 					ImGui::EndCombo();
 				}
+				if (ImGui::InputText(LOC("Treat as letter"), &conf_gui()->treat_as_letters)) {
+					SaveApplyGuiConfig();
+				}
 			}
 
 			if (ImGui::Checkbox(LOC("Disable the accessibility functions"), &conf_gui()->disableAccessebility)) {
