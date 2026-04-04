@@ -102,9 +102,11 @@ void MainWindow::DrawFrameActual() {
 					}
 					ImGui::EndCombo();
 				}
-				if (ImGui::InputText(LOC("Treat as letter"), &conf_gui()->treat_as_letters)) {
+				if (ImGui::InputText(LOC("Treat as letters"), &conf_gui()->treat_as_letters)) {
 					SaveApplyGuiConfig();
 				}
+				ImGui::SetItemTooltip(LOC("Which symbols should be treated as letters for word separation"));
+				
 			}
 
 			if (ImGui::Checkbox(LOC("Disable the accessibility functions"), &conf_gui()->disableAccessebility)) {
