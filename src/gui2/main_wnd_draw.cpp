@@ -343,7 +343,7 @@ void MainWindow::DrawFrameActual() {
 			ImGui::TextLinkOpenURL("https://github.com/Aegel5/SimpleSwitcher");
 
 			if (ImGui::Button("❤️ Support ❤️")) {
-				ImGui::GetPlatformIO().Platform_OpenInShellFn(GImGui, "https://github.com/Aegel5/SimpleSwitcher#donate");
+				ImGui::GetPlatformIO().Platform_OpenInShellFn(GImGui, "https://github.com/Aegel5/SimpleSwitcher?tab=readme-ov-file#%EF%B8%8F-donate");
 			}
 
 			ImGui::TextUnformatted("The program develops only thanks to your support! 🤝");

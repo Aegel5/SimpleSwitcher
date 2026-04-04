@@ -90,7 +90,7 @@ void MainWindow::Draw_run_tab() {
 					if (it.type == CommandType::Snippet) {
 						ImGui::AlignTextToFramePadding();
 						ImGui::TextUnformatted("snippet");
-						ImGuiUtils::SetItemTooltip(LOC("By default, it just enters text; use @@() for hotkeys. Example: @@(Ctrl + V, Enter)MyText"));
+						ImGui::SetItemTooltip(LOC("By default, it just enters text; use @@() for hotkeys. Example: @@(Ctrl + V, Enter)MyText"));
 						ImGui::SameLine(label_width);
 						ImGui::SetNextItemWidth(-1.0f);
 						if (ImGui::InputText("##snippet", &it.cmd)) {
