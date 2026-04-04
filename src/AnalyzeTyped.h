@@ -3,16 +3,22 @@
 // todo: разделить на 2 функции 1: препроцессинг (символ или очистка) 2: реал аналайзинг (может быть lazy).
 inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& scan, const auto& get_lay, TKeyBaseInfo& data){
 
+	auto count_keys = std::ranges::count_if(key, [](auto key) {
+		return !CHotKey::IsKnownMods(key);
+		});
+
+	if (count_keys == 0) return KEYTYPE_COMMAND_NO_CLEAR;
+
+	auto size = key.Size() - count_keys + 1;
+
 	bool is_shift = key.HasMod(VK_SHIFT);
 
-	if (key.Size() == 0) {
-		return KEYTYPE_COMMAND_NO_CLEAR;
-	}
-	else if (key.Size() > 2) {
+	if (size > 2) {
 		return KEYTYPE_COMMAND_CLEAR;
 	}
-	else if (key.Size() == 2) {
-		if (!is_shift || CHotKey::IsKnownMods(vk))
+
+	if (size == 2) {
+		if (!is_shift)
 			return KEYTYPE_COMMAND_CLEAR;
 	}
 

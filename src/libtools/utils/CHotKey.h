@@ -9,38 +9,37 @@ public:
 	explicit CHotKey(TKeyCode key) {Add(key);}
 	CHotKey(TKeyCode key1, TKeyCode key2) {	Add(key1).Add(key2);}
 	CHotKey(TKeyCode key1, TKeyCode key2, TKeyCode key3) { Add(key1).Add(key2).Add(key3);}
-	enum {
-		ADDKEY_NORMAL = 0,
-		ADDKEY_CHECK_EXIST = 0b1,
-		ADDKEY_ENSURE_ONE_VALUEKEY = 0b10,
-		ADDKEY_NO_STRICK_MODS_CHECK = 0b100,
-	};
+	//enum {
+	//	ADDKEY_NORMAL = 0,
+	//	//ADDKEY_CHECK_EXIST = 0b1,
+	//	//ADDKEY_ENSURE_ONE_VALUEKEY = 0b10,
+	//	ADDKEY_NO_STRICK_MODS_CHECK = 0b100,
+	//};
 	CHotKey& Simple_Append(TKeyCode key) {
 		if (size < c_MAX) ++size;
 		keys[size - 1] = key;
 		return *this;
 	}
-	CHotKey& Add(TKeyCode key, int flags = ADDKEY_NORMAL) {
+	CHotKey& Add(TKeyCode key, bool strict_check = true) {
 
-		if (TestFlag(flags, ADDKEY_CHECK_EXIST)) {
-			for (TKeyCode k : *this) {
-				if (CompareKeys(k, key, !TestFlag(flags, ADDKEY_NO_STRICK_MODS_CHECK))) {
-					if (IsCommonMods(k) && !IsCommonMods(key)) {
-						// rewrite common key
-						Remove(k);
-						break;
-					}
-					else {
-						// already exists
-						return *this;
-					}
+		// check exists
+		for (TKeyCode k : *this) {
+			if (CompareKeys(k, key, strict_check)) {
+				if (IsCommonMods(k) && !IsCommonMods(key)) {
+					// rewrite common key
+					Remove(k);
+					break;
+				}
+				else {
+					// already exists
+					return *this;
 				}
 			}
 		}
 
-		if (TestFlag(flags, ADDKEY_ENSURE_ONE_VALUEKEY) && !CHotKey::IsKnownMods(key)) {
-			Remove_if([](auto k) { return !IsKnownMods(k); });
-		}
+		//if (TestFlag(flags, ADDKEY_ENSURE_ONE_VALUEKEY) && !CHotKey::IsKnownMods(key)) {
+		//	Remove_if([](auto k) { return !IsKnownMods(k); });
+		//}
 
 		Simple_Append(key);
 		return *this;

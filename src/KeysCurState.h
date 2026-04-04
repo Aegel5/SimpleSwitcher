@@ -58,7 +58,7 @@ public:
 		return double_cnt;
 	}
 
-	const CHotKey& GetOneValueHotKey()const { return one_value; }
+	const CHotKey& GetHk()const { return one_value; }
 	int Size() const { return all_keys.size(); }
 	bool IsDownNow(TKeyCode vk) const { return all_keys.contains(vk); }
 
@@ -101,7 +101,7 @@ public:
 
 		// update stores
 		if (isDown) {
-			one_value.Add(vkCode, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_ENSURE_ONE_VALUEKEY);
+			one_value.Add(vkCode);
 			auto [it, inserted] = all_keys.try_emplace(vkCode);
 			if (!isInjected) it->second.hasPhisic = true;
 			else it->second.hasEmulated = true;

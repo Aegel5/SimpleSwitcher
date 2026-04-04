@@ -94,7 +94,7 @@ public:
 						vk = CHotKey::Normalize(vk);
 					}
 					if (oper == KEY_STATE_DOWN) {
-						state.Add(vk, CHotKey::ADDKEY_CHECK_EXIST | CHotKey::ADDKEY_NO_STRICK_MODS_CHECK);
+						state.Add(vk, false);
 						SetKey(state);
 					}
 					else {
