@@ -12,6 +12,7 @@ void MainWindow::Draw_run_tab() {
 		}
 
 		float _label_width = ImGui::CalcTextSize("snippet").x + ImGui::GetStyle().ItemSpacing.x;
+		float _label_width2 = ImGui::CalcTextSize("path").x + ImGui::GetStyle().ItemSpacing.x;
 
 		int to_del = -1;
 		bool changes = false;
@@ -31,7 +32,7 @@ void MainWindow::Draw_run_tab() {
 				if(open){
 					ImGui::BeginChild("", {}, ImGuiChildFlags_Borders | ImGuiChildFlags_AutoResizeY);
 					ctx_menu_last_item(true);
-					float label_width = _label_width + ImGui::GetCursorPosX();
+					float label_width = (it.type == CommandType::Run ? _label_width2 : _label_width) + ImGui::GetCursorPosX();
 
 					// enabled
 					{
@@ -89,6 +90,7 @@ void MainWindow::Draw_run_tab() {
 					if (it.type == CommandType::Snippet) {
 						ImGui::AlignTextToFramePadding();
 						ImGui::TextUnformatted("snippet");
+						ImGuiUtils::SetItemTooltip(LOC("By default, it just enters text; use @@() for hotkeys. Example: @@(Ctrl + V, Enter)MyText"));
 						ImGui::SameLine(label_width);
 						ImGui::SetNextItemWidth(-1.0f);
 						if (ImGui::InputText("##snippet", &it.cmd)) {
