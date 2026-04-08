@@ -117,6 +117,8 @@ private:
 	}
 	void DrawFrameActual();
 	void Draw_run_tab();
+	void Draw_expert_tab();
+
 public:
 	MainWindow(bool show, bool conf_err) {
 		show_wnd = show;

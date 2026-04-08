@@ -39,40 +39,52 @@ static bool ImWaitNewFrame(float minDelay
 	// 1. SLEEP PHASE: Determine how long to wait before the next frame
 	float toWaitSeconds = std::max(_g_wantFrameDelay, minDelay);
 
-	do {
-		auto start = steady_clock::now();
-
-		// Wait for OS events or timeout (MsgWaitForMultipleObjectsEx uses milliseconds)
-		DWORD res = ::MsgWaitForMultipleObjectsEx(
-			0, NULL,
-			static_cast<DWORD>(toWaitSeconds * 1000.0f),
-			QS_ALLINPUT,
-			MWMO_INPUTAVAILABLE | MWMO_ALERTABLE
-		);
-
-		if (res == WAIT_TIMEOUT) {
-			break; // Wake up: requested delay has passed
-		}
-
-		// 2. MESSAGE PROCESSING: Handle Windows events
+	if (toWaitSeconds <= 0) {
+		// simple check messages
 		MSG msg;
 		while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
 			if (msg.message == WM_QUIT) return false;
 			::TranslateMessage(&msg);
 			::DispatchMessage(&msg); // Might trigger UI changes and update _g_wantFrameDelay
 		}
+	}
+	else {
+		// wait
+		do {
+			auto start = steady_clock::now();
 
-		// Adjust remaining wait time based on time spent processing messages
-		// If DispatchMessage set a shorter delay, respect it
-		duration<float> elapsed = steady_clock::now() - start;
-		toWaitSeconds -= elapsed.count();
-		minDelay -= elapsed.count();
-		if (toWaitSeconds > _g_wantFrameDelay) {
-			// Try to reduce wait time, but not below the remaining minDelay threshol
-			toWaitSeconds = std::max(minDelay, _g_wantFrameDelay);
-		}
+			// Wait for OS events or timeout (MsgWaitForMultipleObjectsEx uses milliseconds)
+			DWORD res = ::MsgWaitForMultipleObjectsEx(
+				0, NULL,
+				static_cast<DWORD>(toWaitSeconds * 1000.0f),
+				QS_ALLINPUT,
+				MWMO_INPUTAVAILABLE | MWMO_ALERTABLE
+			);
 
-	} while (toWaitSeconds > 0.001f);
+			if (res == WAIT_TIMEOUT) {
+				break; // Wake up: requested delay has passed
+			}
+
+			// 2. MESSAGE PROCESSING: Handle Windows events
+			MSG msg;
+			while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
+				if (msg.message == WM_QUIT) return false;
+				::TranslateMessage(&msg);
+				::DispatchMessage(&msg); // Might trigger UI changes and update _g_wantFrameDelay
+			}
+
+			// Adjust remaining wait time based on time spent processing messages
+			// If DispatchMessage set a shorter delay, respect it
+			duration<float> elapsed = steady_clock::now() - start;
+			toWaitSeconds -= elapsed.count();
+			minDelay -= elapsed.count();
+			if (toWaitSeconds > _g_wantFrameDelay) {
+				// Try to reduce wait time, but not below the remaining minDelay threshol
+				toWaitSeconds = std::max(minDelay, _g_wantFrameDelay);
+			}
+
+		} while (toWaitSeconds > 0.001f);
+	}
 
 	// 3. BURST PHASE: Ensure a sequence of frames for UI consistency (inertia)
 	{
@@ -210,7 +222,7 @@ int StartGui(bool show, bool err_conf) {
 		return false;
 		};
 
-	while (ImWaitNewFrame()) {
+	while (ImWaitNewFrame(conf_gui()->vsync ? 0 : 0.012f)) {
 		// Start the Dear ImGui frame
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
@@ -238,8 +250,7 @@ int StartGui(bool show, bool err_conf) {
 			ImGui::RenderPlatformWindowsDefault();
 		}
 
-		// Present (no vsync needed as ImWaitNewFrame controls the pace)
-		g_pSwapChain->Present(0, 0);
+		g_pSwapChain->Present(conf_gui()->vsync, 0);
 	}
 
 	// Cleanup
