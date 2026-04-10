@@ -55,6 +55,7 @@
 // unit-utils
 #include "TimePoint.h"
 #include "UnorderedSmallMap.h"
+#include "MappedFile.h"
 
 // утилиты
 #include "core/inc_all.h"

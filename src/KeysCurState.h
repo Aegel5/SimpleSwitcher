@@ -53,7 +53,7 @@ public:
 	}
 
 	bool IsHold() const { return is_hold; }
-	bool IsDouble() const { return last_down_vk_clear_up != 0 && double_cnt != 0; } // проверяем четность, чтобы 3-е нажатие не дало hit, а 4-е дало.
+	bool IsDouble() const { return last_down_vk_clear_up != 0 && double_cnt != 0; } 
 	int DoubleCnt() const {
 		return double_cnt;
 	}

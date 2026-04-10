@@ -206,8 +206,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				LOG_ANY("HotKey {} was canceled by mouse click", msg_hotkey.hotkey.ToString());
 			}
 			else {
-
-				if (msg_hotkey.hotkey.IsDouble() && curKeys.DoubleCnt() > 1) {
+				if (msg_hotkey.hotkey.IsDouble() && curKeys.DoubleCnt() > 1) { 
 					LOG_ANY("skip double cnt {}", curKeys.DoubleCnt());
 				}
 				else {

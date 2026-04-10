@@ -4,7 +4,6 @@ void MainWindow::Draw_about_tab() {
 
 	with_TabItem(LOC("About")) {
 
-
 		ImGui::Text("SimpleSwitcher %s", GET_SW_VERSION());
 
 		static string sha = GIT_COMMIT_HASH;

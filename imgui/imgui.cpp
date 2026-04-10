@@ -11183,8 +11183,12 @@ void ImGui::UpdateInputEvents(bool trickle_fast_inputs)
 
     // Record trail (for domain-specific applications wanting to access a precise trail)
     //if (event_n != 0) IMGUI_DEBUG_LOG_IO("Processed: %d / Remaining: %d\n", event_n, g.InputEventsQueue.Size - event_n);
+    
+    // SS_PATCH_IMGUI
+    /*
     for (int n = 0; n < event_n; n++)
         g.InputEventsTrail.push_back(g.InputEventsQueue[n]);
+    */
 
     // [DEBUG]
 #ifndef IMGUI_DISABLE_DEBUG_TOOLS

@@ -168,30 +168,34 @@ int StartGui(bool show, bool err_conf) {
 	ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
 	{
-		wchar_t winPath[1000]; winPath[0] = 0;
-		UINT result = GetWindowsDirectoryW(winPath, std::size(winPath));
-		string path;
-		if (result > 0 && result < std::size(winPath)) {
-			path = StrUtils::Convert(winPath);
-			if (path.back() != '\\') path += '\\';
-			path += "Fonts\\"; // Склеиваем всё в Wide-строке
+		std::wstring font_path(MAX_PATH, L'\0');
+		{
+			UINT size = GetWindowsDirectoryW(font_path.data(), MAX_PATH);
+			if (size > 0 && size < MAX_PATH) {
+				font_path.resize(size); // Обрезаем до реальной длины
+				font_path += L"\\Fonts\\";
+			}
 		}
 		ImFont* font = nullptr;
 
 		if (!font) {
-			font = io.Fonts->AddFontFromFileTTF((path + "segoeui.ttf").c_str(), 24);
+			static MappedFile font_mapped{ (font_path + L"segoeui.ttf").c_str() };
+			if (font_mapped.is_valid()) {
+				ImFontConfig cfg;
+				cfg.FontDataOwnedByAtlas = false;
+				font = io.Fonts->AddFontFromMemoryTTF(const_cast<void*>(font_mapped.data()), font_mapped.size(), 24, &cfg);
+			}
 		}
+
 		if (!font) {
-			font = io.Fonts->AddFontFromFileTTF((path + "tahoma.ttf").c_str(), 20);
+			static MappedFile font_mapped{ (font_path + L"tahoma.ttf").c_str() };
+			if (font_mapped.is_valid()) {
+				ImFontConfig cfg;
+				cfg.FontDataOwnedByAtlas = false;
+				font = io.Fonts->AddFontFromMemoryTTF(const_cast<void*>(font_mapped.data()), font_mapped.size(), 20, &cfg);
+			}
 		}
-		//if (!font) {
-		//	auto data = WinUtils::GetResource(L"font2");
-		//	if (!data.empty()) {
-		//		ImFontConfig cfg{};
-		//		cfg.FontDataOwnedByAtlas = false;
-		//		io.Fonts->AddFontFromMemoryTTF(data.data(), data.size(), std::floorf(17), &cfg);
-		//	}
-		//}
+
 		// fallback
 		if (!font) {
 			font = io.Fonts->AddFontDefault();
@@ -199,10 +203,14 @@ int StartGui(bool show, bool err_conf) {
 
 		// эмодзи
 		{
-			ImFontConfig cfg;
-			cfg.MergeMode = true;
-			cfg.FontLoaderFlags |= ImGuiFreeTypeLoaderFlags_LoadColor;
-			io.Fonts->AddFontFromFileTTF((path + "seguiemj.ttf").c_str(), 18, &cfg);
+			static MappedFile font_mapped{ (font_path + L"seguiemj.ttf").c_str() };
+			if (font_mapped.is_valid()) {
+				ImFontConfig cfg;
+				cfg.FontDataOwnedByAtlas = false;
+				cfg.MergeMode = true;
+				cfg.FontLoaderFlags |= ImGuiFreeTypeLoaderFlags_LoadColor;
+				font = io.Fonts->AddFontFromMemoryTTF(const_cast<void*>(font_mapped.data()), font_mapped.size(), 18, &cfg);
+			}
 		}
 	}
 
