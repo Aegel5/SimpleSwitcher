@@ -11,6 +11,7 @@
 #include "imgui.h"
 #include "backends/imgui_impl_win32.h"
 #include "backends/imgui_impl_dx11.h"
+#include "misc/freetype/imgui_freetype.h"
 #include <d3d11.h>
 #include <tchar.h>
 #include "main_wnd.h"
@@ -194,6 +195,14 @@ int StartGui(bool show, bool err_conf) {
 		// fallback
 		if (!font) {
 			font = io.Fonts->AddFontDefault();
+		}
+
+		// эмодзи
+		{
+			ImFontConfig cfg;
+			cfg.MergeMode = true;
+			cfg.FontLoaderFlags |= ImGuiFreeTypeLoaderFlags_LoadColor;
+			io.Fonts->AddFontFromFileTTF((path + "seguiemj.ttf").c_str(), 18, &cfg);
 		}
 	}
 

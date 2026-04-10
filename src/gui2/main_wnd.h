@@ -118,6 +118,7 @@ private:
 	void DrawFrameActual();
 	void Draw_run_tab();
 	void Draw_expert_tab();
+	void Draw_about_tab();
 
 public:
 	MainWindow(bool show, bool conf_err) {

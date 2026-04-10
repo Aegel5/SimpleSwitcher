@@ -62,7 +62,7 @@ block()
 	set(TMP_GIT_HASH $ENV{GITHUB_SHA})
 	# 2. Если пусто (локальная сборка), ставим заглушку "unknown" или пустую строку ""
 	if(NOT TMP_GIT_HASH)
-		set(TMP_GIT_HASH "unknown")
+		set(TMP_GIT_HASH "")
 	endif()
 	# 3. Пробрасываем в C++ (CMake сам добавит кавычки, если значение внутри кавычек в set)
 	target_compile_definitions(${PROJECT_NAME} PRIVATE GIT_COMMIT_HASH="${TMP_GIT_HASH}")
