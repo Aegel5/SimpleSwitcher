@@ -100,6 +100,7 @@ List of Renderer Backends:
 List of high-level Frameworks Backends (combining Platform + Renderer):
 
     imgui_impl_allegro5.cpp
+    imgui_impl_null.cpp
 
 Emscripten is also supported!
 The SDL2+GL, SDL3+GL, GLFW+GL and GLFW+WebGPU examples are all ready to build and run with Emscripten.
@@ -182,6 +183,7 @@ The Platform backends in impl_impl_XXX.cpp files contain many implementations.
   - `ImGuiBackendFlags_HasSetMousePos`: supports io.WantSetMousePos requests to reposition the OS mouse position (only used if io.ConfigNavMoveSetMousePos is set).
   - `ImGuiBackendFlags_PlatformHasViewports` supports multiple viewports. (multi-viewports only)
   - `ImGuiBackendFlags_HasMouseHoveredViewport` supports calling io.AddMouseViewportEvent() with the viewport under the mouse. IF POSSIBLE, ignore viewports with the ImGuiViewportFlags_NoInputs flag. If this cannot be done, Dear ImGui needs to use a flawed heuristic to find the viewport under mouse position, as it doesn't know about foreign windows. (multi-viewports only)
+  - `ImGuiBackendFlags_HasParentViewport` supports honoring viewport->ParentViewportId value, by applying the corresponding parent/child relation at the Platform level.
 
 **In your `ImGui_ImplXXX_NewFrame()` function:**
 - Set `io.DeltaTime` to the time elapsed (in seconds) since last frame.
@@ -336,7 +338,7 @@ void MyImGuiBackend_UpdateTexture(ImTextureData* tex)
     {
         // Create texture based on tex->Width, tex->Height.
         // - Most backends only support tex->Format == ImTextureFormat_RGBA32.
-        // - Backends for particularly memory constrainted platforms may support tex->Format == ImTextureFormat_Alpha8.
+        // - Backends for particularly memory constrained platforms may support tex->Format == ImTextureFormat_Alpha8.
 
         // Upload all texture pixels
         // - Read from our CPU-side copy of the texture and copy to your graphics API.
