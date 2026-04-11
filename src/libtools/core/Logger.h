@@ -139,9 +139,6 @@ namespace _log_int {
 		DWORD m_dwErr = 0;
 	public:
 		WinErrBOOL(BOOL r) : m_res(r) {}
-		WinErrBOOL(bool r) : m_res(r) {}
-		WinErrBOOL() {}
-		void SetError(DWORD err) { m_dwErr = err; }
 		void Log() const {
 			SwLoggerGlobal().AppendFormat(L"WinErr={} ", m_dwErr);
 
@@ -162,34 +159,6 @@ namespace _log_int {
 			return true;
 		}
 		TStatus ToTStatus() { return SW_ERR_WINAPI; }
-	};
-
-	struct WinErrDwordWait {
-		DWORD res;
-		DWORD dwErr;
-		WinErrDwordWait(DWORD r) : res(r) {}
-		void Log() const {
-			CAutoWinMem lpMsgBuf;
-			DWORD dwErr = GetLastError();
-			SwLoggerGlobal().AppendFormat(L"Wait result={} LastErr={} ", res, dwErr);
-			FormatMessage(
-				FORMAT_MESSAGE_ALLOCATE_BUFFER |
-				FORMAT_MESSAGE_FROM_SYSTEM |
-				FORMAT_MESSAGE_IGNORE_INSERTS,
-				NULL,
-				dwErr,
-				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-				(LPTSTR)&lpMsgBuf,
-				0, NULL);
-			SwLoggerGlobal().Append((TStr)lpMsgBuf.get());
-		}
-		operator bool() {
-			if (res == WAIT_OBJECT_0)
-				return false;
-			dwErr = GetLastError();
-			return true;
-		}
-		TStatus ToTStatus() { return SW_ERR_WAIT_PROCESS; }
 	};
 
 	struct SwErrTStatus {
@@ -252,8 +221,6 @@ namespace _log_int {
 
 }
 
-// todo: add if(loglevel) OUT of function
-#define __RET_ERR(CLASS, X, ...) {CLASS __res = (X); __Log_Err_Common(__res, std::source_location::current(), __VA_ARGS__); return __res.ToTStatus(); }
 #define  _SW_ERR_RET(ClassName, X, ...) {if (ClassName __res = (X)) { __Log_Err_Common(__res, std::source_location::current(), __VA_ARGS__); return __res.ToTStatus(); } }
 #define  _SW_ERR_LOG(ClassName, X, ...) {if (ClassName __res = (X))   __Log_Err_Common(__res, std::source_location::current(), __VA_ARGS__); }
 
@@ -269,11 +236,8 @@ namespace _log_int {
 #define IFH_RET(X, ...) _SW_ERR_RET(_log_int::WinErrHRESULT, X, __VA_ARGS__)
 #define IFH_LOG(X, ...) _SW_ERR_LOG(_log_int::WinErrHRESULT, X, __VA_ARGS__)
 
-#define IF_WAITDWORD_RET(X, ...) _SW_ERR_RET(_log_int::WinErrDwordWait, X, __VA_ARGS__)
-#define IF_WAITDWORD_LOG(X, ...) _SW_ERR_LOG(_log_int::WinErrDwordWait, X, __VA_ARGS__)
-
 #define LOG_ANY(...) if (GetLogLevel() >= LOG_LEVEL_2) {_log_int::LOG_ANY_CMN(__VA_ARGS__);}
-#define LOG_ANY_4(...) if (GetLogLevel() >= LOG_LEVEL_4) {_log_int::LOG_ANY_CMN(__VA_ARGS__);}
+#define LOG_ANY_4(...) if (GetLogLevel() >= LOG_LEVEL_4) [[unlikely]] {_log_int::LOG_ANY_CMN(__VA_ARGS__);}
 #define LOG_WARN(...) if (GetLogLevel() >= LOG_LEVEL_2) {_log_int::LOG_WARN(__VA_ARGS__);}
 
 

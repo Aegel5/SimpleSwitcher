@@ -9,12 +9,14 @@ if(WIN7_COMPAT)
 endif()
 
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
-set(CMAKE_CXX_STANDARD 23)
+#set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 if(MSVC)
 	add_compile_options(/utf-8)
+	add_compile_options(/std:c++latest)
+	add_compile_options(/we5030)
 
     # 1) Dead Code Elimination (Удаление мертвого кода)
     # /Gy — разделяет функции на сегменты, чтобы линковщик мог их удалить

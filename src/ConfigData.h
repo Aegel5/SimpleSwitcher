@@ -59,6 +59,14 @@ struct CHotKeyList {
         }
         return res;
     }
+
+	void FromString(UView str) {
+		keys.clear();
+		for (const auto& hk_string : StrUtils::Split(str, ',')) {
+			keys.push_back(CHotKey::FromString(hk_string));
+		}
+		if (keys.empty()) keys.resize(1);
+	}
 };
 
 struct LayoutInfo {

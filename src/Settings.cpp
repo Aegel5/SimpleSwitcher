@@ -40,23 +40,18 @@ namespace nlohmann {
 		}
 	}
 	void to_json(json& j, const CHotKeyList& p) {
-		if (p.keys.size() == 1) {
-			j = p.key();
-		}
-		else {
-			j = p.keys;
-		}
+		j = p.ToString();
 	}
 
 	void from_json(const json& j, CHotKeyList& p) {
-		if (j.is_array()) {
+		if (j.is_array()) { // old format
 			p.keys = j;
 			if (p.keys.empty()) {
 				p.keys.resize(1);
 			}
 		}
 		else if (j.is_string()) {
-			p.key() = j;
+			p.FromString(j.get_ref<const std::string&>());
 		}
 	}
 
