@@ -279,12 +279,21 @@ namespace StrUtils
 		snprintf(buf, std::ssize(buf), FORWARD(args)...);
 	}
 
-	template<typename... Args>
-	inline void FormatTo(auto& buf, const std::format_string<Args...> s, Args&&... v) { // todo array
-		auto sz = std::size(buf);
-		if (sz == 0) return;
-		auto res = std::format_to_n(buf, sz-1, s, FORWARD(v)...);
-		*res.out = 0;
+	template<size_t N = 0x1000, typename... Args>
+	constexpr auto MakeFormatArray(std::format_string<Args...> s, Args&&... v) {
+		std::array<char, N> buf;
+		auto res = std::format_to_n(buf.data(), buf.size() - 1, s, std::forward<Args>(v)...);
+		*res.out = '\0';
+		return buf;
+	}
+
+	// Версия для широких строк (wchar_t)
+	template<size_t N = 0x1000, typename... Args>
+	constexpr auto MakeFormatArray(std::wformat_string<Args...> s, Args&&... v) {
+		std::array<wchar_t, N> buf;
+		auto res = std::format_to_n(buf.data(), buf.size() - 1, s, std::forward<Args>(v)...);
+		*res.out = L'\0';
+		return buf;
 	}
 
 	inline UView GetLine(const string& s) {

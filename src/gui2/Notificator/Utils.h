@@ -75,7 +75,7 @@ namespace Notific {
 		return res;
 	}
 
-	inline void DeltToHuman(auto& buf, auto delt) {
+	inline void DeltToHuman(auto& buf, auto delt) { // todo: use MakeFormatArray
 		auto days = duration_cast<std::chrono::days>(delt);
 		if (days.count() >= 1) {
 			if (days.count() >= 4) {

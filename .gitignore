@@ -1,6 +1,6 @@
 **/.vs
 /package_build
-/out
+out
 /enc_temp_folder
 
 .vs

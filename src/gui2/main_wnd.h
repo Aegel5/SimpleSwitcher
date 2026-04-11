@@ -20,13 +20,13 @@ class MainWindow : public ImGuiUtils::WindowHelper {
 	std::vector<SetHotKeyCombo> layout_hotkeys;
 	std::vector<SetHotKeyCombo> layout_win_hotkeys;
 	std::vector<SetHotKeyCombo> run_programs_hks;
-	COM::CAutoCOMInitialize autoCom;
 	std::vector<string> flagsSets;
 	std::vector<string> backgrounds;
 	std::vector<std::pair<string, HKL>> menu_lays;
 	ImVec2 startsize{ 544.0, 544.0 / 1.12 };
 	Images::ShaderResource background = MAKE_SHARED(background);
 	bool bg_fill = false;
+	float bg_opacity = 1.0f;
 	BufScanMap remap;
 	bool remap_open = false;
 	bool show_metrics = false;
@@ -54,15 +54,12 @@ private:
 		auto p = PathUtils::GetPath_folder_noLower2() / "UI_Skins" / name;
 		auto img = Images::LoadImageFromFile(p.string().c_str());
 		if (!img->IsOk()) { background->clear();  return; }
-		int alp = 70;
+		bg_opacity = 0.7f;
 		std::smatch match;
 		if (std::regex_search(name, match, std::regex(R"(@ALPHA(\d+))"))) {
-			int alp_ = std::stoi(match[1].str());
-			if (alp_ >= 0 && alp_ <= 100) {
-				alp = alp_;
-			}
+			bg_opacity = std::clamp(std::stoi(match[1].str()) * 0.01f, 0.0f, 1.0f);
 		}
-		Images::SetAlphaFactor(img, alp * 0.01f);
+		//Images::SetAlphaFactor(img, alp * 0.01f);
 		background = Images::ImageToShaderConsume(img);
 		bg_fill = name.contains("@STRETCH");
 	}
@@ -125,7 +122,6 @@ public:
 		show_wnd = show;
 		update_backg();
 		apply_background();
-		IFS_LOG(autoCom.Init());
 		auto scale = ImGui::GetPlatformIO().Monitors[0].DpiScale * 1.2f;
 		title = std::format(
 			"SimpleSwitcher {}{}{}###main_wnd", GET_SW_VERSION(),
@@ -194,7 +190,10 @@ public:
 			max.x += size.x;
 			max.y += size.y;
 		}
-		ImGui::GetForegroundDrawList()->AddImage((ImTextureID)(intptr_t)background->pTexture, min, max);
+		ImGui::GetWindowDrawList()->PushClipRect(min, max, false);
+		ImU32 col = ImColor(1.0f, 1.0f, 1.0f, bg_opacity);
+		ImGui::GetWindowDrawList()->AddImage((ImTextureID)(intptr_t)background->pTexture, min, max, ImVec2(0, 0), ImVec2(1, 1), col);
+		ImGui::GetWindowDrawList()->PopClipRect();
 
 	}
 };

@@ -126,9 +126,10 @@ namespace _log_int {
 
 	inline SwLogger& SwLoggerGlobal() { return SwLogger::Get(); }
 
-	void __LOG_LINE_FORMAT(auto&&... v) {
+	template<bool iswarn = false> void __LOG_LINE_FORMAT(auto&&... v) {
 		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
 		SwLoggerGlobal().AppendPrefix();
+		if constexpr (iswarn) SwLoggerGlobal().Append("[WARN] ");
 		SwLoggerGlobal().AppendFormat(FORWARD(v)...);
 		SwLoggerGlobal().EndLineFlash();
 	}
@@ -210,21 +211,6 @@ namespace _log_int {
 		TStatus ToTStatus() { return SW_ERR_WINAPI; }
 	};
 
-	struct ErrnoDescr {
-		errno_t res;
-		ErrnoDescr(errno_t r) : res(r) {}
-
-		void Log() const {
-			TChar sBuf[0x1000];
-			*sBuf = 0;
-			_wcserror_s(sBuf, res);
-			SwLoggerGlobal().AppendFormat(L"errno_t={} msg={}", res, sBuf);
-		}
-		bool IsError() const { return res != 0; }
-		operator bool() const { return IsError(); }
-		TStatus ToTStatus() { return SW_ERR_ERRNO; }
-	};
-
 	struct WinErrHRESULT {
 		HRESULT res;
 		WinErrHRESULT(HRESULT r) : res(r) {}
@@ -259,22 +245,10 @@ namespace _log_int {
 	inline void LOG_ANY_CMN(const std::format_string<Args...> s, Args&&... v) { _log_int::__LOG_LINE_FORMAT(s, FORWARD(v)...); }
 
 	template<typename... Args>
-	inline void LOG_WARN(const std::wformat_string<Args...> s, Args&&... v) {
-		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
-		SwLoggerGlobal().AppendPrefix();
-		SwLoggerGlobal().Append("[WARN] ");
-		SwLoggerGlobal().AppendFormat(s, FORWARD(v)...);
-		SwLoggerGlobal().EndLineFlash();
-	}
+	inline void LOG_WARN(const std::wformat_string<Args...> s, Args&&... v) { _log_int::__LOG_LINE_FORMAT<true>(s, FORWARD(v)...); }
 
 	template<typename... Args>
-	inline void LOG_WARN(const std::format_string<Args...> s, Args&&... v) {
-		std::unique_lock<std::mutex> _lock(SwLoggerGlobal().Mtx());
-		SwLoggerGlobal().AppendPrefix();
-		SwLoggerGlobal().Append("[WARN] ");
-		SwLoggerGlobal().AppendFormat(s, FORWARD(v)...);
-		SwLoggerGlobal().EndLineFlash();
-	}
+	inline void LOG_WARN(const std::format_string<Args...> s, Args&&... v) { _log_int::__LOG_LINE_FORMAT<true>(s, FORWARD(v)...); }
 
 }
 
@@ -291,10 +265,6 @@ namespace _log_int {
 
 #define IF_LSTATUS_RET(X, ...) _SW_ERR_RET(_log_int::WinErrLSTATUS, X, __VA_ARGS__)
 #define IF_LSTATUS_LOG(X, ...) _SW_ERR_LOG(_log_int::WinErrLSTATUS, X, __VA_ARGS__)
-
-#define IF_ERRNO_RET(X, ...) _SW_ERR_RET(_log_int::ErrnoDescr, X, __VA_ARGS__)
-#define IF_ERRNO_LOG(X, ...) _SW_ERR_LOG(_log_int::ErrnoDescr, X, __VA_ARGS__)
-#define RET_ERRNO(...) __RET_ERR(_log_int::ErrnoDescr, errno, __VA_ARGS__)
 
 #define IFH_RET(X, ...) _SW_ERR_RET(_log_int::WinErrHRESULT, X, __VA_ARGS__)
 #define IFH_LOG(X, ...) _SW_ERR_LOG(_log_int::WinErrHRESULT, X, __VA_ARGS__)

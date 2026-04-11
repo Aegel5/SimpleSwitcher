@@ -22,6 +22,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	IFS_LOG(update_cur_dir());
 	LOG_ANY("Start program {}", GET_SW_VERSION());
 
+	COM::CAutoCOMInitialize autoCom;
+	IFS_LOG(autoCom.Init());
+
 	CMainWorker::Inst().Init();
 
 	g_isAura = std::filesystem::is_directory(PathUtils::GetPath_folder_noLower2() / "UI_Skins");

@@ -107,23 +107,15 @@ namespace procstart
 
 	inline TStatus SwCreateProcess(CreateProcessParm& parm, CAutoHandle& hProc)
 	{
-		static const size_t nSizeExe = 0x1000;
-		std::unique_ptr<TChar[]> bufExe(new TChar[nSizeExe]);
-		if(!bufExe.get()) return SW_ERR_NO_MEMORY;
-		bufExe[0] = 0;
-		TChar* sExe = bufExe.get();
+		auto exeBuf = StrUtils::MakeFormatArray(L"{}", parm.sExe);
 
+		// Формируем аргументы: если есть sCmd — добавляем пробел перед ним, иначе пустая строка
+		auto argsBuf = (parm.sCmd && *parm.sCmd)
+			? StrUtils::MakeFormatArray(L" {}", parm.sCmd)
+			: StrUtils::MakeFormatArray(L"");
 
-		IF_ERRNO_RET(wcscpy_s(sExe, nSizeExe, parm.sExe));
-
-		TCHAR args[0x1000];
-		args[0] = 0;
-
-		if (parm.sCmd)
-		{
-			IF_ERRNO_RET(wcscpy_s(args, L" "));
-			IF_ERRNO_RET(wcscat_s(args, parm.sCmd));
-		}
+		auto sExe = exeBuf.data();
+		auto args = argsBuf.data();
 
 
 		BOOL Res = FALSE;

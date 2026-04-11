@@ -4,25 +4,12 @@ namespace Startup
 {
 	namespace Int
 	{
-		inline TStatus BuildCmdLine(TStr sPath, TStr sArgs, std::wstring& res)
-		{
-			TChar buf[0x1000];
-			if (sArgs != nullptr)
-			{
-				if (swprintf_s(buf, L"\"%s\" %s", sPath, sArgs) == -1)
-				{
-					RET_ERRNO();
-				}
+		inline auto BuildCmdLine(std::wstring_view sPath, std::wstring_view sArgs) {
+			if (sArgs.empty()) {
+				return StrUtils::MakeFormatArray(L"\"{}\"", sPath);
 			}
-			else
-			{
-				if (swprintf_s(buf, L"\"%s\"", sPath) == -1)
-				{
-					RET_ERRNO();
-				}
-			}
-			res = buf;
-			RETURN_SUCCESS;
+
+			return StrUtils::MakeFormatArray(L"\"{}\" {}", sPath, sArgs);
 		}
 	}
 	inline TStatus GetString_AutoStartUser(TStr keyName, bool& exist, std::wstring& value)
@@ -71,10 +58,9 @@ namespace Startup
 		std::wstring value;
 		IFS_RET(GetString_AutoStartUser(keyName, isHasEntry, value));
 
-		std::wstring cmdLine;
-		IFS_RET(Int::BuildCmdLine(sPath, sArgs, cmdLine));
+		auto cmdLine = Int::BuildCmdLine(sPath, sArgs);
 
-		isPathEquals = StrUtils::IsEqualCI(cmdLine.c_str(), value.c_str());
+		isPathEquals = StrUtils::IsEqualCI(cmdLine.data(), value.c_str());
 
 		RETURN_SUCCESS;
 	}
@@ -103,11 +89,10 @@ namespace Startup
 
 		//std::wstring sPath;
 		//GetPath(sPath, PATH_TYPE_EXE_PATH, SW_BIT_32);
-		std::wstring cmdLine;
-		IFS_RET(Int::BuildCmdLine(sPath, sArgs, cmdLine));
+		auto cmdLine = Int::BuildCmdLine(sPath, sArgs);
 
 		DWORD nSizeInBytes = (DWORD)(cmdLine.size() + 1) * sizeof(TCHAR);
-		IF_LSTATUS_RET(RegSetValueEx(hg, keyName, 0, REG_SZ, (PBYTE)cmdLine.c_str(), nSizeInBytes));
+		IF_LSTATUS_RET(RegSetValueEx(hg, keyName, 0, REG_SZ, (PBYTE)cmdLine.data(), nSizeInBytes));
 
 		RETURN_SUCCESS;
 	}
