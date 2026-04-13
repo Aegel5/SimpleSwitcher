@@ -34,13 +34,6 @@ void MainWindow::Draw_expert_tab() {
 		}
 
 		{
-			if (ImGui::Checkbox(LOC("Enable V-Sync"), &conf_gui()->vsync)) {
-				SaveApplyGuiConfig();
-			}
-			ImGui::SetItemTooltip(LOC("Improves UI smoothness, but may require more GPU resources"));
-		}
-
-		{
 			int val = conf_gui()->quick_press_ms;
 			if (ImGui::InputInt(LOC("Double tap interval ms"), &val)) {
 				val = std::clamp(val, 0, 1000);
@@ -49,8 +42,6 @@ void MainWindow::Draw_expert_tab() {
 			}
 
 		}
-
-
 
 
 

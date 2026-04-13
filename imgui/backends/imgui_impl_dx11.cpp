@@ -807,7 +807,7 @@ static void ImGui_ImplDX11_SwapBuffers(ImGuiViewport* viewport, void*)
 {
     ImGui_ImplDX11_ViewportData* vd = (ImGui_ImplDX11_ViewportData*)viewport->RendererUserData;
     if (vd->SwapChain)
-        vd->SwapChain->Present(0, 0); // Present without vsync
+        vd->SwapChain->Present(1, 0); // SS_PATCH_IMGUI
 }
 
 static void ImGui_ImplDX11_InitMultiViewportSupport()
@@ -827,8 +827,10 @@ static void ImGui_ImplDX11_InitMultiViewportSupport()
     sd.SampleDesc.Quality = 0;
     sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     sd.BufferCount = 1;
+    //sd.BufferCount = 2;
     sd.Windowed = TRUE;
-    sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+    sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD; 
+    //sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
     sd.Flags = 0;
     ImGui_ImplDX11_SetSwapChainDescs(&sd, 1);
 }

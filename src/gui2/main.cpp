@@ -17,119 +17,68 @@
 #include "main_wnd.h"
 #include "utils/WinTimer.h"
 #include "TrayIcon.h"
+#include "ImWaitNewFrame.h"
+#include "LoadFonts.h"
 
 // Data
 ID3D11Device*            g_pd3dDevice = nullptr; // no static
 static ID3D11DeviceContext*     g_pd3dDeviceContext = nullptr;
-static IDXGISwapChain*          g_pSwapChain = nullptr;
-static bool                     g_SwapChainOccluded = false;
-static UINT                     g_ResizeWidth = 0, g_ResizeHeight = 0;
-static ID3D11RenderTargetView*  g_mainRenderTargetView = nullptr;
 
-// Forward declarations of helper functions
-bool CreateDeviceD3D(HWND hWnd);
-void CleanupDeviceD3D();
-void CreateRenderTarget();
-void CleanupRenderTarget();
-LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+bool CreateDeviceD3D() {
 
-static bool ImWaitNewFrame(float minDelay 
-	= 0.012f // Real FPS would be 64 (1/0.015ms) because of quants on windows
-) { 
-	using namespace std::chrono;
+	UINT createDeviceFlags = 0;
+	// createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 
-	// 1. SLEEP PHASE: Determine how long to wait before the next frame
-	float toWaitSeconds = std::max(_g_wantFrameDelay, minDelay);
+	D3D_FEATURE_LEVEL featureLevel;
+	const D3D_FEATURE_LEVEL featureLevelArray[2] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0 };
 
-	if (toWaitSeconds <= 0) {
-		// simple check messages
-		MSG msg;
-		while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
-			if (msg.message == WM_QUIT) return false;
-			::TranslateMessage(&msg);
-			::DispatchMessage(&msg); // Might trigger UI changes and update _g_wantFrameDelay
-		}
-	}
-	else {
-		// wait
-		do {
-			auto start = steady_clock::now();
+	// 1. Пытаемся создать аппаратное устройство
+	HRESULT res = D3D11CreateDevice(
+		nullptr,                    // Видеоадаптер (nullptr — по умолчанию)
+		D3D_DRIVER_TYPE_HARDWARE,   // Тип драйвера
+		nullptr,                    // Дескриптор программного драйвера
+		createDeviceFlags,          // Флаги (например, DEBUG)
+		featureLevelArray, 2,       // Массив поддерживаемых версий
+		D3D11_SDK_VERSION,          // Версия SDK
+		&g_pd3dDevice,              // Результат: устройство
+		&featureLevel,              // Результат: выбранный уровень функций
+		&g_pd3dDeviceContext        // Результат: контекст
+	);
 
-			// Wait for OS events or timeout (MsgWaitForMultipleObjectsEx uses milliseconds)
-			DWORD res = ::MsgWaitForMultipleObjectsEx(
-				0, NULL,
-				static_cast<DWORD>(toWaitSeconds * 1000.0f),
-				QS_ALLINPUT,
-				MWMO_INPUTAVAILABLE | MWMO_ALERTABLE
-			);
-
-			if (res == WAIT_TIMEOUT) {
-				break; // Wake up: requested delay has passed
-			}
-
-			// 2. MESSAGE PROCESSING: Handle Windows events
-			MSG msg;
-			while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE)) {
-				if (msg.message == WM_QUIT) return false;
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg); // Might trigger UI changes and update _g_wantFrameDelay
-			}
-
-			// Adjust remaining wait time based on time spent processing messages
-			// If DispatchMessage set a shorter delay, respect it
-			duration<float> elapsed = steady_clock::now() - start;
-			toWaitSeconds -= elapsed.count();
-			minDelay -= elapsed.count();
-			if (toWaitSeconds > _g_wantFrameDelay) {
-				// Try to reduce wait time, but not below the remaining minDelay threshol
-				toWaitSeconds = std::max(minDelay, _g_wantFrameDelay);
-			}
-
-		} while (toWaitSeconds > 0.001f);
+	// 2. Если железо не тянет, пробуем WARP (программный рендеринг)
+	if (res == DXGI_ERROR_UNSUPPORTED) {
+		res = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_WARP, nullptr, createDeviceFlags,
+			featureLevelArray, 2, D3D11_SDK_VERSION,
+			&g_pd3dDevice, &featureLevel, &g_pd3dDeviceContext);
 	}
 
-	// 3. BURST PHASE: Ensure a sequence of frames for UI consistency (inertia)
-	{
-		static int framesRemaining = 0;
-
-		// Reset burst counter if we are starting a new interaction cycle
-		if (framesRemaining <= 0) {
-			framesRemaining = 3;
-		}
-
-		framesRemaining--;
-
-		// If burst is active, force immediate next frame (0s delay).
-		// Once finished, go into deep sleep (100s delay) until next event.
-		_g_wantFrameDelay = (framesRemaining > 0) ? 0.0f : 100.0f;
-	}
+	if (FAILED(res))
+		return false;
 
 	return true;
 }
 
-static std::function wnd_handler = [](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {return false; };
+void CleanupDeviceD3D() {
+	if (g_pd3dDeviceContext) { g_pd3dDeviceContext->Release(); g_pd3dDeviceContext = nullptr; }
+	if (g_pd3dDevice) { g_pd3dDevice->Release(); g_pd3dDevice = nullptr; }
+}
 
 // Main code
 int StartGui(bool show, bool err_conf) {
 	// Make process DPI aware and obtain main monitor scale
 	ImGui_ImplWin32_EnableDpiAwareness();
 	float main_scale = ImGui_ImplWin32_GetDpiScaleForMonitor(::MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY));
-	WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
+	WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, DefWindowProcW, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
 	::RegisterClassExW(&wc);
-	HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Dear ImGui DirectX11 Example", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
+	HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Dear ImGui DirectX11 Example", WS_OVERLAPPEDWINDOW, 100, 100, 1, 1, nullptr, nullptr, wc.hInstance, nullptr);
 	if (hwnd == 0) return 1;
-	g_guiHandle = hwnd;
 
 	// Initialize Direct3D
-	if (!CreateDeviceD3D(hwnd)) {
+	if (!CreateDeviceD3D()) {
 		CleanupDeviceD3D();
-		::UnregisterClassW(wc.lpszClassName, wc.hInstance);
 		return 1;
 	}
 
-	// Show the window
-	//::ShowWindow(hwnd, SW_HIDE);
-	//::UpdateWindow(hwnd);
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -167,57 +116,14 @@ int StartGui(bool show, bool err_conf) {
 	ImGui_ImplWin32_Init(hwnd);
 	ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
-	{
-		std::wstring font_path(MAX_PATH, L'\0');
-		{
-			UINT size = GetWindowsDirectoryW(font_path.data(), MAX_PATH);
-			if (size > 0 && size < MAX_PATH) {
-				font_path.resize(size); // Обрезаем до реальной длины
-				font_path += L"\\Fonts\\";
-			}
-		}
-		ImFont* font = nullptr;
+	LoadFonts();
 
-		if (!font) {
-			static MappedFile font_mapped{ (font_path + L"segoeui.ttf").c_str() };
-			if (font_mapped.is_valid()) {
-				ImFontConfig cfg;
-				cfg.FontDataOwnedByAtlas = false;
-				font = io.Fonts->AddFontFromMemoryTTF(const_cast<void*>(font_mapped.data()), font_mapped.size(), 24, &cfg);
-			}
-		}
-
-		if (!font) {
-			static MappedFile font_mapped{ (font_path + L"tahoma.ttf").c_str() };
-			if (font_mapped.is_valid()) {
-				ImFontConfig cfg;
-				cfg.FontDataOwnedByAtlas = false;
-				font = io.Fonts->AddFontFromMemoryTTF(const_cast<void*>(font_mapped.data()), font_mapped.size(), 20, &cfg);
-			}
-		}
-
-		// fallback
-		if (!font) {
-			font = io.Fonts->AddFontDefault();
-		}
-
-		// эмодзи
-		{
-			static MappedFile font_mapped{ (font_path + L"seguiemj.ttf").c_str() };
-			if (font_mapped.is_valid()) {
-				ImFontConfig cfg;
-				cfg.FontDataOwnedByAtlas = false;
-				cfg.MergeMode = true;
-				cfg.FontLoaderFlags |= ImGuiFreeTypeLoaderFlags_LoadColor;
-				font = io.Fonts->AddFontFromMemoryTTF(const_cast<void*>(font_mapped.data()), font_mapped.size(), 18, &cfg);
-			}
-		}
-	}
 
 	MainWindow mainWindow(show, err_conf);
 	Notific::Notificator notif;
 	Notific::g_notif = &notif;
 	WinTimer timer;
+	g_guiHandle = timer.GetHandler();
 	TrayIcon trayIcon;
 	timer.CycleTimer([&]() {
 		if (notif.Process()) {
@@ -225,8 +131,7 @@ int StartGui(bool show, bool err_conf) {
 		}
 		}, 2000);
 
-	wnd_handler = [&](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-
+	timer.CustomHandler( [&](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		if (msg == WM_ShowWindow) {
 			int mode = wParam;
 			if (mode) notif.ShowHide();
@@ -241,9 +146,9 @@ int StartGui(bool show, bool err_conf) {
 		}
 
 		return false;
-		};
+		});
 
-	while (ImWaitNewFrame(conf_gui()->vsync ? 0 : 0.012f)) {
+	while (ImWaitNewFrame()) {
 		// Start the Dear ImGui frame
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
@@ -261,20 +166,12 @@ int StartGui(bool show, bool err_conf) {
 		// Rendering
 		ImGui::Render();
 
-		//main window hidden
-		//constexpr ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-		//const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
-		//g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
-		//g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
-		//ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
 		// Viewports support
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-		}
-
-		g_pSwapChain->Present(conf_gui()->vsync, 0);
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+#ifdef SS_WIN_7_COMPAT
+		Sleep(1);
+#endif
 	}
 
 	// Cleanup
@@ -283,107 +180,7 @@ int StartGui(bool show, bool err_conf) {
 	ImGui::DestroyContext();
 
 	CleanupDeviceD3D();
-	::DestroyWindow(hwnd);
-	::UnregisterClassW(wc.lpszClassName, wc.hInstance);
 
 	return 0;
 }
 
-// Helper functions
-bool CreateDeviceD3D(HWND hWnd) {
-	// Setup swap chain
-    // This is a basic setup. Optimally could use e.g. DXGI_SWAP_EFFECT_FLIP_DISCARD and handle fullscreen mode differently. See #8979 for suggestions.
-	DXGI_SWAP_CHAIN_DESC sd;
-	ZeroMemory(&sd, sizeof(sd));
-	sd.BufferCount = 2;
-	sd.BufferDesc.Width = 0;
-	sd.BufferDesc.Height = 0;
-	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	sd.BufferDesc.RefreshRate.Numerator = 60;
-	sd.BufferDesc.RefreshRate.Denominator = 1;
-	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.OutputWindow = hWnd;
-	sd.SampleDesc.Count = 1;
-	sd.SampleDesc.Quality = 0;
-	sd.Windowed = TRUE;
-#ifdef SS_WIN_7_COMPAT
-	sd.SwapEffect = DXGI_SWAP_EFFECT_SEQUENTIAL;
-#else
-	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-#endif
-
-	UINT createDeviceFlags = 0;
-	//createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-	D3D_FEATURE_LEVEL featureLevel;
-	const D3D_FEATURE_LEVEL featureLevelArray[2] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0, };
-	HRESULT res = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, createDeviceFlags, featureLevelArray, 2, D3D11_SDK_VERSION, &sd, &g_pSwapChain, &g_pd3dDevice, &featureLevel, &g_pd3dDeviceContext);
-	if (res == DXGI_ERROR_UNSUPPORTED) // Try high-performance WARP software driver if hardware is not available.
-		res = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_WARP, nullptr, createDeviceFlags, featureLevelArray, 2, D3D11_SDK_VERSION, &sd, &g_pSwapChain, &g_pd3dDevice, &featureLevel, &g_pd3dDeviceContext);
-	if (res != S_OK)
-		return false;
-
-    // Disable DXGI's default Alt+Enter fullscreen behavior.
-    // - You are free to leave this enabled, but it will not work properly with multiple viewports.
-    // - This must be done for all windows associated to the device. Our DX11 backend does this automatically for secondary viewports that it creates.
-    IDXGIFactory* pSwapChainFactory;
-    if (SUCCEEDED(g_pSwapChain->GetParent(IID_PPV_ARGS(&pSwapChainFactory))))
-    {
-        pSwapChainFactory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER);
-        pSwapChainFactory->Release();
-    }
-
-	CreateRenderTarget();
-	return true;
-}
-
-void CleanupDeviceD3D() {
-	CleanupRenderTarget();
-	if (g_pSwapChain) { g_pSwapChain->Release(); g_pSwapChain = nullptr; }
-	if (g_pd3dDeviceContext) { g_pd3dDeviceContext->Release(); g_pd3dDeviceContext = nullptr; }
-	if (g_pd3dDevice) { g_pd3dDevice->Release(); g_pd3dDevice = nullptr; }
-}
-
-void CreateRenderTarget() {
-	ID3D11Texture2D* pBackBuffer;
-	g_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
-	g_pd3dDevice->CreateRenderTargetView(pBackBuffer, nullptr, &g_mainRenderTargetView);
-	pBackBuffer->Release();
-}
-
-void CleanupRenderTarget() {
-	if (g_mainRenderTargetView) { g_mainRenderTargetView->Release(); g_mainRenderTargetView = nullptr; }
-}
-
-// Forward declare message handler from imgui_impl_win32.cpp
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-// Win32 message handler
-// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	if (wnd_handler(hWnd, msg, wParam, lParam))
-		return true;
-
-	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
-		return true;
-
-	switch (msg) {
-	case WM_SIZE:
-		if (wParam == SIZE_MINIMIZED)
-			return 0;
-		g_ResizeWidth = (UINT)LOWORD(lParam); // Queue resize
-		g_ResizeHeight = (UINT)HIWORD(lParam);
-		return 0;
-	case WM_SYSCOMMAND:
-		if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
-			return 0;
-		break;
-	case WM_DESTROY:
-		::PostQuitMessage(0);
-		return 0;
-	}
-	return ::DefWindowProcW(hWnd, msg, wParam, lParam);
-}

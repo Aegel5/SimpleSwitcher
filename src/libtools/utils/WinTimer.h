@@ -5,6 +5,7 @@ class WinTimer {
 
 	int lastTimerId = 1;
 	std::vector<std::function<void()>> timerCallbacks;
+	std::function<bool(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)> customH;
 	HWND hwnd = 0;
 	inline thread_local static WinTimer* Inst = 0;
 
@@ -20,6 +21,10 @@ class WinTimer {
 		}
 		}
 
+		if (Inst->customH && Inst->customH(hwnd, uMsg, wParam, lParam)) {
+			return 1;
+		}
+
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 public:
@@ -28,6 +33,9 @@ public:
 		Inst = this;
 		hwnd = WinUtils::CreateMsgWin(L"SimpleSwitcher_Timer_001", WindowProc2);
 		IFW_LOG(hwnd != 0);
+	}
+	void CustomHandler(auto&& func) {
+		customH = FORWARD(func);
 	}
 	void CycleTimer(auto&& func, int ms) {
 		timerCallbacks.push_back(func);

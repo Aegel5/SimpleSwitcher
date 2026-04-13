@@ -113,8 +113,7 @@ namespace nlohmann {
 			ShowLangsInTrayMenu,
 			ShowReminderInTrayMenu,
 			useBritishFlag,
-			treat_as_letters,
-			vsync
+			treat_as_letters
 		)
 }
 

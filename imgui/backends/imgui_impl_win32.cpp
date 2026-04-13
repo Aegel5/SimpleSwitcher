@@ -18,7 +18,9 @@
 // - Introduction, links and more at the top of imgui.cpp
 
 // Configuration flags to add in your imconfig file:
-//#define IMGUI_IMPL_WIN32_DISABLE_GAMEPAD              // Disable gamepad support. This was meaningful before <1.81 but we now load XInput dynamically so the option is now less relevant.
+
+// SS_PATCH_IMGUI
+#define IMGUI_IMPL_WIN32_DISABLE_GAMEPAD              // Disable gamepad support. This was meaningful before <1.81 but we now load XInput dynamically so the option is now less relevant.
 
 // CHANGELOG
 // (minor and older changes stripped away, please see git history for details)

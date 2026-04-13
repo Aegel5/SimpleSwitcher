@@ -50,4 +50,5 @@ struct ImGui_ImplDX11_RenderState
     ID3D11Buffer*           VertexConstantBuffer;
 };
 
+
 #endif // #ifndef IMGUI_DISABLE
