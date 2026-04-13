@@ -128,8 +128,8 @@ int StartGui(bool show, bool err_conf) {
 	}
 
 	// Show the window
-	::ShowWindow(hwnd, SW_HIDE);
-	::UpdateWindow(hwnd);
+	//::ShowWindow(hwnd, SW_HIDE);
+	//::UpdateWindow(hwnd);
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -261,9 +261,12 @@ int StartGui(bool show, bool err_conf) {
 		// Rendering
 		ImGui::Render();
 
-		// Standard DX11 Render calls here...
-		// g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
-		// ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+		//main window hidden
+		//constexpr ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+		//const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
+		//g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
+		//g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
+		//ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 		// Viewports support
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
