@@ -92,7 +92,11 @@ block()
 		set(FT_DISABLE_PNG ON CACHE BOOL "" FORCE)
 		message(STATUS "Fetching freetype")
 		include(FetchContent)
-		FetchContent_Declare(freetype GIT_REPOSITORY https://github.com/freetype/freetype GIT_TAG VER-2-14-3)
+		FetchContent_Declare(
+			freetype GIT_REPOSITORY https://github.com/freetype/freetype GIT_TAG VER-2-14-3
+        GIT_SHALLOW    TRUE   # <--- ВОТ ЭТА ШТУКА (аналог --depth 1)
+        GIT_PROGRESS   TRUE   # Чтобы видеть проценты в консоли, а не сидеть в тишине
+		)
 		FetchContent_MakeAvailable(freetype)
 		target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE freetype)
 		target_include_directories(ImguiLib PRIVATE "${freetype_SOURCE_DIR}/include")
