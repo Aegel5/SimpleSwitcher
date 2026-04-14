@@ -101,6 +101,14 @@ public:
 
 		// update stores
 		if (isDown) {
+
+			// возвращаем старое поведение для capslock/f24 для удобства печати (разрешено нажатие одновременно с другими клавишами).
+			if (Utils::is_in(vkCode, VK_CAPITAL, VK_F24)) {
+				if (!one_value.IsEmpty() && !CHotKey::IsKnownMods(one_value.ValueKey())) {
+					one_value.PopBack();
+				}
+			}
+
 			one_value.Add(vkCode);
 			auto [it, inserted] = all_keys.try_emplace(vkCode);
 			if (!isInjected) it->second.hasPhisic = true;
@@ -113,6 +121,7 @@ public:
 				LOG_WARN("Key was already upped {}", CHotKey::ToString(vkCode));
 			}
 		}
+
 
 		//events[0] = events[1];
 		//events[1] = { vkCode, isDown, TimePoint::Now() };

@@ -93,6 +93,11 @@ public:
 	//auto* ModsBegin(this auto&& self) { return self.keys + 1; }
 	//auto* ModsEnd(this auto&& self) { return self.size <= 1 ? self.ModsBegin() : self.end(); }
 	int Size() const { return size; }
+	void PopBack() {
+		if (size > 0) {
+			keys[--size] = 0;
+		}
+	}
 
 	std::string ToString() const {
 		std::string s;
