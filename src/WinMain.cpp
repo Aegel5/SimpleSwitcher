@@ -11,7 +11,7 @@ inline TStatus update_cur_dir() {
 }
 
 
-extern int StartGui(bool show, bool);
+extern void StartGui(bool show, bool);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
 	SetLogLevel(Utils::IsDebug() ? LOG_LEVEL_2 : LOG_LEVEL_DISABLE);

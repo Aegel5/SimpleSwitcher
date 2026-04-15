@@ -8,6 +8,8 @@
 #include "SetHotKeyCombo.h"
 #include "Notificator/Notificator.h"
 
+#include "ImagesTx.h"
+
 class MainWindow : public ImGuiUtils::WindowHelper {
 	string config_path;
 	std::string title;

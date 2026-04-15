@@ -7,78 +7,21 @@
 // - Introduction, links and more at the top of imgui.cpp
 
 
-#include "imgui_internal.h"
 #include "imgui.h"
-#include "backends/imgui_impl_win32.h"
-#include "backends/imgui_impl_dx11.h"
-#include "misc/freetype/imgui_freetype.h"
-#include <d3d11.h>
-#include <tchar.h>
+
+#include "Backends_Win.h"
+
 #include "main_wnd.h"
 #include "utils/WinTimer.h"
 #include "TrayIcon.h"
-#include "ImWaitNewFrame.h"
 #include "LoadFonts.h"
 
-// Data
-ID3D11Device*            g_pd3dDevice = nullptr; // no static
-static ID3D11DeviceContext*     g_pd3dDeviceContext = nullptr;
-
-bool CreateDeviceD3D() {
-
-	UINT createDeviceFlags = 0;
-	// createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-
-	D3D_FEATURE_LEVEL featureLevel;
-	const D3D_FEATURE_LEVEL featureLevelArray[2] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0 };
-
-	// 1. Пытаемся создать аппаратное устройство
-	HRESULT res = D3D11CreateDevice(
-		nullptr,                    // Видеоадаптер (nullptr — по умолчанию)
-		D3D_DRIVER_TYPE_HARDWARE,   // Тип драйвера
-		nullptr,                    // Дескриптор программного драйвера
-		createDeviceFlags,          // Флаги (например, DEBUG)
-		featureLevelArray, 2,       // Массив поддерживаемых версий
-		D3D11_SDK_VERSION,          // Версия SDK
-		&g_pd3dDevice,              // Результат: устройство
-		&featureLevel,              // Результат: выбранный уровень функций
-		&g_pd3dDeviceContext        // Результат: контекст
-	);
-
-	// 2. Если железо не тянет, пробуем WARP (программный рендеринг)
-	if (res == DXGI_ERROR_UNSUPPORTED) {
-		res = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_WARP, nullptr, createDeviceFlags,
-			featureLevelArray, 2, D3D11_SDK_VERSION,
-			&g_pd3dDevice, &featureLevel, &g_pd3dDeviceContext);
-	}
-
-	if (FAILED(res))
-		return false;
-
-	return true;
-}
-
-void CleanupDeviceD3D() {
-	if (g_pd3dDeviceContext) { g_pd3dDeviceContext->Release(); g_pd3dDeviceContext = nullptr; }
-	if (g_pd3dDevice) { g_pd3dDevice->Release(); g_pd3dDevice = nullptr; }
-}
-
 // Main code
-int StartGui(bool show, bool err_conf) {
+void StartGui(bool show, bool err_conf) {
 	// Make process DPI aware and obtain main monitor scale
-	ImGui_ImplWin32_EnableDpiAwareness();
-	float main_scale = ImGui_ImplWin32_GetDpiScaleForMonitor(::MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY));
-	WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, DefWindowProcW, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
-	::RegisterClassExW(&wc);
-	HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Dear ImGui DirectX11 Example", WS_OVERLAPPEDWINDOW, 100, 100, 1, 1, nullptr, nullptr, wc.hInstance, nullptr);
-	if (hwnd == 0) return 1;
 
-	// Initialize Direct3D
-	if (!CreateDeviceD3D()) {
-		CleanupDeviceD3D();
-		return 1;
-	}
-
+	if (!Backends::Init())
+		return;
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -100,8 +43,8 @@ int StartGui(bool show, bool err_conf) {
 
 	// Setup scaling
 	ImGuiStyle& style = ImGui::GetStyle();
-	style.ScaleAllSizes(main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
-    style.FontScaleDpi = main_scale;        // Set initial font scale. (in docking branch: using io.ConfigDpiScaleFonts=true automatically overrides this for every window depending on the current monitor)
+	style.ScaleAllSizes(Backends::main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
+    style.FontScaleDpi = Backends::main_scale;        // Set initial font scale. (in docking branch: using io.ConfigDpiScaleFonts=true automatically overrides this for every window depending on the current monitor)
 	io.ConfigDpiScaleFonts = true;          // [Experimental] Automatically overwrite style.FontScaleDpi in Begin() when Monitor DPI changes. This will scale fonts but _NOT_ scale sizes/padding for now.
 	io.ConfigDpiScaleViewports = true;      // [Experimental] Scale Dear ImGui and Platform Windows when Monitor DPI changes.
 
@@ -113,8 +56,7 @@ int StartGui(bool show, bool err_conf) {
 	}
 
 	// Setup Platform/Renderer backends
-	ImGui_ImplWin32_Init(hwnd);
-	ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
+	Backends::InitRenders();
 
 	LoadFonts();
 
@@ -148,10 +90,9 @@ int StartGui(bool show, bool err_conf) {
 		return false;
 		});
 
-	while (ImWaitNewFrame()) {
-		// Start the Dear ImGui frame
-		ImGui_ImplDX11_NewFrame();
-		ImGui_ImplWin32_NewFrame();
+	while (Backends::ImWaitNewFrame()) {
+
+		Backends::NewFrame();
 		ImGui::NewFrame();
 
 		// UI Logic
@@ -165,22 +106,16 @@ int StartGui(bool show, bool err_conf) {
 
 		// Rendering
 		ImGui::Render();
-
-		// Viewports support
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
+
 #ifdef SS_WIN_7_COMPAT
 		Sleep(1);
 #endif
 	}
 
-	// Cleanup
-	ImGui_ImplDX11_Shutdown();
-	ImGui_ImplWin32_Shutdown();
+	Backends::Cleanup();
 	ImGui::DestroyContext();
 
-	CleanupDeviceD3D();
-
-	return 0;
 }
 

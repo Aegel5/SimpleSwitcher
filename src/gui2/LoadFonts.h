@@ -1,4 +1,8 @@
-﻿inline void LoadFonts() {
+﻿#pragma once
+
+#include "misc/freetype/imgui_freetype.h"
+
+inline void LoadFonts() {
 
 	ImGuiIO& io = ImGui::GetIO();
 
