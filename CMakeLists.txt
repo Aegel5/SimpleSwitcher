@@ -4,8 +4,8 @@ project(SimpleSwitcher VERSION 1.0 LANGUAGES CXX)
 # Глобальные настройки
 
 if(WIN7_COMPAT)
-	add_definitions(-D_WIN32_WINNT=0x0601)
-	add_definitions(-DSS_WIN_7_COMPAT)
+	add_compile_definitions(_WIN32_WINNT=0x0601)
+	add_compile_definitions(SS_WIN_7_COMPAT)
 endif()
 
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
@@ -83,8 +83,11 @@ block()
 	list(APPEND src imgui/backends/imgui_impl_win32.cpp)
 	target_sources(ImguiLib PRIVATE ${src})
 	target_include_directories(ImguiLib PUBLIC "imgui") # PUBLIC - автоматически прокидываем дальше
+	add_compile_definitions(IMGUI_DISABLE_OBSOLETE_FUNCTIONS)
+	add_compile_definitions(IMGUI_IMPL_WIN32_DISABLE_GAMEPAD)
 	# подключаем freetype
 	block()
+		target_compile_definitions(ImguiLib PRIVATE IMGUI_ENABLE_FREETYPE) # включаем поддержку в imgui
 		set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 		set(SKIP_INSTALL_ALL ON CACHE INTERNAL "" FORCE) 
 		set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "" FORCE)
