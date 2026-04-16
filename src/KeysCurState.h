@@ -103,7 +103,7 @@ public:
 		if (isDown) {
 
 			// возвращаем старое поведение для capslock/f24 для удобства печати (разрешено нажатие одновременно с другими клавишами).
-			if (Utils::is_in(vkCode, VK_CAPITAL, VK_F24)) {
+			if (Utils::is_in(vkCode, VKE_CapsLock, VK_F24)) {
 				if (!one_value.IsEmpty() && !CHotKey::IsKnownMods(one_value.ValueKey())) {
 					one_value.PopBack();
 				}

@@ -36,21 +36,21 @@ inline std::string_view HotKeyTypeName(HotKeyType hk_type) { return simple_enum:
 inline std::generator<CHotKey> GetHk_Defaults(HotKeyType hk) {
 	switch (hk) {
 	case hk_RevertLastWord:
-		co_yield CHotKey(VK_CAPITAL);
+		co_yield CHotKey(VKE_CapsLock);
 		co_yield CHotKey(VK_PAUSE);
 		co_yield CHotKey(VK_F24);
 		co_return;
 	case hk_RevertSeveralWords:
-		co_yield CHotKey(VK_SHIFT, VK_CAPITAL);
+		co_yield CHotKey(VK_SHIFT, VKE_CapsLock);
 		co_yield CHotKey(VK_SHIFT, VK_PAUSE);
 		co_yield CHotKey(VK_SHIFT, VK_F24);
 		co_return;
 	case hk_RevertAllRecentText:
-		co_yield CHotKey{ VK_CONTROL, VK_CAPITAL };
+		co_yield CHotKey{ VK_CONTROL, VKE_CapsLock };
 		co_yield CHotKey(VK_CONTROL, VK_F24);
 		co_return;
 	case hk_RevertSelelected:
-		co_yield CHotKey{ VK_CONTROL, VK_CAPITAL };
+		co_yield CHotKey{ VK_CONTROL, VKE_CapsLock };
 		co_yield CHotKey(VK_CONTROL, VK_F24);
 		co_return;
 	case hk_CycleSwitchLayout:
@@ -78,7 +78,7 @@ inline std::generator<CHotKey> GetHk_Defaults(HotKeyType hk) {
 		co_return;
 	case hk_EmulateCapsLock:
 		co_yield CHotKey(VKE_ALT, VK_F24);
-		co_yield CHotKey(VKE_ALT, VK_CAPITAL);
+		co_yield CHotKey(VKE_ALT, VKE_CapsLock);
 		co_return;
 	}
 }

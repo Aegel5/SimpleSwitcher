@@ -3,6 +3,7 @@
 using TKeyCode = WORD;
 
 enum {
+#ifdef _WIN32
 	VKE_1 = 0x31,
 	VKE_2 = 0x32,
 	VKE_3 = 0x33,
@@ -10,6 +11,9 @@ enum {
 	VKE_C = 67,
 	VKE_BREAK = VK_PAUSE,
 	VKE_ALT = VK_MENU,
+	VKE_CapsLock = VK_CAPITAL,
+	VKE_F24 = VK_F24,
+#endif
 
 	VKE_MAX = 2048,
 	VKE_WIN = VKE_MAX - 1,
@@ -33,6 +37,9 @@ namespace _internal {
 		}
 	public:
 		HotKeyNames() {
+			Set(VKE_WIN, "Win");
+			Set(VKE_CapsLock, "CapsLock");
+
 			Set(0x41, "A");
 			Set(0x42, "B");
 			Set(0x43, "C");
@@ -81,7 +88,7 @@ namespace _internal {
 			Set(VK_RMENU, "RAlt");
 			Set(VK_LWIN, "LWin");
 			Set(VK_RWIN, "RWin");
-			Set(VKE_WIN, "Win");
+
 			Set(VK_APPS, "Apps");
 			Set(VK_ESCAPE, "Esc");
 
@@ -137,7 +144,7 @@ namespace _internal {
 			Set(VK_SNAPSHOT, vkMap[VK_PRINT]);
 			Set(VK_CANCEL, "Cancel");
 			Set(VK_SCROLL, "ScrollLock");
-			Set(VK_CAPITAL, "CapsLock");
+
 			Set(VK_NUMLOCK, "NumLock");
 			Set(VK_SPACE, "Space");
 			Set(VK_BACK, "Backspace");

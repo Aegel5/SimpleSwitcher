@@ -44,7 +44,7 @@ inline TKeyType AnalizeTyped(const CHotKey& key, UINT vk, const TScanCode_Ext& s
 	case VK_ESCAPE:
 		return KEYTYPE_COMMAND_CLEAR;
 
-	case VK_CAPITAL:
+	case VKE_CapsLock:
 	case VK_SCROLL:
 	case VK_PRINT:
 	case VK_NUMLOCK:
