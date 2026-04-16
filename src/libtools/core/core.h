@@ -1,15 +1,6 @@
 ﻿#pragma once
 
-typedef unsigned __int64 TUInt64;
-typedef signed   __int64 TInt64;
-typedef unsigned __int32 TUInt32;
-typedef signed   __int32 TInt32;
-typedef unsigned __int16 TUInt16;
-typedef signed   __int16 TInt16;
-typedef unsigned __int8  TUInt8;
-typedef signed   __int8  TInt8;
-
-typedef TCHAR TChar;
+typedef wchar_t TChar;
 typedef const TChar* TStr;
 using UStr = const char*;
 using SView = std::wstring_view;
@@ -32,7 +23,7 @@ inline bool TestFlagAll(T1 V, T2 F)
 template <typename T1, typename T2>
 inline bool TestFlag(T1 V, T2 F)
 {
-	return TUInt32(V & F) != 0; // TODO: operators for enum == 0 
+	return uint32_t(V & F) != 0; // TODO: operators for enum == 0 
 }
 
 
@@ -56,17 +47,6 @@ enum TSWAdmin
 	SW_ADMIN_OFF, // not use, bugs when UAC enabled.
 	SW_ADMIN_SELF,
 };
-
-inline bool IsSelf64()
-{
-#ifdef _WIN64
-	return true;
-#elif _WIN32
-	return false;
-#else
-	!!ERROR!!
-#endif
-}
 
 
 template<class T>

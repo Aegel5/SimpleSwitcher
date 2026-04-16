@@ -101,7 +101,7 @@ public:
     //bool SkipAllInjectKeys = false;
     bool SkipLowLevelInjectKeys = false;
     bool AlternativeLayoutChange = false;
-    TUInt32 quick_press_ms = 280;
+	uint32_t quick_press_ms = 280;
 	SeparateExtMode separate_ext_mode = SeparateExtMode::Symbol;
     CHotKey win_hotkey_cycle_lang { VK_LMENU, VK_SHIFT };
 	std::string theme = "Light";

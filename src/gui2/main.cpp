@@ -93,7 +93,6 @@ void StartGui(bool show, bool err_conf) {
 	while (ImBackends::WaitNewFrame()) {
 
 		ImBackends::NewFrame();
-		ImGui::NewFrame();
 
 		// UI Logic
 		mainWindow.DrawFrame();

@@ -39,7 +39,7 @@ namespace Utils
 	inline std::wstring GetNameForHKL_Unique(HKL hkl)
 	{
 		std::wstringstream stream;
-		stream << GetNameForHKL_simple(hkl) << " (0x" << std::hex << TUInt64(hkl) << ")";
+		stream << GetNameForHKL_simple(hkl) << " (0x" << std::hex << uint64_t(hkl) << ")";
 		return stream.str();
 	}
 

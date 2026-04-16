@@ -2,7 +2,7 @@
 
 
 
-enum TKeyType : TUInt8
+enum TKeyType : uint8_t
 {
 	KEYTYPE_NONE,
 

@@ -14,7 +14,7 @@ class WorkerImplement
 	struct ContextRevert {
 		TKeyRevert keylist;
 		HKL lay = 0;
-		TUInt32 flags = 0;
+		uint32_t flags = 0;
 	};
 
 	typedef std::vector<CHotKey> TKeyToRevert;

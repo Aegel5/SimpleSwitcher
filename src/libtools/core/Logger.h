@@ -47,12 +47,12 @@ namespace _log_int {
 			::GetLocalTime(&ST);
 			fwprintf_s(m_fp,
 				L"%02u.%02u|%02u:%02u:%02u.%03u|%05u ",
-				(TUInt32)ST.wDay,
-				(TUInt32)ST.wMonth,
-				(TUInt32)ST.wHour,
-				(TUInt32)ST.wMinute,
-				(TUInt32)ST.wSecond,
-				(TUInt32)ST.wMilliseconds,
+				(uint32_t)ST.wDay,
+				(uint32_t)ST.wMonth,
+				(uint32_t)ST.wHour,
+				(uint32_t)ST.wMinute,
+				(uint32_t)ST.wSecond,
+				(uint32_t)ST.wMilliseconds,
 				GetCurrentThreadId());
 		}
 		template<typename... Args>

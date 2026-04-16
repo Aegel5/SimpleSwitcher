@@ -1,4 +1,4 @@
-﻿enum HotKeyType : TUInt32 {
+﻿enum HotKeyType : uint32_t {
 	hk_NULL,
 
 	hk_RevertLastWord,
