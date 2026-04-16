@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Backends_Win.h"
+#include "backends_layer.h"
 
 namespace Images {
 	namespace details {
@@ -13,7 +13,7 @@ namespace Images {
 			}
 			void clear() {
 				if (pTexture) {
-					Backends::CleanupTexture(pTexture);
+					ImBackends::CleanupTexture(pTexture);
 					pTexture = 0;
 				}
 			}
@@ -31,7 +31,7 @@ namespace Images {
 		image->data = 0; // move ownership
 		auto* cur = &res->img;
 		if (!cur->IsOk()) return res;
-		res->pTexture = Backends::LoadTexture(cur->data, cur->width, cur->height);
+		res->pTexture = ImBackends::LoadTexture_RGBA8(cur->data, cur->width, cur->height);
 		cur->clear(); // не требуется
 		return res;
 	}

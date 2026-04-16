@@ -9,7 +9,7 @@
 
 #include "imgui.h"
 
-#include "Backends_Win.h"
+#include "backends_layer.h"
 
 #include "main_wnd.h"
 #include "utils/WinTimer.h"
@@ -20,7 +20,7 @@
 void StartGui(bool show, bool err_conf) {
 	// Make process DPI aware and obtain main monitor scale
 
-	if (!Backends::Init())
+	if (!ImBackends::Init())
 		return;
 
 	// Setup Dear ImGui context
@@ -43,8 +43,8 @@ void StartGui(bool show, bool err_conf) {
 
 	// Setup scaling
 	ImGuiStyle& style = ImGui::GetStyle();
-	style.ScaleAllSizes(Backends::main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
-    style.FontScaleDpi = Backends::main_scale;        // Set initial font scale. (in docking branch: using io.ConfigDpiScaleFonts=true automatically overrides this for every window depending on the current monitor)
+	style.ScaleAllSizes(ImBackends::main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
+    style.FontScaleDpi = ImBackends::main_scale;        // Set initial font scale. (in docking branch: using io.ConfigDpiScaleFonts=true automatically overrides this for every window depending on the current monitor)
 	io.ConfigDpiScaleFonts = true;          // [Experimental] Automatically overwrite style.FontScaleDpi in Begin() when Monitor DPI changes. This will scale fonts but _NOT_ scale sizes/padding for now.
 	io.ConfigDpiScaleViewports = true;      // [Experimental] Scale Dear ImGui and Platform Windows when Monitor DPI changes.
 
@@ -56,7 +56,7 @@ void StartGui(bool show, bool err_conf) {
 	}
 
 	// Setup Platform/Renderer backends
-	Backends::InitRenders();
+	ImBackends::InitRenders();
 
 	LoadFonts();
 
@@ -90,9 +90,9 @@ void StartGui(bool show, bool err_conf) {
 		return false;
 		});
 
-	while (Backends::ImWaitNewFrame()) {
+	while (ImBackends::WaitNewFrame()) {
 
-		Backends::NewFrame();
+		ImBackends::NewFrame();
 		ImGui::NewFrame();
 
 		// UI Logic
@@ -104,17 +104,14 @@ void StartGui(bool show, bool err_conf) {
 			ImWantFrameWithDelay(0.5f);
 		}
 
-		// Rendering
-		ImGui::Render();
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
+		ImBackends::RenderVSync();
 
 #ifdef SS_WIN_7_COMPAT
 		Sleep(1);
 #endif
 	}
 
-	Backends::Cleanup();
+	ImBackends::Cleanup();
 	ImGui::DestroyContext();
 
 }

@@ -6,7 +6,7 @@
 #include "backends/imgui_impl_win32.h"
 #include "backends/imgui_impl_dx11.h"
 
-namespace Backends {
+namespace ImBackends {
 
 	inline ID3D11Device* g_pd3dDevice = nullptr;
 	inline ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
@@ -71,9 +71,16 @@ namespace Backends {
 	inline void NewFrame() {
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
 	}
 
-	inline ImTextureID LoadTexture(unsigned char* image_data, int image_width, int image_height) {
+	inline void RenderVSync() {
+		ImGui::Render();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+	}
+
+	inline ImTextureID LoadTexture_RGBA8(unsigned char* image_data, int image_width, int image_height) {
 
 		// Create texture
 		D3D11_TEXTURE2D_DESC desc;
@@ -116,7 +123,7 @@ namespace Backends {
 		((ID3D11ShaderResourceView*)(void*)t)->Release();
 	}
 
-	inline bool ImWaitNewFrame() {
+	inline bool WaitNewFrame() {
 		using namespace std::chrono;
 
 		if (_g_wantFrameDelay <= 0) {

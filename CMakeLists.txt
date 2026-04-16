@@ -17,15 +17,13 @@ if(MSVC)
 	add_compile_options(/utf-8)
 	add_compile_options(/std:c++latest)
 	add_compile_options(/we5030)
+	add_compile_options(/GF) # String Pooling
 
     # 1) Dead Code Elimination (Удаление мертвого кода)
-    # /Gy — разделяет функции на сегменты, чтобы линковщик мог их удалить
-    # /OPT:REF — удаляет функции, на которые нет ссылок
-    add_compile_options($<$<CONFIG:Release>:/Gy>)
-    add_link_options($<$<CONFIG:Release>:/OPT:REF>)
-    # add_link_options($<$<CONFIG:Release>:/OPT:ICF>)
-	# add_link_options($<$<CONFIG:Release>:/INCREMENTAL:NO>) # Оптимизации выше (REF/ICF) НЕ работают, если включена инкрементальная линковка.
-	add_compile_options(/GF)
+    add_compile_options($<$<CONFIG:Release>:/Gy>)     # /Gy — разделяет функции на сегменты, чтобы линковщик мог их удалить
+    add_link_options($<$<CONFIG:Release>:/OPT:REF>)     # /OPT:REF — удаляет функции, на которые нет ссылок
+
+
 endif()
 
 # Проверка и включение IPO только после объявления project
@@ -85,6 +83,7 @@ block()
 	target_include_directories(ImguiLib PUBLIC "imgui") # PUBLIC - автоматически прокидываем дальше
 	add_compile_definitions(IMGUI_DISABLE_OBSOLETE_FUNCTIONS)
 	add_compile_definitions(IMGUI_IMPL_WIN32_DISABLE_GAMEPAD)
+	add_compile_definitions("$<$<CONFIG:Release>:IMGUI_DISABLE_DEMO_WINDOWS;IMGUI_DISABLE_DEBUG_TOOLS>")
 	# подключаем freetype
 	block()
 		target_compile_definitions(ImguiLib PRIVATE IMGUI_ENABLE_FREETYPE) # включаем поддержку в imgui
