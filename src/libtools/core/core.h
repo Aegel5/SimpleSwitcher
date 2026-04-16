@@ -13,12 +13,6 @@ using namespace std::chrono_literals;
 
 using SpanByte = std::span<std::byte>;
 
-template <typename T1, typename T2>
-inline bool TestFlagAll(T1 V, T2 F)
-{
-	return (V & F) == F;
-}
-
 
 template <typename T1, typename T2>
 inline bool TestFlag(T1 V, T2 F)
