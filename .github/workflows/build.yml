@@ -107,6 +107,6 @@ jobs:
           gh release create "$TAG_NAME" \
             ./SimpleSwitcher_v*.zip \
             --title "SimpleSwitcher ${{ steps.get_version.outputs.VERSION }}-${{ steps.vars.outputs.sha_short }} PREVIEW" \
-            --notes "Автоматическая сборка артефакта" \
+            --notes "Автоматический билд от $(Get-Date -Format 'yyyy-MM-dd HH:mm')" \
             --prerelease \
             
