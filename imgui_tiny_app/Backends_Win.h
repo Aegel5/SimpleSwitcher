@@ -143,6 +143,15 @@ namespace ImBackends {
 
 	inline bool Init(const wchar_t* title, int width, int height, bool hideMode = false) {
 
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+
+        if (hideMode) {
+            ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+            ImGui::GetIO().ConfigViewportsNoDefaultParent = true;
+            ImGui::GetIO().ConfigViewportsNoAutoMerge = true;
+        }
+
 		ImGui_ImplWin32_EnableDpiAwareness();
 		main_scale = ImGui_ImplWin32_GetDpiScaleForMonitor(::MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY));
 
@@ -193,6 +202,12 @@ namespace ImBackends {
 			}
 		}
 
+        if (!hideMode) {
+            // Show the window
+            ::ShowWindow(hwnd_host, SW_SHOWDEFAULT);
+            ::UpdateWindow(hwnd_host);
+        }
+
 		return true;
 	}
 
@@ -209,6 +224,7 @@ namespace ImBackends {
 		ImGui_ImplDX11_Shutdown();
 		ImGui_ImplWin32_Shutdown();
 		details::CleanupDeviceD3D();
+        ImGui::DestroyContext();
 	}
 
 	inline void NewFrame() {

@@ -22,15 +22,9 @@ void StartGui(bool show, bool err_conf) {
 	if (!ImBackends::InitDisableMainViewport())
 		return;
 
-	// Setup Dear ImGui context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigInputTextCursorBlink = false;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-	io.ConfigViewportsNoAutoMerge = true;
-	io.ConfigViewportsNoDefaultParent = true;
 
 
 	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
@@ -54,7 +48,6 @@ void StartGui(bool show, bool err_conf) {
 	ImBackends::InitRenders();
 
 	LoadFonts();
-
 
 	MainWindow mainWindow(show, err_conf);
 	Notific::Notificator notif;
@@ -106,7 +99,5 @@ void StartGui(bool show, bool err_conf) {
 	}
 
 	ImBackends::Cleanup();
-	ImGui::DestroyContext();
-
 }
 
