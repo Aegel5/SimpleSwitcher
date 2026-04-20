@@ -6,12 +6,16 @@
 #include "backends/imgui_impl_win32.h"
 #include "backends/imgui_impl_dx11.h"
 
+#pragma comment(lib, "d3d11.lib") 
+
 namespace ImBackends {
 
 	inline ID3D11Device* g_pd3dDevice = nullptr;
 	inline ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
 	inline float main_scale = 0;
 	inline HWND hwnd_host = 0;
+
+    inline bool IsMultiViewportsSupported() { return true; }
 
 	inline bool Init() {
 

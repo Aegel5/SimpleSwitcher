@@ -69,18 +69,19 @@ block()
 endblock()
 
 
-
 # ImguiLib
 block()
 	add_library(ImguiLib OBJECT)
-	file(GLOB_RECURSE src  imgui/*.cpp )
+	file(GLOB_RECURSE src  imgui_tiny_app/*.cpp )
 	list(FILTER src EXCLUDE REGEX ".*binary_to_compressed_c.cpp")
 	list(FILTER src EXCLUDE REGEX ".*/backends/.*")
 	list(FILTER src EXCLUDE REGEX ".*/examples/.*")
-	list(APPEND src imgui/backends/imgui_impl_dx11.cpp)
-	list(APPEND src imgui/backends/imgui_impl_win32.cpp)
+	if(WIN32)
+		list(APPEND src imgui_tiny_app/backends/imgui_impl_dx11.cpp)
+		list(APPEND src imgui_tiny_app/backends/imgui_impl_win32.cpp)
+	endif()
 	target_sources(ImguiLib PRIVATE ${src})
-	target_include_directories(ImguiLib PUBLIC "imgui") # PUBLIC - автоматически прокидываем дальше
+	target_include_directories(ImguiLib PUBLIC "imgui_tiny_app") # PUBLIC - автоматически прокидываем дальше
 	add_compile_definitions(IMGUI_DISABLE_OBSOLETE_FUNCTIONS)
 	add_compile_definitions(IMGUI_IMPL_WIN32_DISABLE_GAMEPAD)
 	add_compile_definitions("$<$<CONFIG:Release>:IMGUI_DISABLE_DEMO_WINDOWS;IMGUI_DISABLE_DEBUG_TOOLS>")
@@ -104,7 +105,6 @@ block()
 		target_include_directories(ImguiLib PRIVATE "${freetype_SOURCE_DIR}/include")
 	endblock()
 	target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ImguiLib)
-	target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE "d3d11.lib"  "dxgi.lib")
 endblock()
 
 # ExternLib
