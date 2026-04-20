@@ -12,7 +12,6 @@
 #include "backends_layer.h"
 
 #include "main_wnd.h"
-#include "utils/WinTimer.h"
 #include "TrayIcon.h"
 #include "LoadFonts.h"
 
@@ -59,31 +58,31 @@ void StartGui(bool show, bool err_conf) {
 
 	MainWindow mainWindow(show, err_conf);
 	Notific::Notificator notif;
-	Notific::g_notif = &notif;
-	WinTimer timer;
-	g_guiHandle = timer.GetHandler();
 	TrayIcon trayIcon;
-	timer.CycleTimer([&]() {
+	Notific::g_notif = &notif;
+	g_guiHandle = ImBackends::hwnd_host;
+
+	ImBackends::CreateTimer([&]() {
 		if (notif.Process()) {
 			ImWantFrameWithDelay(0);
 		}
 		}, 2000);
 
-	timer.CustomHandler( [&](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+	ImBackends::SetCustomHandler( [&](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		if (msg == WM_ShowWindow) {
 			int mode = wParam;
 			if (mode) notif.ShowHide();
 			else mainWindow.ShowHide();
 			ImWantFrameWithDelay(0);
-			return true;
+			return 0;
 		}
 
 		if (msg == WM_LayNotif) {
 			trayIcon.Update((HKL)wParam);
-			return true;
+			return 0;
 		}
 
-		return false;
+		return 1;
 		});
 
 	while (ImBackends::WaitNewFrame()) {

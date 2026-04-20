@@ -17,7 +17,21 @@ namespace ImBackends {
 	inline float main_scale = 0;
 	inline HWND hwnd_host = 0;
 
-    inline bool IsMultiViewportsSupported() { return true; }
+    namespace details {
+        inline uint64_t lastTimerId = 8;
+        inline std::vector<std::function<void()>> timerCallbacks;
+        inline std::function<bool(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)> customH;
+    }
+
+    inline void CreateTimer(auto&& callback, int msDelay) {
+        using namespace details;
+        timerCallbacks.push_back(std::forward<decltype(callback)>(callback));
+        SetTimer(hwnd_host, lastTimerId++, msDelay, NULL);
+    }
+
+    inline void SetCustomHandler(auto&& callback) {
+        details::customH = std::forward<decltype(callback)>(callback);
+    }
 
 	namespace details {
 
@@ -80,27 +94,43 @@ namespace ImBackends {
 
 		
 
-		inline LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-			if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
-				return true;
+        inline LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
-			switch (msg) {
-			case WM_SIZE:
-				if (wParam == SIZE_MINIMIZED)
-					return 0;
-				g_ResizeWidth = (UINT)LOWORD(lParam); // Queue resize
-				g_ResizeHeight = (UINT)HIWORD(lParam);
-				return 0;
-			case WM_SYSCOMMAND:
-				if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
-					return 0;
-				break;
-			case WM_DESTROY:
-				::PostQuitMessage(0);
-				return 0;
-			}
-			return ::DefWindowProcW(hWnd, msg, wParam, lParam);
-		}
+            if (customH && customH(hWnd, msg, wParam, lParam) == 0) {
+                return 0;
+            }
+
+            if (msg == WM_TIMER) {
+                UINT_PTR timerId = wParam - 8;
+                if (timerId < timerCallbacks.size() && timerId >= 0) {
+                    timerCallbacks[timerId]();
+                    return 0;
+                }
+            }
+
+            if (!g_pSwapChain) return ::DefWindowProcW(hWnd, msg, wParam, lParam);
+
+            if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+                return true;
+
+            switch (msg) {
+            case WM_SIZE:
+                if (wParam == SIZE_MINIMIZED)
+                    return 0;
+                g_ResizeWidth = (UINT)LOWORD(lParam); // Queue resize
+                g_ResizeHeight = (UINT)HIWORD(lParam);
+                return 0;
+            case WM_SYSCOMMAND:
+                if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
+                    return 0;
+                break;
+            case WM_DESTROY:
+                ::PostQuitMessage(0);
+                return 0;
+            }
+
+            return ::DefWindowProcW(hWnd, msg, wParam, lParam);
+        }
 
 		inline void CleanupDeviceD3D() {
 			CleanupRenderTarget();
@@ -117,7 +147,7 @@ namespace ImBackends {
 		main_scale = ImGui_ImplWin32_GetDpiScaleForMonitor(::MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY));
 
 		{
-			WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, hideMode ? DefWindowProcW : ImGui_ImplWin32_WndProcHandler, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
+			WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, details::WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example 2", nullptr };
 			::RegisterClassExW(&wc);
 			hwnd_host = ::CreateWindowW(wc.lpszClassName, title, WS_OVERLAPPEDWINDOW, 100, 100, width, height, nullptr, nullptr, wc.hInstance, nullptr);
 			if (hwnd_host == 0)

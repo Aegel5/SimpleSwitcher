@@ -1,6 +1,6 @@
 ﻿
 #include "TrayIcon.h"
-#include "utils/WinTimer.h"
+
 
 
 inline TStatus update_cur_dir() { 
