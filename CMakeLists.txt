@@ -72,10 +72,10 @@ endblock()
 # ImguiLib
 block()
 	add_library(ImguiLib OBJECT)
-	file(GLOB_RECURSE src  imgui_tiny_app/*.cpp )
-	list(FILTER src EXCLUDE REGEX ".*binary_to_compressed_c.cpp")
-	list(FILTER src EXCLUDE REGEX ".*/backends/.*")
-	list(FILTER src EXCLUDE REGEX ".*/examples/.*")
+	file(GLOB src 
+		"imgui_tiny_app/*.cpp"
+		"imgui_tiny_app/misc/cpp/imgui_stdlib.cpp"
+	)
 	if(WIN32)
 		list(APPEND src imgui_tiny_app/backends/imgui_impl_dx11.cpp)
 		list(APPEND src imgui_tiny_app/backends/imgui_impl_win32.cpp)
@@ -85,8 +85,9 @@ block()
 	add_compile_definitions(IMGUI_DISABLE_OBSOLETE_FUNCTIONS)
 	add_compile_definitions(IMGUI_IMPL_WIN32_DISABLE_GAMEPAD)
 	add_compile_definitions("$<$<CONFIG:Release>:IMGUI_DISABLE_DEMO_WINDOWS;IMGUI_DISABLE_DEBUG_TOOLS>")
-	# подключаем freetype
+	target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ImguiLib)
 	block()
+		target_sources(ImguiLib PRIVATE imgui_tiny_app/misc/freetype/imgui_freetype.cpp)
 		target_compile_definitions(ImguiLib PRIVATE IMGUI_ENABLE_FREETYPE) # включаем поддержку в imgui
 		set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 		set(SKIP_INSTALL_ALL ON CACHE INTERNAL "" FORCE) 
@@ -104,7 +105,6 @@ block()
 		target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE freetype)
 		target_include_directories(ImguiLib PRIVATE "${freetype_SOURCE_DIR}/include")
 	endblock()
-	target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ImguiLib)
 endblock()
 
 # ExternLib
