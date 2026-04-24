@@ -105,7 +105,7 @@ namespace ImBackends {
                 if (timerId < timerCallbacks.size() && timerId >= 0) {
                     timerCallbacks[timerId]();
                     return 0;
-                }
+                } 
             }
 
             if (!g_pSwapChain) return ::DefWindowProcW(hWnd, msg, wParam, lParam);

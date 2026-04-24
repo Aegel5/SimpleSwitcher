@@ -73,21 +73,21 @@ endblock()
 block()
 	add_library(ImguiLib OBJECT)
 	file(GLOB src 
-		"imgui_tiny_app/*.cpp"
-		"imgui_tiny_app/misc/cpp/imgui_stdlib.cpp"
+		"imgui_tiny_app/imgui/*.cpp"
+		"imgui_tiny_app/imgui/misc/cpp/imgui_stdlib.cpp"
 	)
 	if(WIN32)
-		list(APPEND src imgui_tiny_app/backends/imgui_impl_dx11.cpp)
-		list(APPEND src imgui_tiny_app/backends/imgui_impl_win32.cpp)
+		list(APPEND src imgui_tiny_app/imgui/backends/imgui_impl_dx11.cpp)
+		list(APPEND src imgui_tiny_app/imgui/backends/imgui_impl_win32.cpp)
 	endif()
 	target_sources(ImguiLib PRIVATE ${src})
-	target_include_directories(ImguiLib PUBLIC "imgui_tiny_app") # PUBLIC - автоматически прокидываем дальше
-	add_compile_definitions(IMGUI_DISABLE_OBSOLETE_FUNCTIONS)
+	target_include_directories(ImguiLib PUBLIC "imgui_tiny_app" "imgui_tiny_app/imgui") # PUBLIC - автоматически прокидываем дальше
+	add_compile_definitions(IMGUI_DISABLE_OBSOLETE_FUNCTIONS) 
 	add_compile_definitions(IMGUI_IMPL_WIN32_DISABLE_GAMEPAD)
 	add_compile_definitions("$<$<CONFIG:Release>:IMGUI_DISABLE_DEMO_WINDOWS;IMGUI_DISABLE_DEBUG_TOOLS>")
 	target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ImguiLib)
 	block()
-		target_sources(ImguiLib PRIVATE imgui_tiny_app/misc/freetype/imgui_freetype.cpp)
+		target_sources(ImguiLib PRIVATE imgui_tiny_app/imgui/misc/freetype/imgui_freetype.cpp)
 		target_compile_definitions(ImguiLib PRIVATE IMGUI_ENABLE_FREETYPE) # включаем поддержку в imgui
 		set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 		set(SKIP_INSTALL_ALL ON CACHE INTERNAL "" FORCE) 
