@@ -7,20 +7,22 @@ void MainWindow::Draw_about_tab() {
 		ImGui::Text("SimpleSwitcher %s", GET_SW_VERSION());
 
 		static string sha = GIT_COMMIT_HASH;
-		if (sha.size() > 7) sha.resize(7);
-		ImGui::Text("Commit SHA: %s", GIT_COMMIT_HASH);
+		if (!sha.empty()) {
+			static string sha_link = "https://github.com/Aegel5/SimpleSwitcher/commit/" + sha;
+			if (sha.size() > 7) sha.resize(7);
+			ImGui::TextUnformatted("Commit SHA:");
+			ImGui::SameLine(); ImGui::TextLinkOpenURL(sha.c_str(), sha_link.c_str());
+		}
 
 		ImGui::TextUnformatted(LOC("More info:"));
 
-		ImGui::SameLine();
+		ImGui::SameLine(); ImGui::TextLinkOpenURL("https://github.com/Aegel5/SimpleSwitcher");
 
-		ImGui::TextLinkOpenURL("https://github.com/Aegel5/SimpleSwitcher");
-
-		if (ImGui::Button("❤ Support ❤")) {
+		if (ImGui::Button(LOC("❤ Support ❤"))) {
 			ImGui::GetPlatformIO().Platform_OpenInShellFn(GImGui, "https://github.com/Aegel5/SimpleSwitcher?tab=readme-ov-file#%EF%B8%8F-donate");
 		}
 
-		ImGui::TextUnformatted("The program develops only thanks to your support! 🤝");
+		ImGui::TextUnformatted(LOC("The program develops only thanks to your support! 🤝"));
 
 		if (Utils::IsDebug()) {
 
