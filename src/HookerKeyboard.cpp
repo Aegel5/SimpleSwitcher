@@ -122,7 +122,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			return false;
 			};
 
-		bool is_our_key_down = false;
+		bool is_our_key_up_exists = false;
 
 		if (curKeyState == KeyState::KEY_STATE_DOWN) {
 
@@ -134,7 +134,6 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			int need_disable = 0;
 			for (const auto& [hk, key] : cfg->All_hot_keys()) { // всегда полный обход всего цикла
 				if (!check_is_our_key(key, curk)) continue;
-				is_our_key_down = true;
 				double_exists |= key.IsDouble();
 				if (!key.GetKeyup()) {
 
@@ -152,6 +151,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 					}
 				}
 				else {
+					is_our_key_up_exists = true;
 					possible_hk_up = curk;
 				}
 			}
@@ -226,22 +226,20 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			}
 		}
 
-		if (
-			// https://github.com/Aegel5/SimpleSwitcher/issues/70
-			// на наши хоткеи не заходим, не важно up или double или полное совпадение
-			// если они хотят очистить буфер - должны делать сами
-			// если они состоят из одной буквы или shift + буквы - не важно - все равно запрет происходит.
-			!is_our_key_down 
-			&& curKeyState == KeyState::KEY_STATE_DOWN 
+		else if (
+			curKeyState == KeyState::KEY_STATE_DOWN && !curk.IsEmpty()
+
+			// Пропускаем отсылку, если есть UP хот-кей https://github.com/Aegel5/SimpleSwitcher/issues/70
+			// (Если есть просто key или key #double, мы и так сюда не попадем)
+			&& !is_our_key_up_exists
+
 			) {
-			if (!curk.IsEmpty()) {
-				Worker()->PostMsg(Message_KeyType{
-					.vkCode = vkCode,
-					.scan_ext = { (TScanCode)scan_code, isExtended },
-					.cur_hotKey = curk, // без учета disabled, но не критично
-					.is_caps = iscaps == 1,
-					});
-			}
+			Worker()->PostMsg(Message_KeyType{
+				.vkCode = vkCode,
+				.scan_ext = { (TScanCode)scan_code, isExtended },
+				.cur_hotKey = curk, // без учета disabled, но не критично
+				.is_caps = iscaps == 1,
+				});
 		}
 
 	};
