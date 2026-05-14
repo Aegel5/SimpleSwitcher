@@ -24,6 +24,7 @@ jobs:
           fetch-depth: 1 # Без этой строки скачается вся история                   
 
       - name: Check activity and exit if stale
+        if: ${{ github.event.inputs.build_type != 'publish' }}
         shell: bash
         run: |
           LAST_COMMIT=$(git log -1 --format=%ct)
