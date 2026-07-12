@@ -109,6 +109,7 @@ public:
 	string gui_lang = "Russian";
 	bool useBritishFlag = false;
 	string treat_as_letters = "_-";
+	//int inject_delay_after_lang_ms = 0;
 
     std::vector< CHotKeySet> hotkeysList;
     std::vector< RunProgramInfo> run_programs;

@@ -159,18 +159,22 @@ public:
 		while (true)
 		{
 			auto curL = GetKeyboardLayout(topWndInfo2.threadid_default);
-			if (curL != lay) {
+			if (curL == 0) {
+				LOG_WARN("cur lay == 0. continue wait");
+			}
+			else if (curL != lay) {
 				LOG_ANY(L"new lay {} arrived after {}", (void*)curL, GetTickCount64() - start);
 				return curL;
 			}
 
-			if ((GetTickCount64() - start) >= 150) {
+			if ((GetTickCount64() - start) >= 40) {
 				LOG_WARN(L"wait timeout language change for proc {}", m_sTopProcName.c_str());
 				return 0;
 			}
 
 			Sleep(5);
 		}
+
 	}
 
 	TStatus RunProcess(HotKeyType hk, bool after_wait=false);
