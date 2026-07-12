@@ -160,7 +160,7 @@ public:
 		{
 			auto curL = GetKeyboardLayout(topWndInfo2.threadid_default);
 			if (curL != lay) {
-				LOG_ANY(L"new lay arrived after {}", GetTickCount64() - start);
+				LOG_ANY(L"new lay {} arrived after {}", (void*)curL, GetTickCount64() - start);
 				return curL;
 			}
 
