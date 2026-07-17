@@ -132,35 +132,75 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 			if (curk.IsEmpty())
 				return;
-			int need_disable = 0;
-			for (const auto& [hk, key] : cfg->All_hot_keys()) { // всегда полный обход всего цикла
+
+			/* Новая система работы double (экспериментальное):
+
+			Два режима работы: существует #double хот-кей и не существует.
+
+			1) Не существует: полностью игнорируем всю систему мульти-нажатий.
+
+			2) Существует:
+			1 нажатие - запускаем не_double хот-кей если есть с задержкой,
+			2/4/6/8... нажатий - запускаем double и отменяем не_double
+			3/5/7/9... нажатий - ничего не делаем.
+
+			*/
+
+			// Для простоты сделаем за 2 прохода (в случае если hk найден)
+
+			bool found_hk = false;
+
+			for (const auto& [hk, key] : cfg->All_hot_keys()) {
 				if (!check_is_our_key(key, curk)) continue;
-				double_exists |= key.IsDouble();
-				if (!key.GetKeyup()) {
+				found_hk = true;
+				if (key.IsDouble()) {
+					double_exists = true;
+					break;
+				}
+			}
 
-					int prior = 0;
-					if (!key.IsDouble() && curKeys.IsDouble()) prior = 5;
-					if (key.IsDouble() == curKeys.IsDouble()) prior = 10;
+			if (found_hk) {
 
-					if (prior > need_disable) {
-						need_disable = prior;
+				for (const auto& [hk, key] : cfg->All_hot_keys()) { // полный проход из-за is_our_key_up_exists
+					if (!check_is_our_key(key, curk)) continue;
 
-						if (!curKeys.IsHold()) {
+					if (!key.GetKeyup()) {
+
+						if (!double_exists) {
+							// Режим 1: просто запускаем hk
 							msg_hotkey.hotkey = key;
 							msg_hotkey.hk = hk;
 						}
+						else {
+							// Режим 2.
+							if (curKeys.IsMultiple()) {
+								if ((curKeys.MultipleCnt() & 1) == 0 && key.IsDouble()) {
+									// нашли double
+									msg_hotkey.hotkey = key;
+									msg_hotkey.hk = hk;
+								}
+							}
+							else {
+								if (!key.IsDouble()) {
+									// нашли не_double
+									msg_hotkey.hotkey = key;
+									msg_hotkey.hk = hk;
+								}
+							}
+						}
+
+					}
+					else {
+						is_our_key_up_exists = true;
+						possible_hk_up = curk;
 					}
 				}
-				else {
-					is_our_key_up_exists = true;
-					possible_hk_up = curk;
-				}
 			}
-			if (need_disable) {
-				possible_hk_up.Clear();  // не поддерживаем одновременно хоткей на up and down (down в приоритете).
-				request_disable();
-			}
-			else {
+
+			if (msg_hotkey.IsEmpty()) {
+
+				// ctrl + alt
+
 				if (curk.Size() == 3
 					&& curk.HasKey(VK_LMENU, true)
 					&& curk.HasKey(VK_CONTROL, false)
@@ -170,13 +210,20 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 					&& cfg->fixRAlt_lay_ != 0
 					) {
 					LOG_ANY(L"fix ctrl+alt");
-					if (!curKeys.IsHold()) { // пока просто запрещаем
-						msg_hotkey.hk = hk_Fix_RAlt;
-						msg_hotkey.hotkey = curk;
-					}
-					request_disable();
+					msg_hotkey.hk = hk_Fix_RAlt;
+					msg_hotkey.hotkey = curk;
 				}
 			}
+
+			if (!msg_hotkey.IsEmpty()) {
+				possible_hk_up.Clear();  // не поддерживаем одновременно хоткей на up and down (down в приоритете).
+				request_disable();
+				if (curKeys.IsHold()) {
+					// если удержание, то отменяем работу hk, но при этом оставляем запрещение.
+					msg_hotkey = {};
+				}
+			}
+
 		}
 
 		if (curKeyState == KeyState::KEY_STATE_UP) {
@@ -189,7 +236,6 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				if (!possible_up.IsEmpty()) {
 					for (const auto& [hk, key] : cfg->All_hot_keys()) {
 						if (!check_is_our_key(key, possible_up)) continue;
-						double_exists |= key.IsDouble();
 						if (key.GetKeyup()) {
 							msg_hotkey.hotkey = key;
 							msg_hotkey.hk = hk;
@@ -200,30 +246,24 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 		}
 
-		if (msg_hotkey.hk != hk_NULL) {
+		if (!msg_hotkey.IsEmpty()) {
 
 			if (msg_hotkey.hotkey.GetKeyup() && last_mouse_click_time > curKeys.StartOfLastHotKey()) {
 				// Possible Ctrl+Click in IDE
 				LOG_ANY("HotKey {} was canceled by mouse click", msg_hotkey.hotkey.ToString());
 			}
 			else {
-				if (msg_hotkey.hotkey.IsDouble() && curKeys.DoubleCnt() > 1) { 
-					LOG_ANY("skip double cnt {}", curKeys.DoubleCnt());
+				int delay = 0;
+				if (!msg_hotkey.hotkey.IsDouble() && double_exists) {
+					delay = cfg->quick_press_ms; // придется подождать.
+					msg_hotkey.delayed_from = GetTickCount64();
 				}
-				else {
 
-					int delay = 0;
-					if (!msg_hotkey.hotkey.IsDouble() && double_exists) {
-						delay = cfg->quick_press_ms; // придется подождать.
-						msg_hotkey.delayed_from = GetTickCount64();
-					}
-
-					LOG_ANY("post {} {}. has_double {}", msg_hotkey.hotkey.ToString(), (int)msg_hotkey.hk, double_exists);
-					msg_hotkey.cur_keys_down = curKeys.AllKeys(); // todo curKey_no_disabled?
-					if (need_disable_event)
-						Utils::RemoveFirst(msg_hotkey.cur_keys_down, vkCode); // удалим то что запретили, так как поднимать их не нужно.
-					Worker()->PostMsg(std::move(msg_hotkey), delay);
-				}
+				LOG_ANY("post {} {}. has_double {}", msg_hotkey.hotkey.ToString(), (int)msg_hotkey.hk, double_exists);
+				msg_hotkey.cur_keys_down = curKeys.AllKeys(); // todo curKey_no_disabled?
+				if (need_disable_event)
+					Utils::RemoveFirst(msg_hotkey.cur_keys_down, vkCode); // удалим то что запретили, так как поднимать их не нужно.
+				Worker()->PostMsg(std::move(msg_hotkey), delay);
 			}
 		}
 

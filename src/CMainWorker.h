@@ -12,6 +12,7 @@ struct Message_Hotkey {
 	HotKeyType hk = hk_NULL;
 	ULONGLONG delayed_from = 0;
 	vector<TKeyCode> cur_keys_down; // все текущие нажатые.
+	bool IsEmpty() const { return hk == hk_NULL; }
 };
 
 struct Message_ChangeForeg {

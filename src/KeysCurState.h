@@ -53,9 +53,15 @@ public:
 	}
 
 	bool IsHold() const { return is_hold; }
-	bool IsDouble() const { return last_down_vk_clear_up != 0 && double_cnt != 0; } 
-	int DoubleCnt() const {
-		return double_cnt;
+
+	bool IsMultiple() const {
+		return MultipleCnt() != 0;
+	} 
+
+	int MultipleCnt() const {
+		if (last_down_vk_clear_up == 0) return 0; // проверка что текущее состояние после DOWN
+		if (double_cnt == 0) return 0;
+		return double_cnt + 1;
 	}
 
 	const CHotKey& GetHk()const { return one_value; }
