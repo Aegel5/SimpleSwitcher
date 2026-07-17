@@ -216,7 +216,9 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 			if (!msg_hotkey.IsEmpty()) {
 				possible_hk_up.Clear();  // не поддерживаем одновременно хоткей на up and down (down в приоритете).
-				request_disable();
+				if (!msg_hotkey.hotkey.IsPass()) {
+					request_disable();
+				}
 			}
 
 		}

@@ -115,6 +115,9 @@ public:
 		if (m_double_press) {
 			s += " #double";
 		}
+		if (m_pass) {
+			s += " #pass";
+		}
 		return s;
 	}
 	static std::string ToString(TKeyCode key) {
@@ -134,6 +137,7 @@ public:
 			//StrUtils::ToLowerUnsafe(sCur);
 			if (StrUtils::replaceAll(sCur, "#up", "")) { key.SetKeyup(true); }
 			if (StrUtils::replaceAll(sCur, "#double", "")) { key.SetDouble(true); }
+			if (StrUtils::replaceAll(sCur, "#pass", "")) { key.SetPass(true); }
 			StrUtils::Trim(sCur);
 			TKeyCode kCur = _internal::HotKeyNames::Global().GetCode(sCur.c_str());
 			if (kCur == 0) {
@@ -153,7 +157,9 @@ public:
 	}
 	bool Has_left_right() const { return std::any_of(begin(), end(), [](auto v) {return v != Normalize(v); }); }
 	bool IsDouble() const { return m_double_press; }
+	bool IsPass() const { return m_pass; }
 	auto& SetDouble(bool val = true) { m_double_press = val; return *this; }
+	auto& SetPass(bool val = true) { m_pass = val; return *this; }
 	bool IsEnabled() const { return !m_disabled; }
 	void SetEnabled(bool val = true) { m_disabled = !val; }
 	static bool IsKnownMods(TKeyCode key) { return Utils::is_in(Normalize(key), VK_SHIFT, VK_CONTROL, VK_MENU, VKE_WIN); }
@@ -290,6 +296,7 @@ private:
 		uint8_t m_keyup : 1 {};
 		uint8_t m_double_press : 1 {};
 		uint8_t m_disabled : 1 {};
+		uint8_t m_pass : 1 {};
 	};
 	int8_t size = 0;
 	TKeyCode keys[c_MAX] = { 0 };

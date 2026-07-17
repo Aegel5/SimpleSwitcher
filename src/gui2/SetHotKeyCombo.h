@@ -50,7 +50,7 @@ class SetHotKeyCombo {
 		key_str_all = hotkeys->ToString();
 	}
 	void SetKey(CHotKey k) {
-		if (cur_key().Compare(k, CHotKey::COMPARE_STRICK_MODIFIER)) return;
+		//if (cur_key().Compare(k, CHotKey::COMPARE_STRICK_MODIFIER)) return;
 		hotkeys->keys[iCurrentHk] = k;
 		SaveApplyGuiConfig();
 		build_strings();
@@ -148,6 +148,16 @@ public:
 					k.SetDouble(val);
 					SetKey(k);
 				}
+			}
+
+			{
+				bool val = cur_key().IsPass();
+				if (ImGui::Checkbox(LOC("Pass hotkey to system"), &val)) {
+					auto k = cur_key();
+					k.SetPass(val);
+					SetKey(k);
+				}
+				ImGui::SetItemTooltip(LOC("Do not disable the hotkey for the system and other applications"));
 			}
 
 			{
