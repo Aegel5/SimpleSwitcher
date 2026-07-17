@@ -14,8 +14,6 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 	auto process = [&]() {
 
-		bool double_exists = false;
-
 		GETCONF;
 
 		KBDLLHOOKSTRUCT* k = (KBDLLHOOKSTRUCT*)lParam;
@@ -123,7 +121,8 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			return false;
 			};
 
-		bool is_our_key_up_exists = false;
+		bool key_up_exists = false;
+		bool double_exists = false;
 
 		if (curKeyState == KeyState::KEY_STATE_DOWN) {
 
@@ -153,23 +152,22 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			for (const auto& [hk, key] : cfg->All_hot_keys()) {
 				if (!check_is_our_key(key, curk)) continue;
 				found_hk = true;
-				if (key.IsDouble()) {
-					double_exists = true;
-					break;
-				}
+				if (key.IsDouble()) double_exists = true;
+				if (key.GetKeyup()) key_up_exists = true;
 			}
 
 			if (found_hk) {
 
-				for (const auto& [hk, key] : cfg->All_hot_keys()) { // полный проход из-за is_our_key_up_exists
+				for (const auto& [hk, key] : cfg->All_hot_keys()) {
 					if (!check_is_our_key(key, curk)) continue;
 
 					if (!key.GetKeyup()) {
 
 						if (!double_exists) {
-							// Режим 1: просто запускаем hk
+							// Режим 1: просто запускаем первый попавшийся hk
 							msg_hotkey.hotkey = key;
 							msg_hotkey.hk = hk;
+							break;
 						}
 						else {
 							// Режим 2.
@@ -178,6 +176,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 									// нашли double
 									msg_hotkey.hotkey = key;
 									msg_hotkey.hk = hk;
+									break;
 								}
 							}
 							else {
@@ -185,13 +184,13 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 									// нашли не_double
 									msg_hotkey.hotkey = key;
 									msg_hotkey.hk = hk;
+									break;
 								}
 							}
 						}
 
 					}
 					else {
-						is_our_key_up_exists = true;
 						possible_hk_up = curk;
 					}
 				}
@@ -271,7 +270,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 			// Пропускаем отсылку, если есть UP хот-кей https://github.com/Aegel5/SimpleSwitcher/issues/70
 			// (Если есть просто key или key #double, мы и так сюда не попадем)
-			&& !is_our_key_up_exists
+			&& !key_up_exists
 
 			) {
 			Worker()->PostMsg(Message_KeyType{
