@@ -76,7 +76,8 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		CHotKey possible_up;
 		std::swap(possible_up, possible_hk_up); // сразу очищаем
 
-		if (curKeys.Size() == 0) { disable_up = 0; } // все отпущено, ничего запрещать не надо.
+		//if (curKeys.Size() == 0) { disable_up = 0; } // все отпущено, ничего запрещать не надо.
+
 		curKeys.Update(vkCode, isDown, isInjected); // сразу обновляем
 		const auto& curk = curKeys.GetHk();
 
@@ -101,7 +102,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 				// disable_up = vkCode; // up тоже будет в будущем запрещать.
 			}
 			else {
-				disable_up = 0;
+				//disable_up = 0;
 			}
 
 			need_disable_event = true;
@@ -127,7 +128,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		if (curKeyState == KeyState::KEY_STATE_DOWN) {
 
 			// на любое новое нажатие сбрасываем ожидание запрета на UP во избежание ошибок.
-			disable_up = 0;
+			//disable_up = 0;
 
 			if (curk.IsEmpty())
 				return;
@@ -179,10 +180,10 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 		}
 
 		if (curKeyState == KeyState::KEY_STATE_UP) {
-			if (disable_up == vkCode) {
-				request_disable();
-			}
-			else {
+			//if (disable_up == vkCode) {
+			//	request_disable();
+			//}
+			//else {
 				// ищем наш хот-кей.
 				// даже если нашли, up никогда не запрещаем.
 				if (!possible_up.IsEmpty()) {
@@ -195,7 +196,7 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 						}
 					}
 				}
-			}
+			//}
 
 		}
 
