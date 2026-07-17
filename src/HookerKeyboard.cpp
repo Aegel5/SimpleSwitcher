@@ -218,10 +218,6 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			if (!msg_hotkey.IsEmpty()) {
 				possible_hk_up.Clear();  // не поддерживаем одновременно хоткей на up and down (down в приоритете).
 				request_disable();
-				if (curKeys.IsHold()) {
-					// если удержание, то отменяем работу hk, но при этом оставляем запрещение.
-					msg_hotkey = {};
-				}
 			}
 
 		}
@@ -248,7 +244,10 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 		if (!msg_hotkey.IsEmpty()) {
 
-			if (msg_hotkey.hotkey.GetKeyup() && last_mouse_click_time > curKeys.StartOfLastHotKey()) {
+			if (curKeys.IsHold()) {
+				LOG_ANY("Skip hk because hold");
+			}
+			else if (msg_hotkey.hotkey.GetKeyup() && last_mouse_click_time > curKeys.StartOfLastHotKey()) {
 				// Possible Ctrl+Click in IDE
 				LOG_ANY("HotKey {} was canceled by mouse click", msg_hotkey.hotkey.ToString());
 			}
