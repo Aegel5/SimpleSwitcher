@@ -71,8 +71,8 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			return;
 		}
 
-		CHotKey possible_up;
-		std::swap(possible_up, possible_hk_up); // сразу очищаем
+		CHotKey possible_hk_up_current;
+		std::swap(possible_hk_up_current, possible_hk_up); // сразу очищаем
 
 		//if (curKeys.Size() == 0) { disable_up = 0; } // все отпущено, ничего запрещать не надо.
 
@@ -191,7 +191,8 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 
 					}
 					else {
-						possible_hk_up = curk;
+						possible_hk_up = key;
+						possible_hktype_up = hk;
 					}
 				}
 			}
@@ -228,14 +229,9 @@ LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
 			//else {
 				// ищем наш хот-кей.
 				// даже если нашли, up никогда не запрещаем.
-				if (!possible_up.IsEmpty()) {
-					for (const auto& [hk, key] : cfg->All_hot_keys()) {
-						if (!check_is_our_key(key, possible_up)) continue;
-						if (key.GetKeyup()) {
-							msg_hotkey.hotkey = key;
-							msg_hotkey.hk = hk;
-						}
-					}
+				if (!possible_hk_up_current.IsEmpty()) {
+					msg_hotkey.hotkey = possible_hk_up_current;
+					msg_hotkey.hk = possible_hktype_up;
 				}
 			//}
 

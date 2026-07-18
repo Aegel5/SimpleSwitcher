@@ -17,7 +17,11 @@ public:
 public: class HookerKeyboard {
 		CurStateWrapper curKeys;
 		//TKeyCode disable_up = 0;
+
+		// todo: unite
 		CHotKey possible_hk_up;
+		HotKeyType possible_hktype_up;
+
 		public: TimePoint last_mouse_click_time;
 
 		LRESULT CALLBACK LowLevelKeyboardProc(
