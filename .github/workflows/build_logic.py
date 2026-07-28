@@ -18,8 +18,13 @@ def run_cmd(cmd, check=True, text=True, capture_output=True, env=None):
     current_env = os.environ.copy()
     if env:
         current_env.update(env)
-    res = subprocess.run(cmd, shell=True, check=check, text=text, capture_output=capture_output, env=current_env)
-    return res.stdout.strip()
+    try:
+        res = subprocess.run(cmd, shell=True, check=check, text=text, capture_output=capture_output, env=current_env)
+        # Если вывод не перехватывали (capture_output=False), возвращаем пустую строку
+        return res.stdout.strip() if res.stdout else ""
+    except subprocess.CalledProcessError as e:
+        fail(f"Команда завершилась с ошибкой: {cmd}\nВывод: {e.output or e.stderr}")
+
 
 def check_stale_activity():
     """Проверка свежести коммитов (за последние 25 часов)."""
@@ -106,7 +111,7 @@ def main():
     build_type = sys.argv[1] if len(sys.argv) > 1 else ''
     
     # 1. Проверка активности
-    if build_type != 'publish':
+    if build_type == 'preview':
         check_stale_activity()
     
     # 2. Очистка старых релизов
