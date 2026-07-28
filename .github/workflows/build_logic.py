@@ -89,22 +89,19 @@ def prepare_artifacts_and_zip(build_dir_str, zip_name):
         sha_file = exe_file.with_suffix(".exe.sha256")
         with open(sha_file, "w", encoding="ascii") as f:
             f.write(f"{file_hash} *{exe_file.name}\n")
-            
-    # Собираем список файлов для архива
-    files_to_zip = []
-    for ext in ("*.exe", "*.sha256"):
-        files_to_zip.extend(build_dir.glob(ext))
-        
-    bin_files_dir = Path("bin_files")
-    if bin_files_dir.exists():
-        files_to_zip.extend(bin_files_dir.glob("*"))
-        
+                   
     # Создаем ZIP
     message(f"Создаем архив {zip_name}...")
     with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as zipf:
-        for file in files_to_zip:
+        
+        for ext in ("*.exe", "*.sha256"):
+            for file in build_dir.glob(ext):
+                zipf.write(file, file.name)   
+                
+        bin_dir = Path("bin_files")
+        for file in bin_dir.rglob("*"):
             if file.is_file():
-                zipf.write(file, file.name)
+                zipf.write(file, file.relative_to(bin_dir))
                 
     return zip_name;
 
