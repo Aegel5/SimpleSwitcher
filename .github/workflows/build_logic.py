@@ -36,7 +36,7 @@ def check_stale_activity():
         fail("::error::Нет свежих коммитов за 25 часов. Прерываю работу.")
 
 def cleanup_old_prereleases():
-    """Удаление старых пре-релизов, оставляя 5 самых новых."""
+    print("Удаление старых пре-релизов, оставляя 5 самых новых")
     try:
         raw_list = run_cmd("gh release list --limit 100 --json tagName,isPrerelease")
         releases = json.loads(raw_list)
@@ -73,7 +73,7 @@ def calculate_sha256(file_path):
             sha256_hash.update(byte_block)
     return sha256_hash.hexdigest()
 
-def prepare_artifacts_and_zip(build_dir_str, version):
+def prepare_artifacts_and_zip(build_dir_str, zip_name):
     """Хеширование EXE файлов и создание ZIP архива."""
     build_dir = Path(build_dir_str)
     if not build_dir.exists():
@@ -96,14 +96,13 @@ def prepare_artifacts_and_zip(build_dir_str, version):
         files_to_zip.extend(bin_files_dir.glob("*"))
         
     # Создаем ZIP
-    zip_name = f"SimpleSwitcher_v{version}.zip"
     print(f"Создаем архив {zip_name}...")
     with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as zipf:
         for file in files_to_zip:
             if file.is_file():
                 zipf.write(file, file.name)
                 
-    return zip_name
+    return zip_name;
 
 
 def main():
@@ -130,8 +129,12 @@ def main():
     run_cmd("cmake -S . -B build -DCMAKE_BUILD_TYPE=Release", env=env_vars, capture_output=False)
     run_cmd("cmake --build build --config Release", capture_output=False)
     
+    run_cmd("cmake -S . -B build_win7 -DCMAKE_BUILD_TYPE=Release -A Win32 -T v143 -DWIN7_COMPAT=ON", env=env_vars, capture_output=False)
+    run_cmd("cmake --build build_win7 --config Release", capture_output=False)
+    
     # 5. Упаковка
-    zip_name = prepare_artifacts_and_zip("build/Release", version)
+    zip_name = prepare_artifacts_and_zip("build/Release", f"SimpleSwitcher_v{version}.zip")
+    zip_name2 = prepare_artifacts_and_zip("build_win7/Release", f"SimpleSwitcher_v{version}_x86_Win7.zip")
     
     # 6. Публикация релиза
     """Создание пре-релиза в GitHub."""
@@ -140,11 +143,10 @@ def main():
     date_str = datetime.now().strftime('%Y-%m-%d %H:%M')
     notes = f"Автоматический билд от {date_str}"
     
-    cmd = f'gh release create "{tag_name}" "./{zip_name}" --title "{title}" --notes "{notes}" --prerelease'
+    cmd = f'gh release create "{tag_name}" "./{zip_name}" "./{zip_name2}" --title "{title}" --notes "{notes}" --prerelease'
     print(f"Создаем релиз {tag_name}...")
     run_cmd(cmd)
-    
-    
+        
     print("Скрипт успешно завершил работу!")
 
 if __name__ == "__main__":
