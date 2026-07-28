@@ -11,14 +11,23 @@ inline TStatus update_cur_dir() {
 }
 
 
-extern void StartGui(bool);
+extern void StartGui();
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+
+	setlocale(LC_ALL, "en_US.utf8");
 
 	SetLogLevel(Utils::IsDebug() ? LOG_LEVEL_2 : LOG_LEVEL_DISABLE);
 
-	auto conf_ok = cfg_details::ReloadGuiConfig();
+	if (!cfg_details::ReloadGuiConfig()) {
+		MessageBox(
+			NULL,
+			L"Bad config",
+			L"Error",
+			MB_OK | MB_ICONERROR | MB_TASKMODAL
+		);
+		return 1;
+	}
 
-	setlocale(LC_ALL, "en_US.utf8");
 	IFS_LOG(update_cur_dir());
 	LOG_ANY("Start program {}", GET_SW_VERSION());
 
@@ -43,7 +52,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	CoreWorker core;
 
-	StartGui(!conf_ok);
+	StartGui();
 
 	LOG_ANY("program exit");
 

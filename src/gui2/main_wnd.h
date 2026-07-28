@@ -121,7 +121,7 @@ public:
 		update_backg();
 		apply_background();
 	}
-	MainWindow(bool show, bool conf_err) {
+	MainWindow(bool show) {
 		show_wnd = show;
 		title = std::format(
 			"SimpleSwitcher {}{}{}###main_wnd", GET_SW_VERSION(),
@@ -130,7 +130,7 @@ public:
 		check_add_to_auto = autostart_get();
 		config_path = StrUtils::Convert(std::format(L"file://{}", ProgramConfig::GetPath_Conf().wstring()));
 		update_flags();
-		Reinit(conf_err);
+		Reinit();
 	}
 	void ReinitHk() {
 		hotbox.clear();
@@ -138,7 +138,7 @@ public:
 			hotbox.emplace_back(GetGuiTextForHk(it.hkId), GetHk_Defaults(it.hkId), &it.keys);
 		}
 	}
-	void Reinit(bool conf_err) {
+	void Reinit(bool conf_err = false) {
 		if (conf_err) {
 			ShowMessageConfError();
 			return;

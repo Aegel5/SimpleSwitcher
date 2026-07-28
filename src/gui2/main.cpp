@@ -77,7 +77,7 @@ static void StartRealGui(MainWindow* wnd) {
 	ImBackends::Cleanup();
 }
 
-void StartGui(bool err_conf) {
+void StartGui() {
 
 	// Создаем главное окно + таймеры
 	WinTimer timer;
@@ -91,7 +91,7 @@ void StartGui(bool err_conf) {
 	Notific::g_notif = &notif;
 
 	// Создаем главное окно
-	MainWindow mainWindow(false, err_conf);
+	MainWindow mainWindow(false);
 
 	bool lightMode = true;
 
