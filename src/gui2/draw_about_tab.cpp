@@ -24,15 +24,16 @@ void MainWindow::Draw_about_tab() {
 
 		ImGui::TextUnformatted(LOC("The program develops only thanks to your support! 🤝"));
 
-		if (Utils::IsDebug()) {
+#ifndef IMGUI_DISABLE_DEMO_WINDOWS
+		if (ImGui::Button("Show demo"))
+			show_demo_window = true;
+#endif
 
-			if (ImGui::Button("Show demo"))
-				show_demo_window = true;
-
-			if (ImGui::Button("Show metrics")) {
-				show_metrics = true;
-			}
+#ifndef IMGUI_DISABLE_DEBUG_TOOLS
+		if (ImGui::Button("Show metrics")) {
+			show_metrics = true;
 		}
+#endif
 
 		//ImGui::TextLinkOpenURL("Telegram", "https://t.me/simple_switcher");
 
