@@ -29,5 +29,5 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Токен нужен для gh CLI внутри питона
         run: |
-          python .github/scripts/build_logic.py "${{ github.event.inputs.build_type }}"
+          python .github/workflows/build_logic.py "${{ github.event.inputs.build_type }}"
             

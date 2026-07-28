@@ -21,7 +21,7 @@ def run_cmd(cmd, check=True, text=True, capture_output=True, env=None):
     res = subprocess.run(cmd, shell=True, check=check, text=text, capture_output=capture_output, env=current_env)
     return res.stdout.strip()
 
-def check_stale_activity(build_type):
+def check_stale_activity():
     """Проверка свежести коммитов (за последние 25 часов)."""
         
     last_commit_time = int(run_cmd("git log -1 --format=%ct"))
@@ -72,7 +72,7 @@ def prepare_artifacts_and_zip(build_dir_str, version):
     """Хеширование EXE файлов и создание ZIP архива."""
     build_dir = Path(build_dir_str)
     if not build_dir.exists():
-        fail RuntimeError(nt(f"::error::Папка сборки {build_dir} не найдена")
+        fail(f"::error::Папка сборки {build_dir} не найдена")
         
     # Считаем SHA256 для всех .exe
     for exe_file in build_dir.glob("*.exe"):
