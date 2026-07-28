@@ -77,7 +77,7 @@ static void StartRealGui(MainWindow* wnd) {
 	ImBackends::Cleanup();
 }
 
-void StartGui(bool show, bool err_conf) {
+void StartGui(bool err_conf) {
 
 	// Создаем главное окно + таймеры
 	WinTimer timer;
@@ -91,14 +91,16 @@ void StartGui(bool show, bool err_conf) {
 	Notific::g_notif = &notif;
 
 	// Создаем главное окно
-	MainWindow mainWindow(show, err_conf);
+	MainWindow mainWindow(false, err_conf);
+
+	bool lightMode = true;
 
 	timer.CycleTimer(
 		[&]() {
-		if (notif.Process()) {
-			ImWantFrameWithDelay(0);
-			show = true;
-		}
+			if (notif.Process()) {
+				ImWantFrameWithDelay(0);
+				lightMode = false;
+			}
 		}, 2000);
 
 	timer.CustomHandler(
@@ -112,7 +114,7 @@ void StartGui(bool show, bool err_conf) {
 					mainWindow.ShowHide();
 				}
 				ImWantFrameWithDelay(0);
-				show = true;
+				lightMode = false;
 				return 0;
 			}
 
@@ -124,18 +126,16 @@ void StartGui(bool show, bool err_conf) {
 			return 1;
 		});
 
-	while (!show) {
+	while (lightMode) {
 		MSG msg;
 		if (GetMessage(&msg, NULL, 0, 0) <= 0) {
 			return;
 		}
 		::TranslateMessage(&msg);
-		::DispatchMessage(&msg); 
+		::DispatchMessage(&msg);
 	}
 
-	if (show) {
-		StartRealGui(&mainWindow);
-	}
+	StartRealGui(&mainWindow);
 
 }
 

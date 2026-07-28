@@ -11,7 +11,7 @@ inline TStatus update_cur_dir() {
 }
 
 
-extern void StartGui(bool show, bool);
+extern void StartGui(bool);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
 	SetLogLevel(Utils::IsDebug() ? LOG_LEVEL_2 : LOG_LEVEL_DISABLE);
@@ -36,27 +36,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			auto hk = conf_get_unsafe()->GetHk(hk_ToggleEnabled).keys.key();
 			for (auto& it : hk) if (it == VKE_WIN) it = VK_LWIN;
 			InputSender::SendHotKey(hk);
-			//{
-			//	InputSender is;
-			//	is.AddDownVk(hk);
-			//	is.Send();
-			//}
-			//Sleep(10);
-			//{
-			//	InputSender is;
-			//	is.AddUpVk(hk);
-			//	is.Send();
-			//}
 			Sleep(50);
 		}
 		g_enabled.TryEnable();
 	}
 
-	bool show = std::string{ lpCmdLine }.find("/autostart") == -1;
-
 	CoreWorker core;
 
-	StartGui(show, !conf_ok);
+	StartGui(!conf_ok);
 
 	LOG_ANY("program exit");
 
