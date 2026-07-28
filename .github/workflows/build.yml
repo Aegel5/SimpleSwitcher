@@ -21,93 +21,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1 # Без этой строки скачается вся история                   
+          fetch-depth: 1 # Без этой строки скачается вся история    
 
-      - name: Check activity and exit if stale
-        if: ${{ github.event.inputs.build_type != 'publish' }}
+      # Запуск всей логики через один Python скрипт
+      - name: Run Pipeline Script
         shell: bash
-        run: |
-          LAST_COMMIT=$(git log -1 --format=%ct)
-          LIMIT=$(($(date +%s) - 25 * 3600))
-          
-          if [ "$LAST_COMMIT" -lt "$LIMIT" ]; then
-            echo "::error::Нет свежих коммитов за 25 часов. Прерываю работу."
-            exit 1 # Весь Workflow остановится здесь и станет красным
-          fi     
-          
-      - name: Cleanup old pre-releases
-        shell: pwsh
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Токен нужен для gh CLI внутри питона
         run: |
-          # Используем tagName вместо id
-          $preReleases = gh release list --limit 100 --json tagName,isPrerelease | 
-            ConvertFrom-Json | 
-            Where-Object { $_.isPrerelease }
-          # Пропускаем 5 самых НОВЫХ, удаляем всё, что старше
-          $preReleases | Select-Object -Skip 5 | ForEach-Object {
-            Write-Host "Удаление релиза и тега: $($_.tagName)"
-            gh release delete $_.tagName --yes --cleanup-tag
-          }
-
-      - name: Set Short SHA
-        id: vars
-        shell: bash
-        run: echo "sha_short=${GITHUB_SHA:0:3}" >> $GITHUB_OUTPUT
-
-      # 1. Читаем версию из файла ver.h
-      - name: Get version from ver.h
-        id: get_version
-        shell: pwsh
-        run: |
-          $versionFile = Get-Content "src/ver.h" -Raw
-          if ($versionFile -match 'SW_VERSION\s*=\s*"([^"]+)"') {
-              $ver = $Matches[1]
-              echo "VERSION=$ver" >> $env:GITHUB_OUTPUT
-              Write-Host "Найдена версия: $ver"
-          } else {
-              Write-Error "Ошибка: Не удалось найти версию в файле ver.h"
-              exit 1
-          }
-
-      # 2. Сборка (CMake)
-      - name: Configure and Build
-        env:
-          CXXFLAGS: ${{ github.event.inputs.build_type == 'publish' && '-D PUBLIC_RELEASE' || '' }}        
-        run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-          cmake --build build --config Release        
-
-      # 3. Хеширование EXE и упаковка в ZIP
-      - name: Prepare Artifacts and ZIP
-        shell: pwsh
-        run: |
-          # Считаем SHA256 для каждого найденного .exe
-          cd build/Release
-          Get-ChildItem "*.exe" | ForEach-Object {
-              $h = (Get-FileHash $_.Name -Algorithm SHA256).Hash
-              "$h *$($_.Name)" | Out-File "$($_.Name).sha256" -Encoding ascii
-          }
-          cd ../..
-          
-          # Собираем: exe, их хеши и всё из папки bin_files
-          $files = Get-ChildItem "build/Release/*.exe", "build/Release/*.sha256", "bin_files/*"
-          
-          # Создаем архив с именем версии
-          $zipName = "SimpleSwitcher_v${{ steps.get_version.outputs.VERSION }}.zip"
-          Compress-Archive -Path $files.FullName -DestinationPath $zipName -Force
-          
-      - name: Upload Immutable Pre-release
-        shell: bash
-        env: 
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Формируем имя тега в переменную для удобства
-          TAG_NAME="v${{ steps.get_version.outputs.VERSION }}-${{ steps.vars.outputs.sha_short }}"
-          
-          gh release create "$TAG_NAME" \
-            ./SimpleSwitcher_v*.zip \
-            --title "SimpleSwitcher ${{ steps.get_version.outputs.VERSION }}-${{ steps.vars.outputs.sha_short }} PREVIEW" \
-            --notes "Автоматический билд от $(Get-Date -Format 'yyyy-MM-dd HH:mm')" \
-            --prerelease \
+          python .github/scripts/build_logic.py "${{ github.event.inputs.build_type }}"
             
