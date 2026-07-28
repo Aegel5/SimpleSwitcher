@@ -89,6 +89,7 @@ List of Renderer Backends:
     imgui_impl_dx11.cpp         ; DirectX11
     imgui_impl_dx12.cpp         ; DirectX12
     imgui_impl_metal.mm         ; Metal (ObjC or C++)
+    imgui_impl_metal4.mm        ; Metal 4 (ObjC or C++)
     imgui_impl_opengl2.cpp      ; OpenGL 2 (legacy fixed pipeline. Don't use with modern OpenGL code!)
     imgui_impl_opengl3.cpp      ; OpenGL 3/4, OpenGL ES 2/3, WebGL
     imgui_impl_sdlgpu3.cpp      ; SDL_GPU (portable 3D graphics API of SDL3)
@@ -116,7 +117,7 @@ If you are not sure which backend to use, the recommended platform/frameworks fo
 | GLFW | https://github.com/glfw/glfw | imgui_impl_glfw.cpp | |
 | Sokol | https://github.com/floooh/sokol | [util/sokol_imgui.h](https://github.com/floooh/sokol/blob/master/util/sokol_imgui.h) | Lower-level than GLFW/SDL |
 
-If your application runs on Windows or if you are using multi-viewport, the win32 backend handles some details a little better than other backends.
+If your application runs on Windows or if you are using multi-viewports, the imgui_impl_win32 backend handles some details better than other backends.
 
 ## Using third-party Backends
 
@@ -256,8 +257,8 @@ void MyImGuiBackend_RenderDrawData(ImDrawData* draw_data)
             const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
             if (pcmd->UserCallback)
             {
-                if (pcmd->UserCallback == ImDrawCallback_ResetRenderState)
-                    MyEngineSetupenderState();
+                if (pcmd->UserCallback == platform_io.DrawCallback_ResetRenderState)
+                    MyEngineSetupSenderState();
                 else
                     pcmd->UserCallback(cmd_list, pcmd);
             }

@@ -1,5 +1,7 @@
-## OSX artifacts
+## Misc artifacts
 .DS_Store
+.claude
+.vscode
 
 ## Dear ImGui artifacts
 imgui.ini
@@ -55,9 +57,6 @@ examples/example_sdl3_wgpu/web/*
 .idea
 cmake-build-*
 
-## VS code artifacts
-.vscode
-
 ## Unix executables from our example Makefiles
 examples/example_apple_metal/example_apple_metal
 examples/example_apple_opengl2/example_apple_opengl2
@@ -73,6 +72,7 @@ examples/example_sdl2_opengl3/example_sdl2_opengl3
 examples/example_sdl2_sdlrenderer2/example_sdl2_sdlrenderer2
 examples/example_sdl2_vulkan/example_sdl2_vulkan
 examples/example_sdl3_metal/example_sdl3_metal
+examples/example_sdl3_metal4/example_sdl3_metal4
 examples/example_sdl3_opengl3/example_sdl3_opengl3
 examples/example_sdl3_sdlgpu3/example_sdl3_sdlgpu3
 examples/example_sdl3_sdlrenderer3/example_sdl3_sdlrenderer3

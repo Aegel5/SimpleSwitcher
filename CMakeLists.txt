@@ -6,6 +6,8 @@ project(SimpleSwitcher VERSION 1.0 LANGUAGES CXX)
 if(WIN7_COMPAT)
 	add_compile_definitions(_WIN32_WINNT=0x0601)
 	add_compile_definitions(SS_WIN_7_COMPAT)
+else()
+	add_compile_definitions(IMGUI_USE_WCHAR32)
 endif()
 
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
