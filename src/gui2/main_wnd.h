@@ -25,15 +25,12 @@ class MainWindow : public ImGuiUtils::WindowHelper {
 	std::vector<string> flagsSets;
 	std::vector<string> backgrounds;
 	std::vector<std::pair<string, HKL>> menu_lays;
-	ImVec2 startsize{ 544.0, 544.0 / 1.12 };
 	Images::ShaderResource background = MAKE_SHARED(background);
 	bool bg_fill = false;
 	float bg_opacity = 1.0f;
 	BufScanMap remap;
 	bool remap_open = false;
 	bool show_metrics = false;
-public:
-	bool IsVisible() { return show_wnd; }
 private:
 
 	void update_backg() {
@@ -120,11 +117,12 @@ private:
 	void Draw_about_tab();
 
 public:
-	MainWindow(bool show, bool conf_err) {
-		show_wnd = show;
+	void InitImGui() {
 		update_backg();
 		apply_background();
-		auto scale = ImGui::GetPlatformIO().Monitors[0].DpiScale * 1.2f;
+	}
+	MainWindow(bool show, bool conf_err) {
+		show_wnd = show;
 		title = std::format(
 			"SimpleSwitcher {}{}{}###main_wnd", GET_SW_VERSION(),
 			Utils::IsSelfElevated() ? " Administrator" : "",
@@ -132,8 +130,6 @@ public:
 		check_add_to_auto = autostart_get();
 		config_path = StrUtils::Convert(std::format(L"file://{}", ProgramConfig::GetPath_Conf().wstring()));
 		update_flags();
-		startsize.x *= scale;
-		startsize.y *= scale;
 		Reinit(conf_err);
 	}
 	void ReinitHk() {

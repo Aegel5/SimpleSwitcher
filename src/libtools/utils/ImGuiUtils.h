@@ -26,11 +26,13 @@ namespace ImGuiUtils {
 		//void bring_to_top() {
 		//	to_top = true;
 		//}
-		void ShowHide() {
+		bool IsVisible() { return show_wnd; }
+		bool ShowHide() {
 			if (show_wnd) show_wnd = false;
 			else {
 				show_wnd = true; to_top = true;
 			}
+			return show_wnd;
 		}
 	};
 

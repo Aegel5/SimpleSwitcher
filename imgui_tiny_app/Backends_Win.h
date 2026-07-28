@@ -225,6 +225,10 @@ namespace ImBackends {
 		ImGui_ImplWin32_Shutdown();
 		details::CleanupDeviceD3D();
         ImGui::DestroyContext();
+		if (hwnd_host) {
+			::DestroyWindow(hwnd_host);
+			hwnd_host = 0;
+		}
 	}
 
 	inline void NewFrame() {

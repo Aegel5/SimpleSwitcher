@@ -14,13 +14,16 @@
 #include "main_wnd.h"
 #include "TrayIcon.h"
 #include "LoadFonts.h"
+#include "utils/WinTimer.h"
 
 // Main code
-void StartGui(bool show, bool err_conf) {
+static void StartRealGui(MainWindow* wnd) {
 	// Make process DPI aware and obtain main monitor scale
 
-	if (!ImBackends::InitDisableMainViewport())
+	if (!ImBackends::InitDisableMainViewport()) {
+		LOG_ANY("error init");
 		return;
+	}
 
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigInputTextCursorBlink = false;
@@ -49,45 +52,18 @@ void StartGui(bool show, bool err_conf) {
 
 	LoadFonts();
 
-	MainWindow mainWindow(show, err_conf);
-	Notific::Notificator notif;
-	TrayIcon trayIcon;
-	Notific::g_notif = &notif;
-	g_guiHandle = ImBackends::hwnd_host;
-
-	ImBackends::CreateTimer([&]() {
-		if (notif.Process()) {
-			ImWantFrameWithDelay(0);
-		}
-		}, 2000);
-
-	ImBackends::SetCustomHandler( [&](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-		if (msg == WM_ShowWindow) {
-			int mode = wParam;
-			if (mode) notif.ShowHide();
-			else mainWindow.ShowHide();
-			ImWantFrameWithDelay(0);
-			return 0;
-		}
-
-		if (msg == WM_LayNotif) {
-			trayIcon.Update((HKL)wParam);
-			return 0;
-		}
-
-		return 1;
-		});
+	wnd->InitImGui();
 
 	while (ImBackends::WaitNewFrame()) {
 
 		ImBackends::NewFrame();
 
 		// UI Logic
-		mainWindow.DrawFrame();
-		notif.Draw();
+		wnd->DrawFrame();
+		Notific::g_notif->Draw();
 
 		// Timer update if needed
-		if (notif.IsVisible()) {
+		if (Notific::g_notif->IsVisible()) {
 			ImWantFrameWithDelay(0.5f);
 		}
 
@@ -99,5 +75,67 @@ void StartGui(bool show, bool err_conf) {
 	}
 
 	ImBackends::Cleanup();
+}
+
+void StartGui(bool show, bool err_conf) {
+
+	// Создаем главное окно + таймеры
+	WinTimer timer;
+	g_guiHandle = timer.GetHandler();
+
+	// Создаем tray
+	TrayIcon trayIcon;
+
+	// Создаем нотификатор
+	Notific::Notificator notif;
+	Notific::g_notif = &notif;
+
+	// Создаем главное окно
+	MainWindow mainWindow(show, err_conf);
+
+	timer.CycleTimer(
+		[&]() {
+		if (notif.Process()) {
+			ImWantFrameWithDelay(0);
+			show = true;
+		}
+		}, 2000);
+
+	timer.CustomHandler(
+		[&](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+			if (msg == WM_ShowWindow) {
+				int mode = wParam;
+				if (mode) {
+					notif.ShowHide();
+				}
+				else {
+					mainWindow.ShowHide();
+				}
+				ImWantFrameWithDelay(0);
+				show = true;
+				return 0;
+			}
+
+			if (msg == WM_LayNotif) {
+				trayIcon.Update((HKL)wParam);
+				return 0;
+			}
+
+			return 1;
+		});
+
+	while (!show) {
+		MSG msg;
+		if (GetMessage(&msg, NULL, 0, 0) <= 0) {
+			return;
+		}
+		::TranslateMessage(&msg);
+		::DispatchMessage(&msg); 
+	}
+
+	if (show) {
+		StartRealGui(&mainWindow);
+	}
+
 }
 

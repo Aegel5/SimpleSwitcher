@@ -3,6 +3,14 @@
 void MainWindow::DrawFrameActual() {
 
 	ImGuiUtils::ToCenter();
+
+	static ImVec2 startsize{};
+	if (startsize.x == 0) {
+		startsize = { 544.0, 544.0 / 1.12 };
+		auto scale = ImGui::GetPlatformIO().Monitors[0].DpiScale * 1.2f;
+		startsize.x *= scale;
+		startsize.y *= scale;
+	}
 	ImGui::SetNextWindowSize(startsize, ImGuiCond_FirstUseEver);
 	ImGui::Begin(title.c_str(), &show_wnd, ImGuiWindowFlags_NoCollapse);
 
