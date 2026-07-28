@@ -50,7 +50,7 @@ def cleanup_old_prereleases():
         for r in pre_releases[5:]:
             tag = r['tagName']
             message(f"Удаление релиза и тега: {tag}")
-            #run_cmd(f'gh release delete "{tag}" --yes --cleanup-tag')
+            run_cmd(f'gh release delete "{tag}" --yes --cleanup-tag')
     except Exception as e:
         message(f"::warning::Ошибка при очистке релизов: {e}")
 
@@ -132,13 +132,11 @@ def main():
     
     run_cmd('cmake -S . -B build -DCMAKE_BUILD_TYPE=Release', env=env_vars, capture_output=False)
     run_cmd('cmake --build build --config Release', capture_output=False)
-    
-    run_cmd('cmake -S . -B build_win7 -G "Visual Studio 18 2026" -DCMAKE_BUILD_TYPE=Release -A Win32 -T v143 -DWIN7_COMPAT=ON', env=env_vars, capture_output=False)
-    run_cmd('cmake --build build_win7 --config Release', capture_output=False)
-    
-    # 5. Упаковка
     zip_name = prepare_artifacts_and_zip("build/Release", f"SimpleSwitcher_v{version}.zip")
-    zip_name2 = prepare_artifacts_and_zip("build_win7/Release", f"SimpleSwitcher_v{version}_x86_Win7.zip")
+    
+    #run_cmd('cmake -S . -B build_win7 -G "Visual Studio 18 2026" -A Win32 -T v143 -DWIN7_COMPAT=ON', env=env_vars, capture_output=False)
+    #run_cmd('cmake --build build_win7 --config Release', capture_output=False)   
+    #zip_name2 = prepare_artifacts_and_zip("build_win7/Release", f"SimpleSwitcher_v{version}_x86_Win7.zip")
     
     # 6. Публикация релиза
     """Создание пре-релиза в GitHub."""
@@ -147,7 +145,7 @@ def main():
     date_str = datetime.now().strftime('%Y-%m-%d %H:%M')
     notes = f"Автоматический билд от {date_str}"
     
-    cmd = f'gh release create "{tag_name}" "./{zip_name}" "./{zip_name2}" --title "{title}" --notes "{notes}" --prerelease'
+    cmd = f'gh release create "{tag_name}" "./{zip_name}" --title "{title}" --notes "{notes}" --prerelease'
     message(f"Создаем релиз {tag_name}...")
     run_cmd(cmd)
         
