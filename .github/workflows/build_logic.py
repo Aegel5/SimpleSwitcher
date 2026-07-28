@@ -9,6 +9,10 @@ import zipfile
 from datetime import datetime
 from pathlib import Path
 
+def message(text):
+    """Выводит сообщение в консоль и мгновенно сбрасывает буфер (flush)."""
+    print(text, flush=True)
+
 def fail(message):
     print(f"\n::error::{message}\n", flush=True)
     raise RuntimeError(message)
@@ -36,7 +40,7 @@ def check_stale_activity():
         fail("::error::Нет свежих коммитов за 25 часов. Прерываю работу.")
 
 def cleanup_old_prereleases():
-    print("Удаление старых пре-релизов, оставляя 5 самых новых")
+    message("Удаление старых пре-релизов, оставляя 5 самых новых")
     try:
         raw_list = run_cmd("gh release list --limit 100 --json tagName,isPrerelease")
         releases = json.loads(raw_list)
@@ -45,10 +49,10 @@ def cleanup_old_prereleases():
         # Пропускаем первые 5 (самые новые), остальные удаляем
         for r in pre_releases[5:]:
             tag = r['tagName']
-            print(f"Удаление релиза и тега: {tag}")
+            message(f"Удаление релиза и тега: {tag}")
             #run_cmd(f'gh release delete "{tag}" --yes --cleanup-tag')
     except Exception as e:
-        print(f"::warning::Ошибка при очистке релизов: {e}")
+        message(f"::warning::Ошибка при очистке релизов: {e}")
 
 def get_version():
     """Парсинг версии из src/ver.h."""
@@ -62,7 +66,7 @@ def get_version():
         fail("::error::Не удалось найти версию в файле ver.h")
         
     version = match.group(1)
-    print(f"Найдена версия: {version}")
+    message(f"Найдена версия: {version}")
     return version
 
 def calculate_sha256(file_path):
@@ -96,7 +100,7 @@ def prepare_artifacts_and_zip(build_dir_str, zip_name):
         files_to_zip.extend(bin_files_dir.glob("*"))
         
     # Создаем ZIP
-    print(f"Создаем архив {zip_name}...")
+    message(f"Создаем архив {zip_name}...")
     with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as zipf:
         for file in files_to_zip:
             if file.is_file():
@@ -122,14 +126,14 @@ def main():
     version = get_version()
        
     # 4. Сборка (CMake)
-    print("Конфигурация и сборка CMake...")
+    message("Конфигурация и сборка CMake...")
     cxx_flags = '-D PUBLIC_RELEASE' if build_type == 'publish' else ''
     env_vars = {"CXXFLAGS": cxx_flags} if cxx_flags else None
     
     run_cmd("cmake -S . -B build -DCMAKE_BUILD_TYPE=Release", env=env_vars, capture_output=False)
     run_cmd("cmake --build build --config Release", capture_output=False)
     
-    run_cmd("cmake -S . -B build_win7 -DCMAKE_BUILD_TYPE=Release -A Win32 -T v143 -DWIN7_COMPAT=ON", env=env_vars, capture_output=False)
+    run_cmd("cmake -S . -B build_win7 -G "Visual Studio 18 2026" -DCMAKE_BUILD_TYPE=Release -A Win32 -T v143 -DWIN7_COMPAT=ON", env=env_vars, capture_output=False)
     run_cmd("cmake --build build_win7 --config Release", capture_output=False)
     
     # 5. Упаковка
@@ -144,10 +148,10 @@ def main():
     notes = f"Автоматический билд от {date_str}"
     
     cmd = f'gh release create "{tag_name}" "./{zip_name}" "./{zip_name2}" --title "{title}" --notes "{notes}" --prerelease'
-    print(f"Создаем релиз {tag_name}...")
+    message(f"Создаем релиз {tag_name}...")
     run_cmd(cmd)
         
-    print("Скрипт успешно завершил работу!")
+    message("Скрипт успешно завершил работу!")
 
 if __name__ == "__main__":
     main()
