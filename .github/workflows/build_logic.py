@@ -130,11 +130,11 @@ def main():
     cxx_flags = '-D PUBLIC_RELEASE' if build_type == 'publish' else ''
     env_vars = {"CXXFLAGS": cxx_flags} if cxx_flags else None
     
-    run_cmd("cmake -S . -B build -DCMAKE_BUILD_TYPE=Release", env=env_vars, capture_output=False)
-    run_cmd("cmake --build build --config Release", capture_output=False)
+    run_cmd('cmake -S . -B build -DCMAKE_BUILD_TYPE=Release', env=env_vars, capture_output=False)
+    run_cmd('cmake --build build --config Release', capture_output=False)
     
-    run_cmd("cmake -S . -B build_win7 -G "Visual Studio 18 2026" -DCMAKE_BUILD_TYPE=Release -A Win32 -T v143 -DWIN7_COMPAT=ON", env=env_vars, capture_output=False)
-    run_cmd("cmake --build build_win7 --config Release", capture_output=False)
+    run_cmd('cmake -S . -B build_win7 -G "Visual Studio 18 2026" -DCMAKE_BUILD_TYPE=Release -A Win32 -T v143 -DWIN7_COMPAT=ON', env=env_vars, capture_output=False)
+    run_cmd('cmake --build build_win7 --config Release', capture_output=False)
     
     # 5. Упаковка
     zip_name = prepare_artifacts_and_zip("build/Release", f"SimpleSwitcher_v{version}.zip")
