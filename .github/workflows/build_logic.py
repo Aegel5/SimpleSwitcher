@@ -119,13 +119,12 @@ def install (path):
         # Метод subprocess.run по умолчанию блокирует поток и ждет завершения процесса
         process = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except subprocess.CalledProcessError as e:
-        print(f"Error output: {e.stderr.decode('utf-8', errors='ignore')}", file=sys.stderr)
-        sys.exit(e.returncode)    
+        fail(f"Команда завершилась с ошибкой: {cmd}\nВывод: {e.output or e.stderr}")
 
 
 def main():
 
-    install(r'C:\Program Files\Microsoft Visual Studio\2022\Enterprise')
+    #install(r'C:\Program Files\Microsoft Visual Studio\2022\Enterprise')
 
     # Получаем тип билда из аргументов командной строки
     build_type = sys.argv[1] if len(sys.argv) > 1 else ''
@@ -146,9 +145,9 @@ def main():
     cxx_flags = '-D PUBLIC_RELEASE' if build_type == 'publish' else ''
     env_vars = {"CXXFLAGS": cxx_flags} if cxx_flags else None
 
-    run_cmd('cmake -S . -B build_win7 -A Win32 -T v143 -DWIN7_COMPAT=ON', env=env_vars, capture_output=False)
-    run_cmd('cmake --build build_win7 --config Release', capture_output=False)   
-    zip_name2 = prepare_artifacts_and_zip("build_win7/Release", f"SimpleSwitcher_v{version}_x86_Win7.zip")    
+    #run_cmd('cmake -S . -B build_win7 -A Win32 -T v143 -DWIN7_COMPAT=ON', env=env_vars, capture_output=False)
+    #run_cmd('cmake --build build_win7 --config Release', capture_output=False)   
+    #zip_name2 = prepare_artifacts_and_zip("build_win7/Release", f"SimpleSwitcher_v{version}_x86_Win7.zip")    
     
     run_cmd('cmake -S . -B build -DCMAKE_BUILD_TYPE=Release', env=env_vars, capture_output=False)
     run_cmd('cmake --build build --config Release', capture_output=False)
