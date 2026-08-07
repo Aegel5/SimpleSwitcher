@@ -1,0 +1,7 @@
+﻿Language: Cpp
+BasedOnStyle: Chromium
+ColumnLimit: 120 # Увеличит максимальную длину строки до 120 символов
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never

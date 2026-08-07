@@ -9,3 +9,4 @@ bin
 *.pdb
 
 build_win7
+build

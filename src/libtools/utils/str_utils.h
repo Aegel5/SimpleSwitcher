@@ -182,22 +182,22 @@ namespace StrUtils
 	//}
 
 
-	typedef std::vector<std::wstring> TVectStr;
-	inline TVectStr Split(SView str, wchar_t delim, bool skipEmpty = true)
-	{
-		TVectStr res;
-		std::wispanstream data(str);
+	// typedef std::vector<std::wstring> TVectStr;
+	// inline TVectStr Split(SView str, wchar_t delim, bool skipEmpty = true)
+	// {
+	// 	TVectStr res;
+	// 	std::wispanstream data(str);
 
-		std::wstring line;
-		while (std::getline(data, line, delim))
-		{
-			if (skipEmpty && line.empty())
-				continue;;
-			res.push_back(line);
-		}
+	// 	std::wstring line;
+	// 	while (std::getline(data, line, delim))
+	// 	{
+	// 		if (skipEmpty && line.empty())
+	// 			continue;;
+	// 		res.push_back(line);
+	// 	}
 
-		return res;
-	}
+	// 	return res;
+	// }
 
 	inline auto Split(UView str, char delim, bool skipEmpty = true) {
 		std::vector<std::string> res;

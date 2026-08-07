@@ -6,8 +6,8 @@
             "description": "Сделать целевой ОС Windows со средой разработки Visual Studio.",
             "hidden": true,
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/${presetName}",
-            "installDir": "${sourceDir}/out/install/${presetName}",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "installDir": "${sourceDir}/build/install/${presetName}",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "cl.exe",
                 "CMAKE_CXX_COMPILER": "cl.exe"
