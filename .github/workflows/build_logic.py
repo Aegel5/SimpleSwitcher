@@ -145,9 +145,9 @@ def main():
         cmd = f'gh release create "{tag_name}" "./{zip_name}" --title "{title}" --notes "{notes}" --prerelease'
         message(f"Создаем релиз {tag_name}...")
         run_cmd(cmd)
-    else:
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        artifact_zip_name = f"{zip_name.rsplit('.', 1)[0]}_{current_date}.zip"
+    # else:
+    #     current_date = datetime.now().strftime("%Y-%m-%d")
+    #     artifact_zip_name = f"{zip_name.rsplit('.', 1)[0]}_{current_date}.zip"
              
 
         
