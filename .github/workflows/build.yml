@@ -40,6 +40,6 @@ jobs:
         if: ${{ github.event.inputs.build_type == 'preview' }}
         with:
           if-no-files-found: error
-          name: "night_build_${{ runner.os }}.zip"
+          name: "night_build_${{ matrix.os }}.zip"
           path: "*.zip"
             
