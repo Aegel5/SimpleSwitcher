@@ -31,4 +31,11 @@ jobs:
           PYTHONUTF8: 1  # <-- ДОБАВЬТЕ ЭТУ СТРОКУ
         run: |
           python .github/workflows/build_logic.py "${{ github.event.inputs.build_type }}"
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ build_type == 'preview' }}
+        with:
+          if-no-files-found: error
+          name: ${{ artifact }}
+          path: arrifact          
             

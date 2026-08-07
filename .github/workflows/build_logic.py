@@ -148,9 +148,7 @@ def main():
     else:
         current_date = datetime.now().strftime("%Y-%m-%d")
         artifact_zip_name = f"{zip_name.rsplit('.', 1)[0]}_{current_date}.zip"
-        cmd = f'gh run upload-artifact --name "{artifact_zip_name}" --path "./{zip_name}"'
-        message(f"Выкладываем артефакт {artifact_zip_name}...")
-        run_cmd(cmd)        
+             
 
         
     message("Скрипт успешно завершил работу!")
