@@ -16,7 +16,11 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2022
+    strategy:
+      matrix:
+        os: [windows-2022, windows-latest] # Список ваших ОС
+
+    runs-on: ${{ matrix.os }} # Динамический выбор ОС
 
     steps:
       - uses: actions/checkout@v4

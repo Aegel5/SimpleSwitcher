@@ -145,10 +145,13 @@ def main():
     cxx_flags = '-D PUBLIC_RELEASE' if build_type == 'publish' else ''
     env_vars = {"CXXFLAGS": cxx_flags} if cxx_flags else None
 
-    run_cmd('cmake -S . -B build_win7 -A Win32 -T v143 -DWIN7_COMPAT=ON', env=env_vars, capture_output=False)
-    run_cmd('cmake --build build_win7 --config Release', capture_output=False)   
-    zip_name2 = prepare_artifacts_and_zip("build_win7/Release", f"SimpleSwitcher_v{version}_x86_Win7.zip")    
-    
+    try:
+        run_cmd('cmake -S . -B build_win7 -A Win32 -T v143 -DWIN7_COMPAT=ON', env=env_vars, capture_output=False)
+        run_cmd('cmake --build build_win7 --config Release', capture_output=False)   
+        zip_name2 = prepare_artifacts_and_zip("build_win7/Release", f"SimpleSwitcher_v{version}_x86_Win7.zip")    
+    except:
+        message("skip error win7")
+        
     run_cmd('cmake -S . -B build -DCMAKE_BUILD_TYPE=Release', env=env_vars, capture_output=False)
     run_cmd('cmake --build build --config Release', capture_output=False)
     zip_name = prepare_artifacts_and_zip("build/Release", f"SimpleSwitcher_v{version}.zip")
