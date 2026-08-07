@@ -11,8 +11,8 @@ on:
         options:
           - preview
           - publish
-  # schedule:
-  #   - cron: '0 1 * * *' # 1:00 UTC каждый день
+  schedule:
+    - cron: '0 1 * * *' # 1:00 UTC каждый день
 
 jobs:
   build:
