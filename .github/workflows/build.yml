@@ -36,6 +36,6 @@ jobs:
         if: ${{ github.event.inputs.build_type == 'preview' }}
         with:
           if-no-files-found: error
-          name: "night_build_${{ github.sha }}"
+          name: "night_build_${{ github.sha }}.zip"
           path: "*.zip"   
             

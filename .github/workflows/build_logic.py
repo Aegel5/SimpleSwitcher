@@ -130,9 +130,9 @@ def main():
     run_cmd('cmake --build build --config Release', capture_output=False)
     zip_name = prepare_artifacts_and_zip("build/Release", f"SimpleSwitcher_v{version}.zip")
     
-    #run_cmd('cmake -S . -B build_win7 -G "Visual Studio 18 2026" -A Win32 -T v143 -DWIN7_COMPAT=ON', env=env_vars, capture_output=False)
-    #run_cmd('cmake --build build_win7 --config Release', capture_output=False)   
-    #zip_name2 = prepare_artifacts_and_zip("build_win7/Release", f"SimpleSwitcher_v{version}_x86_Win7.zip")
+    run_cmd('cmake -S . -B build_win7 -A Win32 -T v143 -DWIN7_COMPAT=ON', env=env_vars, capture_output=False)
+    run_cmd('cmake --build build_win7 --config Release', capture_output=False)   
+    zip_name2 = prepare_artifacts_and_zip("build_win7/Release", f"SimpleSwitcher_v{version}_x86_Win7.zip")
     
     # 6. Публикация релиза
     if build_type == 'publish':
