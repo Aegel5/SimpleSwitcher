@@ -30,29 +30,29 @@ def run_cmd(cmd, check=True, text=True, capture_output=True, env=None):
         fail(f"Команда завершилась с ошибкой: {cmd}\nВывод: {e.output or e.stderr}")
 
 
-def check_stale_activity():
-    """Проверка свежести коммитов (за последние 25 часов)."""
+# def check_stale_activity():
+#     """Проверка свежести коммитов (за последние 25 часов)."""
         
-    last_commit_time = int(run_cmd("git log -1 --format=%ct"))
-    limit_time = int(time.time()) - (25 * 3600)
+#     last_commit_time = int(run_cmd("git log -1 --format=%ct"))
+#     limit_time = int(time.time()) - (25 * 3600)
     
-    if last_commit_time < limit_time:
-        fail("::error::Нет свежих коммитов за 25 часов. Прерываю работу.")
+#     if last_commit_time < limit_time:
+#         fail("::error::Нет свежих коммитов за 25 часов. Прерываю работу.")
 
-def cleanup_old_prereleases():
-    message("Удаление старых пре-релизов, оставляя 5 самых новых")
-    try:
-        raw_list = run_cmd("gh release list --limit 100 --json tagName,isPrerelease")
-        releases = json.loads(raw_list)
-        pre_releases = [r for r in releases if r.get('isPrerelease')]
+# def cleanup_old_prereleases():
+#     message("Удаление старых пре-релизов, оставляя 5 самых новых")
+#     try:
+#         raw_list = run_cmd("gh release list --limit 100 --json tagName,isPrerelease")
+#         releases = json.loads(raw_list)
+#         pre_releases = [r for r in releases if r.get('isPrerelease')]
         
-        # Пропускаем первые 5 (самые новые), остальные удаляем
-        for r in pre_releases[5:]:
-            tag = r['tagName']
-            message(f"Удаление релиза и тега: {tag}")
-            run_cmd(f'gh release delete "{tag}" --yes --cleanup-tag')
-    except Exception as e:
-        message(f"::warning::Ошибка при очистке релизов: {e}")
+#         # Пропускаем первые 5 (самые новые), остальные удаляем
+#         for r in pre_releases[5:]:
+#             tag = r['tagName']
+#             message(f"Удаление релиза и тега: {tag}")
+#             run_cmd(f'gh release delete "{tag}" --yes --cleanup-tag')
+#     except Exception as e:
+#         message(f"::warning::Ошибка при очистке релизов: {e}")
 
 def get_version():
     """Парсинг версии из src/ver.h."""
@@ -111,11 +111,10 @@ def main():
     build_type = sys.argv[1] if len(sys.argv) > 1 else ''
     
     # 1. Проверка активности
-    if build_type == 'preview':
-        check_stale_activity()
+    #if build_type == 'preview': check_stale_activity()
     
     # 2. Очистка старых релизов
-    cleanup_old_prereleases()
+    # cleanup_old_prereleases()
     
     # 3. Получение SHA и Версии
     github_sha = os.getenv("GITHUB_SHA", "00000000")
@@ -136,15 +135,23 @@ def main():
     #zip_name2 = prepare_artifacts_and_zip("build_win7/Release", f"SimpleSwitcher_v{version}_x86_Win7.zip")
     
     # 6. Публикация релиза
-    """Создание пре-релиза в GitHub."""
-    tag_name = f"v{version}-{sha_short}"
-    title = f"SimpleSwitcher {version}-{sha_short} PREVIEW"
-    date_str = datetime.now().strftime('%Y-%m-%d %H:%M')
-    notes = f"Автоматический билд от {date_str}"
-    
-    cmd = f'gh release create "{tag_name}" "./{zip_name}" --title "{title}" --notes "{notes}" --prerelease'
-    message(f"Создаем релиз {tag_name}...")
-    run_cmd(cmd)
+    if build_type == 'publish':
+        """Создание пре-релиза в GitHub."""
+        tag_name = f"v{version}-{sha_short}"
+        title = f"SimpleSwitcher {version}-{sha_short} PREVIEW"
+        date_str = datetime.now().strftime('%Y-%m-%d %H:%M')
+        notes = f"Автоматический билд от {date_str}"
+        
+        cmd = f'gh release create "{tag_name}" "./{zip_name}" --title "{title}" --notes "{notes}" --prerelease'
+        message(f"Создаем релиз {tag_name}...")
+        run_cmd(cmd)
+    else:
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        artifact_zip_name = f"{zip_name.rsplit('.', 1)[0]}_{current_date}.zip"
+        cmd = f'gh run upload-artifact --name "{artifact_zip_name}" --path "./{zip_name}"'
+        message(f"Выкладываем артефакт {artifact_zip_name}...")
+        run_cmd(cmd)        
+
         
     message("Скрипт успешно завершил работу!")
 

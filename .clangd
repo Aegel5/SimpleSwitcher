@@ -1,0 +1,13 @@
+﻿Diagnostics:
+  UnusedIncludes: None
+
+Completion:
+  HeaderInsertion: Never  
+  
+CompileFlags:
+  CompilationDatabase: "build/x64-debug"
+#  Add: [
+#    --driver-mode=cl, # Заставляет clang симулировать cl.exe
+#    -fms-compatibility,
+#    -fms-extensions
+#  ]  
