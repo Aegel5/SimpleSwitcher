@@ -125,8 +125,8 @@ def install (path):
 
 def main():
 
-    install('C:\Program Files\Microsoft Visual Studio\2022\Enterprise')
-    
+    install(r'C:\Program Files\Microsoft Visual Studio\2022\Enterprise')
+
     # Получаем тип билда из аргументов командной строки
     build_type = sys.argv[1] if len(sys.argv) > 1 else ''
     
