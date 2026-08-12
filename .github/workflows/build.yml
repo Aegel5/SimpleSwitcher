@@ -37,7 +37,6 @@ jobs:
           python .github/workflows/build_logic.py "${{ github.event.inputs.build_type }}"
 
       - uses: actions/upload-artifact@v4
-        if: ${{ github.event.inputs.build_type == 'preview' }}
         with:
           if-no-files-found: error
           name: "night_build_${{ matrix.os }}.zip"
