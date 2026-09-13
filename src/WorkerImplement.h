@@ -143,18 +143,22 @@ class WorkerImplement {
         }
     }
     HKL WaitOtherLay(HKL lay, ULONGLONG minWait = 15, ULONGLONG maxWait = 40) {
+
+        auto start = GetTickCount64();        
+
+        if(minWait > 0){
+            Sleep(minWait);
+        }
         // Дождемся смены языка. Нет смысла переходить в асинхронный режим. Можем ждать прямо здесь.
-        auto start = GetTickCount64();
+
         while (true) {
+            
             auto curL = GetKeyboardLayout(topWndInfo2.threadid_default);
+
             if (curL == 0) {
                 LOG_WARN("WaitLay: cur lay == 0. continue wait");
             } else if (curL != lay) {
-                auto waited = GetTickCount64() - start;
-                if (waited < minWait) {
-                    Sleep(minWait - waited);  // ждем оставшееся время.
-                }
-                LOG_ANY(L"WaitLay: new lay {} arrived after {}. totalwait={}", (void*)curL, waited, GetTickCount64() - start);
+                LOG_ANY(L"WaitLay: new lay {} have after {}", (void*)curL, GetTickCount64() - start);
                 return curL;
             }
 
