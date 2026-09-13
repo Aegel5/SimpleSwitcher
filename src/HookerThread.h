@@ -17,7 +17,7 @@ class CoreWorker {
 		IFW_LOG(m_hWnd != NULL);
 		
 		IFW_LOG(AddClipboardFormatListener(m_hWnd));
-		//IFW_LOG(ChangeWindowMessageFilterEx(hWnd, WM_LayNotif, MSGFLT_ALLOW, 0));
+		IFW_LOG(ChangeWindowMessageFilterEx(m_hWnd, WM_ClearWordsBuffer, MSGFLT_ALLOW, 0));
 
 		auto session_notif_reg = WTSRegisterSessionNotification(m_hWnd, 0);
 		IFW_LOG(session_notif_reg);
@@ -49,6 +49,9 @@ class CoreWorker {
 						IFW_LOG(session_notif_reg);
 					}
 				}
+			}else if(msg.message == WM_ClearWordsBuffer){
+				LOG_ANY("get clear request");
+				Worker()->PostMsg(Message_ClearWorlds{});
 			}
 		}
 
