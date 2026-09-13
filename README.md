@@ -3,6 +3,8 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/alexzh2/SimpleSwitcher/total?style=plastic)
 ![GitHub last commit](https://img.shields.io/github/last-commit/alexzh2/SimpleSwitcher?style=plastic)
 
+> [!IMPORTANT]
+> **As soon as this project hits 200 stars ⭐, I will release a special styled Edition!**
 
 Simple Switcher - переключатель клавиатуры ⌨️ для быстрого исправления языка набранного текста в Windows. Полностью открыт и бесплатен, написан на современном `С++ 23`, турбо-реактивен 🏎️ и никак не сказывается на работе ОС. Список фич небольшой, но он постоянно пополняется.
 
