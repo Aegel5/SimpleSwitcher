@@ -428,38 +428,19 @@ void WorkerImplement::ProcessOurHotKey(Message_Hotkey&& keyData) {
 }
 
 TStatus WorkerImplement::ProcessRevert(ContextRevert&& ctxRevert) {
+    
     bool fDels = false;
 
     if (TestFlag(ctxRevert.flags, SW_CLIENT_SetLang) && ctxRevert.lay) {
-
     	auto prevLay = CurLay();		
-
         SetNewLay(ctxRevert.lay);
+		WaitOtherLay(prevLay, 15, 40);
 
-        auto needWaitLang =
-            IsWindows10OrGreater();  // true; //        m_sTopProcName == L"searchapp.exe"; // возможно теперь всегда
-                                     //        нужно ждать?
-
-		if(needWaitLang){
-			WaitOtherLay(prevLay, 15, 40);
-		}else{
-			// win7 all work ok
-			//Sleep(15);
-		}
     }
 
     if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT) && TestFlag(ctxRevert.flags, SW_CLIENT_BACKSPACE)) {
         InputSender::SendVkKey(VK_BACK, ctxRevert.keylist.size());
     }
-
-    //auto start_wait = GetTickCount64();
-
-    // if (needWaitLang && !TestFlag(ctxRevert.flags, SW_CLIENT_NO_WAIT_LANG)) {
-    // 	WaitOtherLay(prevLay);
-    // }
-
-    // if (m_sTopProcName == L"notepad.exe" && IsWindows11OrGreater())
-    // 	Sleep(15);
 
     if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT)) {
         InputSender::SendKeys(ctxRevert.keylist, m_is_last_caps);

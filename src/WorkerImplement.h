@@ -147,7 +147,7 @@ class WorkerImplement {
         auto start = GetTickCount64();        
 
         if(minWait > 0){
-            Sleep(minWait);
+            Sleep(5);
         }
         // Дождемся смены языка. Нет смысла переходить в асинхронный режим. Можем ждать прямо здесь.
 
@@ -158,7 +158,11 @@ class WorkerImplement {
             if (curL == 0) {
                 LOG_WARN("WaitLay: cur lay == 0. continue wait");
             } else if (curL != lay) {
-                LOG_ANY(L"WaitLay: new lay {} have after {}", (void*)curL, GetTickCount64() - start);
+                auto waited = GetTickCount64() - start;
+                if (waited < minWait) {
+                    Sleep(minWait - waited);  // ждем оставшееся время.
+                }
+                LOG_ANY(L"WaitLay: new lay {} arrived after {}. totalwait={}", (void*)curL, waited, GetTickCount64() - start);
                 return curL;
             }
 
