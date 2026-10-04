@@ -242,6 +242,10 @@ TStatus WorkerImplement::RunProcess(HotKeyType hk, bool after_wait) {
         RETURN_SUCCESS;
     }
 
+    if(it.cmd.empty()){
+        RETURN_SUCCESS;
+    }
+
     if (it.delay > 0 && !after_wait) {
         Worker()->PostMsg([hk](auto p) { p->RunProcess(hk, true); }, it.delay);
         RETURN_SUCCESS;
