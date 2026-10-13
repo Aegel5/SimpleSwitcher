@@ -6,9 +6,10 @@ on:
       build_type:
         description: 'Выберите тип билда'
         required: false
-        default: 'preview'
+        default: 'night'
         type: choice
         options:
+          - night
           - preview
           - publish
   schedule:
