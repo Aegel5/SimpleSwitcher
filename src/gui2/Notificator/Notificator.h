@@ -4,226 +4,229 @@
 
 namespace Notific {
 
-	struct Folder {
-		string name = LOC("Folder");
-		std::vector<Entry> list;
-	};
+struct Folder {
+    string name = LOC("Folder");
+    std::vector<Entry> list;
+};
 
-	struct Settings {
-		std::vector<Folder> folders;
-		int cur_folder_index = 0;
-	};
+struct Settings {
+    std::vector<Folder> folders;
+    int cur_folder_index = 0;
+};
 
-	class Notificator : public ImGuiUtils::WindowHelper {
-		Settings settings;
-		void SaveRequest() {
-			need_save = true;
-		}
-		void SaveCheck() {
-			if (need_save) {
-				need_save = false;
-				Save();
-			}
-		}
-		bool need_save = false;
-		void Load();
-		void Save();
-		bool need_show = false;
-		HWND last_hwnd = 0;
-		std::generator<Entry&> all_entries() {
-			for (auto& folder : settings.folders) {
-				for (auto& it : folder.list) {
-					co_yield it;
-				}
-			}
-		}
-	public:
-		Notificator() {
-			Load();
-		}
-		~Notificator() {
-			SaveCheck();
-		}
+class Notificator : public ImGuiUtils::WindowHelper {
+    Settings settings;
+    void SaveRequest() { need_save = true; }
+    void SaveCheck() {
+        if (need_save) {
+            need_save = false;
+            Save();
+        }
+    }
+    bool need_save = false;
+    void Load();
+    void Save();
+    bool need_show = false;
+    HWND last_hwnd = 0;
+    std::generator<Entry&> all_entries() {
+        for (auto& folder : settings.folders) {
+            for (auto& it : folder.list) {
+                co_yield it;
+            }
+        }
+    }
 
-		bool IsVisible() { 
-			return need_show || show_wnd;
-		}
+   public:
+    Notificator() { Load(); }
+    ~Notificator() { SaveCheck(); }
 
-		bool Process() {
-			need_show = false;
-			for (auto& it : all_entries()) {
-				if (it.IsTrigger()) {
-					it.AdjastActiveString();
-					need_show = true;
-					break;
-				}
-			}
-			SaveCheck();
-			return need_show;
-		}
+    bool IsVisible() { return need_show || show_wnd; }
 
-		void DrawNotify() {
-			if (!need_show) return;
+    bool Process() {
+        need_show = false;
+        for (auto& it : all_entries()) {
+            if (it.IsTrigger()) {
+                it.AdjastActiveString();
+                need_show = true;
+                break;
+            }
+        }
+        SaveCheck();
+        return need_show;
+    }
 
+    void DrawNotify() {
+        if (!need_show)
+            return;
 
-			for (auto& it : all_entries()) {
-				if (it.IsTrigger()) {
-					if (it.play_sound) {
-						if (it.lastStartPlaySound != it.nextActivate) {
-							it.lastStartPlaySound = it.nextActivate;
-							SoundManager::Inst().PlayRandom();
-						}
-					}
-					bool val = true;
-					ImGuiUtils::ToCenter(true);
-					ImGui::Begin(LOC("Event!"), &val, ImGuiWindowFlags_NoSavedSettings| ImGuiWindowFlags_AlwaysAutoResize);
-					{
-						HWND hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
-						if (hwnd != 0 && last_hwnd != hwnd) {
-							last_hwnd = hwnd;
-							if (it.wnd_top) {
-								IFW_LOG(SetWindowPos(last_hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE));
-							}
-							//IFW_LOG(SetForegroundWindow(last_hwnd));
-						}
-					}
+        for (auto& it : all_entries()) {
+            if (it.IsTrigger()) {
+                if (it.play_sound) {
+                    if (it.lastStartPlaySound != it.nextActivate) {
+                        it.lastStartPlaySound = it.nextActivate;
+                        SoundManager::Inst().PlayRandom();
+                    }
+                }
+                bool val = true;
+                ImGuiUtils::ToCenter(false);  // center only first message ever
+                ImGui::Begin(LOC("Event!"), &val, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_AlwaysAutoResize);
+                {
+                    HWND hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
+                    if (hwnd != 0 && last_hwnd != hwnd) {
+                        last_hwnd = hwnd;
+                        if (it.wnd_top) {
+                            IFW_LOG(SetWindowPos(last_hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE));
+                        }
+                        // IFW_LOG(SetForegroundWindow(last_hwnd));
+                    }
+                }
 
-					ImGui::TextWrapped(it.name.c_str());
-					if (ImGui::Button(LOC("Got it!"))) {
-						SoundManager::Inst().StopAllSound();
-						it.SetupNextActivate();
-						SaveRequest();
-					}
-					ImGui::SameLine();
-					if (ImGui::Button(LOC("Remain me tomorow..."))) {
+                ImGui::TextWrapped(it.name.c_str());
+                if (ImGui::Button(LOC("Got it!"))) {
+                    SoundManager::Inst().StopAllSound();
+                    it.SetupPeriodic();
+                    SaveRequest();
+                }
+                if (!it.IsPeriodic()) {
+                    ImGui::SameLine();
+                    if (ImGui::Button(LOC("Repeat"))) {
+                        SoundManager::Inst().StopAllSound();
+                        // recreate exact duration timer
+                        if (it.nextActivate <= it.point) {
+                            it.SetActivate({});
+                        } else {
+                            auto now = Now();
+                            it.point = now;
+                            it.SetActivate(now + (it.nextActivate - it.point));
+                        }
+                        SaveRequest();
+                    }
+                }
+                ImGui::SameLine();
+                if (ImGui::Button(LOC("Remain me tomorow..."))) {
+                    SoundManager::Inst().StopAllSound();
 
-						SoundManager::Inst().StopAllSound();
+                    // Алгоритм следующий: берем первую дату > now() со временем 00:00, затем устанавливаем время из
+                    // reference point важно делать это по local времени.
 
-						// Алгоритм следующий: берем первую дату > now() со временем 00:00, затем устанавливаем время из reference point
-						// важно делать это по local времени.
+                    auto dt = NowLocal() + days(1);
+                    auto ref_point = LocalConvert(it.point);
+                    auto time = ref_point - std::chrono::floor<days>(ref_point);
+                    auto res = std::chrono::floor<days>(dt) + time;
+                    auto res_utc = LocalConvert(res);
 
-						auto dt = NowLocal() + days(1);
-						auto ref_point = LocalConvert(it.point);
-						auto time = ref_point - std::chrono::floor<days>(ref_point);
-						auto res = std::chrono::floor<days>(dt) + time;
-						auto res_utc = LocalConvert(res);
+                    it.SetActivate(res_utc);
+                    SaveRequest();
+                }
 
-						it.SetActivate(res_utc);
-						SaveRequest();
-					}
+                ImGui::End();
+                return;
+            }
+        }
+        need_show = false;
+    }
+    void Draw() {
+        DrawSettings();
+        DrawNotify();
+    }
+    void DrawSettings() {
+        if (!show_wnd)
+            return;
 
-					ImGui::End();
-					return;
-				}
-			}
-			need_show = false;
-		}
-		void Draw() {
-			DrawSettings();
-			DrawNotify();
+        ImGuiUtils::ToCenter();
+        ImGui::SetNextWindowSize({800, 600}, ImGuiCond_FirstUseEver);
+        ImGui::Begin(LOC("Reminder"), &show_wnd);
 
-		}
-		void DrawSettings() {
+        process_helper();
 
-			if (!show_wnd) return;
+        int id = 1;
 
-			ImGuiUtils::ToCenter();
-			ImGui::SetNextWindowSize({800, 600}, ImGuiCond_FirstUseEver);
-			ImGui::Begin(LOC("Reminder"), &show_wnd);
+        // left
+        {
+            auto w = ImGui::GetFontSize() * 15;
+            ImGui::BeginChild("left pane", ImVec2(w, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX);
 
-			process_helper();
+            for (int i = 0; i < settings.folders.size(); i++) {
+                auto& folder = settings.folders[i];
+                {
+                    set_ID(id++);
+                    if (ImGui::Selectable(folder.name.c_str(), i == settings.cur_folder_index)) {
+                        settings.cur_folder_index = i;
+                    }
+                }
+                with_ID(id++) {
+                    if (ImGui::BeginPopupContextItem("ctx1")) {
+                        if (ImGui::InputText("##edit_f", &folder.name, ImGuiInputTextFlags_None)) {
+                            SaveRequest();
+                        }
+                        if (ImGui::Selectable(LOC("Delete"))) {
+                            Utils::RemoveAt(settings.folders, i);
+                            i--;
+                            SaveRequest();
+                        }
+                        ImGui::EndPopup();
+                    }
+                }
+            }
 
-			int id = 1;
+            if (ImGuiUtils::PlusButton()) {
+                settings.folders.emplace_back();
+                SaveRequest();
+            }
 
-			// left
-			{
-				auto w = ImGui::GetFontSize() * 15;
-				ImGui::BeginChild("left pane", ImVec2(w, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX);
+            ImGui::EndChild();
+        }
 
-				for (int i = 0; i < settings.folders.size(); i++) {
-					auto& folder = settings.folders[i];
-					{
-						set_ID(id++);
-						if (ImGui::Selectable(folder.name.c_str(), i == settings.cur_folder_index)) {
-							settings.cur_folder_index = i;
-						}
-					}
-					with_ID(id++) {
-						if (ImGui::BeginPopupContextItem("ctx1")) {
-							if (ImGui::InputText("##edit_f", &folder.name, ImGuiInputTextFlags_None)) {
-								SaveRequest();
-							}
-							if (ImGui::Selectable(LOC("Delete"))) {
-								Utils::RemoveAt(settings.folders, i);
-								i--;
-								SaveRequest();
-							}
-							ImGui::EndPopup();
-						}
-					}
-				}
+        ImGui::SameLine();
+        id += 1000;
 
+        // right
+        {
+            ImGui::BeginGroup();
 
-				if (ImGuiUtils::PlusButton()) {
-					settings.folders.emplace_back();
-					SaveRequest();
-				}
+            for (int iFolder = -1; auto& folder : settings.folders) {
+                iFolder++;
+                if (iFolder == settings.cur_folder_index) {
+                    for (int i = 0; i < folder.list.size(); i++) {
+                        auto& entr = folder.list[i];
+                        auto cur = entr.Draw(id);
+                        if (cur == 10) {
+                            Utils::RemoveAt(folder.list, i);
+                            i--;
+                        }
+                        if (cur) {
+                            SaveRequest();
+                        }
+                    }
+                    if (ImGuiUtils::PlusButton()) {
+                        auto& res = folder.list.emplace_back();
+                        res.SetPoint(Now());
+                        SaveRequest();
+                    }
+                }
+            }
 
-				ImGui::EndChild();
-			}
+            ImGui::EndGroup();
+        }
 
-			ImGui::SameLine();
-			id += 1000;
+        ImGui::End();
+    }
 
-			// right
-			{
-
-				ImGui::BeginGroup();
-
-				for (int iFolder = -1; auto & folder : settings.folders) {
-					iFolder++;
-					if (iFolder == settings.cur_folder_index) {
-						for (int i = 0; i < folder.list.size(); i++) {
-							auto& entr = folder.list[i];
-							auto cur = entr.Draw(id);
-							if (cur == 10) {
-								Utils::RemoveAt(folder.list, i);
-								i--;
-							}
-							if (cur) {
-								SaveRequest();
-							}
-						}
-						if (ImGuiUtils::PlusButton()) {
-							auto& res = folder.list.emplace_back();
-							res.SetPoint(Now());
-							SaveRequest();
-						}
-					}
-				}
-
-				ImGui::EndGroup();
-			}
-
-			ImGui::End();
-		}
-
-		std::generator<string> SordedEntries() {
-			std::multimap<DateTime, string> res;
-			for (const auto& it : all_entries()) {
-				if (it.IsIsFutureAndEnabled()) {
-					auto delt = DeltToNow(it.nextActivate);
-					char buf[100];
-					DeltToHuman(buf, delt);
-					auto line = StrUtils::GetLine(it.name);
-					res.insert({ it.nextActivate, std::format("{} {}", line, buf) });
-				}
-			}
-			for (const auto& it : res) {
-				co_yield it.second;
-			}
-		}
-
-	};
-	inline Notificator* g_notif = nullptr;
-}
+    std::generator<string> SordedEntries() {
+        std::multimap<DateTime, string> res;
+        for (const auto& it : all_entries()) {
+            if (it.IsIsFutureAndEnabled()) {
+                auto delt = DeltToNow(it.nextActivate);
+                char buf[100];
+                DeltToHuman(buf, delt);
+                auto line = StrUtils::GetLine(it.name);
+                res.insert({it.nextActivate, std::format("{} {}", line, buf)});
+            }
+        }
+        for (const auto& it : res) {
+            co_yield it.second;
+        }
+    }
+};
+inline Notificator* g_notif = nullptr;
+}  // namespace Notific
