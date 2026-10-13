@@ -25,7 +25,8 @@ namespace nlohmann {
 		days_period,
 		wnd_top,
 		play_sound,
-		center
+		center,
+		id
 	)
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
@@ -64,6 +65,9 @@ namespace Notific {
 
 		for (auto& it : all_entries()) {
 			it.AdjastActiveString();
+			if(it.id == 0){
+				it.id = next_id();
+			}
 		}
 	}
 }

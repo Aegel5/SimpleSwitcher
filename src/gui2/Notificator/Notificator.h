@@ -35,6 +35,28 @@ class Notificator : public ImGuiUtils::WindowHelper {
             }
         }
     }
+    int next_id() {
+        // 1. Создаем чеклист, где размер равен количеству элементов + 1
+        // (в худшем случае, если заняты все от 0 до N-1, нам нужен ID = N)
+
+        std::array<bool, 100> has {};
+
+        // 2. Отмечаем все ID, которые сейчас заняты
+        for (const auto& item : settings.folders) {
+            for (const auto& e : item.list) {
+                if (e.id >= 0 && e.id < has.size())
+                    has[e.id] = true;
+            }
+        }
+
+        // 3. Ищем первый ложный флаг — это и есть минимальный свободный ID
+        int next_id = 1;
+        for (; next_id < has.size(); next_id++) {
+            if (!has[next_id])
+                break;
+        }
+        return next_id;
+    }
 
    public:
     Notificator() { Load(); }
@@ -58,9 +80,11 @@ class Notificator : public ImGuiUtils::WindowHelper {
     void DrawNotify() {
         if (!need_show)
             return;
+		need_show = false;
 
         for (auto& it : all_entries()) {
             if (it.IsTrigger()) {
+				need_show = true;
                 if (it.play_sound) {
                     if (it.lastStartPlaySound != it.nextActivate) {
                         it.lastStartPlaySound = it.nextActivate;
@@ -69,7 +93,9 @@ class Notificator : public ImGuiUtils::WindowHelper {
                 }
                 bool val = true;
                 ImGuiUtils::ToCenter(it.center);  // center only first message ever
-                ImGui::Begin(LOC("Event!"), &val, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_AlwaysAutoResize);
+				it.center = false;
+				auto arr = StrUtils::MakeFormatArray<100>("{}###notif_id_{}", LOC("Event!"), it.id);
+                ImGui::Begin(arr.data(), &val, ImGuiWindowFlags_AlwaysAutoResize);
                 {
                     HWND hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
                     if (hwnd != 0 && last_hwnd != hwnd) {
@@ -96,8 +122,8 @@ class Notificator : public ImGuiUtils::WindowHelper {
                             it.SetActivate({});
                         } else {
                             auto now = Now();
-							auto dur = it.nextActivate - it.point;
-                            it.point = now;							
+                            auto dur = it.nextActivate - it.point;
+                            it.point = now;
                             it.SetActivate(now + dur);
                         }
                         SaveRequest();
@@ -121,10 +147,8 @@ class Notificator : public ImGuiUtils::WindowHelper {
                 }
 
                 ImGui::End();
-                return;
             }
         }
-        need_show = false;
     }
     void Draw() {
         DrawSettings();
@@ -201,6 +225,7 @@ class Notificator : public ImGuiUtils::WindowHelper {
                     }
                     if (ImGuiUtils::PlusButton()) {
                         auto& res = folder.list.emplace_back();
+						res.id = next_id();
                         res.SetPoint(Now());
                         SaveRequest();
                     }
