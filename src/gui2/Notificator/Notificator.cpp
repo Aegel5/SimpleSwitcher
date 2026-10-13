@@ -24,7 +24,8 @@ namespace nlohmann {
 		enabled,
 		days_period,
 		wnd_top,
-		play_sound
+		play_sound,
+		center
 	)
 
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(

@@ -68,7 +68,7 @@ class Notificator : public ImGuiUtils::WindowHelper {
                     }
                 }
                 bool val = true;
-                ImGuiUtils::ToCenter(false);  // center only first message ever
+                ImGuiUtils::ToCenter(it.center);  // center only first message ever
                 ImGui::Begin(LOC("Event!"), &val, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_AlwaysAutoResize);
                 {
                     HWND hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
@@ -96,8 +96,9 @@ class Notificator : public ImGuiUtils::WindowHelper {
                             it.SetActivate({});
                         } else {
                             auto now = Now();
-                            it.point = now;
-                            it.SetActivate(now + (it.nextActivate - it.point));
+							auto dur = it.nextActivate - it.point;
+                            it.point = now;							
+                            it.SetActivate(now + dur);
                         }
                         SaveRequest();
                     }
