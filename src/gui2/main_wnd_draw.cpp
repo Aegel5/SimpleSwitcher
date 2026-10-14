@@ -232,7 +232,7 @@ void MainWindow::DrawFrameActual() {
     //	auto text = LOC("Close to tray");
     //	ImGuiUtils::SetCursorToRightForButton(text);
     //	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetContentRegionAvail().y -
-    //ImGui::GetFrameHeightWithSpacing()); // todo use child_wnd 	if (ImGui::Button(text)) { show_wnd = false; }
+    // ImGui::GetFrameHeightWithSpacing()); // todo use child_wnd 	if (ImGui::Button(text)) { show_wnd = false; }
     //}
 
     DrawSkin();

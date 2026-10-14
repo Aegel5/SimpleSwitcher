@@ -15,8 +15,8 @@ void InputSender::Send() {
 
     //{
     //	// todo: пропускать только то, что было нажато, а не все подряд (если набрано не с клавиатуры - может быть
-    //рассинхронизация). 	InjectSkipper::LocSkipper loc; 	IFW_LOG(SendInput((UINT)list.size(), &list[0], sizeof(INPUT)) ==
-    //list.size()); // синхронно вызывается наш хук.
+    // рассинхронизация). 	InjectSkipper::LocSkipper loc; 	IFW_LOG(SendInput((UINT)list.size(), &list[0],
+    // sizeof(INPUT)) == list.size()); // синхронно вызывается наш хук.
     //}
 
     // bool doPause = false;

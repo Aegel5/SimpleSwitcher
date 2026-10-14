@@ -14,7 +14,7 @@ json = std::regex_replace(json, regex2, " ]");
 
 // if (ImGui::BeginTable("table1", 3, 0)) {
 //	// Submit columns name with TableSetupColumn() and call TableHeadersRow() to create a row with a header in each
-//column.
+// column.
 //	// (Later we will show how TableSetupColumn() has other uses, optional flags, sizing weight etc.)
 //	ImGui::TableSetupColumn("##layout");
 //	ImGui::TableSetupColumn("Two");
