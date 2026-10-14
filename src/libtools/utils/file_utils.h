@@ -8,39 +8,33 @@
 
 #include "Shlwapi.h"
 
-namespace FileUtils
-{
-	inline DWORD CalcCrcForFile(const TCHAR*sName)
-	{
-		return 0;
-		//std::streamsize const  buffer_size = 1024;
-		//boost::crc_32_type  result;
+namespace FileUtils {
+inline DWORD CalcCrcForFile(const TCHAR* sName) {
+    return 0;
+    // std::streamsize const  buffer_size = 1024;
+    // boost::crc_32_type  result;
 
-		//std::ifstream  ifs(sName, std::ios_base::binary);
+    // std::ifstream  ifs(sName, std::ios_base::binary);
 
-		//if (ifs)
-		//{
-		//	do
-		//	{
-		//		char  buffer[buffer_size];
+    // if (ifs)
+    //{
+    //	do
+    //	{
+    //		char  buffer[buffer_size];
 
-		//		ifs.read(buffer, buffer_size);
-		//		result.process_bytes(buffer, ifs.gcount());
-		//	} while (ifs);
-		//}
+    //		ifs.read(buffer, buffer_size);
+    //		result.process_bytes(buffer, ifs.gcount());
+    //	} while (ifs);
+    //}
 
-		//return result.checksum();
-
-	}
-	inline bool IsFileExists(const wchar_t* sPath)
-	{
-		return PathFileExists(sPath) ? true : false;
-	}
-
-	inline bool RenameFile(const wchar_t* old, const wchar_t* newf)
-	{
-		return MoveFile(old, newf);
-	}
-
+    // return result.checksum();
+}
+inline bool IsFileExists(const wchar_t* sPath) {
+    return PathFileExists(sPath) ? true : false;
 }
 
+inline bool RenameFile(const wchar_t* old, const wchar_t* newf) {
+    return MoveFile(old, newf);
+}
+
+}  // namespace FileUtils

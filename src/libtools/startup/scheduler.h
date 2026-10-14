@@ -8,312 +8,250 @@
 #include "../utils/COM_utils.h"
 #include "../utils/procstart.h"
 
-namespace Startup
-{
-	struct CheckTaskSheduleParm
-	{
-		TStr taskName = NULL;
-		TStr sPath = NULL;
-		TStr sArgs = NULL;
-		bool isTaskExists = false;
-		bool isPathEqual = false;
-		bool isSettingsCorrect = false;
-		std::wstring pathValue;
-	};
+namespace Startup {
+struct CheckTaskSheduleParm {
+    TStr taskName = NULL;
+    TStr sPath = NULL;
+    TStr sArgs = NULL;
+    bool isTaskExists = false;
+    bool isPathEqual = false;
+    bool isSettingsCorrect = false;
+    std::wstring pathValue;
+};
 
-	inline TStatus CheckTaskShedule(CheckTaskSheduleParm& parm)
-	{
-		if (!IsWindowsVistaOrGreater())
-			RETURN_SUCCESS;
+inline TStatus CheckTaskShedule(CheckTaskSheduleParm& parm) {
+    if (!IsWindowsVistaOrGreater())
+        RETURN_SUCCESS;
 
-		CComPtr<IRegisteredTask> pTask;
-		CComPtr<ITaskDefinition> pTaskDef;
+    CComPtr<IRegisteredTask> pTask;
+    CComPtr<ITaskDefinition> pTaskDef;
 
-		// check task exists
-		{
+    // check task exists
+    {
+        CComPtr<ITaskService> pService;
 
-			CComPtr<ITaskService> pService;
+        IFH_RET(CoCreateInstance(CLSID_TaskScheduler, NULL, CLSCTX_INPROC_SERVER, IID_ITaskService, (void**)&pService));
 
-			IFH_RET(CoCreateInstance(
-				CLSID_TaskScheduler,
-				NULL,
-				CLSCTX_INPROC_SERVER,
-				IID_ITaskService,
-				(void**)&pService));
+        IFH_RET(pService->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t()));
 
-			IFH_RET(pService->Connect(
-				_variant_t(),
-				_variant_t(),
-				_variant_t(),
-				_variant_t()));
+        CComPtr<ITaskFolder> pRootFolder;
 
-			CComPtr<ITaskFolder> pRootFolder;
+        IFH_RET(pService->GetFolder(_bstr_t(L"\\"), &pRootFolder));
 
-			IFH_RET(pService->GetFolder(_bstr_t(L"\\"), &pRootFolder));
+        HRESULT res = pRootFolder->GetTask(_bstr_t(parm.taskName), &pTask);
+        if (res != S_OK)
+            RETURN_SUCCESS;
 
+        IFH_RET(pTask->get_Definition(&pTaskDef));
 
-			HRESULT res = pRootFolder->GetTask(_bstr_t(parm.taskName), &pTask);
-			if (res != S_OK)
-				RETURN_SUCCESS;
+        parm.isTaskExists = true;
+    }
 
-			IFH_RET(pTask->get_Definition(&pTaskDef));
+    // check path
+    {
+        CComPtr<IActionCollection> actions;
+        IFH_RET(pTaskDef->get_Actions(&actions));
 
-			parm.isTaskExists = true;
-		}
+        long count = 0;
+        IFH_RET(actions->get_Count(&count));
 
+        if (count != 1) {
+            IFS_RET(SW_ERR_UNKNOWN, L"Wrong count=%u", count);
+        }
 
-		// check path
-		{
-			CComPtr<IActionCollection> actions;
-			IFH_RET(pTaskDef->get_Actions(&actions));
+        CComPtr<IAction> act;
+        IFH_RET(actions->get_Item(1, &act));
 
-			long count = 0;
-			IFH_RET(actions->get_Count(&count));
+        // TASK_ACTION_TYPE actType;
+        // SW_HRESULT_RET(act->get_Type(&actType));
 
-			if (count != 1)
-			{
-				IFS_RET(SW_ERR_UNKNOWN, L"Wrong count=%u", count);
-			}
+        CComPtr<IExecAction> actExec;
+        IFH_RET(act->QueryInterface(&actExec));
 
+        CAuto_Bstr bsPath;
+        IFH_RET(actExec->get_Path(&bsPath));
 
-			CComPtr<IAction> act;
-			IFH_RET(actions->get_Item(1, &act));
+        CAuto_Bstr bsArgs;
+        IFH_RET(actExec->get_Arguments(&bsArgs));
 
-			//TASK_ACTION_TYPE actType;
-			//SW_HRESULT_RET(act->get_Type(&actType));
+        std::wstring actPath(bsPath.get(), SysStringLen(bsPath.get()));
+        StrUtils::trim(actPath, L" \"");
 
-			CComPtr<IExecAction> actExec;
-			IFH_RET(act->QueryInterface(&actExec));
+        parm.pathValue = actPath;
 
-			CAuto_Bstr bsPath;
-			IFH_RET(actExec->get_Path(&bsPath));
+        bool resPath = false;
+        if (parm.sPath) {
+            resPath = _wcsicmp(actPath.c_str(), parm.sPath) == 0;
+        }
+        bool resArgs = false;
+        if (bsArgs) {
+            parm.pathValue.append(L" ");
+            parm.pathValue.append(bsArgs);
+            if (parm.sArgs) {
+                resArgs = _wcsicmp(bsArgs.get(), parm.sArgs) == 0;
+            }
+        }
 
-			CAuto_Bstr bsArgs;
-			IFH_RET(actExec->get_Arguments(&bsArgs));
+        parm.isPathEqual = (resPath && resArgs);
+    }
 
-			std::wstring actPath(bsPath.get(), SysStringLen(bsPath.get()));
-			StrUtils::trim(actPath, L" \"");
+    // check settings
+    {
+        CComPtr<ITaskSettings> pSettings;
+        IFH_RET(pTaskDef->get_Settings(&pSettings));
 
-			parm.pathValue = actPath;
+        VARIANT_BOOL fDisallowStartIfOnBatteries;
+        IFH_RET(pSettings->get_DisallowStartIfOnBatteries(&fDisallowStartIfOnBatteries));
 
-			bool resPath = false;
-			if (parm.sPath)
-			{
-				resPath = _wcsicmp(actPath.c_str(), parm.sPath) == 0;
-			}
-			bool resArgs = false;
-			if (bsArgs)
-			{
-				parm.pathValue.append(L" ");
-				parm.pathValue.append(bsArgs);
-				if (parm.sArgs)
-				{
-					resArgs = _wcsicmp(bsArgs.get(), parm.sArgs) == 0;
-				}
-			}
+        VARIANT_BOOL fStopIfGoingOnBatteries;
+        IFH_RET(pSettings->get_DisallowStartIfOnBatteries(&fStopIfGoingOnBatteries));
 
-			parm.isPathEqual = (resPath && resArgs);
-		}
+        CAuto_Bstr bsTimeLimit;
+        IFH_RET(pSettings->get_ExecutionTimeLimit(&bsTimeLimit));
 
-		// check settings
-		{
-			CComPtr<ITaskSettings> pSettings;
-			IFH_RET(pTaskDef->get_Settings(&pSettings));
+        int priority;
+        IFH_RET(pSettings->get_Priority(&priority));
 
-			VARIANT_BOOL fDisallowStartIfOnBatteries;
-			IFH_RET(pSettings->get_DisallowStartIfOnBatteries(&fDisallowStartIfOnBatteries));
+        if (priority == 6 && fDisallowStartIfOnBatteries == VARIANT_FALSE && fStopIfGoingOnBatteries == VARIANT_FALSE &&
+            StrUtils::IsEqualCI(bsTimeLimit, L"PT0S")) {
+            parm.isSettingsCorrect = true;
+        }
+    }
 
-			VARIANT_BOOL fStopIfGoingOnBatteries;
-			IFH_RET(pSettings->get_DisallowStartIfOnBatteries(&fStopIfGoingOnBatteries));
-
-			CAuto_Bstr bsTimeLimit;
-			IFH_RET(pSettings->get_ExecutionTimeLimit(&bsTimeLimit));
-
-			int priority;
-			IFH_RET(pSettings->get_Priority(&priority));
-
-			if (
-				priority == 6
-				&& fDisallowStartIfOnBatteries == VARIANT_FALSE
-				&& fStopIfGoingOnBatteries == VARIANT_FALSE
-				&& StrUtils::IsEqualCI(bsTimeLimit, L"PT0S"))
-			{
-				parm.isSettingsCorrect = true;
-			}
-		}
-
-		RETURN_SUCCESS;
-	}
-	inline TStatus RemoveTaskShedule(TStr sTaskName)
-	{
-		CComPtr<ITaskService> pService;
-
-		IFH_RET(CoCreateInstance(
-			CLSID_TaskScheduler,
-			NULL,
-			CLSCTX_INPROC_SERVER,
-			IID_ITaskService,
-			(void**)&pService));
-
-		IFH_RET(pService->Connect(
-			_variant_t(),
-			_variant_t(),
-			_variant_t(),
-			_variant_t()));
-
-		CComPtr<ITaskFolder> pRootFolder;
-
-		IFH_RET(pService->GetFolder(_bstr_t(L"\\"), &pRootFolder));
-
-		IFH_RET(pRootFolder->DeleteTask(_bstr_t(sTaskName), 0));
-
-		RETURN_SUCCESS;
-	}
-
-	struct CreateTaskSheduleParm
-	{
-		TStr taskName = NULL;
-		TStr sPath = NULL;
-		TStr sArgs = NULL;
-		bool removeOld = true;
-		bool fAsAdmin = true;
-	};
-	inline TStatus CreateTaskShedule2(CreateTaskSheduleParm& parm)
-	{
-		if (parm.taskName == nullptr || parm.sPath == nullptr)
-		{
-			return SW_ERR_INVALID_PARAMETR;
-		}
-
-		CComPtr<ITaskFolder> pRootFolder;
-		CComPtr<ITaskDefinition> pTask;
-
-		// service
-		{
-			CComPtr<ITaskService> pService;
-
-			IFH_RET(CoCreateInstance(
-				CLSID_TaskScheduler,
-				NULL,
-				CLSCTX_INPROC_SERVER,
-				IID_ITaskService,
-				(void**)&pService));
-
-			IFH_RET(pService->Connect(
-				_variant_t(),
-				_variant_t(),
-				_variant_t(),
-				_variant_t()));
-
-
-			IFH_RET(pService->GetFolder(_bstr_t(L"\\"), &pRootFolder));
-
-			if (parm.removeOld)
-			{
-				pRootFolder->DeleteTask(_bstr_t(parm.taskName), 0);
-			}
-			else
-			{
-				// TODO: error if exists
-			}
-
-			IFH_RET(pService->NewTask(0, &pTask));
-		}
-	
-		// reginfo
-		{
-			CComPtr<IRegistrationInfo> pRegInfo;
-			IFH_RET(pTask->get_RegistrationInfo(&pRegInfo));
-			_bstr_t bstrVal(_T("123"));
-			IFH_RET(pRegInfo->put_Author(bstrVal));
-		}
-
-		// principal
-		{
-			CComPtr<IPrincipal> pPrincipal;
-			IFH_RET(pTask->get_Principal(&pPrincipal));
-			IFH_RET(pPrincipal->put_LogonType(TASK_LOGON_INTERACTIVE_TOKEN));
-			if (parm.fAsAdmin)
-			{
-				IFH_RET(pPrincipal->put_RunLevel(TASK_RUNLEVEL_HIGHEST));
-			}
-		}
-	
-		// settings
-		{
-			CComPtr<ITaskSettings> pSettings;
-			IFH_RET(pTask->get_Settings(&pSettings));
-
-			IFH_RET(pSettings->put_StartWhenAvailable(VARIANT_TRUE));
-			IFH_RET(pSettings->put_AllowDemandStart(VARIANT_TRUE));
-
-			IFH_RET(pSettings->put_DisallowStartIfOnBatteries(VARIANT_FALSE));
-			IFH_RET(pSettings->put_StopIfGoingOnBatteries(VARIANT_FALSE));
-
-			_bstr_t bstrVal(_T("PT0S"));
-			IFH_RET(pSettings->put_ExecutionTimeLimit(bstrVal));
-			IFH_RET(pSettings->put_AllowHardTerminate(VARIANT_FALSE));
-
-			IFH_RET(pSettings->put_RunOnlyIfNetworkAvailable(VARIANT_FALSE));
-			//SW_HRESULT_RET(pSettings->put_DeleteExpiredTaskAfter(NULL));
-			//SW_HRESULT_RET(pSettings->put_RestartCount(0));
-
-			IFH_RET(pSettings->put_Priority(6));
-		}
-	
-		// triggers
-		{
-			CComPtr<ITriggerCollection> pTriggerCollection;
-			IFH_RET(pTask->get_Triggers(&pTriggerCollection));
-
-			CComPtr<ITrigger> pTrigger;
-			IFH_RET(pTriggerCollection->Create(TASK_TRIGGER_LOGON, &pTrigger));
-			pTriggerCollection.Release();
-
-			CComPtr<ILogonTrigger> pLogonTrigger;
-			IFH_RET(pTrigger->QueryInterface(
-				IID_ILogonTrigger,
-				(void**)&pLogonTrigger));
-			pTrigger.Release();
-
-			IFH_RET(pLogonTrigger->put_Id(_bstr_t(L"Trigger1")));
-		}
-	
-
-		// actions
-		{
-			CComPtr<IActionCollection> pActionCollection;
-			IFH_RET(pTask->get_Actions(&pActionCollection));
-
-			CComPtr<IAction> pAction;
-			IFH_RET(pActionCollection->Create(TASK_ACTION_EXEC, &pAction));
-
-			CComPtr<IExecAction> pExecAction;
-			IFH_RET(pAction->QueryInterface(
-				IID_IExecAction, (void**)&pExecAction));
-
-			IFH_RET(pExecAction->put_Path(_bstr_t(parm.sPath)));
-
-			if (parm.sArgs)
-			{
-				IFH_RET(pExecAction->put_Arguments(_bstr_t(parm.sArgs)));
-			}
-		}
-	
-		// create task
-		{
-			CComPtr<IRegisteredTask> pRegisteredTask;
-			IFH_RET(pRootFolder->RegisterTaskDefinition(
-				_bstr_t(parm.taskName),
-				pTask,
-				TASK_CREATE,
-				_variant_t(),
-				_variant_t(),
-				TASK_LOGON_INTERACTIVE_TOKEN,
-				_variant_t(L""),
-				&pRegisteredTask));
-		}
-	
-		RETURN_SUCCESS;
-	}
+    RETURN_SUCCESS;
 }
+inline TStatus RemoveTaskShedule(TStr sTaskName) {
+    CComPtr<ITaskService> pService;
+
+    IFH_RET(CoCreateInstance(CLSID_TaskScheduler, NULL, CLSCTX_INPROC_SERVER, IID_ITaskService, (void**)&pService));
+
+    IFH_RET(pService->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t()));
+
+    CComPtr<ITaskFolder> pRootFolder;
+
+    IFH_RET(pService->GetFolder(_bstr_t(L"\\"), &pRootFolder));
+
+    IFH_RET(pRootFolder->DeleteTask(_bstr_t(sTaskName), 0));
+
+    RETURN_SUCCESS;
+}
+
+struct CreateTaskSheduleParm {
+    TStr taskName = NULL;
+    TStr sPath = NULL;
+    TStr sArgs = NULL;
+    bool removeOld = true;
+    bool fAsAdmin = true;
+};
+inline TStatus CreateTaskShedule2(CreateTaskSheduleParm& parm) {
+    if (parm.taskName == nullptr || parm.sPath == nullptr) {
+        return SW_ERR_INVALID_PARAMETR;
+    }
+
+    CComPtr<ITaskFolder> pRootFolder;
+    CComPtr<ITaskDefinition> pTask;
+
+    // service
+    {
+        CComPtr<ITaskService> pService;
+
+        IFH_RET(CoCreateInstance(CLSID_TaskScheduler, NULL, CLSCTX_INPROC_SERVER, IID_ITaskService, (void**)&pService));
+
+        IFH_RET(pService->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t()));
+
+        IFH_RET(pService->GetFolder(_bstr_t(L"\\"), &pRootFolder));
+
+        if (parm.removeOld) {
+            pRootFolder->DeleteTask(_bstr_t(parm.taskName), 0);
+        } else {
+            // TODO: error if exists
+        }
+
+        IFH_RET(pService->NewTask(0, &pTask));
+    }
+
+    // reginfo
+    {
+        CComPtr<IRegistrationInfo> pRegInfo;
+        IFH_RET(pTask->get_RegistrationInfo(&pRegInfo));
+        _bstr_t bstrVal(_T("123"));
+        IFH_RET(pRegInfo->put_Author(bstrVal));
+    }
+
+    // principal
+    {
+        CComPtr<IPrincipal> pPrincipal;
+        IFH_RET(pTask->get_Principal(&pPrincipal));
+        IFH_RET(pPrincipal->put_LogonType(TASK_LOGON_INTERACTIVE_TOKEN));
+        if (parm.fAsAdmin) {
+            IFH_RET(pPrincipal->put_RunLevel(TASK_RUNLEVEL_HIGHEST));
+        }
+    }
+
+    // settings
+    {
+        CComPtr<ITaskSettings> pSettings;
+        IFH_RET(pTask->get_Settings(&pSettings));
+
+        IFH_RET(pSettings->put_StartWhenAvailable(VARIANT_TRUE));
+        IFH_RET(pSettings->put_AllowDemandStart(VARIANT_TRUE));
+
+        IFH_RET(pSettings->put_DisallowStartIfOnBatteries(VARIANT_FALSE));
+        IFH_RET(pSettings->put_StopIfGoingOnBatteries(VARIANT_FALSE));
+
+        _bstr_t bstrVal(_T("PT0S"));
+        IFH_RET(pSettings->put_ExecutionTimeLimit(bstrVal));
+        IFH_RET(pSettings->put_AllowHardTerminate(VARIANT_FALSE));
+
+        IFH_RET(pSettings->put_RunOnlyIfNetworkAvailable(VARIANT_FALSE));
+        // SW_HRESULT_RET(pSettings->put_DeleteExpiredTaskAfter(NULL));
+        // SW_HRESULT_RET(pSettings->put_RestartCount(0));
+
+        IFH_RET(pSettings->put_Priority(6));
+    }
+
+    // triggers
+    {
+        CComPtr<ITriggerCollection> pTriggerCollection;
+        IFH_RET(pTask->get_Triggers(&pTriggerCollection));
+
+        CComPtr<ITrigger> pTrigger;
+        IFH_RET(pTriggerCollection->Create(TASK_TRIGGER_LOGON, &pTrigger));
+        pTriggerCollection.Release();
+
+        CComPtr<ILogonTrigger> pLogonTrigger;
+        IFH_RET(pTrigger->QueryInterface(IID_ILogonTrigger, (void**)&pLogonTrigger));
+        pTrigger.Release();
+
+        IFH_RET(pLogonTrigger->put_Id(_bstr_t(L"Trigger1")));
+    }
+
+    // actions
+    {
+        CComPtr<IActionCollection> pActionCollection;
+        IFH_RET(pTask->get_Actions(&pActionCollection));
+
+        CComPtr<IAction> pAction;
+        IFH_RET(pActionCollection->Create(TASK_ACTION_EXEC, &pAction));
+
+        CComPtr<IExecAction> pExecAction;
+        IFH_RET(pAction->QueryInterface(IID_IExecAction, (void**)&pExecAction));
+
+        IFH_RET(pExecAction->put_Path(_bstr_t(parm.sPath)));
+
+        if (parm.sArgs) {
+            IFH_RET(pExecAction->put_Arguments(_bstr_t(parm.sArgs)));
+        }
+    }
+
+    // create task
+    {
+        CComPtr<IRegisteredTask> pRegisteredTask;
+        IFH_RET(pRootFolder->RegisterTaskDefinition(_bstr_t(parm.taskName), pTask, TASK_CREATE, _variant_t(),
+                                                    _variant_t(), TASK_LOGON_INTERACTIVE_TOKEN, _variant_t(L""),
+                                                    &pRegisteredTask));
+    }
+
+    RETURN_SUCCESS;
+}
+}  // namespace Startup

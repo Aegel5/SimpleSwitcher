@@ -1,76 +1,61 @@
 ﻿#pragma once
 
-inline HMODULE GetCurrentModule()
-{
-	// NB: XP+ solution!
-	HMODULE hModule = NULL;
-	GetModuleHandleEx(
-		GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
-		(LPCTSTR)GetCurrentModule,
-		&hModule);
+inline HMODULE GetCurrentModule() {
+    // NB: XP+ solution!
+    HMODULE hModule = NULL;
+    GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCTSTR)GetCurrentModule, &hModule);
 
-	return hModule;
+    return hModule;
 }
 
-inline bool IsWindowsVersionOrGreater(WORD wMajorVersion, WORD wMinorVersion, WORD wServicePackMajor)
-{
-	OSVERSIONINFOEXW osvi = { sizeof(osvi), 0, 0, 0, 0,{ 0 }, 0, 0 };
-	DWORDLONG        const dwlConditionMask = VerSetConditionMask(
-		VerSetConditionMask(
-			VerSetConditionMask(
-				0, VER_MAJORVERSION, VER_GREATER_EQUAL),
-			VER_MINORVERSION, VER_GREATER_EQUAL),
-		VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL);
+inline bool IsWindowsVersionOrGreater(WORD wMajorVersion, WORD wMinorVersion, WORD wServicePackMajor) {
+    OSVERSIONINFOEXW osvi = {sizeof(osvi), 0, 0, 0, 0, {0}, 0, 0};
+    DWORDLONG const dwlConditionMask =
+        VerSetConditionMask(VerSetConditionMask(VerSetConditionMask(0, VER_MAJORVERSION, VER_GREATER_EQUAL),
+                                                VER_MINORVERSION, VER_GREATER_EQUAL),
+                            VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL);
 
-	osvi.dwMajorVersion = wMajorVersion;
-	osvi.dwMinorVersion = wMinorVersion;
-	osvi.wServicePackMajor = wServicePackMajor;
+    osvi.dwMajorVersion = wMajorVersion;
+    osvi.dwMinorVersion = wMinorVersion;
+    osvi.wServicePackMajor = wServicePackMajor;
 
-	return VerifyVersionInfoW(&osvi, VER_MAJORVERSION | VER_MINORVERSION | VER_SERVICEPACKMAJOR, dwlConditionMask) != FALSE;
+    return VerifyVersionInfoW(&osvi, VER_MAJORVERSION | VER_MINORVERSION | VER_SERVICEPACKMAJOR, dwlConditionMask) !=
+           FALSE;
 }
 
-inline bool
-IsWindowsVistaOrGreater()
-{
-	return IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_VISTA), LOBYTE(_WIN32_WINNT_VISTA), 0);
+inline bool IsWindowsVistaOrGreater() {
+    return IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_VISTA), LOBYTE(_WIN32_WINNT_VISTA), 0);
 }
 
-#define ____WIN32_WINNT_WIN10                  0x0A00
-inline bool
-IsWindows10OrGreater()
-{
+#define ____WIN32_WINNT_WIN10 0x0A00
+inline bool IsWindows10OrGreater() {
+    // OSVERSIONINFO osvi;
+    // ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
+    // osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+    // GetVersionEx(&osvi);
+    // return osvi.dwMajorVersion >= 10;
 
-	//OSVERSIONINFO osvi;
-	//ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
-	//osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	//GetVersionEx(&osvi);
-	//return osvi.dwMajorVersion >= 10;
-
-	return IsWindowsVersionOrGreater(HIBYTE(____WIN32_WINNT_WIN10), LOBYTE(____WIN32_WINNT_WIN10), 0);
+    return IsWindowsVersionOrGreater(HIBYTE(____WIN32_WINNT_WIN10), LOBYTE(____WIN32_WINNT_WIN10), 0);
 }
 
-inline bool
-IsWindows11OrGreater()
-{
-	OSVERSIONINFOEX osvi;
-	ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
-	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+inline bool IsWindows11OrGreater() {
+    OSVERSIONINFOEX osvi;
+    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 
-	if (!GetVersionEx((OSVERSIONINFO*)&osvi)) {
-		return false; // Не удалось получить версию
-	}
+    if (!GetVersionEx((OSVERSIONINFO*)&osvi)) {
+        return false;  // Не удалось получить версию
+    }
 
-	// Проверяем, что версия >= 10.0.22000
-	if (osvi.dwMajorVersion > 10 ||
-		(osvi.dwMajorVersion == 10 && osvi.dwBuildNumber >= 22000)) {
-		return true; // Windows 11 или выше
-	}
+    // Проверяем, что версия >= 10.0.22000
+    if (osvi.dwMajorVersion > 10 || (osvi.dwMajorVersion == 10 && osvi.dwBuildNumber >= 22000)) {
+        return true;  // Windows 11 или выше
+    }
 
-	return false; // Версия ниже Windows 11
-
+    return false;  // Версия ниже Windows 11
 }
 
-//inline bool IsWindows10OrGreater2()
+// inline bool IsWindows10OrGreater2()
 //{
 //	OSVERSIONINFO osvi;
 //	ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -90,7 +75,4 @@ IsWindows11OrGreater()
 //	}
 //
 //	return false;
-//}
-
-
-
+// }

@@ -4,68 +4,65 @@
 
 namespace WinUtils {
 
-	inline Vec_f2 GetDpiMainMonScale() {
+inline Vec_f2 GetDpiMainMonScale() {
+    if (!WinApiInt::GetDpiForMonitor) {
+        return {1.0f, 1.0f};
+    }
 
-		if (!WinApiInt::GetDpiForMonitor) {
-			return { 1.0f,1.0f };
-		}
+    HMONITOR hMonitor = MonitorFromWindow(NULL, MONITOR_DEFAULTTOPRIMARY);
+    UINT dpiX = 96, dpiY = 96;
+    WinApiInt::GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
 
-		HMONITOR hMonitor = MonitorFromWindow(NULL, MONITOR_DEFAULTTOPRIMARY);
-		UINT dpiX = 96, dpiY = 96;
-		WinApiInt::GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
-
-		// Корректируем размеры с учетом DPI
-		return{ dpiX / 96.0f,  dpiY / 96.0f };
-	}
-	inline float GetDpiMainMonScale2() {
-		auto res = GetDpiMainMonScale();
-		return std::max(res.x, res.y);
-	}
-	inline HWND CreateMsgWin(TStr name, WNDPROC proc = 0) {
-		WNDCLASS wc = {};
-		wc.lpfnWndProc = proc != 0?proc: DefWindowProc;
-		wc.hInstance = GetModuleHandle(NULL);
-		wc.lpszClassName = name;
-		RegisterClass(&wc);
-		return CreateWindowW(name, name, 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, wc.hInstance, NULL);
-	}
-	inline void PostMsg(HWND hwnd, UINT msg, WPARAM wparm = 0) {
-		if(hwnd != 0) PostMessage(hwnd, msg, wparm, 0);
-	}
-
-	inline SpanByte GetResource(TStr id) {
-
-		auto hModule = GetModuleHandle(NULL);
-
-		HRSRC hResource = FindResource(hModule, id, RT_RCDATA);
-		if (!hResource) return {};
-
-		HGLOBAL hLoadedResource = LoadResource(hModule, hResource);
-		if (!hLoadedResource) return {};
-
-		void* pData = LockResource(hLoadedResource);
-		DWORD resourceSize = SizeofResource(hModule, hResource);
-
-		return { (std::byte*)pData, resourceSize };
-
-	}
-	inline bool IsCurrentProcessActive()
-	{
-		// Получаем дескриптор активного (foreground) окна
-		HWND foregroundWindow = GetForegroundWindow();
-		if (foregroundWindow == NULL)
-			return false;
-
-		// Получаем PID процесса, которому принадлежит активное окно
-		DWORD foregroundProcessId = 0;
-		GetWindowThreadProcessId(foregroundWindow, &foregroundProcessId);
-
-		// Получаем PID текущего процесса
-		DWORD currentProcessId = GetCurrentProcessId();
-
-		// Сравниваем PID
-		return (foregroundProcessId == currentProcessId);
-	}
+    // Корректируем размеры с учетом DPI
+    return {dpiX / 96.0f, dpiY / 96.0f};
+}
+inline float GetDpiMainMonScale2() {
+    auto res = GetDpiMainMonScale();
+    return std::max(res.x, res.y);
+}
+inline HWND CreateMsgWin(TStr name, WNDPROC proc = 0) {
+    WNDCLASS wc = {};
+    wc.lpfnWndProc = proc != 0 ? proc : DefWindowProc;
+    wc.hInstance = GetModuleHandle(NULL);
+    wc.lpszClassName = name;
+    RegisterClass(&wc);
+    return CreateWindowW(name, name, 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, wc.hInstance, NULL);
+}
+inline void PostMsg(HWND hwnd, UINT msg, WPARAM wparm = 0) {
+    if (hwnd != 0)
+        PostMessage(hwnd, msg, wparm, 0);
 }
 
+inline SpanByte GetResource(TStr id) {
+    auto hModule = GetModuleHandle(NULL);
 
+    HRSRC hResource = FindResource(hModule, id, RT_RCDATA);
+    if (!hResource)
+        return {};
+
+    HGLOBAL hLoadedResource = LoadResource(hModule, hResource);
+    if (!hLoadedResource)
+        return {};
+
+    void* pData = LockResource(hLoadedResource);
+    DWORD resourceSize = SizeofResource(hModule, hResource);
+
+    return {(std::byte*)pData, resourceSize};
+}
+inline bool IsCurrentProcessActive() {
+    // Получаем дескриптор активного (foreground) окна
+    HWND foregroundWindow = GetForegroundWindow();
+    if (foregroundWindow == NULL)
+        return false;
+
+    // Получаем PID процесса, которому принадлежит активное окно
+    DWORD foregroundProcessId = 0;
+    GetWindowThreadProcessId(foregroundWindow, &foregroundProcessId);
+
+    // Получаем PID текущего процесса
+    DWORD currentProcessId = GetCurrentProcessId();
+
+    // Сравниваем PID
+    return (foregroundProcessId == currentProcessId);
+}
+}  // namespace WinUtils

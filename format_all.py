@@ -10,7 +10,7 @@ from pathlib import Path
 PORTABLE_DATA_DIR = r"D:/soft/vscode/data"
 
 # Расширения файлов для форматирования
-EXTENSIONS = {'.cpp', '.hpp', '.c', '.h', '.cc', '.cxx', '.ino'}
+EXTENSIONS = {'.cpp', '.hpp', '.c', '.h'}
 
 
 def find_clang_format():

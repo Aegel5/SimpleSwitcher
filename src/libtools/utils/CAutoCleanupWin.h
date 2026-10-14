@@ -1,61 +1,51 @@
 ﻿#pragma once
 
-class CAutoClipBoard
-{
-public:
-	CAutoClipBoard() {}
-	TStatus Open(HWND hwnd = NULL, DWORD dwTimeout=50)
-	{
-		if (m_stat)
-			RETURN_SUCCESS;
+class CAutoClipBoard {
+   public:
+    CAutoClipBoard() {}
+    TStatus Open(HWND hwnd = NULL, DWORD dwTimeout = 50) {
+        if (m_stat)
+            RETURN_SUCCESS;
 
-		LOG_ANY(L"open clip");
+        LOG_ANY(L"open clip");
 
-		auto start = GetTickCount64();
-		int countTry = 0;
-		while (true)
-		{
-			++countTry;
-			m_stat = OpenClipboard(hwnd);
-			if (m_stat)
-			{
-				break;
-			}
-			if (GetTickCount64() - start > dwTimeout)
-			{
-				break;
-			}
-			Sleep(2);
-		}
+        auto start = GetTickCount64();
+        int countTry = 0;
+        while (true) {
+            ++countTry;
+            m_stat = OpenClipboard(hwnd);
+            if (m_stat) {
+                break;
+            }
+            if (GetTickCount64() - start > dwTimeout) {
+                break;
+            }
+            Sleep(2);
+        }
 
-		if (countTry > 1)
-		{
-			LOG_ANY(L"Clip open try {} count. result={}", countTry, m_stat);
-		}
+        if (countTry > 1) {
+            LOG_ANY(L"Clip open try {} count. result={}", countTry, m_stat);
+        }
 
-		IFW_RET(m_stat); 
-		RETURN_SUCCESS;
-	}
-	void Cleanup()
-	{
-		if (m_stat)
-		{
-			LOG_ANY(L"close clip");
-			IFW_LOG(CloseClipboard());
-		}
-		m_stat = FALSE;
-	}
-	~CAutoClipBoard()
-	{
-		Cleanup();
-	}
-private:
-	BOOL m_stat = FALSE;
+        IFW_RET(m_stat);
+        RETURN_SUCCESS;
+    }
+    void Cleanup() {
+        if (m_stat) {
+            LOG_ANY(L"close clip");
+            IFW_LOG(CloseClipboard());
+        }
+        m_stat = FALSE;
+    }
+    ~CAutoClipBoard() { Cleanup(); }
+
+   private:
+    BOOL m_stat = FALSE;
 };
 
-//class CAutoHotKeyRegister
+// class CAutoHotKeyRegister
 //{
-//public:
+// public:
 //	BOOL Register(HWND hwnd, int id, UINT mods, DWORD key)
 //	{
 //		Cleanup();
@@ -76,15 +66,15 @@ private:
 //			m_res = FALSE;
 //		}
 //	}
-//private:
+// private:
 //	BOOL m_res = FALSE;
 //	HWND m_hwnd;
 //	int m_id;
-//};
+// };
 //
-//class CAutoThreadAttach
+// class CAutoThreadAttach
 //{
-//public:
+// public:
 //	CAutoThreadAttach(){}
 //	TStatus Attach(DWORD id)
 //	{
@@ -101,9 +91,7 @@ private:
 //			res = 0;
 //		}
 //	}
-//private:
+// private:
 //	BOOL res = false;
 //	DWORD threadId = 0;
-//};
-
-
+// };
