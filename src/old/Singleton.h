@@ -2,27 +2,30 @@
 #pragma once
 
 namespace details {
-	template <typename T>
-	struct Singleton {
-		inline static T* ptr = nullptr;
-		Singleton(T* instance) {
-			assert(!Singleton<T>::ptr && "Duplicate singleton creation!");
-			ptr = instance;
-		}
-		~Singleton() { ptr = nullptr; }
-	};
-}
+template <typename T>
+struct Singleton {
+    inline static T* ptr = nullptr;
+    Singleton(T* instance) {
+        assert(!Singleton<T>::ptr && "Duplicate singleton creation!");
+        ptr = instance;
+    }
+    ~Singleton() { ptr = nullptr; }
+};
+}  // namespace details
 
-#define ENABLE_SINGLETON(Type) \
-public: \
-    static Type* inst() { return details::Singleton<Type>::ptr; } \
+#define ENABLE_SINGLETON(Type)                \
+   public:                                    \
+    static Type* inst() {                     \
+        return details::Singleton<Type>::ptr; \
+    }                                         \
     /* Запрещаем копирование и перемещение */ \
-private: \
-    details::Singleton<Type> life_guard_{this}
+   private:                                   \
+    details::Singleton<Type> life_guard_ {    \
+        this                                  \
+    }
 
 //Type(const Type&) = delete; \
     //Type& operator=(const Type&) = delete; \
     //Type(Type&&) = delete; \
     //Type& operator=(Type&&) = delete; \
-
 

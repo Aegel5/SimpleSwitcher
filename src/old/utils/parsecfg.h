@@ -1,7 +1,7 @@
-﻿//#pragma once
+﻿// #pragma once
 //
 //
-//namespace ParseCfg
+// namespace ParseCfg
 //{
 //	template<bool DEF>
 //	class SettingBool
@@ -128,4 +128,4 @@
 //		}
 //		return it->second;
 //	}
-//}
+// }

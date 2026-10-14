@@ -4,73 +4,65 @@
 #include "CMainWorker.h"
 
 class CoreWorker {
-
     std::thread core_work;
-	std::atomic<HWND> m_hWnd = nullptr;
+    std::atomic<HWND> m_hWnd = nullptr;
 
-	void StartMonitor() {
+    void StartMonitor() {
+        LOG_ANY(L"StartMonitor...");
+        IFW_LOG(SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS));
 
-		LOG_ANY(L"StartMonitor...");
-		IFW_LOG(SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS));
+        m_hWnd = WinUtils::CreateMsgWin(L"SimpleSw_325737FD_Serv");
+        IFW_LOG(m_hWnd != NULL);
 
-		m_hWnd = WinUtils::CreateMsgWin(L"SimpleSw_325737FD_Serv");
-		IFW_LOG(m_hWnd != NULL);
-		
-		IFW_LOG(AddClipboardFormatListener(m_hWnd));
-		IFW_LOG(ChangeWindowMessageFilterEx(m_hWnd, WM_ClearWordsBuffer, MSGFLT_ALLOW, 0));
+        IFW_LOG(AddClipboardFormatListener(m_hWnd));
+        IFW_LOG(ChangeWindowMessageFilterEx(m_hWnd, WM_ClearWordsBuffer, MSGFLT_ALLOW, 0));
 
-		auto session_notif_reg = WTSRegisterSessionNotification(m_hWnd, 0);
-		IFW_LOG(session_notif_reg);
-		if (!session_notif_reg) {
-			auto timer_session_register = SetTimer(m_hWnd, 5, 20000, NULL);
-		}
+        auto session_notif_reg = WTSRegisterSessionNotification(m_hWnd, 0);
+        IFW_LOG(session_notif_reg);
+        if (!session_notif_reg) {
+            auto timer_session_register = SetTimer(m_hWnd, 5, 20000, NULL);
+        }
 
-		Hooker hooker;
-		IFS_LOG(hooker.StartHook());
+        Hooker hooker;
+        IFS_LOG(hooker.StartHook());
 
-		MSG msg;
-		while (GetMessage(&msg, NULL, 0, 0) > 0) {
-			if (msg.message == WM_CLIPBOARDUPDATE) {
-				Worker()->PostMsg([](auto w) {w->CliboardChanged(); });
-			}
-			else if (msg.message == WM_WTSSESSION_CHANGE) {
-				LOG_ANY("WM_WTSSESSION_CHANGE {}", (int)msg.wParam);
-				if (msg.wParam == WTS_SESSION_UNLOCK || msg.wParam == WTS_SESSION_LOCK) {
-					hooker.ClearAllKeys();
-				}
-			}
-			else if (msg.message == WM_TIMER) {
-				auto timerId = msg.wParam;
-				if (timerId == 5) {
-					IFW_LOG(KillTimer(m_hWnd, timerId));
-					if (!session_notif_reg) {
-						LOG_ANY("Register by timer");
-						session_notif_reg = WTSRegisterSessionNotification(m_hWnd, 0);
-						IFW_LOG(session_notif_reg);
-					}
-				}
-			}else if(msg.message == WM_ClearWordsBuffer){
-				LOG_ANY("get clear request");
-				Worker()->PostMsg(Message_ClearWorlds{});
-			}
-		}
+        MSG msg;
+        while (GetMessage(&msg, NULL, 0, 0) > 0) {
+            if (msg.message == WM_CLIPBOARDUPDATE) {
+                Worker()->PostMsg([](auto w) { w->CliboardChanged(); });
+            } else if (msg.message == WM_WTSSESSION_CHANGE) {
+                LOG_ANY("WM_WTSSESSION_CHANGE {}", (int)msg.wParam);
+                if (msg.wParam == WTS_SESSION_UNLOCK || msg.wParam == WTS_SESSION_LOCK) {
+                    hooker.ClearAllKeys();
+                }
+            } else if (msg.message == WM_TIMER) {
+                auto timerId = msg.wParam;
+                if (timerId == 5) {
+                    IFW_LOG(KillTimer(m_hWnd, timerId));
+                    if (!session_notif_reg) {
+                        LOG_ANY("Register by timer");
+                        session_notif_reg = WTSRegisterSessionNotification(m_hWnd, 0);
+                        IFW_LOG(session_notif_reg);
+                    }
+                }
+            } else if (msg.message == WM_ClearWordsBuffer) {
+                LOG_ANY("get clear request");
+                Worker()->PostMsg(Message_ClearWorlds{});
+            }
+        }
 
-		if (session_notif_reg) {
-			IFW_LOG(WTSUnRegisterSessionNotification(m_hWnd));
-		}
-	}
-
-public:
-
-    CoreWorker() {
-        core_work = std::thread(std::bind(&CoreWorker::StartMonitor, this));
+        if (session_notif_reg) {
+            IFW_LOG(WTSUnRegisterSessionNotification(m_hWnd));
+        }
     }
 
-    ~CoreWorker() {
+   public:
+    CoreWorker() { core_work = std::thread(std::bind(&CoreWorker::StartMonitor, this)); }
 
-		PostMessage(m_hWnd, WM_QUIT, 0, 0);
-		if (core_work.joinable())
-			core_work.join();
-		m_hWnd = nullptr;
+    ~CoreWorker() {
+        PostMessage(m_hWnd, WM_QUIT, 0, 0);
+        if (core_work.joinable())
+            core_work.join();
+        m_hWnd = nullptr;
     }
 };

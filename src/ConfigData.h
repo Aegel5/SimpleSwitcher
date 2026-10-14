@@ -1,7 +1,6 @@
 ﻿
 struct CHotKeyList {
-
-    std::vector<CHotKey> keys{ 1 };
+    std::vector<CHotKey> keys{1};
     bool HasKey(CHotKey ktest, CHotKey::TCompareFlags flags) const {
         for (const auto& k : keys) {
             if (ktest.Compare(k, flags))
@@ -10,26 +9,25 @@ struct CHotKeyList {
         return false;
     }
 
-	int size() {
-		return keys.size();
-	}
+    int size() { return keys.size(); }
 
-	bool DeleteEmpty() {
-		for (int i = 0; i < size(); i++) {
-			if (!keys[i].IsEmpty()) {
-				if(i != 0) std::swap(keys[0], keys[i]);
-				break;
-			}
-		}
-		bool found = false;
-		for (int i = size() - 1; i >= 1; i--) {
-			if (keys[i].IsEmpty()) {
-				Utils::RemoveAt(keys, i);
-				found = true;
-			}
-		}
-		return found;
-	}
+    bool DeleteEmpty() {
+        for (int i = 0; i < size(); i++) {
+            if (!keys[i].IsEmpty()) {
+                if (i != 0)
+                    std::swap(keys[0], keys[i]);
+                break;
+            }
+        }
+        bool found = false;
+        for (int i = size() - 1; i >= 1; i--) {
+            if (keys[i].IsEmpty()) {
+                Utils::RemoveAt(keys, i);
+                found = true;
+            }
+        }
+        return found;
+    }
 
     bool Empty() {
         for (const auto& k : keys) {
@@ -39,18 +37,13 @@ struct CHotKeyList {
         return true;
     }
 
+    CHotKey& key() { return keys[0]; }
 
-    CHotKey& key() {
-        return keys[0];
-    }
-
-    const CHotKey& key() const {
-        return keys[0];
-    }
+    const CHotKey& key() const { return keys[0]; }
 
     std::string ToString() const {
         std::string res;
-        for (int i = -1; const auto & it : keys) {
+        for (int i = -1; const auto& it : keys) {
             i++;
             if (i != 0) {
                 res += ", ";
@@ -60,13 +53,14 @@ struct CHotKeyList {
         return res;
     }
 
-	void FromString(UView str) {
-		keys.clear();
-		for (const auto& hk_string : StrUtils::Split(str, ',')) {
-			keys.push_back(CHotKey::FromString(hk_string));
-		}
-		if (keys.empty()) keys.resize(1);
-	}
+    void FromString(UView str) {
+        keys.clear();
+        for (const auto& hk_string : StrUtils::Split(str, ',')) {
+            keys.push_back(CHotKey::FromString(hk_string));
+        }
+        if (keys.empty())
+            keys.resize(1);
+    }
 };
 
 struct LayoutInfo {
@@ -76,36 +70,34 @@ struct LayoutInfo {
     CHotKeyList hotkey;
 };
 
-enum class CommandType {
-	Run, Snippet
-};
+enum class CommandType { Run, Snippet };
 
 struct RunProgramInfo {
     string cmd;
     string args;
     CHotKeyList hotkey;
     bool elevated = false;
-	int delay = 0;
-	bool enabled = true;
-	CommandType type = CommandType::Run;
+    int delay = 0;
+    bool enabled = true;
+    CommandType type = CommandType::Run;
 };
 
-
 struct LayoutInfoList {
-
     std::vector<LayoutInfo> info;
 
     bool AllLayoutEnabled() const {
-        return std::ranges::all_of(info, [](const auto& x) {return x.enabled; });
+        return std::ranges::all_of(info, [](const auto& x) { return x.enabled; });
     }
     std::generator<HKL> EnabledLayouts() const {
         for (const auto& it : info) {
-            if (it.enabled) co_yield it.layout;
+            if (it.enabled)
+                co_yield it.layout;
         }
     }
     int CntLayoutEnabled() const {
         int cnt = 0;
-        for (const auto& it : EnabledLayouts()) cnt++;
+        for (const auto& it : EnabledLayouts())
+            cnt++;
         return cnt;
     }
     HKL NextEnabledLayout(HKL lay) const {
@@ -124,9 +116,7 @@ struct LayoutInfoList {
         return 0;
     }
 
-    bool HasLayout(HKL lay) const {
-        return GetLayoutInfo(lay) != nullptr;
-    }
+    bool HasLayout(HKL lay) const { return GetLayoutInfo(lay) != nullptr; }
 
     const LayoutInfo* GetLayoutInfo(HKL lay) const {
         for (const auto& it : info) {
@@ -136,7 +126,8 @@ struct LayoutInfoList {
         return nullptr;
     }
     const LayoutInfo* GetLayoutIndex(int i) const {
-        if (i >= info.size()) return nullptr;
+        if (i >= info.size())
+            return nullptr;
         return &info[i];
     }
 };

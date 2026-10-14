@@ -1,6 +1,6 @@
 ﻿//	inline bool ProcSingleton(const TChar* mtxName)
 //	{
-//#ifdef _WIN32
+// #ifdef _WIN32
 //		HANDLE mtxGui = CreateMutex(NULL, FALSE, mtxName);
 //		if (GetLastError() == ERROR_ALREADY_EXISTS)
 //		{
@@ -12,7 +12,7 @@
 //		}
 //
 //		return false;
-//#else
+// #else
 //		// Логика для Linux через абстрактные сокеты (аналог именованного мьютекса)
 //		int sock = socket(AF_UNIX, SOCK_STREAM, 0);
 //		if (sock < 0) return false;
@@ -34,5 +34,5 @@
 //		}
 //		// Сокет намеренно не закрываем, чтобы держать "мьютекс"
 //		return false;
-//#endif
+// #endif
 //	}

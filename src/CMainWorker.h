@@ -1,72 +1,70 @@
 ﻿#pragma once
 
 struct Message_KeyType {
-	TKeyCode   vkCode = 0;
-	TScanCode_Ext scan_ext;
-	CHotKey cur_hotKey;
-	bool is_caps = false;
+    TKeyCode vkCode = 0;
+    TScanCode_Ext scan_ext;
+    CHotKey cur_hotKey;
+    bool is_caps = false;
 };
 
 struct Message_Hotkey {
-	CHotKey hotkey;
-	HotKeyType hk = hk_NULL;
-	ULONGLONG delayed_from = 0;
-	vector<TKeyCode> cur_keys_down; // все текущие нажатые.
-	bool IsEmpty() const { return hk == hk_NULL; }
+    CHotKey hotkey;
+    HotKeyType hk = hk_NULL;
+    ULONGLONG delayed_from = 0;
+    vector<TKeyCode> cur_keys_down;  // все текущие нажатые.
+    bool IsEmpty() const { return hk == hk_NULL; }
 };
 
 struct Message_ChangeForeg {
-	HWND hwnd = 0;
+    HWND hwnd = 0;
 };
 
 struct Message_ClearWorlds {};
 struct Message_Quit {};
 
 class WorkerImplement;
-using Message_Func = std::move_only_function<void(WorkerImplement*)>; // все захваченное должно быть копией.
+using Message_Func = std::move_only_function<void(WorkerImplement*)>;  // все захваченное должно быть копией.
 
-using Message_Variant = std::variant< Message_KeyType, Message_Hotkey, Message_ClearWorlds, Message_Func, Message_ChangeForeg, Message_Quit >;
+using Message_Variant =
+    std::variant<Message_KeyType, Message_Hotkey, Message_ClearWorlds, Message_Func, Message_ChangeForeg, Message_Quit>;
 
 class CMainWorker {
+    std::unique_ptr<WorkerImplement> worker_impl;
+    MultiThreadQueue<Message_Variant> m_queue;
+    std::thread m_thread;
 
-	std::unique_ptr<WorkerImplement> worker_impl;
-	MultiThreadQueue<Message_Variant> m_queue;
-	std::thread m_thread;
+    void WorkerInt();
 
-	void WorkerInt();
+    void StopAndWait() {
+        m_queue.PostMsg(Message_Quit{});
+        if (m_thread.joinable())
+            m_thread.join();
+    }
 
-	void StopAndWait() {
-		m_queue.PostMsg(Message_Quit{});
-		if (m_thread.joinable())
-			m_thread.join();
-	}
+    // void ReStart() {
+    //	StopAndWait();
+    //	m_queue.Reinitialize();
+    //	m_thread = std::thread(std::bind(&CMainWorker::WorkerInt, this));
+    // }
 
-	//void ReStart() {
-	//	StopAndWait();
-	//	m_queue.Reinitialize();
-	//	m_thread = std::thread(std::bind(&CMainWorker::WorkerInt, this));
-	//}
+   public:
+    WorkerImplement* WorkerImpl() { return worker_impl.get(); }
 
-public:
-	WorkerImplement* WorkerImpl() { return worker_impl.get(); }
+    void Init();
 
-	void Init();
+    ~CMainWorker() { StopAndWait(); }
 
-	~CMainWorker() {
-		StopAndWait();
-	}
+    void PostMsg(auto&& msg, int delay = 0) { m_queue.PostMsg(std::move(msg), delay); }
 
-
-	void PostMsg(auto&& msg, int delay = 0) {
-		m_queue.PostMsg(std::move(msg), delay);
-	}
-
-	static CMainWorker& Inst() {
-		static CMainWorker inst;
-		return inst;
-	}
-
+    static CMainWorker& Inst() {
+        static CMainWorker inst;
+        return inst;
+    }
 };
 
-inline CMainWorker* Worker() { return &CMainWorker::Inst(); }
-inline WorkerImplement* WorkerImpl() { return Worker()->WorkerImpl(); }
+inline CMainWorker* Worker() {
+    return &CMainWorker::Inst();
+}
+inline WorkerImplement* WorkerImpl() {
+    return Worker()->WorkerImpl();
+}

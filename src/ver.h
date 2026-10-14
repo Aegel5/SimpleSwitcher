@@ -1,11 +1,11 @@
 ﻿namespace details {
-	static const char* SW_VERSION = "7.0.7";	
+static const char* SW_VERSION = "7.0.7";
 }
 
 inline const char* GET_SW_VERSION() {
 #ifdef PUBLIC_RELEASE
-	return details::SW_VERSION;
+    return details::SW_VERSION;
 #endif
-	static std::string ver{ details::SW_VERSION + " PREVIEW"s };
-	return ver.c_str();
-} 
+    static std::string ver{details::SW_VERSION + " PREVIEW"s};
+    return ver.c_str();
+}

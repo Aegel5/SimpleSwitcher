@@ -39,7 +39,7 @@ class Notificator : public ImGuiUtils::WindowHelper {
         // 1. Создаем чеклист, где размер равен количеству элементов + 1
         // (в худшем случае, если заняты все от 0 до N-1, нам нужен ID = N)
 
-        std::array<bool, 100> has {};
+        std::array<bool, 100> has{};
 
         // 2. Отмечаем все ID, которые сейчас заняты
         for (const auto& item : settings.folders) {
@@ -80,11 +80,11 @@ class Notificator : public ImGuiUtils::WindowHelper {
     void DrawNotify() {
         if (!need_show)
             return;
-		need_show = false;
+        need_show = false;
 
         for (auto& it : all_entries()) {
             if (it.IsTrigger()) {
-				need_show = true;
+                need_show = true;
                 if (it.play_sound) {
                     if (it.lastStartPlaySound != it.nextActivate) {
                         it.lastStartPlaySound = it.nextActivate;
@@ -93,8 +93,8 @@ class Notificator : public ImGuiUtils::WindowHelper {
                 }
                 bool val = true;
                 ImGuiUtils::ToCenter(it.center);  // center only first message ever
-				it.center = false;
-				auto arr = StrUtils::MakeFormatArray<100>("{}###notif_id_{}", LOC("Event!"), it.id);
+                it.center = false;
+                auto arr = StrUtils::MakeFormatArray<100>("{}###notif_id_{}", LOC("Event!"), it.id);
                 ImGui::Begin(arr.data(), &val, ImGuiWindowFlags_AlwaysAutoResize);
                 {
                     HWND hwnd = (HWND)ImGui::GetWindowViewport()->PlatformHandle;
@@ -225,7 +225,7 @@ class Notificator : public ImGuiUtils::WindowHelper {
                     }
                     if (ImGuiUtils::PlusButton()) {
                         auto& res = folder.list.emplace_back();
-						res.id = next_id();
+                        res.id = next_id();
                         res.SetPoint(Now());
                         SaveRequest();
                     }

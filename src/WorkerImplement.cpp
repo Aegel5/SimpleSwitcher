@@ -242,7 +242,7 @@ TStatus WorkerImplement::RunProcess(HotKeyType hk, bool after_wait) {
         RETURN_SUCCESS;
     }
 
-    if(it.cmd.empty()){
+    if (it.cmd.empty()) {
         RETURN_SUCCESS;
     }
 
@@ -432,14 +432,12 @@ void WorkerImplement::ProcessOurHotKey(Message_Hotkey&& keyData) {
 }
 
 TStatus WorkerImplement::ProcessRevert(ContextRevert&& ctxRevert) {
-    
     bool fDels = false;
 
     if (TestFlag(ctxRevert.flags, SW_CLIENT_SetLang) && ctxRevert.lay) {
-    	auto prevLay = CurLay();		
+        auto prevLay = CurLay();
         SetNewLay(ctxRevert.lay);
-		WaitOtherLay(prevLay, 15, 40);
-
+        WaitOtherLay(prevLay, 15, 40);
     }
 
     if (TestFlag(ctxRevert.flags, SW_CLIENT_PUTTEXT) && TestFlag(ctxRevert.flags, SW_CLIENT_BACKSPACE)) {

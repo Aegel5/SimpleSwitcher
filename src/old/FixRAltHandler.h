@@ -1,8 +1,8 @@
-﻿//#pragma once
+﻿// #pragma once
 //
 //// Пока без поддержки Alternative Mode
 //
-//class FixRAltHandler {
+// class FixRAltHandler {
 //
 //    void Handle_up(CurStateWrapper& state) {
 //

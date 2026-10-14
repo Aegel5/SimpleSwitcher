@@ -1,6 +1,6 @@
-﻿//#pragma once
+﻿// #pragma once
 //
-//namespace cmdlineparse
+// namespace cmdlineparse
 //{
 //	using TKeyValue = std::map<tstring, tstring>;
 //
@@ -26,4 +26,4 @@
 //		}
 //		RETURN_SUCCESS;
 //	}
-//}
+// }

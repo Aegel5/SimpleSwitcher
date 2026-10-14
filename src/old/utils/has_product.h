@@ -1,4 +1,4 @@
-﻿//inline TStatus IsProductHas(const TChar* sPath, const TChar* sStr, bool& fRes)
+﻿// inline TStatus IsProductHas(const TChar* sPath, const TChar* sStr, bool& fRes)
 //{
 //	fRes = false;
 
@@ -6,7 +6,6 @@
 //	DWORD dummy;
 //	DWORD dwSize = GetFileVersionInfoSize(sPath, &dummy);
 //	IFW_RET(dwSize != 0);
-
 
 //	std::vector<BYTE> data(dwSize);
 //	IFW_RET(GetFileVersionInfo(sPath, NULL, dwSize, &data[0]));
@@ -37,7 +36,7 @@
 //			lpTranslate[i].wCodePage) < 0)
 //			RET_ERRNO();
 
-//		// Retrieve file description for language and code page "i". 
+//		// Retrieve file description for language and code page "i".
 //		VerQueryValue(
 //			&data[0],
 //			sResPath,
@@ -55,7 +54,6 @@
 //		}
 //		int k = 0;
 //	}
-
 
 //	RETURN_SUCCESS;
 //}

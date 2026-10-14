@@ -6,7 +6,6 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
-
 #include "imgui.h"
 
 #include "backends_layer.h"
@@ -18,124 +17,126 @@
 
 // Main code
 static void StartRealGui(MainWindow* wnd) {
-	// Make process DPI aware and obtain main monitor scale
+    // Make process DPI aware and obtain main monitor scale
 
-	if (!ImBackends::InitDisableMainViewport()) {
-		LOG_ANY("error init");
-		return;
-	}
+    if (!ImBackends::InitDisableMainViewport()) {
+        LOG_ANY("error init");
+        return;
+    }
 
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigInputTextCursorBlink = false;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+    io.ConfigInputTextCursorBlink = false;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
 
+    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular
+    // ones.
+    SetStyle();
 
-	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-	SetStyle();
+    // Setup scaling
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.ScaleAllSizes(
+        ImBackends::main_scale);  // Bake a fixed style scale. (until we have a solution for dynamic style scaling,
+                                  // changing this requires resetting Style + calling this again)
+    style.FontScaleDpi =
+        ImBackends::main_scale;     // Set initial font scale. (in docking branch: using io.ConfigDpiScaleFonts=true
+                                    // automatically overrides this for every window depending on the current monitor)
+    io.ConfigDpiScaleFonts = true;  // [Experimental] Automatically overwrite style.FontScaleDpi in Begin() when Monitor
+                                    // DPI changes. This will scale fonts but _NOT_ scale sizes/padding for now.
+    io.ConfigDpiScaleViewports =
+        true;  // [Experimental] Scale Dear ImGui and Platform Windows when Monitor DPI changes.
 
-	// Setup scaling
-	ImGuiStyle& style = ImGui::GetStyle();
-	style.ScaleAllSizes(ImBackends::main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
-    style.FontScaleDpi = ImBackends::main_scale;        // Set initial font scale. (in docking branch: using io.ConfigDpiScaleFonts=true automatically overrides this for every window depending on the current monitor)
-	io.ConfigDpiScaleFonts = true;          // [Experimental] Automatically overwrite style.FontScaleDpi in Begin() when Monitor DPI changes. This will scale fonts but _NOT_ scale sizes/padding for now.
-	io.ConfigDpiScaleViewports = true;      // [Experimental] Scale Dear ImGui and Platform Windows when Monitor DPI changes.
+    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular
+    // ones.
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        style.WindowRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    }
 
-    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-		style.WindowRounding = 0.0f;
-		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-	}
+    // Setup Platform/Renderer backends
+    ImBackends::InitRenders();
 
-	// Setup Platform/Renderer backends
-	ImBackends::InitRenders();
+    LoadFonts();
 
-	LoadFonts();
+    wnd->InitImGui();
 
-	wnd->InitImGui();
+    while (ImBackends::WaitNewFrame()) {
+        ImBackends::NewFrame();
 
-	while (ImBackends::WaitNewFrame()) {
+        // UI Logic
+        wnd->DrawFrame();
+        Notific::g_notif->Draw();
 
-		ImBackends::NewFrame();
+        // Timer update if needed
+        if (Notific::g_notif->IsVisible()) {
+            ImWantFrameWithDelay(0.5f);
+        }
 
-		// UI Logic
-		wnd->DrawFrame();
-		Notific::g_notif->Draw();
-
-		// Timer update if needed
-		if (Notific::g_notif->IsVisible()) {
-			ImWantFrameWithDelay(0.5f);
-		}
-
-		ImBackends::RenderVSync();
+        ImBackends::RenderVSync();
 
 #ifdef SS_WIN_7_COMPAT
-		Sleep(1);
+        Sleep(1);
 #endif
-	}
+    }
 
-	ImBackends::Cleanup();
+    ImBackends::Cleanup();
 }
 
 void StartGui() {
+    // Создаем главное окно + таймеры
+    WinTimer timer;
+    g_guiHandle = timer.GetHandler();
 
-	// Создаем главное окно + таймеры
-	WinTimer timer;
-	g_guiHandle = timer.GetHandler();
+    // Создаем tray
+    TrayIcon trayIcon;
 
-	// Создаем tray
-	TrayIcon trayIcon;
+    // Создаем нотификатор
+    Notific::Notificator notif;
+    Notific::g_notif = &notif;
 
-	// Создаем нотификатор
-	Notific::Notificator notif;
-	Notific::g_notif = &notif;
+    // Создаем главное окно
+    MainWindow mainWindow(false);
 
-	// Создаем главное окно
-	MainWindow mainWindow(false);
+    bool lightMode = true;
 
-	bool lightMode = true;
+    timer.CycleTimer(
+        [&]() {
+            if (notif.Process()) {
+                ImWantFrameWithDelay(0);
+                lightMode = false;
+            }
+        },
+        2000);
 
-	timer.CycleTimer(
-		[&]() {
-			if (notif.Process()) {
-				ImWantFrameWithDelay(0);
-				lightMode = false;
-			}
-		}, 2000);
+    timer.CustomHandler([&](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+        if (msg == WM_ShowWindow) {
+            int mode = wParam;
+            if (mode) {
+                notif.ShowHide();
+            } else {
+                mainWindow.ShowHide();
+            }
+            ImWantFrameWithDelay(0);
+            lightMode = false;
+            return 0;
+        }
 
-	timer.CustomHandler(
-		[&](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-			if (msg == WM_ShowWindow) {
-				int mode = wParam;
-				if (mode) {
-					notif.ShowHide();
-				}
-				else {
-					mainWindow.ShowHide();
-				}
-				ImWantFrameWithDelay(0);
-				lightMode = false;
-				return 0;
-			}
+        if (msg == WM_LayNotif) {
+            trayIcon.Update((HKL)wParam);
+            return 0;
+        }
 
-			if (msg == WM_LayNotif) {
-				trayIcon.Update((HKL)wParam);
-				return 0;
-			}
+        return 1;
+    });
 
-			return 1;
-		});
+    while (lightMode) {
+        MSG msg;
+        if (GetMessage(&msg, NULL, 0, 0) <= 0) {
+            return;
+        }
+        ::TranslateMessage(&msg);
+        ::DispatchMessage(&msg);
+    }
 
-	while (lightMode) {
-		MSG msg;
-		if (GetMessage(&msg, NULL, 0, 0) <= 0) {
-			return;
-		}
-		::TranslateMessage(&msg);
-		::DispatchMessage(&msg);
-	}
-
-	StartRealGui(&mainWindow);
-
+    StartRealGui(&mainWindow);
 }
-

@@ -1,5 +1,5 @@
-﻿//#pragma once
-//namespace gui_tools
+﻿// #pragma once
+// namespace gui_tools
 //{
 //	template<UINT WM_TRAYICON, UINT TIMER_ID, UINT ICON_ID>
 //	class TrayIcon
@@ -146,4 +146,4 @@
 //		UINT m_uTaskbarRestart = -1;
 //		TMenu m_menu;
 //	};
-//}
+// }

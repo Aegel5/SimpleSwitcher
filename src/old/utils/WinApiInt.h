@@ -1,7 +1,7 @@
-﻿//#pragma once
-//#include <winternl.h>
+﻿// #pragma once
+// #include <winternl.h>
 //
-//namespace WinApiInt
+// namespace WinApiInt
 //{
 //	template<typename TFuncPtr>
 //	TFuncPtr _GetProcAddress(const char* sFnName, const char* sDllName, TFuncPtr)
@@ -17,10 +17,10 @@
 //		return (TFuncPtr)GetProcAddress(hDll, sFnName);
 //	}
 //
-//#define __GETPROC_NTDLL(FuncName) _GetProcAddress(#FuncName, "ntdll.dll", FuncName);
-//#define __GETPROC_Advapi32(FuncName) _GetProcAddress(#FuncName, "Advapi32.dll", FuncName);
-//#define __GETPROC_User32(FuncName) _GetProcAddress(#FuncName, "User32.dll", FuncName);
-//#define __GETPROC_Kernel32(FuncName) _GetProcAddress(#FuncName, "Kernel32.dll", FuncName);
+// #define __GETPROC_NTDLL(FuncName) _GetProcAddress(#FuncName, "ntdll.dll", FuncName);
+// #define __GETPROC_Advapi32(FuncName) _GetProcAddress(#FuncName, "Advapi32.dll", FuncName);
+// #define __GETPROC_User32(FuncName) _GetProcAddress(#FuncName, "User32.dll", FuncName);
+// #define __GETPROC_Kernel32(FuncName) _GetProcAddress(#FuncName, "Kernel32.dll", FuncName);
 //
 //	BOOL
 //	(NTAPI * const CreateProcessWithTokenW)
@@ -87,4 +87,4 @@
 //			_In_      int     cchData
 //			) = __GETPROC_Kernel32(GetLocaleInfoEx);
 //
-//}
+// }

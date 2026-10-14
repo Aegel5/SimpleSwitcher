@@ -1,124 +1,112 @@
 ﻿#pragma once
 
-struct InputSender
-{
-private:
-	std::vector<INPUT> list;
-public:
+struct InputSender {
+   private:
+    std::vector<INPUT> list;
 
-	void Send();
+   public:
+    void Send();
 
-	void Clear()
-	{
-		list.clear();
-	}
-	void Add(TKeyCode key, KeyState state, TScanCode_Ext scan = {})
-	{
-		INPUT cur;
-		SwZeroMemory(cur);
-		cur.type = INPUT_KEYBOARD;
+    void Clear() { list.clear(); }
+    void Add(TKeyCode key, KeyState state, TScanCode_Ext scan = {}) {
+        INPUT cur;
+        SwZeroMemory(cur);
+        cur.type = INPUT_KEYBOARD;
 
-		if (scan.scan != 0) {
-			cur.ki.wScan = scan.scan;
-			SetFlag(cur.ki.dwFlags, KEYEVENTF_SCANCODE);
-			if (scan.is_ext) {
-				SetFlag(cur.ki.dwFlags, KEYEVENTF_EXTENDEDKEY);
-			}
-		}
-		else {
-			if (key == 0) {
-				LOG_WARN(L"try add empty key");
-				return;
-			}
-			cur.ki.wVk = key;
-		}
+        if (scan.scan != 0) {
+            cur.ki.wScan = scan.scan;
+            SetFlag(cur.ki.dwFlags, KEYEVENTF_SCANCODE);
+            if (scan.is_ext) {
+                SetFlag(cur.ki.dwFlags, KEYEVENTF_EXTENDEDKEY);
+            }
+        } else {
+            if (key == 0) {
+                LOG_WARN(L"try add empty key");
+                return;
+            }
+            cur.ki.wVk = key;
+        }
 
-		if (state == KEY_STATE_UP)
-			SetFlag(cur.ki.dwFlags, KEYEVENTF_KEYUP);
+        if (state == KEY_STATE_UP)
+            SetFlag(cur.ki.dwFlags, KEYEVENTF_KEYUP);
 
-		list.push_back(cur);
-	}
-	void AddScanCode(const TKeyBaseInfo& key, KeyState keyState = KEY_STATE_DOWN)
-	{
-		if (key.is_shift) {
-			Add(VK_LSHIFT, keyState);
-		}
+        list.push_back(cur);
+    }
+    void AddScanCode(const TKeyBaseInfo& key, KeyState keyState = KEY_STATE_DOWN) {
+        if (key.is_shift) {
+            Add(VK_LSHIFT, keyState);
+        }
 
-		if (key.scan_code.scan == 0) {
-			Add(key.vk_code, keyState);
-		}
-		else {
-			Add(0, keyState, key.scan_code);
-		}
-	}
-	void AddPressVk(TKeyCode vk, int num = 1)	{
-		for (int i = 0; i < num; i++) {
-			Add(vk, KEY_STATE_DOWN);
-			Add(vk, KEY_STATE_UP);
-		}
-	}
-	static void SendVkKey(TKeyCode vk, int num = 1) {
-		InputSender is;
-		is.AddPressVk(vk, num);
-		is.Send();
-	}
-	void AddDownVk(const CHotKey& key) {
-		for (const auto& k : key ) {
-			Add(k, KEY_STATE_DOWN);
-		}
-	}
-	void AddUpVk(const CHotKey& key) {
-		for (const auto& k : key | std::views::reverse) {
-			Add(k, KEY_STATE_UP);
-		}
-	}
-	static void SendWithPause(const CHotKey& key)
-	{
-		InputSender is;
-		is.AddDownVk(key);
-		is.Send();
-		Sleep(1);
-		is.Clear();
-		is.AddUpVk(key);
-		is.Send();
-	}
-	void AddPressVk(const CHotKey& key)	{
-		if (key.Size() == 0) return;
-		AddDownVk(key);
-		AddUpVk(key);
-	}
-	void AddUnicodePress(wchar_t symbol) {
-		INPUT cur = {};
-		cur.type = INPUT_KEYBOARD;
-		cur.ki.wScan = symbol;
-		cur.ki.dwFlags = KEYEVENTF_UNICODE;
-		list.push_back(cur);
-		cur.ki.dwFlags |= KEYEVENTF_KEYUP;
-		list.push_back(cur);
-	}
-	static void SendHotKey(const CHotKey& key) {
-		InputSender is;
-		is.AddPressVk(key);
-		is.Send();
-	}
-	void AddPressBase(const TKeyBaseInfo& key)
-	{
-		AddScanCode(key, KEY_STATE_DOWN);
-		AddScanCode(key, KEY_STATE_UP);
-	}
-	static void SendKeys(const TKeyRevert& sendData, bool is_now_caps) {
+        if (key.scan_code.scan == 0) {
+            Add(key.vk_code, keyState);
+        } else {
+            Add(0, keyState, key.scan_code);
+        }
+    }
+    void AddPressVk(TKeyCode vk, int num = 1) {
+        for (int i = 0; i < num; i++) {
+            Add(vk, KEY_STATE_DOWN);
+            Add(vk, KEY_STATE_UP);
+        }
+    }
+    static void SendVkKey(TKeyCode vk, int num = 1) {
+        InputSender is;
+        is.AddPressVk(vk, num);
+        is.Send();
+    }
+    void AddDownVk(const CHotKey& key) {
+        for (const auto& k : key) {
+            Add(k, KEY_STATE_DOWN);
+        }
+    }
+    void AddUpVk(const CHotKey& key) {
+        for (const auto& k : key | std::views::reverse) {
+            Add(k, KEY_STATE_UP);
+        }
+    }
+    static void SendWithPause(const CHotKey& key) {
+        InputSender is;
+        is.AddDownVk(key);
+        is.Send();
+        Sleep(1);
+        is.Clear();
+        is.AddUpVk(key);
+        is.Send();
+    }
+    void AddPressVk(const CHotKey& key) {
+        if (key.Size() == 0)
+            return;
+        AddDownVk(key);
+        AddUpVk(key);
+    }
+    void AddUnicodePress(wchar_t symbol) {
+        INPUT cur = {};
+        cur.type = INPUT_KEYBOARD;
+        cur.ki.wScan = symbol;
+        cur.ki.dwFlags = KEYEVENTF_UNICODE;
+        list.push_back(cur);
+        cur.ki.dwFlags |= KEYEVENTF_KEYUP;
+        list.push_back(cur);
+    }
+    static void SendHotKey(const CHotKey& key) {
+        InputSender is;
+        is.AddPressVk(key);
+        is.Send();
+    }
+    void AddPressBase(const TKeyBaseInfo& key) {
+        AddScanCode(key, KEY_STATE_DOWN);
+        AddScanCode(key, KEY_STATE_UP);
+    }
+    static void SendKeys(const TKeyRevert& sendData, bool is_now_caps) {
+        InputSender inputSender;
 
-		InputSender inputSender;
+        LOG_ANY("Send {} keys. is_now_caps: {}", sendData.size(), is_now_caps);
 
-		LOG_ANY("Send {} keys. is_now_caps: {}", sendData.size(), is_now_caps);
+        for (auto key : sendData) {
+            // if (isCaps) key.revert_shift();
+            inputSender.AddPressBase(key);
+        }
 
-		for (auto key : sendData)
-		{
-			//if (isCaps) key.revert_shift();
-			inputSender.AddPressBase(key);
-		}
-
-		inputSender.Send();
-	}
-
+        inputSender.Send();
+    }
 };

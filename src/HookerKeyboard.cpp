@@ -1,291 +1,259 @@
 ﻿
-LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(
-	_In_  int nCode,
-	_In_  WPARAM wParam,
-	_In_  LPARAM lParam
-) {
+LRESULT CALLBACK Hooker::HookerKeyboard::LowLevelKeyboardProc(_In_ int nCode, _In_ WPARAM wParam, _In_ LPARAM lParam) {
+    if (nCode != HC_ACTION) {
+        return CallNextHookEx(0, nCode, wParam, lParam);
+    }
 
-	if (nCode != HC_ACTION) {
-		return CallNextHookEx(0, nCode, wParam, lParam);
-	}
+    Message_Hotkey msg_hotkey;
+    bool need_disable_event = false;
 
-	Message_Hotkey msg_hotkey;
-	bool need_disable_event = false;
+    auto process = [&]() {
+        GETCONF;
 
-	auto process = [&]() {
+        KBDLLHOOKSTRUCT* k = (KBDLLHOOKSTRUCT*)lParam;
 
-		GETCONF;
+        TKeyCode vkCode = (TKeyCode)k->vkCode;
+        auto curKeyState = GetKeyState(wParam);
+        bool isInjected = TestFlag(k->flags, LLKHF_INJECTED);
+        bool is_low_inject = TestFlag(k->flags, LLKHF_LOWER_IL_INJECTED);
+        bool isAltDown = TestFlag(k->flags, LLKHF_ALTDOWN);
+        bool isSysKey = wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP;
+        bool isExtended = TestFlag(k->flags, LLKHF_EXTENDED);
+        bool is_pressed = !TestFlag(k->flags, LLKHF_UP);
+        auto scan_code = k->scanCode;
+        int iscaps = -1;
+        bool isDown = curKeyState == KEY_STATE_DOWN;
+        if (isDown)
+            iscaps = Utils::IsCapslockEnabled() ? 1 : 0;
 
-		KBDLLHOOKSTRUCT* k = (KBDLLHOOKSTRUCT*)lParam;
+        LOG_ANY(
+            "KEY_MSG: {}({:x}) "
+            "{},scan=0x{:x},inject={},low_inject={},altdown={},syskey={},extended={},is_pressed={},flags=0x{:b},caps={"
+            "}",
+            CHotKey::ToString(vkCode), vkCode, (curKeyState == KEY_STATE_UP ? "UP" : "DOWN"), scan_code, isInjected,
+            is_low_inject, isAltDown, isSysKey, isExtended, is_pressed, k->flags, iscaps);
 
-		TKeyCode vkCode = (TKeyCode)k->vkCode;
-		auto curKeyState = GetKeyState(wParam);
-		bool isInjected = TestFlag(k->flags, LLKHF_INJECTED);
-		bool is_low_inject = TestFlag(k->flags, LLKHF_LOWER_IL_INJECTED);
-		bool isAltDown = TestFlag(k->flags, LLKHF_ALTDOWN);
-		bool isSysKey = wParam == WM_SYSKEYDOWN || wParam == WM_SYSKEYUP;
-		bool isExtended = TestFlag(k->flags, LLKHF_EXTENDED);
-		bool is_pressed = !TestFlag(k->flags, LLKHF_UP);
-		auto scan_code = k->scanCode;
-		int iscaps = -1;
-		bool isDown = curKeyState == KEY_STATE_DOWN;
-		if (isDown) iscaps = Utils::IsCapslockEnabled() ? 1 : 0;
+        if (k->dwExtraInfo == c_MyInjectedId) {
+            LOG_ANY(L"skip our keys");
+            return;
+        }
 
-		LOG_ANY(
-			"KEY_MSG: {}({:x}) {},scan=0x{:x},inject={},low_inject={},altdown={},syskey={},extended={},is_pressed={},flags=0x{:b},caps={}",
-			CHotKey::ToString(vkCode),
-			vkCode,
-			(curKeyState == KEY_STATE_UP ? "UP" : "DOWN"),
-			scan_code,
-			isInjected,
-			is_low_inject,
-			isAltDown,
-			isSysKey,
-			isExtended,
-			is_pressed,
-			k->flags,
-			iscaps
-		);
+        if (k->vkCode > 255) {
+            LOG_ANY(L"k->vkCode > 255: {}", k->vkCode);
+        }
 
-		if (k->dwExtraInfo == c_MyInjectedId) {
-			LOG_ANY(L"skip our keys");
-			return;
-		}
+        if (k->vkCode == 0) {
+            LOG_ANY(L"skip vk 0");
+            return;
+        }
 
-		if (k->vkCode > 255) {
-			LOG_ANY(L"k->vkCode > 255: {}", k->vkCode);
-		}
+        if (scan_code == 541) {
+            LOG_ANY(L"skip bugged lctrl");
+            return;
+        }
 
-		if (k->vkCode == 0) {
-			LOG_ANY(L"skip vk 0");
-			return;
-		}
+        if (is_low_inject && cfg->SkipLowLevelInjectKeys) {
+            LOG_ANY(L"skip low_inject");
+            return;
+        }
 
-		if (scan_code == 541) {
-			LOG_ANY(L"skip bugged lctrl");
-			return;
-		}
+        CHotKey possible_hk_up_current;
+        std::swap(possible_hk_up_current, possible_hk_up);  // сразу очищаем
 
-		if (is_low_inject && cfg->SkipLowLevelInjectKeys) {
-			LOG_ANY(L"skip low_inject");
-			return;
-		}
+        // if (curKeys.Size() == 0) { disable_up = 0; } // все отпущено, ничего запрещать не надо.
 
-		CHotKey possible_hk_up_current;
-		std::swap(possible_hk_up_current, possible_hk_up); // сразу очищаем
+        curKeys.Update(vkCode, isDown, isInjected);  // сразу обновляем
+        const auto& curk = curKeys.GetHk();
 
-		//if (curKeys.Size() == 0) { disable_up = 0; } // все отпущено, ничего запрещать не надо.
+        auto request_disable = [&]() {
+            if (isDown) {
+                if (curk.ValueKey() != vkCode) {
+                    LOG_ANY("CRITICAL: urk.ValueKey() != vkCode");
+                }
 
-		curKeys.Update(vkCode, isDown, isInjected); // сразу обновляем
-		const auto& curk = curKeys.GetHk();
+                // https://github.com/Aegel5/SimpleSwitcher/issues/97
+                // пока исправление не добаляем.
+                //
+                // if (Utils::is_in(vkCode, VK_SHIFT, VK_LSHIFT, VK_RSHIFT, VK_CONTROL, VK_LCONTROL, VK_RCONTROL)) {
+                //	LOG_ANY(L"Skip disable key={} for shift or ctrl", CHotKey::ToString(vkCode));
+                //	return;
+                //}
 
-		auto request_disable = [&]() {
+                // Попробуем пока вообще без запрета UP во избежания ошибок.
+                // https://github.com/Aegel5/SimpleSwitcher/issues/97
+                // disable_up = vkCode; // up тоже будет в будущем запрещать.
+            } else {
+                // disable_up = 0;
+            }
 
-			if (isDown) {
-				if (curk.ValueKey() != vkCode) {
-					LOG_ANY("CRITICAL: urk.ValueKey() != vkCode");
-				}
+            need_disable_event = true;
+            LOG_ANY("Key {} was disabled({})", CHotKey::ToString(vkCode), isDown ? "down" : "up");
+        };
 
-				// https://github.com/Aegel5/SimpleSwitcher/issues/97
-				// пока исправление не добаляем.
-				// 
-				//if (Utils::is_in(vkCode, VK_SHIFT, VK_LSHIFT, VK_RSHIFT, VK_CONTROL, VK_LCONTROL, VK_RCONTROL)) {
-				//	LOG_ANY(L"Skip disable key={} for shift or ctrl", CHotKey::ToString(vkCode));
-				//	return;
-				//}
+        curKeys.DebugPrint();
 
+        int check_disabled_status = -1;
 
-				// Попробуем пока вообще без запрета UP во избежания ошибок.
-				// https://github.com/Aegel5/SimpleSwitcher/issues/97
-				// disable_up = vkCode; // up тоже будет в будущем запрещать.
-			}
-			else {
-				//disable_up = 0;
-			}
+        auto check_is_our_key = [&check_disabled_status, cfg](const CHotKey& k1, const CHotKey& k2) {
+            if (k1.Compare(k2, CHotKey::COMPARE_IGNORE_KEYUP | CHotKey::COMPARE_IGNORE_DOUBLE)) {
+                if (check_disabled_status == -1) {
+                    check_disabled_status = cfg->IsSkipProgramTop() ? 1 : 0;
+                }
+                return check_disabled_status == 0;
+            }
+            return false;
+        };
 
-			need_disable_event = true;
-			LOG_ANY("Key {} was disabled({})", CHotKey::ToString(vkCode), isDown ? "down": "up");
-		};
+        bool key_up_exists = false;
+        bool double_exists = false;
 
-		curKeys.DebugPrint();
+        if (curKeyState == KeyState::KEY_STATE_DOWN) {
+            // на любое новое нажатие сбрасываем ожидание запрета на UP во избежание ошибок.
+            // disable_up = 0;
 
-		int check_disabled_status = -1;
+            if (curk.IsEmpty())
+                return;
 
-		auto check_is_our_key = [&check_disabled_status, cfg](const CHotKey& k1, const CHotKey& k2) {
-			if (k1.Compare(k2, CHotKey::COMPARE_IGNORE_KEYUP | CHotKey::COMPARE_IGNORE_DOUBLE)) {
-				if (check_disabled_status == -1) {
-					check_disabled_status = cfg->IsSkipProgramTop() ? 1 : 0;
-				}
-				return check_disabled_status == 0;
-			}
-			return false;
-			};
+            /* Новая система работы double (экспериментальное):
 
-		bool key_up_exists = false;
-		bool double_exists = false;
+            Два режима работы: существует #double хот-кей и не существует.
 
-		if (curKeyState == KeyState::KEY_STATE_DOWN) {
+            1) Не существует: полностью игнорируем всю систему мульти-нажатий.
 
-			// на любое новое нажатие сбрасываем ожидание запрета на UP во избежание ошибок.
-			//disable_up = 0;
+            2) Существует:
+            1 нажатие - запускаем не_double хот-кей если есть с задержкой,
+            2/4/6/8... нажатий - запускаем double и отменяем не_double
+            3/5/7/9... нажатий - ничего не делаем.
 
-			if (curk.IsEmpty())
-				return;
+            */
 
-			/* Новая система работы double (экспериментальное):
+            // Для простоты сделаем за 2 прохода (в случае если hk найден)
 
-			Два режима работы: существует #double хот-кей и не существует.
+            bool found_hk = false;
 
-			1) Не существует: полностью игнорируем всю систему мульти-нажатий.
+            for (const auto& [hk, key] : cfg->All_hot_keys()) {
+                if (!check_is_our_key(key, curk))
+                    continue;
+                found_hk = true;
+                if (key.IsDouble())
+                    double_exists = true;
+                if (key.GetKeyup())
+                    key_up_exists = true;
+            }
 
-			2) Существует:
-			1 нажатие - запускаем не_double хот-кей если есть с задержкой,
-			2/4/6/8... нажатий - запускаем double и отменяем не_double
-			3/5/7/9... нажатий - ничего не делаем.
+            if (found_hk) {
+                for (const auto& [hk, key] : cfg->All_hot_keys()) {
+                    if (!check_is_our_key(key, curk))
+                        continue;
 
-			*/
+                    if (!key.GetKeyup()) {
+                        if (!double_exists) {
+                            // Режим 1: просто запускаем первый попавшийся hk
+                            msg_hotkey.hotkey = key;
+                            msg_hotkey.hk = hk;
+                            break;
+                        } else {
+                            // Режим 2.
+                            if (curKeys.IsMultiple()) {
+                                if ((curKeys.MultipleCnt() & 1) == 0 && key.IsDouble()) {
+                                    // нашли double
+                                    msg_hotkey.hotkey = key;
+                                    msg_hotkey.hk = hk;
+                                    break;
+                                }
+                            } else {
+                                if (!key.IsDouble()) {
+                                    // нашли не_double
+                                    msg_hotkey.hotkey = key;
+                                    msg_hotkey.hk = hk;
+                                    break;
+                                }
+                            }
+                        }
 
-			// Для простоты сделаем за 2 прохода (в случае если hk найден)
+                    } else {
+                        possible_hk_up = key;
+                        possible_hktype_up = hk;
+                    }
+                }
+            }
 
-			bool found_hk = false;
+            if (msg_hotkey.IsEmpty()) {
+                // ctrl + alt
 
-			for (const auto& [hk, key] : cfg->All_hot_keys()) {
-				if (!check_is_our_key(key, curk)) continue;
-				found_hk = true;
-				if (key.IsDouble()) double_exists = true;
-				if (key.GetKeyup()) key_up_exists = true;
-			}
+                if (curk.Size() == 3 && curk.HasKey(VK_LMENU, true) && curk.HasKey(VK_CONTROL, false) &&
+                    !curk.IsKnownMods(vkCode) && vkCode == curk.ValueKey() && cfg->fixRAlt && cfg->fixRAlt_lay_ != 0) {
+                    LOG_ANY(L"fix ctrl+alt");
+                    msg_hotkey.hk = hk_Fix_RAlt;
+                    msg_hotkey.hotkey = curk;
+                }
+            }
 
-			if (found_hk) {
+            if (!msg_hotkey.IsEmpty()) {
+                possible_hk_up.Clear();  // не поддерживаем одновременно хоткей на up and down (down в приоритете).
+                request_disable();
+            }
+        }
 
-				for (const auto& [hk, key] : cfg->All_hot_keys()) {
-					if (!check_is_our_key(key, curk)) continue;
+        if (curKeyState == KeyState::KEY_STATE_UP) {
+            // if (disable_up == vkCode) {
+            //	request_disable();
+            // }
+            // else {
+            //  ищем наш хот-кей.
+            //  даже если нашли, up никогда не запрещаем.
+            if (!possible_hk_up_current.IsEmpty()) {
+                msg_hotkey.hotkey = possible_hk_up_current;
+                msg_hotkey.hk = possible_hktype_up;
+            }
+            //}
+        }
 
-					if (!key.GetKeyup()) {
+        if (!msg_hotkey.IsEmpty()) {
+            if (curKeys.IsHold()) {
+                LOG_ANY("Skip hk because hold");
+            } else if (msg_hotkey.hotkey.GetKeyup() && last_mouse_click_time > curKeys.StartOfLastHotKey()) {
+                // Possible Ctrl+Click in IDE
+                LOG_ANY("HotKey {} was canceled by mouse click", msg_hotkey.hotkey.ToString());
+            } else {
+                int delay = 0;
+                if (!msg_hotkey.hotkey.IsDouble() && double_exists) {
+                    delay = cfg->quick_press_ms;  // придется подождать.
+                    msg_hotkey.delayed_from = GetTickCount64();
+                }
 
-						if (!double_exists) {
-							// Режим 1: просто запускаем первый попавшийся hk
-							msg_hotkey.hotkey = key;
-							msg_hotkey.hk = hk;
-							break;
-						}
-						else {
-							// Режим 2.
-							if (curKeys.IsMultiple()) {
-								if ((curKeys.MultipleCnt() & 1) == 0 && key.IsDouble()) {
-									// нашли double
-									msg_hotkey.hotkey = key;
-									msg_hotkey.hk = hk;
-									break;
-								}
-							}
-							else {
-								if (!key.IsDouble()) {
-									// нашли не_double
-									msg_hotkey.hotkey = key;
-									msg_hotkey.hk = hk;
-									break;
-								}
-							}
-						}
+                LOG_ANY("post {} {}. has_double {}", msg_hotkey.hotkey.ToString(), (int)msg_hotkey.hk, double_exists);
+                msg_hotkey.cur_keys_down = curKeys.AllKeys();  // todo curKey_no_disabled?
+                if (need_disable_event)
+                    Utils::RemoveFirst(msg_hotkey.cur_keys_down,
+                                       vkCode);  // удалим то что запретили, так как поднимать их не нужно.
+                Worker()->PostMsg(std::move(msg_hotkey), delay);
+            }
+        }
 
-					}
-					else {
-						possible_hk_up = key;
-						possible_hktype_up = hk;
-					}
-				}
-			}
+        else if (curKeyState == KeyState::KEY_STATE_DOWN &&
+                 !curk.IsEmpty()
 
-			if (msg_hotkey.IsEmpty()) {
+                 // Пропускаем отсылку, если есть UP хот-кей https://github.com/Aegel5/SimpleSwitcher/issues/70
+                 // (Если есть просто key или key #double, мы и так сюда не попадем)
+                 && !key_up_exists
 
-				// ctrl + alt
+        ) {
+            Worker()->PostMsg(Message_KeyType{
+                .vkCode = vkCode,
+                .scan_ext = {(TScanCode)scan_code, isExtended},
+                .cur_hotKey = curk,  // без учета disabled, но не критично
+                .is_caps = iscaps == 1,
+            });
+        }
+    };
 
-				if (curk.Size() == 3
-					&& curk.HasKey(VK_LMENU, true)
-					&& curk.HasKey(VK_CONTROL, false)
-					&& !curk.IsKnownMods(vkCode)
-					&& vkCode == curk.ValueKey()
-					&& cfg->fixRAlt
-					&& cfg->fixRAlt_lay_ != 0
-					) {
-					LOG_ANY(L"fix ctrl+alt");
-					msg_hotkey.hk = hk_Fix_RAlt;
-					msg_hotkey.hotkey = curk;
-				}
-			}
+    process();
 
-			if (!msg_hotkey.IsEmpty()) {
-				possible_hk_up.Clear();  // не поддерживаем одновременно хоткей на up and down (down в приоритете).
-				request_disable();
-			}
+    if (need_disable_event && (g_enabled.IsEnabled() || msg_hotkey.hk == hk_ToggleEnabled)) {
+        // делаем вид, что клавиша не была нажата.
+        return 1;
+    }
 
-		}
-
-		if (curKeyState == KeyState::KEY_STATE_UP) {
-			//if (disable_up == vkCode) {
-			//	request_disable();
-			//}
-			//else {
-				// ищем наш хот-кей.
-				// даже если нашли, up никогда не запрещаем.
-				if (!possible_hk_up_current.IsEmpty()) {
-					msg_hotkey.hotkey = possible_hk_up_current;
-					msg_hotkey.hk = possible_hktype_up;
-				}
-			//}
-
-		}
-
-		if (!msg_hotkey.IsEmpty()) {
-
-			if (curKeys.IsHold()) {
-				LOG_ANY("Skip hk because hold");
-			}
-			else if (msg_hotkey.hotkey.GetKeyup() && last_mouse_click_time > curKeys.StartOfLastHotKey()) {
-				// Possible Ctrl+Click in IDE
-				LOG_ANY("HotKey {} was canceled by mouse click", msg_hotkey.hotkey.ToString());
-			}
-			else {
-				int delay = 0;
-				if (!msg_hotkey.hotkey.IsDouble() && double_exists) {
-					delay = cfg->quick_press_ms; // придется подождать.
-					msg_hotkey.delayed_from = GetTickCount64();
-				}
-
-				LOG_ANY("post {} {}. has_double {}", msg_hotkey.hotkey.ToString(), (int)msg_hotkey.hk, double_exists);
-				msg_hotkey.cur_keys_down = curKeys.AllKeys(); // todo curKey_no_disabled?
-				if (need_disable_event)
-					Utils::RemoveFirst(msg_hotkey.cur_keys_down, vkCode); // удалим то что запретили, так как поднимать их не нужно.
-				Worker()->PostMsg(std::move(msg_hotkey), delay);
-			}
-		}
-
-		else if (
-			curKeyState == KeyState::KEY_STATE_DOWN && !curk.IsEmpty()
-
-			// Пропускаем отсылку, если есть UP хот-кей https://github.com/Aegel5/SimpleSwitcher/issues/70
-			// (Если есть просто key или key #double, мы и так сюда не попадем)
-			&& !key_up_exists
-
-			) {
-			Worker()->PostMsg(Message_KeyType{
-				.vkCode = vkCode,
-				.scan_ext = { (TScanCode)scan_code, isExtended },
-				.cur_hotKey = curk, // без учета disabled, но не критично
-				.is_caps = iscaps == 1,
-				});
-		}
-
-	};
-
-	process();
-
-	if (need_disable_event && (g_enabled.IsEnabled() || msg_hotkey.hk == hk_ToggleEnabled)){
-		// делаем вид, что клавиша не была нажата.
-		return 1; 
-	}
-
-	return CallNextHookEx(0, nCode, wParam, lParam);
-
+    return CallNextHookEx(0, nCode, wParam, lParam);
 }

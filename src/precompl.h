@@ -5,16 +5,14 @@
 #define NOMINMAX
 
 // windows
-#define WIN32_LEAN_AND_MEAN // убрать лишние header из winapi
+#define WIN32_LEAN_AND_MEAN  // убрать лишние header из winapi
 #include <windows.h>
 #include <Winuser.h>
 #include <Psapi.h>
 #include <mmsystem.h>
 
-
 #include <wtsapi32.h>
 #pragma comment(lib, "Wtsapi32.lib")
-
 
 // std
 #include <stdlib.h>
@@ -44,11 +42,11 @@
 #include <cassert>
 #include <future>
 #include <random>
-//#include <flat_map>
+// #include <flat_map>
 #include <ranges>
 
 #include "imgui.h"
-#include "imgui_internal.h" 
+#include "imgui_internal.h"
 #include "imgui_sugar.hpp"
 #include "misc/cpp/imgui_stdlib.h"
 
@@ -75,17 +73,15 @@
 #include "utils/ImGuiUtils.h"
 #include "utils/rand.h"
 
-
 // base
 #include "ver.h"
 #include "consts.h"
 #include "Localizator.h"
 #include "Settings.h"
 
-
 // core-worker-utils
 #include "SoundManager.h"
-//#include "InjectSkipper.h"
+// #include "InjectSkipper.h"
 #include "KeysStruct.h"
 #include "InputSender.h"
 #include "KeysCurState.h"
@@ -100,13 +96,3 @@
 #include "WorkerImplement.h"
 #include "Hooker.h"
 #include "HookerThread.h"
-
-
-
-
-
-
-
-
-
-

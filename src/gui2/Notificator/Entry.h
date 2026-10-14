@@ -70,15 +70,15 @@ struct Entry {
             SetActivate(Convert(pt));
         } else if (period == Period::NDays) {
             correct_days_period();
-            if(point > now) point = now;            
+            if (point > now)
+                point = now;
             auto delt_d = floor<days>(now - point).count();
             delt_d /= days_period;
             SetActivate(point + days(delt_d * days_period + days_period));  // accurate calc
-        }else if (period == Period::NMinutes) {
+        } else if (period == Period::NMinutes) {
             correct_days_period();
             SetActivate(now + minutes(days_period));  // for minutes always do from now.
-        }
-        else if (period == Period::Year) {
+        } else if (period == Period::Year) {
             auto now = Convert(Now());
             auto pt = Convert(point);
             pt.y = now.y;
@@ -155,12 +155,10 @@ struct Entry {
                 if (period == Period::NDays) {
                     StrUtils::Sprintf(buf, LOC("Every %d days"), days_period);
                     title = buf;
-                }
-                else if (period == Period::NMinutes) {
+                } else if (period == Period::NMinutes) {
                     StrUtils::Sprintf(buf, LOC("Every %d minutes"), days_period);
                     title = buf;
-                }                
-                else {
+                } else {
                     title = PeriodNameLOC(period);
                 }
 
@@ -183,11 +181,10 @@ struct Entry {
                     // if(ImGui::InputInt(LOC("Days"), &day_period, 1,
                     int per = 0;
 
-
                     per = period == Period::NDays ? days_period : 0;
                     ImGui::SetNextItemWidth(ImGui::CalcTextSize("1111").x * 4);
                     if (ImGui::InputInt(LOC("Days"), &per, 1, 10)) {
-                        period = Period::NDays;                        
+                        period = Period::NDays;
                         correct_days_period();
                         days_period = per;
                         changes = true;
@@ -195,7 +192,7 @@ struct Entry {
                     }
 
                     per = 0;
-                    if(period == Period::NMinutes) 
+                    if (period == Period::NMinutes)
                         per = days_period;
                     ImGui::SetNextItemWidth(ImGui::CalcTextSize("1111").x * 4);
                     if (ImGui::InputInt(LOC("Minutes"), &per, 1, 10)) {
@@ -204,7 +201,7 @@ struct Entry {
                         days_period = per;
                         changes = true;
                         SetupPeriodic();
-                    }                    
+                    }
                 }
             }
 
@@ -268,7 +265,7 @@ struct Entry {
             }
             if (ImGui::Checkbox(LOC("Bring window to top"), &wnd_top)) {
                 changes = true;
-            }         
+            }
             if (ImGui::Selectable(LOC("Delete"))) {
                 changes = 10;
             }
