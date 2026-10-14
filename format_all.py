@@ -13,14 +13,14 @@ PORTABLE_DATA_DIR = r"D:/soft/vscode/data"
 EXTENSIONS = {'.cpp', '.hpp', '.c', '.h'}
 
 
-def find_clang_format():
+def find_clang_format(name = "clang-format"):
     """Ищет clang-format в указанной папке data Portable-версии или в PATH."""
     # 1. Поиск внутри указанной Portable папки "data"
     if PORTABLE_DATA_DIR:
         data_path = Path(PORTABLE_DATA_DIR).resolve()
         if data_path.exists() and data_path.is_dir():
             # Задаем маску для рекурсивного поиска по всей папке data_path
-            pattern = "**/clang-format.exe" if sys.platform == "win32" else "**/clang-format"
+            pattern = f"**/{name}.exe" if sys.platform == "win32" else f"**/{name}"
             
             # Находим все совпадения во всех подпапках
             found_paths = list(data_path.glob(pattern))
@@ -41,6 +41,7 @@ def find_clang_format():
 
 def format_directory(target_dir):
     """Находит все файлы с нужными расширениями за вычетом исключений и форматирует их."""
+    #clang_format_path = find_clang_format("clang-tidy")
     clang_format_path = find_clang_format()
 
     if not clang_format_path:
@@ -89,6 +90,8 @@ def format_directory(target_dir):
         file_names = ", ".join(Path(f).name for f in chunk)        
         try:
             print(f"Запуск пачки: {file_names}")
+            #checks_flag = "--checks=bugprone-*,performance-*"
+            #subprocess.run([clang_format_path, checks_flag] + chunk , check=True)            
             subprocess.run([clang_format_path, "-i"] + chunk, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Ошибка при форматировании пачки файлов: {e}", file=sys.stderr)
