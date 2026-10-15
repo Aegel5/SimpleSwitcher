@@ -157,7 +157,7 @@ def main():
     zip_name = prepare_artifacts_and_zip("build/Release", f"SimpleSwitcher_v{version}.zip")
        
     # 6. Публикация релиза
-    if build_type != 'night':
+    if build_type in ('preview', 'publish'):
         """Создание пре-релиза в GitHub."""
         tag_name = f"v{version}-{sha_short}"
         title = f"SimpleSwitcher {version}-{sha_short} PREVIEW"
