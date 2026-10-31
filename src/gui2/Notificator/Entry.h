@@ -13,6 +13,7 @@ struct Entry {
     };
     int days_period = 0;
     bool center = true;
+    bool rem_tomorrow = true;
     int id = 0;
 
     Period period = Period::Month;
@@ -266,6 +267,9 @@ struct Entry {
             if (ImGui::Checkbox(LOC("Bring window to top"), &wnd_top)) {
                 changes = true;
             }
+            if (ImGui::Checkbox(LOC("Suggest reminding tomorrow"), &rem_tomorrow)) {
+                changes = true;
+            }            
             if (ImGui::Selectable(LOC("Delete"))) {
                 changes = 10;
             }

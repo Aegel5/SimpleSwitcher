@@ -130,20 +130,22 @@ class Notificator : public ImGuiUtils::WindowHelper {
                     }
                 }
                 ImGui::SameLine();
-                if (ImGui::Button(LOC("Remain me tomorow..."))) {
-                    SoundManager::Inst().StopAllSound();
+                if (it.rem_tomorrow) {
+                    if (ImGui::Button(LOC("Remain me tomorrow..."))) {
+                        SoundManager::Inst().StopAllSound();
 
-                    // Алгоритм следующий: берем первую дату > now() со временем 00:00, затем устанавливаем время из
-                    // reference point важно делать это по local времени.
+                        // Алгоритм следующий: берем первую дату > now() со временем 00:00, затем устанавливаем время из
+                        // reference point важно делать это по local времени.
 
-                    auto dt = NowLocal() + days(1);
-                    auto ref_point = LocalConvert(it.point);
-                    auto time = ref_point - std::chrono::floor<days>(ref_point);
-                    auto res = std::chrono::floor<days>(dt) + time;
-                    auto res_utc = LocalConvert(res);
+                        auto dt = NowLocal() + days(1);
+                        auto ref_point = LocalConvert(it.point);
+                        auto time = ref_point - std::chrono::floor<days>(ref_point);
+                        auto res = std::chrono::floor<days>(dt) + time;
+                        auto res_utc = LocalConvert(res);
 
-                    it.SetActivate(res_utc);
-                    SaveRequest();
+                        it.SetActivate(res_utc);
+                        SaveRequest();
+                    }
                 }
 
                 ImGui::End();

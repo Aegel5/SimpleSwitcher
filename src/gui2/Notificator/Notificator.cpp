@@ -25,6 +25,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(Notific::Entry,
                                                 wnd_top,
                                                 play_sound,
                                                 center,
+                                                rem_tomorrow,
                                                 id)
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(Notific::Folder, name, list)
